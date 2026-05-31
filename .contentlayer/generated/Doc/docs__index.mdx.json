@@ -1,0 +1,21 @@
+{
+  "title": "Introduction",
+  "description": "Welcome to the Next SaaS Stripe Starter documentation.",
+  "published": true,
+  "body": {
+    "raw": "\nNext SaaS Stripe Starter is <b>Open Source Boilerplate</b>.\n\nBuilt on the [Taxonomy](https://github.com/shadcn-ui/taxonomy) app by shadcn, it integrates Next.js 14, Prisma, Neon, Auth.js v5, Resend, React Email, Shadcn/ui, and Stripe.\n\nWith Next SaaS Stripe Starter, you get a solid foundation for your SaaS journey.\n\nThis documentation is your go-to resource for configuring and using the starter effectively.\n\nLet's get started and happy coding!\n",
+    "code": "var Component=(()=>{var p=Object.create;var a=Object.defineProperty;var l=Object.getOwnPropertyDescriptor;var m=Object.getOwnPropertyNames;var S=Object.getPrototypeOf,x=Object.prototype.hasOwnProperty;var f=(e,t)=>()=>(t||e((t={exports:{}}).exports,t),t.exports),g=(e,t)=>{for(var r in t)a(e,r,{get:t[r],enumerable:!0})},c=(e,t,r,i)=>{if(t&&typeof t==\"object\"||typeof t==\"function\")for(let o of m(t))!x.call(e,o)&&o!==r&&a(e,o,{get:()=>t[o],enumerable:!(i=l(t,o))||i.enumerable});return e};var y=(e,t,r)=>(r=e!=null?p(S(e)):{},c(t||!e||!e.__esModule?a(r,\"default\",{value:e,enumerable:!0}):r,e)),j=e=>c(a({},\"__esModule\",{value:!0}),e);var d=f((M,s)=>{s.exports=_jsx_runtime});var N={};g(N,{default:()=>h,frontmatter:()=>_});var n=y(d()),_={title:\"Introduction\",description:\"Welcome to the Next SaaS Stripe Starter documentation.\"};function u(e){let t={a:\"a\",p:\"p\",...e.components};return(0,n.jsxs)(n.Fragment,{children:[(0,n.jsxs)(t.p,{children:[\"Next SaaS Stripe Starter is \",(0,n.jsx)(\"b\",{children:\"Open Source Boilerplate\"}),\".\"]}),`\n`,(0,n.jsxs)(t.p,{children:[\"Built on the \",(0,n.jsx)(t.a,{href:\"https://github.com/shadcn-ui/taxonomy\",children:\"Taxonomy\"}),\" app by shadcn, it integrates Next.js 14, Prisma, Neon, Auth.js v5, Resend, React Email, Shadcn/ui, and Stripe.\"]}),`\n`,(0,n.jsx)(t.p,{children:\"With Next SaaS Stripe Starter, you get a solid foundation for your SaaS journey.\"}),`\n`,(0,n.jsx)(t.p,{children:\"This documentation is your go-to resource for configuring and using the starter effectively.\"}),`\n`,(0,n.jsx)(t.p,{children:\"Let's get started and happy coding!\"})]})}function h(e={}){let{wrapper:t}=e.components||{};return t?(0,n.jsx)(t,{...e,children:(0,n.jsx)(u,{...e})}):u(e)}return j(N);})();\n;return Component;"
+  },
+  "_id": "docs/index.mdx",
+  "_raw": {
+    "sourceFilePath": "docs/index.mdx",
+    "sourceFileName": "index.mdx",
+    "sourceFileDir": "docs",
+    "contentType": "mdx",
+    "flattenedPath": "docs"
+  },
+  "type": "Doc",
+  "slug": "/docs",
+  "slugAsParams": "",
+  "images": []
+}
