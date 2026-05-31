@@ -2,50 +2,47 @@ import { FeatureLdg, InfoLdg, TestimonialType } from "types";
 
 export const infos: InfoLdg[] = [
   {
-    title: "Empower your projects",
+    title: "AI care știe brandul tău",
     description:
-      "Unlock the full potential of your projects with our open-source SaaS platform. Collaborate seamlessly, innovate effortlessly, and scale limitlessly.",
+      "Uploadează documente despre produsele tale, prețuri și ton de comunicare. AI-ul generează conținut 100% factual — zero hallucinations, zero texte generice.",
     image: "/_static/illustrations/work-from-home.jpg",
     list: [
       {
-        title: "Collaborative",
-        description: "Work together with your team members in real-time.",
+        title: "Brand Voice",
+        description: "Definești tonul, valorile și publicul țintă o singură dată.",
         icon: "laptop",
       },
       {
-        title: "Innovative",
-        description: "Stay ahead of the curve with access constant updates.",
+        title: "RAG per brand",
+        description: "AI-ul citește documentele tale și scrie despre ce știe.",
         icon: "settings",
       },
       {
-        title: "Scalable",
-        description:
-          "Our platform offers the scalability needed to adapt to your needs.",
+        title: "Multi-limbă",
+        description: "Generează nativ în română, engleză, germană și alte 6 limbi.",
         icon: "search",
       },
     ],
   },
   {
-    title: "Seamless Integration",
+    title: "Publică pe toate platformele",
     description:
-      "Integrate our open-source SaaS seamlessly into your existing workflows. Effortlessly connect with your favorite tools and services for a streamlined experience.",
+      "Conectezi conturile o singură dată și publici simultan pe Facebook, Instagram, LinkedIn, X, Discord și blog WordPress. Direct API, fără intermediari scumpi.",
     image: "/_static/illustrations/work-from-home.jpg",
     list: [
       {
-        title: "Flexible",
-        description:
-          "Customize your integrations to fit your unique requirements.",
+        title: "Direct API",
+        description: "Fără Zapier, fără Zernio. Costuri minime la volum mare.",
         icon: "laptop",
       },
       {
-        title: "Efficient",
-        description: "Streamline your processes and reducing manual effort.",
+        title: "Calendar editorial",
+        description: "Drag & drop, ore optime automate, bulk scheduling.",
         icon: "search",
       },
       {
-        title: "Reliable",
-        description:
-          "Rely on our robust infrastructure and comprehensive documentation.",
+        title: "Retry automat",
+        description: "Dacă publicarea eșuează, sistemul încearcă de 3 ori automat.",
         icon: "settings",
       },
     ],
@@ -54,97 +51,97 @@ export const infos: InfoLdg[] = [
 
 export const features: FeatureLdg[] = [
   {
-    title: "Feature 1",
+    title: "Telegram Bot",
     description:
-      "Amet praesentium deserunt ex commodi tempore fuga voluptatem. Sit, sapiente.",
-    link: "/",
-    icon: "nextjs",
-  },
-  {
-    title: "Feature 2",
-    description:
-      "Amet praesentium deserunt ex commodi tempore fuga voluptatem. Sit, sapiente.",
-    link: "/",
-    icon: "google",
-  },
-  {
-    title: "Feature 3",
-    description:
-      "Amet praesentium deserunt ex commodi tempore fuga voluptatem. Sit, sapiente.",
-    link: "/",
-    icon: "gitHub",
-  },
-  {
-    title: "Feature 4",
-    description:
-      "Amet praesentium deserunt ex commodi tempore fuga voluptatem. Sit, sapiente.",
-    link: "/",
+      "Trimite o idee din telefon. AI-ul generează postarea, tu o aprobi cu un tap. Publicare imediată sau programată.",
+    link: "/pricing",
     icon: "laptop",
   },
   {
-    title: "Feature 5",
+    title: "Brand Intelligence (RAG)",
     description:
-      "Amet praesentium deserunt ex commodi tempore fuga voluptatem. Sit, sapiente.",
-    link: "/",
+      "Upload PDF, DOCX sau URL cu descrierea brandului. AI-ul scrie ca și cum ar cunoaște compania ta de ani de zile.",
+    link: "/pricing",
+    icon: "settings",
+  },
+  {
+    title: "Calendar Editorial",
+    description:
+      "Vizualizare lunară și săptămânală. Drag & drop pentru reprogramare. Culori per platformă și status.",
+    link: "/pricing",
+    icon: "laptop",
+  },
+  {
+    title: "Generator de Idei",
+    description:
+      "100 de idei de postări generate din contextul brandului tău. Educational, promotional, storytelling — distribuite pe categorii.",
+    link: "/pricing",
+    icon: "copy",
+  },
+  {
+    title: "Agency Mode",
+    description:
+      "Gestionează toți clienții dintr-un singur cont. Switch rapid între workspace-uri, billing unificat.",
+    link: "/pricing",
     icon: "user",
   },
   {
-    title: "Feature 6",
+    title: "Analytics",
     description:
-      "Amet praesentium deserunt ex commodi tempore fuga voluptatem. Sit, sapiente.",
-    link: "/",
-    icon: "copy",
+      "Reach, impressions, likes și shares sincronizate automat de pe toate platformele. Top 5 posturi per perioadă.",
+    link: "/pricing",
+    icon: "search",
   },
 ];
 
 export const testimonials: TestimonialType[] = [
   {
-    name: "John Doe",
-    job: "Full Stack Developer",
-    image: "https://randomuser.me/api/portraits/men/1.jpg",
+    name: "Andrei Popescu",
+    job: "Fondator startup SaaS",
+    image: "https://randomuser.me/api/portraits/men/32.jpg",
     review:
-      "The next-saas-stripe-starter repo has truly revolutionized my development workflow. With its comprehensive features and seamless integration with Stripe, I've been able to build and deploy projects faster than ever before. The documentation is clear and concise, making it easy to navigate through the setup process. I highly recommend next-saas-stripe-starter to any developer.",
+      "Am trecut de la 3 ore/săptămână pe social media la 15 minute. NexNex generează exact tonul brandului nostru — nu mai corectez textele AI.",
   },
   {
-    name: "Alice Smith",
-    job: "UI/UX Designer",
-    image: "https://randomuser.me/api/portraits/women/2.jpg",
+    name: "Maria Ionescu",
+    job: "Social Media Manager",
+    image: "https://randomuser.me/api/portraits/women/44.jpg",
     review:
-      "Thanks to next-saas-stripe-starter, I've been able to create modern and attractive user interfaces in record time. The starter kit provides a solid foundation for building sleek and intuitive designs, allowing me to focus more on the creative aspects of my work.",
+      "Gestionez 8 clienți cu NexNex Agency. Calendar vizual, aprobare rapidă, publicare automată. A eliminat jumătate din munca mea manuală.",
   },
   {
-    name: "David Johnson",
-    job: "DevOps Engineer",
-    image: "https://randomuser.me/api/portraits/men/3.jpg",
+    name: "Radu Constantin",
+    job: "Antreprenor e-commerce",
+    image: "https://randomuser.me/api/portraits/men/67.jpg",
     review:
-      "Thanks to next-saas-stripe-starter, I was able to streamline the entire process and get payments up and running in no time. ",
+      "Botul de Telegram e genial. Fac o poză la un produs nou, AI-ul scrie captionul, eu aprob, gata. Tot procesul durează 2 minute.",
   },
   {
-    name: "Michael Wilson",
-    job: "Project Manager",
-    image: "https://randomuser.me/api/portraits/men/5.jpg",
+    name: "Elena Dumitrescu",
+    job: "Creator de conținut",
+    image: "https://randomuser.me/api/portraits/women/23.jpg",
     review:
-      "I'm impressed by the quality of code and clear documentation of next-saas-stripe-starter. Kudos to the team!",
+      "RAG-ul face diferența față de orice alt tool. AI-ul știe exact prețurile, features și valorile brandului meu. Zero post-uri cu informații greșite.",
   },
   {
-    name: "Sophia Garcia",
-    job: "Data Analyst",
-    image: "https://randomuser.me/api/portraits/women/6.jpg",
+    name: "Mihai Stanescu",
+    job: "Director Marketing",
+    image: "https://randomuser.me/api/portraits/men/55.jpg",
     review:
-      "next-saas-stripe-starter provided me with the tools I needed to efficiently manage user data. Thank you so much!",
+      "Echipa noastră de 5 persoane publică acum de 3x mai mult conținut. Workflow-ul de aprobare cu NexNex e mult mai rapid decât orice tool am testat.",
   },
   {
-    name: "Emily Brown",
-    job: "Marketing Manager",
-    image: "https://randomuser.me/api/portraits/women/4.jpg",
+    name: "Ana Popa",
+    job: "Freelancer Content",
+    image: "https://randomuser.me/api/portraits/women/12.jpg",
     review:
-      "next-saas-stripe-starter has been an invaluable asset in my role as a marketing manager. With its seamless integration with Stripe, I've been able to launch targeted marketing campaigns with built-in payment functionality, allowing us to monetize our products and services more effectively.",
+      "Ca freelancer cu 12 clienți, NexNex Agency mi-a salvat business-ul. Un singur abonament, toți clienții sub control, facturare simplă.",
   },
   {
-    name: "Jason Stan",
-    job: "Web Designer",
-    image: "https://randomuser.me/api/portraits/men/9.jpg",
+    name: "Bogdan Muresan",
+    job: "Co-fondator agenție digitală",
+    image: "https://randomuser.me/api/portraits/men/78.jpg",
     review:
-      "Thanks to next-saas-stripe-starter, I've been able to create modern and attractive user interfaces in record time. The starter kit provides a solid foundation for building sleek and intuitive designs, allowing me to focus more on the creative aspects of my work.",
+      "Am încercat Buffer, Hootsuite, SocialBee. NexNex e singurul cu bot Telegram + RAG per client. Pentru agenții, e game changer.",
   },
 ];

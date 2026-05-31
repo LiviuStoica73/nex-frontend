@@ -3,52 +3,61 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-
-import { HeaderSection } from "../shared/header-section";
+} from "@/components/ui/accordion"
+import { HeaderSection } from "../shared/header-section"
 
 const pricingFaqData = [
   {
     id: "item-1",
-    question: "What is the cost of the free plan?",
+    question: "Există un trial gratuit?",
     answer:
-      "Our free plan is completely free, with no monthly or annual charges. It's a great way to get started and explore our basic features.",
+      "Da — 14 zile trial gratuit pe planul Pro, fără card de credit. Explorezi toate funcționalitățile înainte de orice angajament.",
   },
   {
     id: "item-2",
-    question: "How much does the Basic Monthly plan cost?",
+    question: "Pot anula oricând?",
     answer:
-      "The Basic Monthly plan is priced at $15 per month. It provides access to our core features and is billed on a monthly basis.",
+      "Da, anulezi oricând din dashboard, fără penalități. La anulare rămâi pe planul plătit până la sfârșitul perioadei facturate.",
   },
   {
     id: "item-3",
-    question: "What is the price of the Pro Monthly plan?",
+    question: "Ce înseamnă RAG per brand?",
     answer:
-      "The Pro Monthly plan is available for $25 per month. It offers advanced features and is billed on a monthly basis for added flexibility.",
+      "RAG (Retrieval-Augmented Generation) înseamnă că AI-ul citește documentele pe care le încarci tu — descrieri produse, prețuri, FAQ — și generează conținut bazat pe informații reale, nu inventate. Fiecare brand are propriul set de documente izolat.",
   },
   {
     id: "item-4",
-    question: "Do you offer any annual subscription plans?",
+    question: "Ce platforme sociale sunt suportate?",
     answer:
-      "Yes, we offer annual subscription plans for even more savings. The Basic Annual plan is $144 per year, and the Pro Annual plan is $300 per year.",
+      "Facebook, Instagram, LinkedIn, X (Twitter), Discord și WordPress Blog — prin API direct. YouTube, Threads și Bluesky vin în Faza 2. TikTok și Pinterest sunt în backlog (necesită review extern de luni).",
   },
   {
     id: "item-5",
-    question: "Is there a trial period for the paid plans?",
+    question: "Cum funcționează Telegram Bot?",
     answer:
-      "We offer a 14-day free trial for both the Pro Monthly and Pro Annual plans. It's a great way to experience all the features before committing to a paid subscription.",
+      "Conectezi contul NexNex cu Telegram din Settings. Apoi scrii orice temă în chat — AI-ul generează postarea cu RAG-ul brandului tău, tu aprobi cu un buton, și e publicată sau programată automat. Funcționează de pe orice telefon.",
   },
-];
+  {
+    id: "item-6",
+    question: "Există discount pentru abonament anual?",
+    answer:
+      "Da — discount de ~17% (echivalent 2 luni gratuite) la abonamentul anual față de cel lunar.",
+  },
+  {
+    id: "item-7",
+    question: "Planul Agency acoperă toți clienții mei?",
+    answer:
+      "Da — un singur abonament Agency (€199/lună) acoperă până la 15 clienți. Agency XL (€349/lună) e nelimitat. Fiecare client are workspace izolat, login propriu și RAG propriu.",
+  },
+]
 
 export function PricingFaq() {
   return (
     <section className="container max-w-4xl py-2">
       <HeaderSection
         label="FAQ"
-        title="Frequently Asked Questions"
-        subtitle="Explore our comprehensive FAQ to find quick answers to common
-          inquiries. If you need further assistance, don't hesitate to
-          contact us for personalized help."
+        title="Întrebări frecvente"
+        subtitle="Dacă nu găsești răspunsul, scrie-ne la support@nex-nex.com."
       />
 
       <Accordion type="single" collapsible className="my-12 w-full">
@@ -62,5 +71,5 @@ export function PricingFaq() {
         ))}
       </Accordion>
     </section>
-  );
+  )
 }

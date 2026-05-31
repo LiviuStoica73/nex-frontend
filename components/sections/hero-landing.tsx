@@ -1,48 +1,26 @@
-import Link from "next/link";
-
-import { env } from "@/env.mjs";
-import { siteConfig } from "@/config/site";
-import { cn, nFormatter } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
-import { Icons } from "@/components/shared/icons";
+import Link from "next/link"
+import { cn } from "@/lib/utils"
+import { buttonVariants } from "@/components/ui/button"
 
 export default async function HeroLanding() {
-  const { stargazers_count: stars } = await fetch(
-    "https://api.github.com/repos/mickasmt/next-saas-stripe-starter",
-    {
-      ...(env.GITHUB_OAUTH_TOKEN && {
-        headers: {
-          Authorization: `Bearer ${process.env.GITHUB_OAUTH_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-      }),
-      // data will revalidate every hour
-      next: { revalidate: 3600 },
-    },
-  )
-    .then((res) => res.json())
-    .catch((e) => console.log(e));
-
   return (
-    <section className="space-y-6 py-12 sm:py-20 lg:py-20">
+    <section className="space-y-6 py-12 sm:py-20 lg:py-24">
       <div className="container flex max-w-5xl flex-col items-center gap-5 text-center">
         <Link
-          href="https://twitter.com/miickasmt/status/1810465801649938857"
+          href="/pricing"
           className={cn(
             buttonVariants({ variant: "outline", size: "sm", rounded: "full" }),
             "px-4",
           )}
-          target="_blank"
         >
-          <span className="mr-3">🎉</span>
-          <span className="hidden md:flex">Introducing&nbsp;</span> Next Auth
-          Roles Template on <Icons.twitter className="ml-2 size-3.5" />
+          <span className="mr-2">🚀</span>
+          14 zile trial gratuit · Fără card de credit
         </Link>
 
         <h1 className="text-balance font-urban text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-[66px]">
-          Kick off with a bang with{" "}
+          De la idee la publicat{" "}
           <span className="text-gradient_indigo-purple font-extrabold">
-            SaaS Starter
+            în câteva minute
           </span>
         </h1>
 
@@ -50,8 +28,8 @@ export default async function HeroLanding() {
           className="max-w-2xl text-balance leading-normal text-muted-foreground sm:text-xl sm:leading-8"
           style={{ animationDelay: "0.35s", animationFillMode: "forwards" }}
         >
-          Build your next project using Next.js 14, Prisma, Neon, Auth.js v5,
-          Resend, React Email, Shadcn/ui, Stripe.
+          NexNex este copilotul tău AI pentru conținut social media. Generează,
+          programează și publică pe toate rețelele — cu AI care știe brandul tău.
         </p>
 
         <div
@@ -59,37 +37,31 @@ export default async function HeroLanding() {
           style={{ animationDelay: "0.4s", animationFillMode: "forwards" }}
         >
           <Link
-            href="/pricing"
+            href="/register"
             prefetch={true}
             className={cn(
               buttonVariants({ size: "lg", rounded: "full" }),
               "gap-2",
             )}
           >
-            <span>Go Pricing</span>
-            <Icons.arrowRight className="size-4" />
+            <span>Încearcă gratuit</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           </Link>
           <Link
-            href={siteConfig.links.github}
-            target="_blank"
-            rel="noreferrer"
+            href="/pricing"
             className={cn(
-              buttonVariants({
-                variant: "outline",
-                size: "lg",
-                rounded: "full",
-              }),
+              buttonVariants({ variant: "outline", size: "lg", rounded: "full" }),
               "px-5",
             )}
           >
-            <Icons.gitHub className="mr-2 size-4" />
-            <p>
-              <span className="hidden sm:inline-block">Star on</span> GitHub{" "}
-              <span className="font-semibold">{nFormatter(stars)}</span>
-            </p>
+            Vezi planuri
           </Link>
         </div>
+
+        <p className="text-sm text-muted-foreground">
+          Facebook · Instagram · LinkedIn · X · Discord · Blog WordPress
+        </p>
       </div>
     </section>
-  );
+  )
 }
