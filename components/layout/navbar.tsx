@@ -52,9 +52,9 @@ export function NavBar({ scroll = false }: NavBarProps) {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/_static/logo.png"
-              alt="NexNex logo"
+              alt="nex-nex logo"
               height={36}
-              style={{ height: "36px", width: "auto" }}
+              className="h-9 w-auto"
             />
           </Link>
 

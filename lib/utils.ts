@@ -39,10 +39,10 @@ export function constructMetadata({
     ],
     authors: [
       {
-        name: "NexNex",
+        name: "Liviu Stoica",
       },
     ],
-    creator: "NexNex",
+    creator: "Liviu Stoica",
     openGraph: {
       type: "website",
       locale: "en_US",
