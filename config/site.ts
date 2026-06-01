@@ -13,6 +13,8 @@ export const siteConfig: SiteConfig = {
     twitter: "https://twitter.com/nexnexai",
     github: "https://github.com/nexnex",
   },
+  logo: "/_static/logo.png",
+  icon: "/_static/icon.png",
   mailSupport: "support@nex-nex.com",
 };
 

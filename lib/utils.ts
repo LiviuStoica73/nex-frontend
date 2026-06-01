@@ -39,10 +39,10 @@ export function constructMetadata({
     ],
     authors: [
       {
-        name: "mickasmt",
+        name: "NexNex",
       },
     ],
-    creator: "mickasmt",
+    creator: "NexNex",
     openGraph: {
       type: "website",
       locale: "en_US",
@@ -50,15 +50,20 @@ export function constructMetadata({
       title,
       description,
       siteName: title,
+      images: [{ url: image }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
       images: [image],
-      creator: "@miickasmt",
+      creator: "@nexnexai",
     },
-    icons,
+    icons: {
+      icon: "/_static/favicons/favicon-32x32.png",
+      shortcut: "/_static/favicons/favicon-16x16.png",
+      apple: "/_static/favicons/apple-touch-icon.png",
+    },
     metadataBase: new URL(siteConfig.url),
     manifest: `${siteConfig.url}/site.webmanifest`,
     ...(noIndex && {
