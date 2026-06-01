@@ -1,7 +1,6 @@
 "use client";
 
 import { useContext } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -50,12 +49,12 @@ export function NavBar({ scroll = false }: NavBarProps) {
       >
         <div className="flex gap-6 md:gap-10">
           <Link href="/" className="flex items-center space-x-2">
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src="/_static/logo.png"
               alt="NexNex logo"
-              width={120}
               height={36}
-              priority
+              style={{ height: "36px", width: "auto" }}
             />
           </Link>
 

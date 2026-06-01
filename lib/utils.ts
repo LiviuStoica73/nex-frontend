@@ -60,8 +60,11 @@ export function constructMetadata({
       creator: "@nexnexai",
     },
     icons: {
-      icon: "/_static/favicons/favicon-32x32.png",
-      shortcut: "/_static/favicons/favicon-16x16.png",
+      icon: [
+        { url: "/favicon.png", type: "image/png" },
+        { url: "/favicon.ico" },
+      ],
+      shortcut: "/favicon.png",
       apple: "/_static/favicons/apple-touch-icon.png",
     },
     metadataBase: new URL(siteConfig.url),
