@@ -6,6 +6,10 @@ import("./env.mjs");
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  webpack: (config) => {
+    config.cache = false;
+    return config;
+  },
   images: {
     remotePatterns: [
       {
