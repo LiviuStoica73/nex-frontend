@@ -56,6 +56,7 @@ export function NavBar({ scroll = false }: NavBarProps) {
               height={36}
               className="h-9 w-auto"
             />
+            <span className="font-urban text-xl font-bold">Nex-Nex</span>
           </Link>
 
           {links && links.length > 0 ? (
