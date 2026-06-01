@@ -25,6 +25,9 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["@prisma/client"],
   },
+  generateBuildId: async () => {
+    return `build-${Date.now()}`;
+  },
 };
 
 module.exports = withContentlayer(nextConfig);
