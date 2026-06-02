@@ -51,12 +51,16 @@ export function NavBar({ scroll = false }: NavBarProps) {
           <Link href="/" className="flex items-center space-x-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/_static/logo.png"
-              alt="nex-nex logo"
-              height={36}
+              src="/_static/logo-icon.png"
+              alt="Nex-Nex"
               className="h-9 w-auto"
             />
-            <span className="font-urban text-xl font-bold">Nex-Nex</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/_static/logo-sign.png"
+              alt="Nex-Nex"
+              className="h-7 w-auto"
+            />
           </Link>
 
           {links && links.length > 0 ? (
