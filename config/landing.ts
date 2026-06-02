@@ -144,4 +144,11 @@ export const testimonials: TestimonialType[] = [
     review:
       "Am încercat Buffer, Hootsuite, SocialBee. Nex-Nex e singurul cu bot Telegram + RAG per client. Pentru agenții, e game changer.",
   },
+  {
+    name: "Ioana Constantin",
+    job: "Antreprenor local — Salon frumusețe",
+    image: "https://randomuser.me/api/portraits/women/65.jpg",
+    review:
+      "Nu știam nimic despre social media. Acum postez zilnic pe Instagram și Facebook fără să pierd timp. Nex-Nex face totul — eu doar aprob.",
+  },
 ];
