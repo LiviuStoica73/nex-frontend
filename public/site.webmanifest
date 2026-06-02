@@ -1,20 +1,23 @@
 {
-  "name": "NexNex",
-  "short_name": "NexNex",
+  "name": "Nex-Nex",
+  "short_name": "Nex-Nex",
   "description": "Your AI content copilot — from idea to published, in minutes.",
   "icons": [
     {
-      "src": "./_static/favicons/android-chrome-192x192.png",
+      "src": "/_static/favicons/android-chrome-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "./_static/favicons/android-chrome-512x512.png",
+      "src": "/_static/favicons/android-chrome-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
   "theme_color": "#334C29",
-  "background_color": "#F5F0E8",
-  "display": "standalone"
+  "background_color": "#A38C43",
+  "display": "standalone",
+  "start_url": "/"
 }
