@@ -6,70 +6,70 @@ const steps = [
     title: "AI învață business-ul tău",
     description:
       "Încarci documentele brandului — ghid de stil, produse, ton de comunicare. AI-ul tău personal învață totul și devine expertul brandului tău.",
-    image: "/_static/workflow/1-ai-invata-business-ul-tau-(rag).png",
+    image: "/_static/workflow/1-rag.webp",
   },
   {
     number: "02",
     title: "Ceri idei de postare",
     description:
       "Îi spui lui Nex-Nex despre ce vrei să postezi. Primești instant 5 idei creative, adaptate brandului și audienței tale.",
-    image: "/_static/workflow/2-ceri-idei-de-postare.png",
+    image: "/_static/workflow/2-idei.webp",
   },
   {
     number: "03",
     title: "Alegi ideea",
     description:
       "Selectezi ideea care ți se potrivește cel mai bine. Nex-Nex o dezvoltă în direcția pe care o alegi tu.",
-    image: "/_static/workflow/3-alegi-ideea.png",
+    image: "/_static/workflow/3-alegere.webp",
   },
   {
     number: "04",
     title: "AI scrie textul, SEO și hashtag-urile",
     description:
       "Primești textul complet, optimizat SEO, cu hashtag-urile potrivite pentru fiecare platformă. Editezi dacă vrei, sau publici direct.",
-    image: "/_static/workflow/4-ai-dezvolta-textul-seo-hashtag-uri.png",
+    image: "/_static/workflow/4-text.webp",
   },
   {
     number: "05",
     title: "Urci poza sau ceri una AI",
     description:
       "Ai o poză? O încarci. Nu ai? Descrii ce vrei și AI-ul generează un prompt profesional pentru imaginea perfectă.",
-    image: "/_static/workflow/5-urci-poza-sau-ai-propune-prompt.png",
+    image: "/_static/workflow/5-poza.webp",
   },
   {
     number: "06",
     title: "AI generează imaginea",
     description:
       "Din promptul tău, AI-ul creează imagini profesionale. Alegi varianta preferată direct din aplicație.",
-    image: "/_static/workflow/6-ai-creeaza-poza.png",
+    image: "/_static/workflow/6-generare.webp",
   },
   {
     number: "07",
     title: "Postezi acum sau programezi",
     description:
       "Publici imediat sau alegi momentul optim. Nex-Nex îți arată când audiența ta e cel mai activă.",
-    image: "/_static/workflow/7-postezi-acum-sau-programezi.png",
+    image: "/_static/workflow/7-programare.webp",
   },
   {
     number: "08",
     title: "Moment optim per rețea",
     description:
       "Fiecare platformă are orele ei de aur. Nex-Nex calculează automat când să postezi pe Instagram, LinkedIn, TikTok și altele pentru reach maxim.",
-    image: "/_static/workflow/8-randament-maxim-per-retea.png",
+    image: "/_static/workflow/8-timing.webp",
   },
   {
     number: "09",
     title: "Publici pe toate rețelele",
     description:
       "Un singur click — postarea ajunge simultan pe toate platformele tale: Instagram, LinkedIn, Facebook, X, TikTok, Discord.",
-    image: "/_static/workflow/9-publica-pe-multiple-retele.png",
+    image: "/_static/workflow/9-publicare.webp",
   },
   {
     number: "10",
     title: "În orice limbă",
     description:
       "Audiența ta e globală? Nex-Nex traduce și adaptează cultural postarea în peste 50 de limbi, menținând vocea brandului tău.",
-    image: "/_static/workflow/10-postari-in-orice-limba.png",
+    image: "/_static/workflow/10-limbi.webp",
   },
 ];
 
