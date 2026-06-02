@@ -2,7 +2,7 @@ import { auth } from "@/auth"
 import { redirect } from "next/navigation"
 import { ClientsManager } from "@/components/agency/clients-manager"
 
-export const metadata = { title: "Clienți Agenție — NexNex" }
+export const metadata = { title: "Clienți Agenție — Nex-Nex" }
 
 export default async function ClientsPage() {
   const session = await auth()

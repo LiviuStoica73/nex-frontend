@@ -100,14 +100,14 @@ export const testimonials: TestimonialType[] = [
     job: "Fondator startup SaaS",
     image: "https://randomuser.me/api/portraits/men/32.jpg",
     review:
-      "Am trecut de la 3 ore/săptămână pe social media la 15 minute. NexNex generează exact tonul brandului nostru — nu mai corectez textele AI.",
+      "Am trecut de la 3 ore/săptămână pe social media la 15 minute. Nex-Nex generează exact tonul brandului nostru — nu mai corectez textele AI.",
   },
   {
     name: "Maria Ionescu",
     job: "Social Media Manager",
     image: "https://randomuser.me/api/portraits/women/44.jpg",
     review:
-      "Gestionez 8 clienți cu NexNex Agency. Calendar vizual, aprobare rapidă, publicare automată. A eliminat jumătate din munca mea manuală.",
+      "Gestionez 8 clienți cu Nex-Nex Agency. Calendar vizual, aprobare rapidă, publicare automată. A eliminat jumătate din munca mea manuală.",
   },
   {
     name: "Radu Constantin",
@@ -128,20 +128,20 @@ export const testimonials: TestimonialType[] = [
     job: "Director Marketing",
     image: "https://randomuser.me/api/portraits/men/55.jpg",
     review:
-      "Echipa noastră de 5 persoane publică acum de 3x mai mult conținut. Workflow-ul de aprobare cu NexNex e mult mai rapid decât orice tool am testat.",
+      "Echipa noastră de 5 persoane publică acum de 3x mai mult conținut. Workflow-ul de aprobare cu Nex-Nex e mult mai rapid decât orice tool am testat.",
   },
   {
     name: "Ana Popa",
     job: "Freelancer Content",
     image: "https://randomuser.me/api/portraits/women/12.jpg",
     review:
-      "Ca freelancer cu 12 clienți, NexNex Agency mi-a salvat business-ul. Un singur abonament, toți clienții sub control, facturare simplă.",
+      "Ca freelancer cu 12 clienți, Nex-Nex Agency mi-a salvat business-ul. Un singur abonament, toți clienții sub control, facturare simplă.",
   },
   {
     name: "Bogdan Muresan",
     job: "Co-fondator agenție digitală",
     image: "https://randomuser.me/api/portraits/men/78.jpg",
     review:
-      "Am încercat Buffer, Hootsuite, SocialBee. NexNex e singurul cu bot Telegram + RAG per client. Pentru agenții, e game changer.",
+      "Am încercat Buffer, Hootsuite, SocialBee. Nex-Nex e singurul cu bot Telegram + RAG per client. Pentru agenții, e game changer.",
   },
 ];

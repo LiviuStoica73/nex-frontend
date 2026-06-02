@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 
 export const metadata = constructMetadata({
-  title: "Prețuri — NexNex",
+  title: "Prețuri — Nex-Nex",
   description: "Planuri simple pentru creatori individuali și agenții. 14 zile trial gratuit, fără card.",
 })
 

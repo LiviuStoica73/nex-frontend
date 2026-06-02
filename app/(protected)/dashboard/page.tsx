@@ -3,7 +3,7 @@ import { constructMetadata } from "@/lib/utils"
 import { AnalyticsDashboard } from "@/components/analytics/analytics-dashboard"
 
 export const metadata = constructMetadata({
-  title: "Dashboard — NexNex",
+  title: "Dashboard — Nex-Nex",
   description: "Performanța conținutului tău în timp real.",
 })
 

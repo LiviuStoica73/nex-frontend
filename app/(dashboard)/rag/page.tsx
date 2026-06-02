@@ -2,7 +2,7 @@ import { auth } from "@/auth"
 import { redirect } from "next/navigation"
 import { RagManager } from "@/components/rag/rag-manager"
 
-export const metadata = { title: "Brand Intelligence (RAG) — NexNex" }
+export const metadata = { title: "Brand Intelligence (RAG) — Nex-Nex" }
 
 export default async function RagPage() {
   const session = await auth()

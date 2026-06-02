@@ -2,7 +2,7 @@ import { auth } from "@/auth"
 import { redirect } from "next/navigation"
 import { BrandKitForm } from "@/components/brand-kit/brand-kit-form"
 
-export const metadata = { title: "Brand Kit — NexNex" }
+export const metadata = { title: "Brand Kit — Nex-Nex" }
 
 export default async function BrandKitPage() {
   const session = await auth()

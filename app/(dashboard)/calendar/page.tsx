@@ -2,7 +2,7 @@ import { EditorialCalendar } from "@/components/calendar/editorial-calendar"
 import { auth } from "@/auth"
 import { redirect } from "next/navigation"
 
-export const metadata = { title: "Calendar Editorial — NexNex" }
+export const metadata = { title: "Calendar Editorial — Nex-Nex" }
 
 export default async function CalendarPage() {
   const session = await auth()

@@ -28,7 +28,7 @@ export default async function HeroLanding() {
           className="max-w-2xl text-balance leading-normal text-muted-foreground sm:text-xl sm:leading-8"
           style={{ animationDelay: "0.35s", animationFillMode: "forwards" }}
         >
-          NexNex este copilotul tău AI pentru conținut social media. Generează,
+          Nex-Nex este copilotul tău AI pentru conținut social media. Generează,
           programează și publică pe toate rețelele — cu AI care știe brandul tău.
         </p>
 

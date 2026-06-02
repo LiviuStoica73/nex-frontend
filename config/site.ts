@@ -4,7 +4,7 @@ import { env } from "@/env.mjs";
 const site_url = env.NEXT_PUBLIC_APP_URL;
 
 export const siteConfig: SiteConfig = {
-  name: "NexNex",
+  name: "Nex-Nex",
   description:
     "Your AI content copilot — from idea to published, in minutes. Generate, schedule and publish on all social networks with AI that knows your brand.",
   url: site_url,

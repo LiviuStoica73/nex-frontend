@@ -2,7 +2,7 @@ import { auth } from "@/auth"
 import { redirect } from "next/navigation"
 import { BillingDashboard } from "@/components/billing/billing-dashboard"
 
-export const metadata = { title: "Billing — NexNex" }
+export const metadata = { title: "Billing — Nex-Nex" }
 
 export default async function BillingPage() {
   const session = await auth()

@@ -2,7 +2,7 @@ import { auth } from "@/auth"
 import { redirect } from "next/navigation"
 import { CampaignsList } from "@/components/campaigns/campaigns-list"
 
-export const metadata = { title: "Campanii — NexNex" }
+export const metadata = { title: "Campanii — Nex-Nex" }
 
 export default async function CampaignsPage() {
   const session = await auth()

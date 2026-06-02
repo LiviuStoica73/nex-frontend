@@ -84,7 +84,7 @@ export function OnboardingWizard({ token }: Props) {
           {step === 1 && (
             <>
               <div>
-                <h1 className="text-2xl font-bold">Bun venit la NexNex! 👋</h1>
+                <h1 className="text-2xl font-bold">Bun venit la Nex-Nex! 👋</h1>
                 <p className="text-muted-foreground mt-1">Hai să configurăm brandul tău în 4 pași.</p>
               </div>
               <div className="space-y-2">

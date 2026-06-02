@@ -35,7 +35,7 @@ const pricingFaqData = [
     id: "item-5",
     question: "Cum funcționează Telegram Bot?",
     answer:
-      "Conectezi contul NexNex cu Telegram din Settings. Apoi scrii orice temă în chat — AI-ul generează postarea cu RAG-ul brandului tău, tu aprobi cu un buton, și e publicată sau programată automat. Funcționează de pe orice telefon.",
+      "Conectezi contul Nex-Nex cu Telegram din Settings. Apoi scrii orice temă în chat — AI-ul generează postarea cu RAG-ul brandului tău, tu aprobi cu un buton, și e publicată sau programată automat. Funcționează de pe orice telefon.",
   },
   {
     id: "item-6",
