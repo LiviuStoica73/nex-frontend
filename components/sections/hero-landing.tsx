@@ -18,9 +18,9 @@ export default async function HeroLanding() {
         </Link>
 
         <h1 className="text-balance font-urban text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-[66px]">
-          De la idee la publicat{" "}
+          Expert AI{" "}
           <span className="text-gradient_indigo-purple font-extrabold">
-            în câteva minute
+            de buzunar
           </span>
         </h1>
 
@@ -28,8 +28,8 @@ export default async function HeroLanding() {
           className="max-w-2xl text-balance leading-normal text-muted-foreground sm:text-xl sm:leading-8"
           style={{ animationDelay: "0.35s", animationFillMode: "forwards" }}
         >
-          Nex-Nex este copilotul tău AI pentru conținut social media. Generează,
-          programează și publică pe toate rețelele — cu AI care știe brandul tău.
+          AI învață brandul tău, creează conținut profesionist și-l publică
+          automat pe rețele sociale.
         </p>
 
         <div
