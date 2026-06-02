@@ -6,6 +6,7 @@ import InfoLanding from "@/components/sections/info-landing";
 import Powered from "@/components/sections/powered";
 import PreviewLanding from "@/components/sections/preview-landing";
 import Testimonials from "@/components/sections/testimonials";
+import { WorkflowSection } from "@/components/sections/workflow-section";
 
 export default function IndexPage() {
   return (
@@ -13,6 +14,7 @@ export default function IndexPage() {
       <HeroLanding />
       <PreviewLanding />
       <Powered />
+      <WorkflowSection />
       <BentoGrid />
       <InfoLanding data={infos[0]} reverse={true} />
       {/* <InfoLanding data={infos[1]} /> */}
