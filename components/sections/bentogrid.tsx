@@ -40,37 +40,40 @@ export default function BentoGrid() {
             Tot ce ai nevoie, într-un singur loc
           </h2>
           <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto">
-            Nex-Nex înlocuiește 5 tool-uri separate cu una singură experiență fluidă.
+            Nex-Nex înlocuiește 4 instrumente separate cu o singură aplicație, într-o experiență fluidă.
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {cards.map((card) => (
-            <div
-              key={card.title}
-              className={`relative rounded-2xl border p-6 space-y-3 ${
-                card.highlight
-                  ? "bg-[#334C29] text-white border-[#334C29]"
-                  : "bg-background"
-              }`}
-            >
-              <div className="text-4xl">{card.icon}</div>
-              <h3
-                className={`font-heading font-bold text-lg ${
-                  card.highlight ? "text-white" : "text-foreground"
+          {cards.map((card, index) => {
+            const isGreen = index === 0 || index === cards.length - 1;
+            return (
+              <div
+                key={card.title}
+                className={`relative rounded-2xl border p-6 space-y-3 ${
+                  isGreen
+                    ? "bg-[#334C29] text-white border-[#334C29]"
+                    : "bg-background"
                 }`}
               >
-                {card.title}
-              </h3>
-              <p
-                className={`text-sm leading-relaxed ${
-                  card.highlight ? "text-white/80" : "text-muted-foreground"
-                }`}
-              >
-                {card.description}
-              </p>
-            </div>
-          ))}
+                <div className="text-4xl">{card.icon}</div>
+                <h3
+                  className={`font-heading font-bold text-lg ${
+                    isGreen ? "text-white" : "text-foreground"
+                  }`}
+                >
+                  {card.title}
+                </h3>
+                <p
+                  className={`text-sm leading-relaxed ${
+                    isGreen ? "text-white/80" : "text-muted-foreground"
+                  }`}
+                >
+                  {card.description}
+                </p>
+              </div>
+            );
+          })}
         </div>
       </MaxWidthWrapper>
     </section>
