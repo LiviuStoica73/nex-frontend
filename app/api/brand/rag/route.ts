@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
         headers: { Authorization: `Bearer ${s.token}` },
         body: fd,
       })
-      results.push(await upstream.json())
+      results.push(await upstream.json() as never)
     }
     return NextResponse.json(results, { status: 200 })
   }
