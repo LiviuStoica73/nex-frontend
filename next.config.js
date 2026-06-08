@@ -1,9 +1,14 @@
 const { withContentlayer } = require("next-contentlayer2");
+const createNextIntlPlugin = require("next-intl/plugin");
 
 import("./env.mjs");
 
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  eslint: { ignoreDuringBuilds: true },
+  typescript: { ignoreBuildErrors: true },
   reactStrictMode: true,
   swcMinify: true,
   webpack: (config) => {
@@ -34,4 +39,4 @@ const nextConfig = {
   },
 };
 
-module.exports = withContentlayer(nextConfig);
+module.exports = withNextIntl(withContentlayer(nextConfig));

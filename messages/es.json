@@ -1,0 +1,46 @@
+{
+  "nav": {
+    "dashboard": "Panel de control",
+    "campaigns": "Campañas",
+    "calendar": "Calendario",
+    "settings": "Configuración",
+    "brand_kit": "Kit de marca",
+    "billing": "Facturación"
+  },
+  "auth": {
+    "sign_in": "Iniciar sesión",
+    "sign_out": "Cerrar sesión",
+    "sign_in_with_google": "Iniciar sesión con Google",
+    "sign_in_with_email": "Iniciar sesión con Email",
+    "sign_up_with_email": "Registrarse con Email",
+    "welcome_back": "Bienvenido de nuevo",
+    "enter_email": "Ingresa tu email para iniciar sesión",
+    "no_account": "¿No tienes cuenta? Regístrate",
+    "or_continue_with": "O continúa con",
+    "back": "Volver"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "loading": "Cargando...",
+    "error": "Algo salió mal",
+    "success": "Guardado con éxito"
+  },
+  "settings": {
+    "title": "Configuración",
+    "subtitle": "Administra la configuración de la cuenta y del sitio.",
+    "language": "Idioma de la interfaz",
+    "language_description": "Elige el idioma para la interfaz",
+    "timezone": "Zona horaria",
+    "save_changes": "Guardar cambios"
+  },
+  "brand_kit": {
+    "title": "Kit de marca",
+    "logo": "Logotipo",
+    "colors": "Colores",
+    "typography": "Tipografía",
+    "templates": "Plantillas"
+  }
+}
