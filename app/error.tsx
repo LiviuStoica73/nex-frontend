@@ -11,9 +11,12 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
     <div className="flex min-h-screen flex-col items-center justify-center text-center p-6">
       <h1 className="text-6xl font-bold text-muted-foreground">500</h1>
       <h2 className="mt-4 text-2xl font-semibold">Ceva a mers greșit</h2>
-      <p className="mt-2 text-muted-foreground max-w-md">
-        A apărut o eroare neașteptată. Echipa noastră a fost notificată automat.
+      <p className="mt-2 text-muted-foreground max-w-md font-mono text-sm text-red-500">
+        {error?.message || "Unknown error"}
       </p>
+      <pre className="mt-2 text-xs text-left text-muted-foreground max-w-2xl overflow-auto">
+        {error?.stack}
+      </pre>
       <button onClick={reset}
         className="mt-6 rounded-md bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90">
         Încearcă din nou

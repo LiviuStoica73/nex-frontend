@@ -67,6 +67,9 @@ model User {
   stripePriceId          String?   @map(name: "stripe_price_id")
   stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
 
+  accessToken String? @map(name: "access_token")
+  orgId       String? @map(name: "org_id")
+
   @@map(name: "users")
 }
 

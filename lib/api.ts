@@ -42,6 +42,7 @@ export interface Post {
   scheduled_at: string | null
   status: PostStatus
   published_url: string | null
+  last_error: string | null
   retry_count: number
 }
 
@@ -78,6 +79,10 @@ export const api = {
       apiFetch<Campaign>(`/api/v1/orgs/${orgId}/campaigns`, {
         method: "POST",
         body: JSON.stringify(data),
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    listPosts: (orgId: string, campaignId: string, token: string) =>
+      apiFetch<Post[]>(`/api/v1/orgs/${orgId}/campaigns/${campaignId}/posts`, {
         headers: { Authorization: `Bearer ${token}` },
       }),
   },

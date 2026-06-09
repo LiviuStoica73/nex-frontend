@@ -6,7 +6,6 @@
 // Features: 6 languages with flag emoji, cookie update, backend PATCH call, router refresh
 
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
 
 import {
   Select,
@@ -51,7 +50,6 @@ interface LanguagePickerProps {
 
 export function LanguagePicker({ className }: LanguagePickerProps) {
   const router = useRouter();
-  const t = useTranslations("settings");
   const currentLocale = getCurrentLocale();
 
   function handleChange(locale: string) {
@@ -62,9 +60,9 @@ export function LanguagePicker({ className }: LanguagePickerProps) {
 
   return (
     <div className={className}>
-      <label className="mb-1 block text-sm font-medium">{t("language")}</label>
+      <label className="mb-1 block text-sm font-medium">Interface Language</label>
       <p className="mb-2 text-xs text-muted-foreground">
-        {t("language_description")}
+        Choose the language for the interface
       </p>
       <Select defaultValue={currentLocale} onValueChange={handleChange}>
         <SelectTrigger className="w-[200px]">
