@@ -16,6 +16,18 @@ declare module "next-auth" {
   }
 }
 
+// Resincronizăm token-ul backend cu 24h înainte să expire (TTL backend = 7 zile)
+const TOKEN_REFRESH_MARGIN_MS = 24 * 60 * 60 * 1000;
+
+function getJwtExpiryMs(jwt: string): number | null {
+  try {
+    const payload = JSON.parse(Buffer.from(jwt.split(".")[1], "base64").toString());
+    return typeof payload.exp === "number" ? payload.exp * 1000 : null;
+  } catch {
+    return null;
+  }
+}
+
 export const {
   handlers: { GET, POST },
   auth,
@@ -39,7 +51,7 @@ export const {
       return session;
     },
 
-    async jwt({ token, account }) {
+    async jwt({ token }) {
       if (!token.sub) return token;
 
       const dbUser = await getUserById(token.sub);
@@ -50,19 +62,45 @@ export const {
       token.picture = dbUser.image;
       token.role = dbUser.role;
 
-      // La primul login Google, apelăm backend-ul pentru access_token + org_id
-      if (account?.provider === "google" && account.id_token) {
+      // Citim accessToken și orgId din Prisma (salvate la sync cu backend)
+      if (dbUser.accessToken) token.accessToken = dbUser.accessToken;
+      if (dbUser.orgId) token.orgId = dbUser.orgId;
+
+      // Sincronizăm cu backend-ul când token-ul lipsește SAU expiră în <24h
+      // (nu doar la primul login — altfel după 7 zile rămâne 401 permanent)
+      const expiryMs = dbUser.accessToken ? getJwtExpiryMs(dbUser.accessToken) : null;
+      const needsSync =
+        !dbUser.accessToken ||
+        !dbUser.orgId ||
+        !expiryMs ||
+        expiryMs < Date.now() + TOKEN_REFRESH_MARGIN_MS;
+
+      if (needsSync) {
         try {
-          const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002";
-          const res = await fetch(`${apiUrl}/api/v1/auth/google`, {
+          // Server-side: preferă URL-ul intern (localhost pe Hetzner), nu ruta publică
+          const apiUrl =
+            process.env.API_URL_INTERNAL ||
+            process.env.NEXT_PUBLIC_API_URL ||
+            "http://localhost:8002";
+          const res = await fetch(`${apiUrl}/api/v1/internal/sync-user`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id_token: account.id_token }),
+            body: JSON.stringify({
+              email: dbUser.email,
+              name: dbUser.name,
+              image: dbUser.image,
+              secret: process.env.INTERNAL_API_SECRET,
+            }),
           });
           if (res.ok) {
             const data = await res.json();
             token.accessToken = data.access_token;
             token.orgId = data.org_id;
+            // Salvăm în Prisma pentru sesiunile viitoare
+            await prisma.user.update({
+              where: { id: dbUser.id },
+              data: { accessToken: data.access_token, orgId: data.org_id },
+            });
           }
         } catch {
           // Backend down — login continuă fără token backend

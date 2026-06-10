@@ -10,7 +10,7 @@ async function getSession() {
   return { orgId, token }
 }
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002"
+const API = process.env.API_URL_INTERNAL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002"
 
 export async function GET() {
   const s = await getSession()

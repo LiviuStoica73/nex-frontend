@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
   const token = (session.user as any).accessToken
   if (!orgId || !token) return NextResponse.json({ detail: "Missing orgId or token" }, { status: 400 })
   const formData = await req.formData()
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002"
+  const apiUrl = process.env.API_URL_INTERNAL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002"
   const upstream = await fetch(`${apiUrl}/api/v1/orgs/${orgId}/brand-kit/templates`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
