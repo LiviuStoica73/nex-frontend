@@ -1,10 +1,11 @@
 "use client";
 
 // locale-switcher-compact.tsx
-// Version: 1.0, 2026-06-11
+// Version: 1.1, 2026-06-11
 // Scope: Compact locale switcher for navbar — flag + code, no label
-// Features: cookie update, hard reload for server component refresh
+// Features: server-side cookie via /api/locale/set + redirect (bypass Cloudflare cache)
 
+import { usePathname } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,11 +32,13 @@ function getCurrentLocale(): string {
 }
 
 export function LocaleSwitcherCompact() {
+  const pathname = usePathname();
   const current = LANGUAGES.find((l) => l.code === getCurrentLocale()) ?? LANGUAGES[1];
 
   function handleSelect(locale: string) {
-    document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=31536000; SameSite=Lax`;
-    window.location.reload();
+    // Cookie setat pe server via API route + redirect — bypass orice cache Cloudflare
+    const returnTo = encodeURIComponent(pathname ?? "/");
+    window.location.href = `/api/locale/set?locale=${locale}&return=${returnTo}`;
   }
 
   return (

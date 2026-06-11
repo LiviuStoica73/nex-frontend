@@ -5,7 +5,7 @@
 // Scope: Language selector component — sets NEXT_LOCALE cookie and syncs with backend
 // Features: 6 languages with flag emoji, cookie update, backend PATCH call, router refresh
 
-import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import {
   Select,
@@ -49,14 +49,13 @@ interface LanguagePickerProps {
 }
 
 export function LanguagePicker({ className }: LanguagePickerProps) {
-  const router = useRouter();
+  const pathname = usePathname();
   const currentLocale = getCurrentLocale();
 
   function handleChange(locale: string) {
-    document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=31536000; SameSite=Lax`;
     void syncLocaleToBackend(locale);
-    // Hard reload: asigură că server component-ele citesc noul cookie
-    window.location.reload();
+    const returnTo = encodeURIComponent(pathname ?? "/");
+    window.location.href = `/api/locale/set?locale=${locale}&return=${returnTo}`;
   }
 
   return (
