@@ -16,7 +16,13 @@ export function GET(request: NextRequest) {
     return new NextResponse("Unsupported locale", { status: 400 });
   }
 
-  const response = NextResponse.redirect(new URL(returnTo, request.url));
+  // Folosim origin-ul din request pentru redirect — nu new URL(returnTo, request.url)
+  // care ar putea folosi URL-ul intern (localhost:3001) în spatele unui proxy
+  const origin = request.headers.get("x-forwarded-host")
+    ? `https://${request.headers.get("x-forwarded-host")}`
+    : new URL(request.url).origin;
+  const safeReturn = returnTo.startsWith("/") ? returnTo : "/";
+  const response = NextResponse.redirect(`${origin}${safeReturn}`);
   response.cookies.set("NEXT_LOCALE", locale, {
     path: "/",
     maxAge: 60 * 60 * 24 * 365,
