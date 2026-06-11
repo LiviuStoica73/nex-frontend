@@ -32,6 +32,13 @@ interface BrandKit {
   subtitle_italic: string | null
   subtitle_color: string | null
   text_bg_color: string | null
+  // Quick Post Defaults
+  qp_default_provider: string
+  qp_default_platforms: string[]
+  qp_default_tone: string
+  qp_default_logo: boolean
+  qp_default_sign: boolean
+  qp_default_template: boolean
 }
 
 interface RagDoc {
@@ -49,7 +56,7 @@ const STATUS_ICON: Record<RagDoc["status"], string> = {
   failed: "❌",
 }
 
-type Tab = "identitate" | "voce" | "tipografie" | "documente"
+type Tab = "identitate" | "voce" | "tipografie" | "documente" | "quick_post"
 
 interface Props { orgId: string; token: string }
 
@@ -68,6 +75,12 @@ export function BrandKitForm({ orgId, token }: Props) {
     title_italic: null, title_color: null,
     subtitle_font: null, subtitle_font_size: null, subtitle_bold: null,
     subtitle_italic: null, subtitle_color: null, text_bg_color: null,
+    qp_default_provider: "comfyui",
+    qp_default_platforms: [],
+    qp_default_tone: "neutral",
+    qp_default_logo: false,
+    qp_default_sign: false,
+    qp_default_template: false,
   })
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -94,7 +107,16 @@ export function BrandKitForm({ orgId, token }: Props) {
     fetch(`/api/brand/kit`)
       .then((r) => r.json())
       .then((data) => {
-        setKit({ ...data, visual_templates: data.visual_templates || [] })
+        setKit({
+          ...data,
+          visual_templates: data.visual_templates || [],
+          qp_default_provider: data.qp_default_provider || "comfyui",
+          qp_default_platforms: data.qp_default_platforms || [],
+          qp_default_tone: data.qp_default_tone || "neutral",
+          qp_default_logo: data.qp_default_logo ?? false,
+          qp_default_sign: data.qp_default_sign ?? false,
+          qp_default_template: data.qp_default_template ?? false,
+        })
         setKeywordsInput((data.keywords || []).join(", "))
         setAvoidInput((data.avoid_words || []).join(", "))
       })
@@ -143,6 +165,12 @@ export function BrandKitForm({ orgId, token }: Props) {
           subtitle_italic: kit.subtitle_italic,
           subtitle_color: kit.subtitle_color,
           text_bg_color: kit.text_bg_color,
+          qp_default_provider: kit.qp_default_provider,
+          qp_default_platforms: kit.qp_default_platforms,
+          qp_default_tone: kit.qp_default_tone,
+          qp_default_logo: kit.qp_default_logo,
+          qp_default_sign: kit.qp_default_sign,
+          qp_default_template: kit.qp_default_template,
         }),
       })
       if (!res.ok) setError(`Eroare ${res.status}: ${await res.text()}`)
@@ -315,6 +343,7 @@ export function BrandKitForm({ orgId, token }: Props) {
     { id: "voce",        label: "Voce & Cuvinte" },
     { id: "tipografie",  label: "Tipografie" },
     { id: "documente",   label: "Documente AI" },
+    { id: "quick_post",  label: "⚡ Quick Post" },
   ]
 
   const FONT_OPTIONS = [
@@ -820,6 +849,175 @@ export function BrandKitForm({ orgId, token }: Props) {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* ── Tab: Quick Post Defaults ─────────────────────────────────────────── */}
+      {tab === "quick_post" && (
+        <div className="space-y-6">
+
+          {/* Generator imagini implicit */}
+          <div className="rounded-lg border bg-card p-5 space-y-4">
+            <div>
+              <h2 className="font-semibold">Generator imagini implicit</h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Folosit automat la ⚡ Quick Post fără să întrebi utilizatorul.
+              </p>
+            </div>
+            <div className="flex flex-col gap-2">
+              {[
+                { value: "comfyui", label: "🖼️ Nex-Nex RTX (ComfyUI) — local, 1 credit" },
+                { value: "fal",     label: "⚡ Fal.ai FLUX — rapid, 1 credit" },
+                { value: "gemini",  label: "🎨 Google Gemini — brand integrat, 2 credite" },
+              ].map(({ value, label }) => (
+                <label key={value} className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="qp_default_provider"
+                    value={value}
+                    checked={kit.qp_default_provider === value}
+                    onChange={() => setKit((k) => ({ ...k, qp_default_provider: value }))}
+                    className="accent-primary"
+                  />
+                  <span className="text-sm">{label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Rețele sociale implicite */}
+          <div className="rounded-lg border bg-card p-5 space-y-4">
+            <div>
+              <h2 className="font-semibold">Rețele sociale implicite</h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Selectate automat la Quick Post. Dacă nu alegi nimic, se folosesc conturile active.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {["instagram", "linkedin", "facebook", "x"].map((platform) => {
+                const ICONS: Record<string, string> = { instagram: "📸", linkedin: "💼", facebook: "📘", x: "𝕏" }
+                const checked = kit.qp_default_platforms.includes(platform)
+                return (
+                  <label key={platform} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => {
+                        const next = checked
+                          ? kit.qp_default_platforms.filter((p) => p !== platform)
+                          : [...kit.qp_default_platforms, platform]
+                        setKit((k) => ({ ...k, qp_default_platforms: next }))
+                      }}
+                      className="accent-primary"
+                    />
+                    <span className="text-sm capitalize">{ICONS[platform]} {platform}</span>
+                  </label>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Ton implicit */}
+          <div className="rounded-lg border bg-card p-5 space-y-4">
+            <div>
+              <h2 className="font-semibold">Ton implicit pentru text</h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Aplicat la generarea textului în Quick Post. "Neutru" înseamnă că AI-ul alege.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { value: "neutral",   label: "⚖️ Neutru" },
+                { value: "inspiring", label: "✨ Inspirațional" },
+                { value: "formal",    label: "💼 Formal" },
+                { value: "casual",    label: "😊 Casual" },
+              ].map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setKit((k) => ({ ...k, qp_default_tone: value }))}
+                  className={`rounded-full border px-4 py-1.5 text-sm transition-colors ${
+                    kit.qp_default_tone === value
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-input hover:bg-muted"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Assets vizuale implicite */}
+          <div className="rounded-lg border bg-card p-5 space-y-4">
+            <div>
+              <h2 className="font-semibold">Assets vizuale implicite</h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Dacă bifezi, Quick Post va aplica aceste elemente automat pe imaginea generată.
+                Lasă debifat dacă vrei imagini curate fără branding.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={kit.qp_default_logo}
+                  onChange={(e) => setKit((k) => ({ ...k, qp_default_logo: e.target.checked }))}
+                  className="accent-primary"
+                />
+                <div>
+                  <span className="text-sm font-medium">Logo brand</span>
+                  {kit.logo_url
+                    ? <span className="ml-2 text-xs text-muted-foreground">(încărcat ✓)</span>
+                    : <span className="ml-2 text-xs text-destructive">(neîncărcat — adaugă din tab Identitate)</span>
+                  }
+                </div>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={kit.qp_default_sign}
+                  onChange={(e) => setKit((k) => ({ ...k, qp_default_sign: e.target.checked }))}
+                  className="accent-primary"
+                />
+                <div>
+                  <span className="text-sm font-medium">Sign / Tipografie brand</span>
+                  {kit.sign_url
+                    ? <span className="ml-2 text-xs text-muted-foreground">(încărcat ✓)</span>
+                    : <span className="ml-2 text-xs text-destructive">(neîncărcat)</span>
+                  }
+                </div>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={kit.qp_default_template}
+                  onChange={(e) => setKit((k) => ({ ...k, qp_default_template: e.target.checked }))}
+                  className="accent-primary"
+                />
+                <div>
+                  <span className="text-sm font-medium">Template vizual (primul din lista ta)</span>
+                  {kit.visual_templates.length > 0
+                    ? <span className="ml-2 text-xs text-muted-foreground">({kit.visual_templates.length} template{kit.visual_templates.length > 1 ? "-uri" : ""} ✓)</span>
+                    : <span className="ml-2 text-xs text-destructive">(niciun template — adaugă din tab Identitate)</span>
+                  }
+                </div>
+              </label>
+            </div>
+          </div>
+
+          {/* Salvează */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={save}
+              disabled={saving}
+              className="rounded-md bg-primary px-5 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+            >
+              {saving ? "Se salvează..." : saved ? "✓ Salvat" : "Salvează defaults Quick Post"}
+            </button>
+            {saved && <span className="text-sm text-green-600">✓ Setările au fost salvate!</span>}
+          </div>
+
         </div>
       )}
     </div>
