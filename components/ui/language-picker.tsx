@@ -55,7 +55,8 @@ export function LanguagePicker({ className }: LanguagePickerProps) {
   function handleChange(locale: string) {
     document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=31536000; SameSite=Lax`;
     void syncLocaleToBackend(locale);
-    router.refresh();
+    // Hard reload: asigură că server component-ele citesc noul cookie
+    window.location.reload();
   }
 
   return (

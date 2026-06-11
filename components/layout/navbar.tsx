@@ -16,6 +16,8 @@ import { DocsSearch } from "@/components/docs/search";
 import { ModalContext } from "@/components/modals/providers";
 import { Icons } from "@/components/shared/icons";
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
+import { ModeToggle } from "@/components/layout/mode-toggle";
+import { LocaleSwitcherCompact } from "@/components/ui/locale-switcher-compact";
 
 interface NavBarProps {
   scroll?: boolean;
@@ -86,6 +88,9 @@ export function NavBar({ scroll = false }: NavBarProps) {
         </div>
 
         <div className="flex items-center space-x-3">
+          <LocaleSwitcherCompact />
+          <ModeToggle />
+
           {/* right header for docs */}
           {documentation ? (
             <div className="hidden flex-1 items-center space-x-4 sm:justify-end lg:flex">
