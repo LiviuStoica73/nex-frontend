@@ -22,7 +22,10 @@ export function GET(request: NextRequest) {
     ? `https://${request.headers.get("x-forwarded-host")}`
     : new URL(request.url).origin;
   const safeReturn = returnTo.startsWith("/") ? returnTo : "/";
-  const response = NextResponse.redirect(`${origin}${safeReturn}`);
+  const response = NextResponse.redirect(`${origin}${safeReturn}`, { status: 302 });
+  response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
+  response.headers.set("CDN-Cache-Control", "no-store");
+  response.headers.set("Cloudflare-CDN-Cache-Control", "no-store");
   response.cookies.set("NEXT_LOCALE", locale, {
     path: "/",
     maxAge: 60 * 60 * 24 * 365,
