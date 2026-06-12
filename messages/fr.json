@@ -1,17 +1,307 @@
 {
-  "nav": { "dashboard": "Tableau de bord", "campaigns": "Campagnes", "calendar": "Calendrier", "settings": "Paramètres", "brand_kit": "Kit de marque", "billing": "Facturation" },
-  "auth": { "sign_in": "Se connecter", "sign_out": "Se déconnecter", "sign_in_with_google": "Se connecter avec Google", "sign_in_with_email": "Se connecter avec Email", "sign_up_with_email": "S'inscrire", "welcome_back": "Bon retour", "enter_email": "Entrez votre email pour vous connecter", "no_account": "Pas de compte ? Inscrivez-vous", "or_continue_with": "Ou continuer avec", "back": "Retour" },
-  "common": { "save": "Enregistrer", "cancel": "Annuler", "delete": "Supprimer", "edit": "Modifier", "loading": "Chargement...", "error": "Une erreur s'est produite", "success": "Enregistré avec succès", "toggle_sidebar": "Basculer la barre latérale", "toggle_navigation_menu": "Basculer le menu de navigation" },
-  "settings": { "title": "Paramètres", "subtitle": "Gérez les paramètres du compte et du site.", "language": "Langue de l'interface", "language_description": "Choisissez la langue de l'interface", "timezone": "Fuseau horaire", "save_changes": "Enregistrer les modifications" },
-  "brand_kit": { "title": "Kit de marque", "logo": "Logo", "colors": "Couleurs", "typography": "Typographie", "templates": "Modèles" },
-  "dashboard": { "title": "Tableau de bord", "subtitle": "Les performances de votre contenu en temps réel." },
-  "marketing_nav": { "pricing": "Tarifs", "features": "Fonctionnalités", "blog": "Blog" },
-  "docs_nav": { "documentation": "Documentation", "guides": "Guides" },
-  "dashboard_sidebar": { "sections": { "content": "CONTENU", "brand": "MARQUE", "account": "COMPTE" }, "items": { "dashboard": "Dashboard", "campaigns": "Publications", "calendar": "Calendrier", "brand_kit": "Brand Kit", "billing": "Abonnement", "settings": "Paramètres", "admin_panel": "Panneau Admin" } },
-  "search": { "button": "Rechercher", "docs_suffix": "documentation", "placeholder": "Tapez une commande ou recherchez...", "no_results": "Aucun résultat trouvé." },
-  "analytics": { "loading": "Chargement des analytics...", "days": "{count} jours", "syncing": "Synchronisation...", "sync_now": "Synchroniser maintenant", "kpi_published_posts": "Publications publiées", "kpi_total_reach": "Reach total", "kpi_total_likes": "Likes totaux", "kpi_total_shares": "Partages totaux", "empty_title": "Aucune publication au cours des {days} derniers jours", "empty_subtitle": "Publiez vos premiers posts pour voir les analytics.", "engagement_by_platform": "Engagement par plateforme", "metric_reach": "Reach", "metric_likes": "Likes", "metric_comments": "Commentaires", "metric_shares": "Partages", "post_distribution": "Répartition des publications", "top_posts": "Top 5 publications", "no_data": "Aucune donnée disponible.", "not_available": "—", "score": "score" },
-  "calendar": { "page_title": "Calendrier éditorial", "page_subtitle": "Visualisez et replanifiez vos publications.", "today": "Aujourd'hui", "month": "Mois", "week": "Semaine", "day": "Jour", "status_legend": "Statut :", "scheduled_at": "Planifié", "view_published_post": "Voir la publication publiée →", "publish_now": "Publier maintenant", "close": "Fermer", "not_available": "—", "statuses": { "draft": "Brouillon", "approved": "Approuvé", "scheduled": "Planifié", "published": "Publié", "failed": "Échoué", "skipped": "Ignoré", "archived": "Archivé" } },
-  "campaigns": { "page_title": "Publications", "page_subtitle": "Toutes les publications créées depuis le bot Telegram.", "delete_confirm": "Supprimer définitivement cette publication ?", "loading_campaigns": "Chargement des campagnes...", "empty_title": "Aucune publication pour le moment", "empty_subtitle": "Créez votre première publication depuis le bot Telegram avec /start.", "loading_posts": "Chargement des publications...", "empty_campaign_posts": "Aucune publication dans cette campagne.", "view_post": "Voir la publication →", "edit_text": "Modifier le texte", "reschedule": "Replanifier", "pause": "Pause", "resume": "Activer", "repost": "Reposter", "other_language": "Autre langue", "other_social_network": "Autre réseau social", "delete": "Supprimer", "error_prefix": "Erreur", "dialog_edit_title": "Modifier le texte de la publication", "dialog_reschedule_title": "Replanifier la publication", "dialog_repost_title": "Reposter sur d'autres réseaux", "dialog_translate_title": "Publication dans une autre langue", "select_platforms": "Sélectionnez les plateformes :", "scheduled_date_optional": "Date planifiée (optionnel) :", "cancel": "Annuler", "saving": "Enregistrement...", "save": "Enregistrer", "creating": "Création...", "create_posts": "Créer des publications", "language_label": "Langue :", "platform_optional_label": "Plateforme (optionnel, identique par défaut) :", "same_platform": "Même plateforme", "generating": "Génération...", "generate": "Générer", "image_alt": "Image {index}", "platforms": { "instagram": "Instagram", "facebook": "Facebook", "linkedin": "LinkedIn", "x": "X / Twitter", "discord": "Discord", "blog": "Blog" }, "statuses": { "draft": "Brouillon", "approved": "Approuvé", "scheduled": "Planifié", "published": "Publié", "failed": "Échoué", "skipped": "Ignoré" } },
-  "account": { "delete_title": "Supprimer le compte", "delete_description": "Ceci est une zone dangereuse. Soyez prudent.", "delete_confirm_title": "Êtes-vous sûr ?", "active_subscription": "Abonnement actif", "delete_warning": "Supprimez définitivement votre compte {site}{suffix}. Cette action est irréversible. Veuillez continuer avec prudence.", "delete_warning_subscription_suffix": " et votre abonnement", "delete_button": "Supprimer le compte", "name_title": "Votre nom", "name_description": "Entrez un nom d'affichage avec lequel vous êtes à l'aise.", "name_label": "Nom", "save_changes_suffix": "modifications", "name_hint": "32 caractères maximum", "role_title": "Votre rôle", "role_description": "Sélectionnez le rôle que vous souhaitez utiliser pendant les tests.", "role_label": "Rôle", "role_placeholder": "Sélectionnez un rôle", "role_hint": "Supprimez ce champ en production réelle" },
-  "telegram": { "title": "Bot Telegram", "description_before": "Connectez votre compte à", "description_after": "pour créer et approuver des publications directement depuis Telegram.", "generate_code": "Générer le code de connexion", "token_error": "Erreur lors de la génération du token.", "server_error": "Impossible de se connecter au serveur. Réessayez.", "send_code_before": "Envoyez ce code au bot", "send_code_after": " :", "copy": "Copier", "expires_in": "Le code expire dans 10 minutes." }
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "campaigns": "Campagnes",
+    "calendar": "Calendrier",
+    "settings": "Paramètres",
+    "brand_kit": "Kit de marque",
+    "billing": "Facturation"
+  },
+  "auth": {
+    "sign_in": "Se connecter",
+    "sign_out": "Se déconnecter",
+    "sign_in_with_google": "Se connecter avec Google",
+    "sign_in_with_email": "Se connecter avec Email",
+    "sign_up_with_email": "S'inscrire",
+    "welcome_back": "Bon retour",
+    "enter_email": "Entrez votre email pour vous connecter",
+    "no_account": "Pas de compte ? Inscrivez-vous",
+    "or_continue_with": "Ou continuer avec",
+    "back": "Retour"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "success": "Enregistré avec succès",
+    "toggle_sidebar": "Basculer la barre latérale",
+    "toggle_navigation_menu": "Basculer le menu de navigation"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Gérez les paramètres du compte et du site.",
+    "language": "Langue de l'interface",
+    "language_description": "Choisissez la langue de l'interface",
+    "timezone": "Fuseau horaire",
+    "save_changes": "Enregistrer les modifications"
+  },
+  "brand_kit": {
+    "title": "Kit de marque",
+    "logo": "Logo",
+    "colors": "Couleurs",
+    "typography": "Typographie",
+    "templates": "Modèles"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "subtitle": "Les performances de votre contenu en temps réel."
+  },
+  "marketing_nav": {
+    "pricing": "Tarifs",
+    "features": "Fonctionnalités",
+    "blog": "Blog"
+  },
+  "docs_nav": {
+    "documentation": "Documentation",
+    "guides": "Guides"
+  },
+  "dashboard_sidebar": {
+    "sections": {
+      "content": "CONTENU",
+      "brand": "MARQUE",
+      "account": "COMPTE"
+    },
+    "items": {
+      "dashboard": "Dashboard",
+      "campaigns": "Publications",
+      "calendar": "Calendrier",
+      "brand_kit": "Brand Kit",
+      "billing": "Abonnement",
+      "settings": "Paramètres",
+      "admin_panel": "Panneau Admin"
+    }
+  },
+  "search": {
+    "button": "Rechercher",
+    "docs_suffix": "documentation",
+    "placeholder": "Tapez une commande ou recherchez...",
+    "no_results": "Aucun résultat trouvé."
+  },
+  "analytics": {
+    "loading": "Chargement des analytics...",
+    "days": "{count} jours",
+    "syncing": "Synchronisation...",
+    "sync_now": "Synchroniser maintenant",
+    "kpi_published_posts": "Publications publiées",
+    "kpi_total_reach": "Reach total",
+    "kpi_total_likes": "Likes totaux",
+    "kpi_total_shares": "Partages totaux",
+    "empty_title": "Aucune publication au cours des {days} derniers jours",
+    "empty_subtitle": "Publiez vos premiers posts pour voir les analytics.",
+    "engagement_by_platform": "Engagement par plateforme",
+    "metric_reach": "Reach",
+    "metric_likes": "Likes",
+    "metric_comments": "Commentaires",
+    "metric_shares": "Partages",
+    "post_distribution": "Répartition des publications",
+    "top_posts": "Top 5 publications",
+    "no_data": "Aucune donnée disponible.",
+    "not_available": "—",
+    "score": "score"
+  },
+  "calendar": {
+    "page_title": "Calendrier éditorial",
+    "page_subtitle": "Visualisez et replanifiez vos publications.",
+    "today": "Aujourd'hui",
+    "month": "Mois",
+    "week": "Semaine",
+    "day": "Jour",
+    "status_legend": "Statut :",
+    "scheduled_at": "Planifié",
+    "view_published_post": "Voir la publication publiée →",
+    "publish_now": "Publier maintenant",
+    "close": "Fermer",
+    "not_available": "—",
+    "statuses": {
+      "draft": "Brouillon",
+      "approved": "Approuvé",
+      "scheduled": "Planifié",
+      "published": "Publié",
+      "failed": "Échoué",
+      "skipped": "Ignoré",
+      "archived": "Archivé"
+    }
+  },
+  "campaigns": {
+    "page_title": "Publications",
+    "page_subtitle": "Toutes les publications créées depuis le bot Telegram.",
+    "delete_confirm": "Supprimer définitivement cette publication ?",
+    "loading_campaigns": "Chargement des campagnes...",
+    "empty_title": "Aucune publication pour le moment",
+    "empty_subtitle": "Créez votre première publication depuis le bot Telegram avec /start.",
+    "loading_posts": "Chargement des publications...",
+    "empty_campaign_posts": "Aucune publication dans cette campagne.",
+    "view_post": "Voir la publication →",
+    "edit_text": "Modifier le texte",
+    "reschedule": "Replanifier",
+    "pause": "Pause",
+    "resume": "Activer",
+    "repost": "Reposter",
+    "other_language": "Autre langue",
+    "other_social_network": "Autre réseau social",
+    "delete": "Supprimer",
+    "error_prefix": "Erreur",
+    "dialog_edit_title": "Modifier le texte de la publication",
+    "dialog_reschedule_title": "Replanifier la publication",
+    "dialog_repost_title": "Reposter sur d'autres réseaux",
+    "dialog_translate_title": "Publication dans une autre langue",
+    "select_platforms": "Sélectionnez les plateformes :",
+    "scheduled_date_optional": "Date planifiée (optionnel) :",
+    "cancel": "Annuler",
+    "saving": "Enregistrement...",
+    "save": "Enregistrer",
+    "creating": "Création...",
+    "create_posts": "Créer des publications",
+    "language_label": "Langue :",
+    "platform_optional_label": "Plateforme (optionnel, identique par défaut) :",
+    "same_platform": "Même plateforme",
+    "generating": "Génération...",
+    "generate": "Générer",
+    "image_alt": "Image {index}",
+    "platforms": {
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "linkedin": "LinkedIn",
+      "x": "X / Twitter",
+      "discord": "Discord",
+      "blog": "Blog"
+    },
+    "statuses": {
+      "draft": "Brouillon",
+      "approved": "Approuvé",
+      "scheduled": "Planifié",
+      "published": "Publié",
+      "failed": "Échoué",
+      "skipped": "Ignoré"
+    }
+  },
+  "account": {
+    "delete_title": "Supprimer le compte",
+    "delete_description": "Ceci est une zone dangereuse. Soyez prudent.",
+    "delete_confirm_title": "Êtes-vous sûr ?",
+    "active_subscription": "Abonnement actif",
+    "delete_warning": "Supprimez définitivement votre compte {site}{suffix}. Cette action est irréversible. Veuillez continuer avec prudence.",
+    "delete_warning_subscription_suffix": " et votre abonnement",
+    "delete_button": "Supprimer le compte",
+    "name_title": "Votre nom",
+    "name_description": "Entrez un nom d'affichage avec lequel vous êtes à l'aise.",
+    "name_label": "Nom",
+    "save_changes_suffix": "modifications",
+    "name_hint": "32 caractères maximum",
+    "role_title": "Votre rôle",
+    "role_description": "Sélectionnez le rôle que vous souhaitez utiliser pendant les tests.",
+    "role_label": "Rôle",
+    "role_placeholder": "Sélectionnez un rôle",
+    "role_hint": "Supprimez ce champ en production réelle"
+  },
+  "telegram": {
+    "title": "Bot Telegram",
+    "description_before": "Connectez votre compte à",
+    "description_after": "pour créer et approuver des publications directement depuis Telegram.",
+    "generate_code": "Générer le code de connexion",
+    "token_error": "Erreur lors de la génération du token.",
+    "server_error": "Impossible de se connecter au serveur. Réessayez.",
+    "send_code_before": "Envoyez ce code au bot",
+    "send_code_after": " :",
+    "copy": "Copier",
+    "expires_in": "Le code expire dans 10 minutes."
+  },
+  "hero_landing": {
+    "trial_badge": "Try free for 14 days",
+    "title_prefix": "Social media content",
+    "title_highlight": "created by AI, approved by you",
+    "description": "Send an idea from Telegram. AI generates the text, image and picks the best time to publish. You approve with a tap.",
+    "primary_cta": "Start for free",
+    "secondary_cta": "See pricing",
+    "platforms": "Facebook · Instagram · LinkedIn · X · TikTok"
+  },
+  "preview_landing": {
+    "image_alt": "Nex-Nex interface — posts dashboard"
+  },
+  "workflow_section": {
+    "title": "How Nex-Nex works",
+    "subtitle": "From idea to published post in minutes, no technical knowledge required.",
+    "steps": {
+      "01": {
+        "title": "Upload your brand context",
+        "description": "Add PDFs, URLs or descriptions about your company. AI learns your voice, values and products."
+      },
+      "02": {
+        "title": "Generate post ideas",
+        "description": "Get 100 ideas organized by category: educational, promotional, storytelling, seasonal."
+      },
+      "03": {
+        "title": "Choose your topic",
+        "description": "Select the idea that fits or send any topic directly from Telegram."
+      },
+      "04": {
+        "title": "AI generates the text",
+        "description": "The text is written in your brand voice, adapted for each social media platform."
+      },
+      "05": {
+        "title": "Add a photo (optional)",
+        "description": "Send a photo from your phone. AI transforms it into a professional social media image."
+      },
+      "06": {
+        "title": "AI generates the image",
+        "description": "No photo? AI creates an original image based on your post content."
+      },
+      "07": {
+        "title": "Schedule publishing",
+        "description": "Choose a date and time, or let AI find the optimal moment for your audience."
+      },
+      "08": {
+        "title": "AI picks the best time",
+        "description": "Based on historical data, AI recommends the time slot with the highest engagement."
+      },
+      "09": {
+        "title": "Post publishes automatically",
+        "description": "Nex-Nex publishes simultaneously on all selected platforms without any extra steps."
+      },
+      "10": {
+        "title": "Publish in any language",
+        "description": "One piece of content, culturally adapted for any market you want to reach."
+      }
+    }
+  },
+  "bentogrid_section": {
+    "title": "Everything you need for social media",
+    "subtitle": "Features built for content creators and marketing agencies.",
+    "cards": {
+      "brand_intelligence": {
+        "title": "Brand Intelligence",
+        "description": "AI learns your brand voice, values and products from PDF documents, URLs and descriptions. Every post sounds like you."
+      },
+      "from_idea_to_published": {
+        "title": "From idea to published",
+        "description": "Send a topic from Telegram. In 2 minutes you have text, image and the post scheduled across all platforms."
+      },
+      "languages": {
+        "title": "Any language, any market",
+        "description": "Generate content in any language. Culturally adapted, not just translated."
+      },
+      "best_time": {
+        "title": "Best time to publish",
+        "description": "AI analyzes your history and recommends the time with the highest reach for your audience."
+      }
+    }
+  },
+  "features_section": {
+    "label": "Features",
+    "title": "Everything you need for social media",
+    "subtitle": "AI tools built to simplify content creation and publishing.",
+    "cta": "Learn more"
+  },
+  "testimonials_section": {
+    "label": "Testimonials",
+    "title": "What Nex-Nex users say",
+    "subtitle": "Over 500 creators and agencies publish faster and more efficiently with Nex-Nex.",
+    "badge_ai": "AI Verified"
+  },
+  "powered_section": {
+    "title": "Built with top technologies"
+  }
 }

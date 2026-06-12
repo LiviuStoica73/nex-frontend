@@ -208,5 +208,100 @@
     "send_code_after": ":",
     "copy": "Copy",
     "expires_in": "The code expires in 10 minutes."
+  },
+  "hero_landing": {
+    "trial_badge": "Try free for 14 days",
+    "title_prefix": "Social media content",
+    "title_highlight": "created by AI, approved by you",
+    "description": "Send an idea from Telegram. AI generates the text, image and picks the best time to publish. You approve with a tap.",
+    "primary_cta": "Start for free",
+    "secondary_cta": "See pricing",
+    "platforms": "Facebook · Instagram · LinkedIn · X · TikTok"
+  },
+  "preview_landing": {
+    "image_alt": "Nex-Nex interface — posts dashboard"
+  },
+  "workflow_section": {
+    "title": "How Nex-Nex works",
+    "subtitle": "From idea to published post in minutes, no technical knowledge required.",
+    "steps": {
+      "01": {
+        "title": "Upload your brand context",
+        "description": "Add PDFs, URLs or descriptions about your company. AI learns your voice, values and products."
+      },
+      "02": {
+        "title": "Generate post ideas",
+        "description": "Get 100 ideas organized by category: educational, promotional, storytelling, seasonal."
+      },
+      "03": {
+        "title": "Choose your topic",
+        "description": "Select the idea that fits or send any topic directly from Telegram."
+      },
+      "04": {
+        "title": "AI generates the text",
+        "description": "The text is written in your brand voice, adapted for each social media platform."
+      },
+      "05": {
+        "title": "Add a photo (optional)",
+        "description": "Send a photo from your phone. AI transforms it into a professional social media image."
+      },
+      "06": {
+        "title": "AI generates the image",
+        "description": "No photo? AI creates an original image based on your post content."
+      },
+      "07": {
+        "title": "Schedule publishing",
+        "description": "Choose a date and time, or let AI find the optimal moment for your audience."
+      },
+      "08": {
+        "title": "AI picks the best time",
+        "description": "Based on historical data, AI recommends the time slot with the highest engagement."
+      },
+      "09": {
+        "title": "Post publishes automatically",
+        "description": "Nex-Nex publishes simultaneously on all selected platforms without any extra steps."
+      },
+      "10": {
+        "title": "Publish in any language",
+        "description": "One piece of content, culturally adapted for any market you want to reach."
+      }
+    }
+  },
+  "bentogrid_section": {
+    "title": "Everything you need for social media",
+    "subtitle": "Features built for content creators and marketing agencies.",
+    "cards": {
+      "brand_intelligence": {
+        "title": "Brand Intelligence",
+        "description": "AI learns your brand voice, values and products from PDF documents, URLs and descriptions. Every post sounds like you."
+      },
+      "from_idea_to_published": {
+        "title": "From idea to published",
+        "description": "Send a topic from Telegram. In 2 minutes you have text, image and the post scheduled across all platforms."
+      },
+      "languages": {
+        "title": "Any language, any market",
+        "description": "Generate content in Romanian, English, Italian or any other language. Culturally adapted, not just translated."
+      },
+      "best_time": {
+        "title": "Best time to publish",
+        "description": "AI analyzes your history and recommends the time with the highest reach for your specific audience."
+      }
+    }
+  },
+  "features_section": {
+    "label": "Features",
+    "title": "Everything you need for social media",
+    "subtitle": "AI tools built to simplify content creation and publishing.",
+    "cta": "Learn more"
+  },
+  "testimonials_section": {
+    "label": "Testimonials",
+    "title": "What Nex-Nex users say",
+    "subtitle": "Over 500 creators and agencies publish faster and more efficiently with Nex-Nex.",
+    "badge_ai": "AI Verified"
+  },
+  "powered_section": {
+    "title": "Built with top technologies"
   }
 }

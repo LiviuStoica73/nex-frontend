@@ -208,5 +208,100 @@
     "send_code_after": ":",
     "copy": "Copiază",
     "expires_in": "Codul expiră în 10 minute."
+  },
+  "hero_landing": {
+    "trial_badge": "Încearcă gratuit 14 zile",
+    "title_prefix": "Conținut social media",
+    "title_highlight": "creat de AI, aprobat de tine",
+    "description": "Trimite o idee din Telegram. AI-ul generează textul, imaginea și alege momentul optim de publicare. Tu aprobi cu un tap.",
+    "primary_cta": "Începe gratuit",
+    "secondary_cta": "Vezi prețurile",
+    "platforms": "Facebook · Instagram · LinkedIn · X · TikTok"
+  },
+  "preview_landing": {
+    "image_alt": "Interfața Nex-Nex — dashboard postări"
+  },
+  "workflow_section": {
+    "title": "Cum funcționează Nex-Nex",
+    "subtitle": "De la idee la postare publicată în câteva minute, fără cunoștințe tehnice.",
+    "steps": {
+      "01": {
+        "title": "Încarci contextul brandului",
+        "description": "Adaugi PDF-uri, URL-uri sau descrieri despre compania ta. AI-ul învață vocea, valorile și produsele tale."
+      },
+      "02": {
+        "title": "Generezi idei de postări",
+        "description": "Primești 100 de idei organizate pe categorii: educational, promotional, storytelling, sezonier."
+      },
+      "03": {
+        "title": "Alegi subiectul",
+        "description": "Selectezi ideea care ți se potrivește sau trimiți orice subiect direct din Telegram."
+      },
+      "04": {
+        "title": "AI generează textul",
+        "description": "Textul este scris în vocea brandului tău, adaptat pentru fiecare platformă socială."
+      },
+      "05": {
+        "title": "Adaugi o fotografie (opțional)",
+        "description": "Trimiți o poză din telefon. AI-ul o transformă într-o imagine profesionistă pentru social media."
+      },
+      "06": {
+        "title": "AI generează imaginea",
+        "description": "Dacă nu ai fotografie, AI-ul creează o imagine originală bazată pe conținutul postării."
+      },
+      "07": {
+        "title": "Programezi publicarea",
+        "description": "Alegi data și ora sau lași AI-ul să găsească momentul optim pentru audiența ta."
+      },
+      "08": {
+        "title": "AI alege momentul optim",
+        "description": "Pe baza datelor istorice, AI-ul recomandă intervalul cu cel mai mare engagement."
+      },
+      "09": {
+        "title": "Postarea se publică automat",
+        "description": "Nex-Nex publică simultan pe toate platformele selectate, fără intervenție suplimentară."
+      },
+      "10": {
+        "title": "Publici în orice limbă",
+        "description": "Un singur conținut, tradus și adaptat cultural pentru orice piață dorești să atingi."
+      }
+    }
+  },
+  "bentogrid_section": {
+    "title": "Tot ce ai nevoie pentru social media",
+    "subtitle": "Funcționalități construite pentru creatori de conținut și agenții de marketing.",
+    "cards": {
+      "brand_intelligence": {
+        "title": "Brand Intelligence",
+        "description": "AI-ul învață vocea, valorile și produsele brandului tău din documente PDF, URL-uri și descrieri. Fiecare postare sună ca tine."
+      },
+      "from_idea_to_published": {
+        "title": "De la idee la publicat",
+        "description": "Trimiți un subiect din Telegram. În 2 minute ai text, imagine și postarea programată pe toate platformele."
+      },
+      "languages": {
+        "title": "Orice limbă, orice piață",
+        "description": "Generezi conținut în română, engleză, italiană sau orice altă limbă. Adaptat cultural, nu doar tradus."
+      },
+      "best_time": {
+        "title": "Momentul optim de publicare",
+        "description": "AI-ul analizează istoricul și recomandă ora cu cel mai mare reach pentru audiența ta specifică."
+      }
+    }
+  },
+  "features_section": {
+    "label": "Funcționalități",
+    "title": "Tot ce îți trebuie pentru social media",
+    "subtitle": "Instrumente AI construite pentru a simplifica crearea și publicarea conținutului.",
+    "cta": "Află mai mult"
+  },
+  "testimonials_section": {
+    "label": "Testimoniale",
+    "title": "Ce spun utilizatorii Nex-Nex",
+    "subtitle": "Peste 500 de creatori și agenții publică mai repede și mai eficient cu Nex-Nex.",
+    "badge_ai": "Verificat AI"
+  },
+  "powered_section": {
+    "title": "Construit cu tehnologii de top"
   }
 }
