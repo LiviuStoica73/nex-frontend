@@ -1,10 +1,9 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 
-import { testimonials } from "@/config/landing";
-
 export default function Testimonials() {
   const t = useTranslations("testimonials_section");
+  const items = t.raw("items") as Array<{ name: string; job: string; review: string; image: string }>;
 
   return (
     <section>
@@ -22,7 +21,7 @@ export default function Testimonials() {
         </div>
 
         <div className="column-1 gap-5 space-y-5 md:columns-2 lg:columns-3">
-          {testimonials.map((item) => (
+          {items.map((item) => (
             <div className="break-inside-avoid" key={item.name}>
               <div className="relative rounded-xl border bg-muted/25">
                 <div className="flex flex-col px-4 py-5 sm:p-6">

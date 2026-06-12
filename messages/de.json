@@ -293,13 +293,89 @@
     "label": "Features",
     "title": "Everything you need for social media",
     "subtitle": "AI tools built to simplify content creation and publishing.",
-    "cta": "Learn more"
+    "cta": "Learn more",
+    "items": {
+      "telegram_bot": {
+        "title": "Telegram Bot",
+        "description": "Send an idea from your phone. AI generates the post, you approve with a tap. Immediate or scheduled publishing."
+      },
+      "brand_intelligence": {
+        "title": "Brand Intelligence (RAG)",
+        "description": "Upload PDF, DOCX or URL with your brand description. AI writes as if it has known your company for years."
+      },
+      "editorial_calendar": {
+        "title": "Editorial Calendar",
+        "description": "Monthly and weekly view. Drag & drop to reschedule. Colors per platform and status."
+      },
+      "idea_generator": {
+        "title": "Idea Generator",
+        "description": "100 post ideas generated from your brand context. Educational, promotional, storytelling — organized by category."
+      },
+      "agency_mode": {
+        "title": "Agency Mode",
+        "description": "Manage all clients from one account. Fast switch between workspaces, unified billing."
+      },
+      "analytics": {
+        "title": "Analytics",
+        "description": "Reach, impressions, likes and shares synced automatically from all platforms. Top 5 posts per period."
+      }
+    }
   },
   "testimonials_section": {
     "label": "Testimonials",
     "title": "What Nex-Nex users say",
     "subtitle": "Over 500 creators and agencies publish faster and more efficiently with Nex-Nex.",
-    "badge_ai": "AI Verified"
+    "badge_ai": "AI Verified",
+    "items": [
+      {
+        "name": "Andrei Popescu",
+        "job": "SaaS Startup Founder",
+        "review": "I went from 3 hours/week on social media to 15 minutes. Nex-Nex generates exactly our brand tone — I no longer correct AI texts.",
+        "image": "https://randomuser.me/api/portraits/men/32.jpg"
+      },
+      {
+        "name": "Maria Ionescu",
+        "job": "Social Media Manager",
+        "review": "I manage 8 clients with Nex-Nex Agency. Visual calendar, quick approval, automatic publishing. It eliminated half of my manual work.",
+        "image": "https://randomuser.me/api/portraits/women/44.jpg"
+      },
+      {
+        "name": "Radu Constantin",
+        "job": "E-commerce Entrepreneur",
+        "review": "The Telegram bot is brilliant. I take a photo of a new product, AI writes the caption, I approve, done. The whole process takes 2 minutes.",
+        "image": "https://randomuser.me/api/portraits/men/67.jpg"
+      },
+      {
+        "name": "Elena Dumitrescu",
+        "job": "Content Creator",
+        "review": "RAG makes the difference compared to any other tool. AI knows exactly the prices, features and values of my brand. Zero posts with wrong information.",
+        "image": "https://randomuser.me/api/portraits/women/23.jpg"
+      },
+      {
+        "name": "Mihai Stanescu",
+        "job": "Marketing Director",
+        "review": "Our team of 5 now publishes 3x more content. The approval workflow with Nex-Nex is much faster than any tool we have tested.",
+        "image": "https://randomuser.me/api/portraits/men/55.jpg"
+      },
+      {
+        "name": "Ana Popa",
+        "job": "Freelancer Content",
+        "review": "As a freelancer with 12 clients, Nex-Nex Agency saved my business. One subscription, all clients under control, simple billing.",
+        "image": "https://randomuser.me/api/portraits/women/12.jpg"
+      },
+      {
+        "name": "Bogdan Muresan",
+        "job": "Co-founder digital agency",
+        "review": "I tried Buffer, Hootsuite, SocialBee. Nex-Nex is the only one with Telegram bot + RAG per client. For agencies, it is a game changer.",
+        "image": "https://randomuser.me/api/portraits/men/78.jpg"
+      },
+      {
+        "name": "Ioana Constantin",
+        "job": "Local entrepreneur — Beauty salon",
+        "review": "I knew nothing about social media. Now I post daily on Instagram and Facebook without losing time. Nex-Nex does everything — I just approve.",
+        "image": "https://randomuser.me/api/portraits/women/65.jpg"
+      }
+    ]
   },
   "powered_section": {
     "title": "Built with top technologies"

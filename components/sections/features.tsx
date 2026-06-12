@@ -1,11 +1,19 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
-import { features } from "@/config/landing";
 import { Button } from "@/components/ui/button";
 import { HeaderSection } from "@/components/shared/header-section";
 import { Icons } from "@/components/shared/icons";
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
+
+const FEATURE_KEYS = [
+  { key: "telegram_bot", icon: "laptop" },
+  { key: "brand_intelligence", icon: "settings" },
+  { key: "editorial_calendar", icon: "laptop" },
+  { key: "idea_generator", icon: "copy" },
+  { key: "agency_mode", icon: "user" },
+  { key: "analytics", icon: "search" },
+] as const;
 
 export default function Features() {
   const t = useTranslations("features_section");
@@ -21,12 +29,12 @@ export default function Features() {
           />
 
           <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature) => {
-              const Icon = Icons[feature.icon || "nextjs"];
+            {FEATURE_KEYS.map(({ key, icon }) => {
+              const Icon = Icons[icon];
               return (
                 <div
                   className="group relative overflow-hidden rounded-2xl border bg-background p-5 md:p-8"
-                  key={feature.title}
+                  key={key}
                 >
                   <div
                     aria-hidden="true"
@@ -38,7 +46,7 @@ export default function Features() {
                     </div>
 
                     <p className="mt-6 pb-6 text-muted-foreground">
-                      {feature.description}
+                      {t(`items.${key}.description`)}
                     </p>
 
                     <div className="-mb-5 flex gap-3 border-t border-muted py-4 md:-mb-7">

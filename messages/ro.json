@@ -293,13 +293,49 @@
     "label": "Funcționalități",
     "title": "Tot ce îți trebuie pentru social media",
     "subtitle": "Instrumente AI construite pentru a simplifica crearea și publicarea conținutului.",
-    "cta": "Află mai mult"
+    "cta": "Află mai mult",
+    "items": {
+      "telegram_bot": {
+        "title": "Telegram Bot",
+        "description": "Trimite o idee din telefon. AI-ul generează postarea, tu o aprobi cu un tap. Publicare imediată sau programată."
+      },
+      "brand_intelligence": {
+        "title": "Brand Intelligence (RAG)",
+        "description": "Upload PDF, DOCX sau URL cu descrierea brandului. AI-ul scrie ca și cum ar cunoaște compania ta de ani de zile."
+      },
+      "editorial_calendar": {
+        "title": "Calendar Editorial",
+        "description": "Vizualizare lunară și săptămânală. Drag & drop pentru reprogramare. Culori per platformă și status."
+      },
+      "idea_generator": {
+        "title": "Generator de Idei",
+        "description": "100 de idei de postări generate din contextul brandului tău. Educational, promotional, storytelling — distribuite pe categorii."
+      },
+      "agency_mode": {
+        "title": "Agency Mode",
+        "description": "Gestionează toți clienții dintr-un singur cont. Switch rapid între workspace-uri, billing unificat."
+      },
+      "analytics": {
+        "title": "Analytics",
+        "description": "Reach, impressions, likes și shares sincronizate automat de pe toate platformele. Top 5 posturi per perioadă."
+      }
+    }
   },
   "testimonials_section": {
     "label": "Testimoniale",
     "title": "Ce spun utilizatorii Nex-Nex",
     "subtitle": "Peste 500 de creatori și agenții publică mai repede și mai eficient cu Nex-Nex.",
-    "badge_ai": "Verificat AI"
+    "badge_ai": "Verificat AI",
+    "items": [
+      { "name": "Andrei Popescu", "job": "Fondator startup SaaS", "review": "Am trecut de la 3 ore/săptămână pe social media la 15 minute. Nex-Nex generează exact tonul brandului nostru — nu mai corectez textele AI.", "image": "https://randomuser.me/api/portraits/men/32.jpg" },
+      { "name": "Maria Ionescu", "job": "Social Media Manager", "review": "Gestionez 8 clienți cu Nex-Nex Agency. Calendar vizual, aprobare rapidă, publicare automată. A eliminat jumătate din munca mea manuală.", "image": "https://randomuser.me/api/portraits/women/44.jpg" },
+      { "name": "Radu Constantin", "job": "Antreprenor e-commerce", "review": "Botul de Telegram e genial. Fac o poză la un produs nou, AI-ul scrie captionul, eu aprob, gata. Tot procesul durează 2 minute.", "image": "https://randomuser.me/api/portraits/men/67.jpg" },
+      { "name": "Elena Dumitrescu", "job": "Creator de conținut", "review": "RAG-ul face diferența față de orice alt tool. AI-ul știe exact prețurile, features și valorile brandului meu. Zero post-uri cu informații greșite.", "image": "https://randomuser.me/api/portraits/women/23.jpg" },
+      { "name": "Mihai Stanescu", "job": "Director Marketing", "review": "Echipa noastră de 5 persoane publică acum de 3x mai mult conținut. Workflow-ul de aprobare cu Nex-Nex e mult mai rapid decât orice tool am testat.", "image": "https://randomuser.me/api/portraits/men/55.jpg" },
+      { "name": "Ana Popa", "job": "Freelancer Content", "review": "Ca freelancer cu 12 clienți, Nex-Nex Agency mi-a salvat business-ul. Un singur abonament, toți clienții sub control, facturare simplă.", "image": "https://randomuser.me/api/portraits/women/12.jpg" },
+      { "name": "Bogdan Muresan", "job": "Co-fondator agenție digitală", "review": "Am încercat Buffer, Hootsuite, SocialBee. Nex-Nex e singurul cu bot Telegram + RAG per client. Pentru agenții, e game changer.", "image": "https://randomuser.me/api/portraits/men/78.jpg" },
+      { "name": "Ioana Constantin", "job": "Antreprenor local — Salon frumusețe", "review": "Nu știam nimic despre social media. Acum postez zilnic pe Instagram și Facebook fără să pierd timp. Nex-Nex face totul — eu doar aprob.", "image": "https://randomuser.me/api/portraits/women/65.jpg" }
+    ]
   },
   "powered_section": {
     "title": "Construit cu tehnologii de top"
