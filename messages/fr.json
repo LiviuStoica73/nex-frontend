@@ -210,90 +210,90 @@
     "expires_in": "Le code expire dans 10 minutes."
   },
   "hero_landing": {
-    "trial_badge": "Try free for 14 days",
-    "title_prefix": "Social media content",
-    "title_highlight": "created by AI, approved by you",
-    "description": "Send an idea from Telegram. AI generates the text, image and picks the best time to publish. You approve with a tap.",
-    "primary_cta": "Start for free",
-    "secondary_cta": "See pricing",
-    "platforms": "Facebook · Instagram · LinkedIn · X · TikTok"
+    "trial_badge": "14-day free trial · No credit card required",
+    "title_prefix": "Pocket AI",
+    "title_highlight": "expert",
+    "description": "AI learns your brand, creates professional content, and publishes it automatically on social networks.",
+    "primary_cta": "Try it free",
+    "secondary_cta": "View plans",
+    "platforms": "Facebook · Instagram · LinkedIn · X · Discord · WordPress Blog"
   },
   "preview_landing": {
-    "image_alt": "Nex-Nex interface — posts dashboard"
+    "image_alt": "Nex-Nex — The Next Era of Content"
   },
   "workflow_section": {
-    "title": "How Nex-Nex works",
-    "subtitle": "From idea to published post in minutes, no technical knowledge required.",
+    "title": "How it works",
+    "subtitle": "From idea to publishing across all networks — in just a few minutes.",
     "steps": {
       "01": {
-        "title": "Upload your brand context",
-        "description": "Add PDFs, URLs or descriptions about your company. AI learns your voice, values and products."
+        "title": "AI learns your business",
+        "description": "You upload your brand documents — style guide, products, communication tone. Your personal AI learns everything and becomes the expert of your brand."
       },
       "02": {
-        "title": "Generate post ideas",
-        "description": "Get 100 ideas organized by category: educational, promotional, storytelling, seasonal."
+        "title": "You ask for post ideas",
+        "description": "You tell Nex-Nex what you want to post about. Instantly, you get 5 creative ideas adapted to your brand and audience."
       },
       "03": {
-        "title": "Choose your topic",
-        "description": "Select the idea that fits or send any topic directly from Telegram."
+        "title": "You choose the idea",
+        "description": "You select the idea that fits you best. Nex-Nex develops it in the direction you choose."
       },
       "04": {
-        "title": "AI generates the text",
-        "description": "The text is written in your brand voice, adapted for each social media platform."
+        "title": "AI writes the text, SEO, and hashtags",
+        "description": "You receive the full text, SEO-optimized, with the right hashtags for each platform. Edit it if you want, or publish it directly."
       },
       "05": {
-        "title": "Add a photo (optional)",
-        "description": "Send a photo from your phone. AI transforms it into a professional social media image."
+        "title": "You upload a photo or ask for an AI one",
+        "description": "Do you have a photo? Upload it. Don't have one? Describe what you want and AI generates a professional prompt for the perfect image."
       },
       "06": {
         "title": "AI generates the image",
-        "description": "No photo? AI creates an original image based on your post content."
+        "description": "From your prompt, AI creates professional images. You choose your preferred version directly from the app."
       },
       "07": {
-        "title": "Schedule publishing",
-        "description": "Choose a date and time, or let AI find the optimal moment for your audience."
+        "title": "You post now or schedule it",
+        "description": "Publish immediately or choose the best moment. Nex-Nex shows you when your audience is most active."
       },
       "08": {
-        "title": "AI picks the best time",
-        "description": "Based on historical data, AI recommends the time slot with the highest engagement."
+        "title": "Best timing per network",
+        "description": "Each platform has its golden hours. Nex-Nex automatically calculates when to post on Instagram, LinkedIn, TikTok, and more for maximum reach."
       },
       "09": {
-        "title": "Post publishes automatically",
-        "description": "Nex-Nex publishes simultaneously on all selected platforms without any extra steps."
+        "title": "You publish on all networks",
+        "description": "One single click — the post goes live simultaneously on all your platforms: Instagram, LinkedIn, Facebook, X, TikTok, Discord."
       },
       "10": {
-        "title": "Publish in any language",
-        "description": "One piece of content, culturally adapted for any market you want to reach."
+        "title": "In any language",
+        "description": "Is your audience global? Nex-Nex translates and culturally adapts your post into 50+ languages while preserving your brand voice."
       }
     }
   },
   "bentogrid_section": {
-    "title": "Everything you need for social media",
-    "subtitle": "Features built for content creators and marketing agencies.",
+    "title": "Everything you need, in one place",
+    "subtitle": "Nex-Nex replaces 4 separate tools with one single app, in a seamless experience.",
     "cards": {
       "brand_intelligence": {
         "title": "Brand Intelligence",
-        "description": "AI learns your brand voice, values and products from PDF documents, URLs and descriptions. Every post sounds like you."
+        "description": "You upload your brand documents once. AI remembers your tone, products, and values — and writes like you every time."
       },
       "from_idea_to_published": {
-        "title": "From idea to published",
-        "description": "Send a topic from Telegram. In 2 minutes you have text, image and the post scheduled across all platforms."
+        "title": "From idea to published in 3 minutes",
+        "description": "Idea → text → image → publishing on 6 platforms. The entire flow in a single app, without copy-paste between tools."
       },
       "languages": {
-        "title": "Any language, any market",
-        "description": "Generate content in any language. Culturally adapted, not just translated."
+        "title": "50+ languages",
+        "description": "Generate and publish in any language. AI culturally adapts the message — it doesn't just translate word by word."
       },
       "best_time": {
-        "title": "Best time to publish",
-        "description": "AI analyzes your history and recommends the time with the highest reach for your audience."
+        "title": "Automatic best timing",
+        "description": "The algorithm calculates maximum reach hours per platform and schedules automatically. You no longer need to check stats yourself."
       }
     }
   },
   "features_section": {
     "label": "Features",
-    "title": "Everything you need for social media",
-    "subtitle": "AI tools built to simplify content creation and publishing.",
-    "cta": "Learn more",
+    "title": "Everything Nex-Nex does for you.",
+    "subtitle": "From content generation to automatic publishing — all the tools in a single app.",
+    "cta": "View plans",
     "items": {
       "telegram_bot": {
         "title": "Telegram Bot",
@@ -323,9 +323,9 @@
   },
   "testimonials_section": {
     "label": "Testimonials",
-    "title": "What Nex-Nex users say",
-    "subtitle": "Over 500 creators and agencies publish faster and more efficiently with Nex-Nex.",
-    "badge_ai": "AI Verified",
+    "title": "What our customers would say — if we already had customers 😄",
+    "subtitle": "Hypothetical testimonials generated by AI. The real ones will appear soon.",
+    "badge_ai": "🤖 AI",
     "items": [
       {
         "name": "Andrei Popescu",
@@ -378,6 +378,408 @@
     ]
   },
   "powered_section": {
-    "title": "Built with top technologies"
+    "title": "Powered by"
+  },
+  "marketing_pricing_page": {
+    "metadata": {
+      "title": "Pricing — Nex-Nex",
+      "description": "Simple plans for individual creators and agencies. 14-day free trial, no card required."
+    },
+    "title": "Simple and transparent pricing",
+    "subtitle": "14-day free trial on any plan. No credit card required. Cancel anytime.",
+    "popular_badge": "Popular",
+    "per_month": "/month",
+    "agency_xl": {
+      "prefix": "Agency XL (unlimited clients) —",
+      "price": "€349/month",
+      "link": "Annual discount available"
+    },
+    "plans": {
+      "free": {
+        "description": "To test the platform",
+        "cta": "Try for free",
+        "features": [
+          "1 brand",
+          "2 social accounts",
+          "10 posts/month",
+          "Basic AI text"
+        ]
+      },
+      "starter": {
+        "description": "For individual creators",
+        "cta": "Start 14-day trial",
+        "features": [
+          "1 brand",
+          "5 social accounts",
+          "100 posts/month",
+          "AI text + image",
+          "Telegram Bot",
+          "5 GB storage"
+        ]
+      },
+      "pro": {
+        "description": "Most popular",
+        "cta": "Start 14-day trial",
+        "features": [
+          "3 brands",
+          "15 social accounts",
+          "Unlimited posts",
+          "AI text + image + video",
+          "Analytics",
+          "Multi-language",
+          "20 GB storage"
+        ]
+      },
+      "business": {
+        "description": "For teams",
+        "cta": "Start 14-day trial",
+        "features": [
+          "10 brands",
+          "Unlimited accounts",
+          "Unlimited posts",
+          "Full AI",
+          "Advanced analytics",
+          "50 GB storage"
+        ]
+      },
+      "agency": {
+        "description": "For agencies",
+        "cta": "Contact us",
+        "features": [
+          "Unlimited brands",
+          "Unlimited accounts",
+          "15 clients",
+          "Isolated client portal",
+          "Unified billing",
+          "100 GB storage"
+        ]
+      }
+    }
+  },
+  "pricing_cards": {
+    "label": "Pricing",
+    "title": "Start at full speed!",
+    "per_month": "/month",
+    "yearly_charge": "${amount} will be charged when annual",
+    "monthly_charge": "when charged monthly",
+    "go_to_dashboard": "Go to dashboard",
+    "sign_in": "Sign in",
+    "toggle_group_aria": "toggle-year",
+    "yearly_aria": "Toggle yearly billing",
+    "monthly_aria": "Toggle monthly billing",
+    "yearly": "Yearly (-20%)",
+    "monthly": "Monthly",
+    "support_prefix": "Email",
+    "support_suffix": "to contact our support team.",
+    "support_note": "You can test the subscriptions and won't be charged."
+  },
+  "pricing_faq": {
+    "label": "FAQ",
+    "title": "Frequently asked questions",
+    "subtitle": "If you can't find the answer, write to us at support@nex-nex.com.",
+    "items": {
+      "item_1": {
+        "question": "Is there a free trial?",
+        "answer": "Yes — a 14-day free trial on the Pro plan, no credit card required. You can explore all features before making any commitment."
+      },
+      "item_2": {
+        "question": "Can I cancel anytime?",
+        "answer": "Yes, you can cancel anytime from the dashboard, with no penalties. After cancellation, you stay on the paid plan until the end of the billed period."
+      },
+      "item_3": {
+        "question": "What does RAG per brand mean?",
+        "answer": "RAG (Retrieval-Augmented Generation) means the AI reads the documents you upload — product descriptions, prices, FAQ — and generates content based on real information, not invented details. Each brand has its own isolated set of documents."
+      },
+      "item_4": {
+        "question": "Which social platforms are supported?",
+        "answer": "Facebook, Instagram, LinkedIn, X (Twitter), Discord, and WordPress Blog — via direct API. YouTube, Threads, and Bluesky are coming in Phase 2. TikTok and Pinterest are in the backlog and require external review that can take months."
+      },
+      "item_5": {
+        "question": "How does the Telegram Bot work?",
+        "answer": "You connect your Nex-Nex account with Telegram from Settings. Then you write any topic in chat — the AI generates the post using your brand's RAG, you approve it with one button, and it is published or scheduled automatically. It works from any phone."
+      },
+      "item_6": {
+        "question": "Is there a discount for annual billing?",
+        "answer": "Yes — about a 17% discount (equivalent to 2 free months) on the annual subscription compared to the monthly one."
+      },
+      "item_7": {
+        "question": "Does the Agency plan cover all my clients?",
+        "answer": "Yes — one Agency subscription (€199/month) covers up to 15 clients. Agency XL (€349/month) is unlimited. Each client has an isolated workspace, separate login, and separate RAG."
+      }
+    }
+  },
+  "compare_plans": {
+    "label": "Plans",
+    "title": "Compare Our Plans",
+    "subtitle": "Find the perfect plan tailored for your business needs!",
+    "empty": "—"
+  },
+  "billing_info": {
+    "title": "Subscription Plan",
+    "description": "You are currently on the <strong>{plan}</strong> plan.",
+    "cancels_on": "Your plan will be canceled on {date}.",
+    "renews_on": "Your plan renews on {date}.",
+    "choose_plan": "Choose a plan"
+  },
+  "login_page": {
+    "metadata": {
+      "title": "Login",
+      "description": "Login to your account"
+    }
+  },
+  "register_page": {
+    "metadata": {
+      "title": "Create an account",
+      "description": "Create an account to get started."
+    },
+    "login": "Login",
+    "title": "Create an account",
+    "subtitle": "Enter your email below to create your account",
+    "terms_prefix": "By clicking continue, you agree to our",
+    "terms_link": "Terms of Service",
+    "terms_middle": "and",
+    "privacy_link": "Privacy Policy"
+  },
+  "brand_kit_form": {
+    "common": {
+      "save": "Save",
+      "saving": "Saving...",
+      "saved": "✅ Saved!"
+    },
+    "errors": {
+      "missing_org": "The session has no orgId. Please sign in again.",
+      "save_failed": "Error {status}: {message}",
+      "network": "Network error. Check your connection.",
+      "logo_upload_failed": "Logo upload failed ({status})",
+      "storage_not_configured": "R2 storage is not configured.",
+      "logo_network": "Network error while uploading logo.",
+      "sign_upload_failed": "Sign upload failed ({status})",
+      "sign_network": "Network error while uploading sign.",
+      "logo_sign_upload_failed": "Logo + sign upload failed ({status})",
+      "logo_sign_network": "Network error while uploading logo + sign.",
+      "template_upload_failed": "Template upload failed ({status})",
+      "template_network": "Network error while uploading template."
+    },
+    "tabs": {
+      "identity": "Identity",
+      "voice": "Voice & Words",
+      "typography": "Typography",
+      "documents": "AI Documents",
+      "quick_post": "⚡ Quick Post"
+    },
+    "identity": {
+      "brand_name": {
+        "label": "Company / brand name",
+        "placeholder": "Ex: Nex-Nex, Creative Agency, TechStartup LLC"
+      },
+      "slogan": {
+        "label": "Slogan",
+        "placeholder": "Ex: AI Content Copilot for creators"
+      },
+      "description": {
+        "label": "Short description",
+        "placeholder": "1-3 sentences about what your brand does."
+      },
+      "visual_assets": {
+        "title": "Visual assets"
+      },
+      "logo": {
+        "label": "Logo",
+        "description": "Square 1:1 image, transparent background",
+        "alt": "Logo",
+        "upload": "Upload logo",
+        "replace": "Replace logo",
+        "uploading": "Uploading..."
+      },
+      "sign": {
+        "label": "Sign / brand font",
+        "description": "The brand writing style (PNG/SVG)",
+        "alt": "Sign",
+        "upload": "Upload sign",
+        "replace": "Replace sign",
+        "uploading": "Uploading..."
+      },
+      "logo_sign": {
+        "label": "Combined logo + sign",
+        "description": "A single file with logo and sign together — used when both are selected in Telegram. Create it in Canva/Figma and upload it here.",
+        "alt": "Logo + Sign",
+        "upload": "Upload logo + sign",
+        "replace": "Replace logo + sign",
+        "uploading": "Uploading..."
+      },
+      "colors": {
+        "title": "Brand colors",
+        "primary": {
+          "label": "Primary",
+          "description": "The main brand color"
+        },
+        "secondary": {
+          "label": "Secondary",
+          "description": "Support color / secondary background"
+        },
+        "accent": {
+          "label": "Accent",
+          "description": "CTAs, buttons, highlights"
+        },
+        "background": {
+          "label": "Background",
+          "description": "Image background color"
+        },
+        "text_dark": {
+          "label": "Dark text",
+          "description": "Text on light background"
+        },
+        "text_light": {
+          "label": "Light text",
+          "description": "Text on dark background"
+        }
+      },
+      "templates": {
+        "title": "Post templates",
+        "description": "The background images / visual layouts of the brand. The AI will use them when generating images for posts.",
+        "alt": "Template {index}",
+        "delete": "Delete template",
+        "item_label": "Template {index}",
+        "uploading": "Uploading...",
+        "add": "Add template"
+      }
+    },
+    "voice": {
+      "title": "Brand Voice",
+      "description": "Describe the tone, values, and target audience. The AI will use this for every generation.",
+      "placeholder": "Ex: Professional but friendly tone. Audience: entrepreneurs aged 25-45. Values: innovation, efficiency, transparency. We avoid excessive technical jargon.",
+      "keywords": {
+        "title": "Keywords & words to avoid",
+        "label": "Keywords (comma-separated)",
+        "placeholder": "innovation, quality, efficiency, results"
+      },
+      "avoid_words": {
+        "label": "Words to avoid",
+        "placeholder": "cheap, free, 100% guaranteed"
+      }
+    },
+    "typography": {
+      "description_prefix": "Typography settings are used when generating images with",
+      "description_product_template": "Product in template",
+      "description_middle": "and for",
+      "description_text_on_image": "Text on image",
+      "title_block": {
+        "title": "Title"
+      },
+      "subtitle_block": {
+        "title": "Subtitle / Price"
+      },
+      "font": "Font",
+      "size": "Size (px)",
+      "default_font": "— Default (Inter) —",
+      "bold": "Bold",
+      "italic": "Italic",
+      "color": "Color",
+      "overlay": {
+        "title": "Text overlay background",
+        "description_prefix": "The color of the semi-transparent band behind the text written on the image. You can include alpha (ex:",
+        "description_suffix": ")."
+      }
+    },
+    "documents": {
+      "brand_docs": {
+        "title": "Documents about the brand",
+        "description": "Upload manuals, FAQs, presentations, or web pages. The AI will use them as references when generating content — correct prices, real features, zero hallucinations.",
+        "upload": "Upload PDF / DOCX / TXT",
+        "processing": "Processing..."
+      },
+      "url": {
+        "placeholder": "https://your-site.com/about",
+        "name_placeholder": "Name (optional)",
+        "add": "Add URL"
+      },
+      "indexed": {
+        "title": "Indexed documents ({count})",
+        "loading": "Loading...",
+        "empty": "No documents yet. Upload a file or add a URL.",
+        "chunks": "{count} chunks"
+      },
+      "status": {
+        "processing": "processing",
+        "indexed": "indexed",
+        "failed": "failed"
+      },
+      "test": {
+        "title": "Test it — what does the AI know about your brand?",
+        "placeholder": "Ex: \"What are the prices?\" or \"What products do we sell?\"",
+        "ask": "Ask"
+      }
+    },
+    "quick_post": {
+      "provider": {
+        "title": "Default image generator",
+        "description": "Used automatically in ⚡ Quick Post without asking the user.",
+        "options": {
+          "comfyui": "🖼️ Nex-Nex RTX (ComfyUI) — local, 1 credit",
+          "fal": "⚡ Fal.ai FLUX — fast, 1 credit",
+          "gemini": "🎨 Google Gemini — integrated branding, 2 credits"
+        }
+      },
+      "platforms": {
+        "title": "Default social networks",
+        "description": "Selected automatically in Quick Post. If you choose nothing, active accounts are used."
+      },
+      "tone": {
+        "title": "Default text tone",
+        "description": "Applied when generating text in Quick Post. \"Neutral\" means the AI chooses.",
+        "options": {
+          "neutral": "⚖️ Neutral",
+          "inspiring": "✨ Inspirational",
+          "formal": "💼 Formal",
+          "casual": "😊 Casual"
+        }
+      },
+      "visual_assets": {
+        "title": "Default visual assets",
+        "description": "If checked, Quick Post will apply these elements automatically to the generated image. Leave unchecked if you want clean images without branding.",
+        "logo": "Brand logo",
+        "sign": "Sign / brand typography",
+        "template": "Visual template (the first one in your list)",
+        "loaded": "(uploaded ✓)",
+        "logo_missing": "(not uploaded — add it from the Identity tab)",
+        "sign_missing": "(not uploaded)",
+        "template_missing": "(no template — add one from the Identity tab)",
+        "template_loaded_one": "(1 template ✓)",
+        "template_loaded_many": "({count} templates ✓)"
+      },
+      "save_defaults": "Save Quick Post defaults",
+      "saved_short": "✓ Saved",
+      "saved_message": "✓ Settings have been saved!"
+    }
+  },
+  "sign_in_modal": {
+    "title": "Sign In",
+    "description": "This is strictly for demo purposes - only your email and profile picture will be stored.",
+    "google_cta": "Sign In with Google"
+  },
+  "delete_account_modal": {
+    "title": "Delete Account",
+    "warning_label": "Warning:",
+    "warning_text": "This will permanently delete your account and your active subscription!",
+    "verification": {
+      "prefix": "To verify, type",
+      "phrase": "confirm delete account",
+      "suffix": "below"
+    },
+    "confirm_cta": "Confirm delete account",
+    "toast": {
+      "loading": "Deleting account...",
+      "success": "Account deleted successfully!"
+    }
+  },
+  "marketing_not_found": {
+    "image_alt": "404",
+    "message": "Page not found. Back to",
+    "homepage": "Homepage"
+  },
+  "marketing_error": {
+    "title": "Something went wrong!",
+    "unknown_error": "Unknown error",
+    "retry": "Try again"
   }
 }
