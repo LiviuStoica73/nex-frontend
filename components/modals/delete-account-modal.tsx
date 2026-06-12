@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Dispatch,
   SetStateAction,
@@ -7,6 +9,7 @@ import {
 } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +23,7 @@ function DeleteAccountModal({
   showDeleteAccountModal: boolean;
   setShowDeleteAccountModal: Dispatch<SetStateAction<boolean>>;
 }) {
+  const t = useTranslations("delete_account_modal");
   const { data: session } = useSession();
   const [deleting, setDeleting] = useState(false);
 
@@ -27,17 +31,12 @@ function DeleteAccountModal({
     setDeleting(true);
     await fetch(`/api/user`, {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
     }).then(async (res) => {
       if (res.status === 200) {
-        // delay to allow for the route change to complete
         await new Promise((resolve) =>
           setTimeout(() => {
-            signOut({
-              callbackUrl: `${window.location.origin}/`,
-            });
+            signOut({ callbackUrl: `${window.location.origin}/` });
             resolve(null);
           }, 500),
         );
@@ -62,21 +61,18 @@ function DeleteAccountModal({
             image: session?.user?.image || null,
           }}
         />
-        <h3 className="text-lg font-semibold">Delete Account</h3>
+        <h3 className="text-lg font-semibold">{t("title")}</h3>
         <p className="text-center text-sm text-muted-foreground">
-          <b>Warning:</b> This will permanently delete your account and your
-          active subscription!
+          <b>{t("warning_label")}</b> {t("warning_text")}
         </p>
-
-        {/* TODO: Use getUserSubscriptionPlan(session.user.id) to display the user's subscription if he have a paid plan */}
       </div>
 
       <form
         onSubmit={async (e) => {
           e.preventDefault();
           toast.promise(deleteAccount(), {
-            loading: "Deleting account...",
-            success: "Account deleted successfully!",
+            loading: t("toast.loading"),
+            success: t("toast.success"),
             error: (err) => err,
           });
         }}
@@ -84,17 +80,17 @@ function DeleteAccountModal({
       >
         <div>
           <label htmlFor="verification" className="block text-sm">
-            To verify, type{" "}
+            {t("verification.prefix")}{" "}
             <span className="font-semibold text-black dark:text-white">
-              confirm delete account
+              {t("verification.phrase")}
             </span>{" "}
-            below
+            {t("verification.suffix")}
           </label>
           <Input
             type="text"
             name="verification"
             id="verification"
-            pattern="confirm delete account"
+            pattern={t("verification.phrase")}
             required
             autoFocus={false}
             autoComplete="off"
@@ -102,11 +98,8 @@ function DeleteAccountModal({
           />
         </div>
 
-        <Button
-          variant={deleting ? "disable" : "destructive"}
-          disabled={deleting}
-        >
-          Confirm delete account
+        <Button variant={deleting ? "disable" : "destructive"} disabled={deleting}>
+          {t("confirm_cta")}
         </Button>
       </form>
     </Modal>

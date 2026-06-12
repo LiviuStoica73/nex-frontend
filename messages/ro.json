@@ -327,17 +327,157 @@
     "subtitle": "Peste 500 de creatori și agenții publică mai repede și mai eficient cu Nex-Nex.",
     "badge_ai": "Verificat AI",
     "items": [
-      { "name": "Andrei Popescu", "job": "Fondator startup SaaS", "review": "Am trecut de la 3 ore/săptămână pe social media la 15 minute. Nex-Nex generează exact tonul brandului nostru — nu mai corectez textele AI.", "image": "https://randomuser.me/api/portraits/men/32.jpg" },
-      { "name": "Maria Ionescu", "job": "Social Media Manager", "review": "Gestionez 8 clienți cu Nex-Nex Agency. Calendar vizual, aprobare rapidă, publicare automată. A eliminat jumătate din munca mea manuală.", "image": "https://randomuser.me/api/portraits/women/44.jpg" },
-      { "name": "Radu Constantin", "job": "Antreprenor e-commerce", "review": "Botul de Telegram e genial. Fac o poză la un produs nou, AI-ul scrie captionul, eu aprob, gata. Tot procesul durează 2 minute.", "image": "https://randomuser.me/api/portraits/men/67.jpg" },
-      { "name": "Elena Dumitrescu", "job": "Creator de conținut", "review": "RAG-ul face diferența față de orice alt tool. AI-ul știe exact prețurile, features și valorile brandului meu. Zero post-uri cu informații greșite.", "image": "https://randomuser.me/api/portraits/women/23.jpg" },
-      { "name": "Mihai Stanescu", "job": "Director Marketing", "review": "Echipa noastră de 5 persoane publică acum de 3x mai mult conținut. Workflow-ul de aprobare cu Nex-Nex e mult mai rapid decât orice tool am testat.", "image": "https://randomuser.me/api/portraits/men/55.jpg" },
-      { "name": "Ana Popa", "job": "Freelancer Content", "review": "Ca freelancer cu 12 clienți, Nex-Nex Agency mi-a salvat business-ul. Un singur abonament, toți clienții sub control, facturare simplă.", "image": "https://randomuser.me/api/portraits/women/12.jpg" },
-      { "name": "Bogdan Muresan", "job": "Co-fondator agenție digitală", "review": "Am încercat Buffer, Hootsuite, SocialBee. Nex-Nex e singurul cu bot Telegram + RAG per client. Pentru agenții, e game changer.", "image": "https://randomuser.me/api/portraits/men/78.jpg" },
-      { "name": "Ioana Constantin", "job": "Antreprenor local — Salon frumusețe", "review": "Nu știam nimic despre social media. Acum postez zilnic pe Instagram și Facebook fără să pierd timp. Nex-Nex face totul — eu doar aprob.", "image": "https://randomuser.me/api/portraits/women/65.jpg" }
+      {
+        "name": "Andrei Popescu",
+        "job": "Fondator startup SaaS",
+        "review": "Am trecut de la 3 ore/săptămână pe social media la 15 minute. Nex-Nex generează exact tonul brandului nostru — nu mai corectez textele AI.",
+        "image": "https://randomuser.me/api/portraits/men/32.jpg"
+      },
+      {
+        "name": "Maria Ionescu",
+        "job": "Social Media Manager",
+        "review": "Gestionez 8 clienți cu Nex-Nex Agency. Calendar vizual, aprobare rapidă, publicare automată. A eliminat jumătate din munca mea manuală.",
+        "image": "https://randomuser.me/api/portraits/women/44.jpg"
+      },
+      {
+        "name": "Radu Constantin",
+        "job": "Antreprenor e-commerce",
+        "review": "Botul de Telegram e genial. Fac o poză la un produs nou, AI-ul scrie captionul, eu aprob, gata. Tot procesul durează 2 minute.",
+        "image": "https://randomuser.me/api/portraits/men/67.jpg"
+      },
+      {
+        "name": "Elena Dumitrescu",
+        "job": "Creator de conținut",
+        "review": "RAG-ul face diferența față de orice alt tool. AI-ul știe exact prețurile, features și valorile brandului meu. Zero post-uri cu informații greșite.",
+        "image": "https://randomuser.me/api/portraits/women/23.jpg"
+      },
+      {
+        "name": "Mihai Stanescu",
+        "job": "Director Marketing",
+        "review": "Echipa noastră de 5 persoane publică acum de 3x mai mult conținut. Workflow-ul de aprobare cu Nex-Nex e mult mai rapid decât orice tool am testat.",
+        "image": "https://randomuser.me/api/portraits/men/55.jpg"
+      },
+      {
+        "name": "Ana Popa",
+        "job": "Freelancer Content",
+        "review": "Ca freelancer cu 12 clienți, Nex-Nex Agency mi-a salvat business-ul. Un singur abonament, toți clienții sub control, facturare simplă.",
+        "image": "https://randomuser.me/api/portraits/women/12.jpg"
+      },
+      {
+        "name": "Bogdan Muresan",
+        "job": "Co-fondator agenție digitală",
+        "review": "Am încercat Buffer, Hootsuite, SocialBee. Nex-Nex e singurul cu bot Telegram + RAG per client. Pentru agenții, e game changer.",
+        "image": "https://randomuser.me/api/portraits/men/78.jpg"
+      },
+      {
+        "name": "Ioana Constantin",
+        "job": "Antreprenor local — Salon frumusețe",
+        "review": "Nu știam nimic despre social media. Acum postez zilnic pe Instagram și Facebook fără să pierd timp. Nex-Nex face totul — eu doar aprob.",
+        "image": "https://randomuser.me/api/portraits/women/65.jpg"
+      }
     ]
   },
   "powered_section": {
     "title": "Construit cu tehnologii de top"
+  },
+  "marketing_pricing_page": {
+    "title": "Prețuri simple și transparente",
+    "subtitle": "14 zile trial gratuit pe orice plan. Fără card de credit. Anulezi oricând.",
+    "popular_badge": "Popular",
+    "per_month": "/lună",
+    "agency_xl": {
+      "prefix": "Agency XL (clienți nelimitați) —",
+      "price": "€349/lună",
+      "link": "Discount anual disponibil"
+    },
+    "metadata": {
+      "title": "Prețuri — Nex-Nex",
+      "description": "Planuri simple pentru creatori individuali și agenții. 14 zile trial gratuit, fără card."
+    },
+    "plans": {
+      "free": {
+        "description": "Pentru a testa platforma",
+        "cta": "Încearcă gratuit",
+        "features": [
+          "1 brand",
+          "2 conturi sociale",
+          "10 posturi/lună",
+          "AI text basic"
+        ]
+      },
+      "starter": {
+        "description": "Pentru creatori individuali",
+        "cta": "Începe trial 14 zile",
+        "features": [
+          "1 brand",
+          "5 conturi sociale",
+          "100 posturi/lună",
+          "AI text + imagine",
+          "Telegram Bot",
+          "5 GB storage"
+        ]
+      },
+      "pro": {
+        "description": "Cel mai popular",
+        "cta": "Începe trial 14 zile",
+        "features": [
+          "3 branduri",
+          "15 conturi sociale",
+          "Posturi nelimitate",
+          "AI text + imagine + video",
+          "Analytics",
+          "Multi-limbă",
+          "20 GB storage"
+        ]
+      },
+      "business": {
+        "description": "Pentru echipe",
+        "cta": "Începe trial 14 zile",
+        "features": [
+          "10 branduri",
+          "Conturi nelimitate",
+          "Posturi nelimitate",
+          "AI complet",
+          "Analytics avansat",
+          "50 GB storage"
+        ]
+      },
+      "agency": {
+        "description": "Pentru agenții",
+        "cta": "Contactează-ne",
+        "features": [
+          "Branduri nelimitate",
+          "Conturi nelimitate",
+          "15 clienți",
+          "Portal client izolat",
+          "Billing unificat",
+          "100 GB storage"
+        ]
+      }
+    }
+  },
+  "footer": {
+    "tagline": "AI învață brandul tău, creează conținut profesionist și-l publică automat pe rețele sociale.",
+    "sections": {
+      "product": {
+        "title": "Produs",
+        "features": "Funcționalități",
+        "how_it_works": "Cum funcționează",
+        "pricing": "Prețuri",
+        "blog": "Blog"
+      },
+      "legal": {
+        "title": "Legal",
+        "terms": "Termeni și Condiții",
+        "privacy": "Politică de Confidențialitate"
+      },
+      "support": {
+        "title": "Suport",
+        "email": "Email"
+      }
+    },
+    "copyright": "© 2026 Nex-Nex.com · All rights reserved · contact@nex-nex.com",
+    "anpc_sol": "Soluționarea Online a Litigiilor",
+    "anpc_sal": "Soluționarea Alternativă a Litigiilor"
   }
 }

@@ -781,5 +781,29 @@
     "title": "Something went wrong!",
     "unknown_error": "Unknown error",
     "retry": "Try again"
+  },
+  "footer": {
+    "tagline": "AI learns your brand, creates professional content, and publishes it automatically on social networks.",
+    "sections": {
+      "product": {
+        "title": "Product",
+        "features": "Features",
+        "how_it_works": "How it works",
+        "pricing": "Pricing",
+        "blog": "Blog"
+      },
+      "legal": {
+        "title": "Legal",
+        "terms": "Terms of Service",
+        "privacy": "Privacy Policy"
+      },
+      "support": {
+        "title": "Support",
+        "email": "Email"
+      }
+    },
+    "copyright": "© 2026 Nex-Nex.com · All rights reserved · contact@nex-nex.com",
+    "anpc_sol": "Online Dispute Resolution",
+    "anpc_sal": "Alternative Dispute Resolution"
   }
 }

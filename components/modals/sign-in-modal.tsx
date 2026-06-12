@@ -1,3 +1,5 @@
+"use client";
+
 import { signIn } from "next-auth/react";
 import {
   Dispatch,
@@ -6,6 +8,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useTranslations } from "next-intl";
 
 import { Icons } from "@/components/shared/icons";
 import { Button } from "@/components/ui/button";
@@ -19,6 +22,7 @@ function SignInModal({
   showSignInModal: boolean;
   setShowSignInModal: Dispatch<SetStateAction<boolean>>;
 }) {
+  const t = useTranslations("sign_in_modal");
   const [signInClicked, setSignInClicked] = useState(false);
 
   return (
@@ -28,11 +32,8 @@ function SignInModal({
           <a href={siteConfig.url}>
             <Icons.logo className="size-10" />
           </a>
-          <h3 className="font-urban text-2xl font-bold">Sign In</h3>
-          <p className="text-sm text-gray-500">
-            This is strictly for demo purposes - only your email and profile
-            picture will be stored.
-          </p>
+          <h3 className="font-urban text-2xl font-bold">{t("title")}</h3>
+          <p className="text-sm text-gray-500">{t("description")}</p>
         </div>
 
         <div className="flex flex-col space-y-4 bg-secondary/50 px-4 py-8 md:px-16">
@@ -49,7 +50,7 @@ function SignInModal({
             ) : (
               <Icons.google className="mr-2 size-4" />
             )}{" "}
-            Sign In with Google
+            {t("google_cta")}
           </Button>
         </div>
       </div>
