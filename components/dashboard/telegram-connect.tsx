@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { Icons } from "@/components/shared/icons";
 
 export function TelegramConnectSection() {
+  const t = useTranslations("telegram");
   const { data: session } = useSession();
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -27,14 +29,14 @@ export function TelegramConnectSection() {
 
       if (!res.ok) {
         const data = await res.json();
-        setError(data.detail || "Eroare la generarea token-ului.");
+        setError(data.detail || t("token_error"));
         return;
       }
 
       const data = await res.json();
       setToken(data.token);
     } catch {
-      setError("Nu se poate conecta la server. Încearcă din nou.");
+      setError(t("server_error"));
     } finally {
       setLoading(false);
     }
@@ -43,9 +45,9 @@ export function TelegramConnectSection() {
   return (
     <div className="flex flex-col gap-4 py-8">
       <div>
-        <h3 className="text-lg font-medium">Telegram Bot</h3>
+        <h3 className="text-lg font-medium">{t("title")}</h3>
         <p className="text-sm text-muted-foreground">
-          Conectează-ți contul la{" "}
+          {t("description_before")}{" "}
           <a
             href="https://t.me/Nex_Nex_AI_Bot"
             target="_blank"
@@ -54,7 +56,7 @@ export function TelegramConnectSection() {
           >
             @Nex_Nex_AI_Bot
           </a>{" "}
-          pentru a crea și aproba posturi direct din Telegram.
+          {t("description_after")}
         </p>
       </div>
 
@@ -70,14 +72,14 @@ export function TelegramConnectSection() {
             ) : (
               <Icons.add className="size-4" />
             )}
-            Generează cod de conectare
+            {t("generate_code")}
           </button>
           {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
         </div>
       ) : (
         <div className="rounded-lg border bg-muted/50 p-4">
           <p className="mb-2 text-sm text-muted-foreground">
-            Trimite acest cod botului{" "}
+            {t("send_code_before")}{" "}
             <a
               href="https://t.me/Nex_Nex_AI_Bot"
               target="_blank"
@@ -86,7 +88,7 @@ export function TelegramConnectSection() {
             >
               @Nex_Nex_AI_Bot
             </a>
-            :
+            {t("send_code_after")}
           </p>
           <div className="flex items-center gap-3">
             <code className="rounded bg-background px-3 py-2 font-mono text-lg font-bold tracking-widest">
@@ -96,11 +98,11 @@ export function TelegramConnectSection() {
               onClick={() => navigator.clipboard.writeText(token)}
               className="text-sm text-muted-foreground hover:text-foreground"
             >
-              Copiază
+              {t("copy")}
             </button>
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            Codul expiră în 10 minute.
+            {t("expires_in")}
           </p>
         </div>
       )}

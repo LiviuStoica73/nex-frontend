@@ -12,9 +12,9 @@
     "sign_out": "Abmelden",
     "sign_in_with_google": "Mit Google anmelden",
     "sign_in_with_email": "Mit E-Mail anmelden",
-    "sign_up_with_email": "Mit E-Mail registrieren",
+    "sign_up_with_email": "Registrieren",
     "welcome_back": "Willkommen zurück",
-    "enter_email": "E-Mail eingeben, um sich anzumelden",
+    "enter_email": "Geben Sie Ihre E-Mail ein, um sich anzumelden",
     "no_account": "Kein Konto? Registrieren",
     "or_continue_with": "Oder weiter mit",
     "back": "Zurück"
@@ -26,7 +26,9 @@
     "edit": "Bearbeiten",
     "loading": "Wird geladen...",
     "error": "Etwas ist schiefgelaufen",
-    "success": "Erfolgreich gespeichert"
+    "success": "Erfolgreich gespeichert",
+    "toggle_sidebar": "Seitenleiste umschalten",
+    "toggle_navigation_menu": "Navigationsmenü umschalten"
   },
   "settings": {
     "title": "Einstellungen",
@@ -42,5 +44,169 @@
     "colors": "Farben",
     "typography": "Typografie",
     "templates": "Vorlagen"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Ihre Content-Performance in Echtzeit."
+  },
+  "marketing_nav": {
+    "pricing": "Preise",
+    "features": "Funktionen",
+    "blog": "Blog"
+  },
+  "docs_nav": {
+    "documentation": "Dokumentation",
+    "guides": "Leitfäden"
+  },
+  "dashboard_sidebar": {
+    "sections": {
+      "content": "INHALT",
+      "brand": "MARKE",
+      "account": "KONTO"
+    },
+    "items": {
+      "dashboard": "Dashboard",
+      "campaigns": "Beiträge",
+      "calendar": "Kalender",
+      "brand_kit": "Marken-Kit",
+      "billing": "Abonnement",
+      "settings": "Einstellungen",
+      "admin_panel": "Admin-Panel"
+    }
+  },
+  "search": {
+    "button": "Suche",
+    "docs_suffix": "Dokumentation",
+    "placeholder": "Befehl eingeben oder suchen...",
+    "no_results": "Keine Ergebnisse gefunden."
+  },
+  "analytics": {
+    "loading": "Analytics werden geladen...",
+    "days": "{count} Tage",
+    "syncing": "Synchronisiere...",
+    "sync_now": "Jetzt synchronisieren",
+    "kpi_published_posts": "Veröffentlichte Beiträge",
+    "kpi_total_reach": "Gesamtreichweite",
+    "kpi_total_likes": "Gesamte Likes",
+    "kpi_total_shares": "Gesamte Shares",
+    "empty_title": "Keine Beiträge in den letzten {days} Tagen veröffentlicht",
+    "empty_subtitle": "Veröffentlichen Sie Ihre ersten Beiträge, um Analytics zu sehen.",
+    "engagement_by_platform": "Engagement nach Plattform",
+    "metric_reach": "Reichweite",
+    "metric_likes": "Likes",
+    "metric_comments": "Kommentare",
+    "metric_shares": "Shares",
+    "post_distribution": "Beitragsverteilung",
+    "top_posts": "Top 5 Beiträge",
+    "no_data": "Keine Daten verfügbar.",
+    "not_available": "—",
+    "score": "Score"
+  },
+  "calendar": {
+    "page_title": "Redaktionskalender",
+    "page_subtitle": "Beiträge ansehen und neu planen.",
+    "today": "Heute",
+    "month": "Monat",
+    "week": "Woche",
+    "day": "Tag",
+    "status_legend": "Status:",
+    "scheduled_at": "Geplant",
+    "view_published_post": "Veröffentlichten Beitrag ansehen →",
+    "publish_now": "Jetzt veröffentlichen",
+    "close": "Schließen",
+    "not_available": "—",
+    "statuses": {
+      "draft": "Entwurf",
+      "approved": "Genehmigt",
+      "scheduled": "Geplant",
+      "published": "Veröffentlicht",
+      "failed": "Fehlgeschlagen",
+      "skipped": "Übersprungen",
+      "archived": "Archiviert"
+    }
+  },
+  "campaigns": {
+    "page_title": "Beiträge",
+    "page_subtitle": "Alle aus dem Telegram-Bot erstellten Beiträge.",
+    "delete_confirm": "Diesen Beitrag dauerhaft löschen?",
+    "loading_campaigns": "Kampagnen werden geladen...",
+    "empty_title": "Noch keine Beiträge",
+    "empty_subtitle": "Erstellen Sie Ihren ersten Beitrag mit /start im Telegram-Bot.",
+    "loading_posts": "Beiträge werden geladen...",
+    "empty_campaign_posts": "Keine Beiträge in dieser Kampagne.",
+    "view_post": "Beitrag ansehen →",
+    "edit_text": "Text bearbeiten",
+    "reschedule": "Neu planen",
+    "pause": "Pausieren",
+    "resume": "Aktivieren",
+    "repost": "Erneut posten",
+    "other_language": "Andere Sprache",
+    "other_social_network": "Anderes soziales Netzwerk",
+    "delete": "Löschen",
+    "error_prefix": "Fehler",
+    "dialog_edit_title": "Beitragstext bearbeiten",
+    "dialog_reschedule_title": "Beitrag neu planen",
+    "dialog_repost_title": "Auf anderen Netzwerken erneut posten",
+    "dialog_translate_title": "Beitrag in einer anderen Sprache",
+    "select_platforms": "Plattformen auswählen:",
+    "scheduled_date_optional": "Geplantes Datum (optional):",
+    "cancel": "Abbrechen",
+    "saving": "Speichert...",
+    "save": "Speichern",
+    "creating": "Wird erstellt...",
+    "create_posts": "Beiträge erstellen",
+    "language_label": "Sprache:",
+    "platform_optional_label": "Plattform (optional, standardmäßig dieselbe):",
+    "same_platform": "Dieselbe Plattform",
+    "generating": "Wird generiert...",
+    "generate": "Generieren",
+    "image_alt": "Bild {index}",
+    "platforms": {
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "linkedin": "LinkedIn",
+      "x": "X / Twitter",
+      "discord": "Discord",
+      "blog": "Blog"
+    },
+    "statuses": {
+      "draft": "Entwurf",
+      "approved": "Genehmigt",
+      "scheduled": "Geplant",
+      "published": "Veröffentlicht",
+      "failed": "Fehlgeschlagen",
+      "skipped": "Übersprungen"
+    }
+  },
+  "account": {
+    "delete_title": "Konto löschen",
+    "delete_description": "Dies ist ein Gefahrenbereich. Vorsicht.",
+    "delete_confirm_title": "Sind Sie sicher?",
+    "active_subscription": "Aktives Abonnement",
+    "delete_warning": "Löschen Sie Ihr {site}-Konto{suffix} dauerhaft. Diese Aktion kann nicht rückgängig gemacht werden. Bitte vorsichtig fortfahren.",
+    "delete_warning_subscription_suffix": " und Ihr Abonnement",
+    "delete_button": "Konto löschen",
+    "name_title": "Ihr Name",
+    "name_description": "Geben Sie einen Anzeigenamen ein, mit dem Sie sich wohlfühlen.",
+    "name_label": "Name",
+    "save_changes_suffix": "Änderungen",
+    "name_hint": "Maximal 32 Zeichen",
+    "role_title": "Ihre Rolle",
+    "role_description": "Wählen Sie die Rolle, die Sie beim Testen der App verwenden möchten.",
+    "role_label": "Rolle",
+    "role_placeholder": "Rolle auswählen",
+    "role_hint": "Dieses Feld in der echten Produktion entfernen"
+  },
+  "telegram": {
+    "title": "Telegram-Bot",
+    "description_before": "Verbinden Sie Ihr Konto mit",
+    "description_after": "um Beiträge direkt aus Telegram zu erstellen und zu genehmigen.",
+    "generate_code": "Verbindungscode generieren",
+    "token_error": "Fehler beim Generieren des Tokens.",
+    "server_error": "Verbindung zum Server nicht möglich. Versuchen Sie es erneut.",
+    "send_code_before": "Senden Sie diesen Code an den Bot",
+    "send_code_after": ":",
+    "copy": "Kopieren",
+    "expires_in": "Der Code läuft in 10 Minuten ab."
   }
 }

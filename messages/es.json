@@ -1,46 +1,17 @@
 {
-  "nav": {
-    "dashboard": "Panel de control",
-    "campaigns": "Campañas",
-    "calendar": "Calendario",
-    "settings": "Configuración",
-    "brand_kit": "Kit de marca",
-    "billing": "Facturación"
-  },
-  "auth": {
-    "sign_in": "Iniciar sesión",
-    "sign_out": "Cerrar sesión",
-    "sign_in_with_google": "Iniciar sesión con Google",
-    "sign_in_with_email": "Iniciar sesión con Email",
-    "sign_up_with_email": "Registrarse con Email",
-    "welcome_back": "Bienvenido de nuevo",
-    "enter_email": "Ingresa tu email para iniciar sesión",
-    "no_account": "¿No tienes cuenta? Regístrate",
-    "or_continue_with": "O continúa con",
-    "back": "Volver"
-  },
-  "common": {
-    "save": "Guardar",
-    "cancel": "Cancelar",
-    "delete": "Eliminar",
-    "edit": "Editar",
-    "loading": "Cargando...",
-    "error": "Algo salió mal",
-    "success": "Guardado con éxito"
-  },
-  "settings": {
-    "title": "Configuración",
-    "subtitle": "Administra la configuración de la cuenta y del sitio.",
-    "language": "Idioma de la interfaz",
-    "language_description": "Elige el idioma para la interfaz",
-    "timezone": "Zona horaria",
-    "save_changes": "Guardar cambios"
-  },
-  "brand_kit": {
-    "title": "Kit de marca",
-    "logo": "Logotipo",
-    "colors": "Colores",
-    "typography": "Tipografía",
-    "templates": "Plantillas"
-  }
+  "nav": { "dashboard": "Panel de control", "campaigns": "Campañas", "calendar": "Calendario", "settings": "Configuración", "brand_kit": "Kit de marca", "billing": "Facturación" },
+  "auth": { "sign_in": "Iniciar sesión", "sign_out": "Cerrar sesión", "sign_in_with_google": "Iniciar sesión con Google", "sign_in_with_email": "Iniciar sesión con Email", "sign_up_with_email": "Registrarse", "welcome_back": "Bienvenido de nuevo", "enter_email": "Ingresa tu email para iniciar sesión", "no_account": "¿No tienes cuenta? Regístrate", "or_continue_with": "O continúa con", "back": "Volver" },
+  "common": { "save": "Guardar", "cancel": "Cancelar", "delete": "Eliminar", "edit": "Editar", "loading": "Cargando...", "error": "Algo salió mal", "success": "Guardado con éxito", "toggle_sidebar": "Cambiar barra lateral", "toggle_navigation_menu": "Cambiar menú de navegación" },
+  "settings": { "title": "Configuración", "subtitle": "Administra la configuración de la cuenta y del sitio.", "language": "Idioma de la interfaz", "language_description": "Elige el idioma de la interfaz", "timezone": "Zona horaria", "save_changes": "Guardar cambios" },
+  "brand_kit": { "title": "Kit de marca", "logo": "Logotipo", "colors": "Colores", "typography": "Tipografía", "templates": "Plantillas" },
+  "dashboard": { "title": "Panel de control", "subtitle": "El rendimiento de tu contenido en tiempo real." },
+  "marketing_nav": { "pricing": "Precios", "features": "Funciones", "blog": "Blog" },
+  "docs_nav": { "documentation": "Documentación", "guides": "Guías" },
+  "dashboard_sidebar": { "sections": { "content": "CONTENIDO", "brand": "MARCA", "account": "CUENTA" }, "items": { "dashboard": "Dashboard", "campaigns": "Publicaciones", "calendar": "Calendario", "brand_kit": "Brand Kit", "billing": "Suscripción", "settings": "Configuración", "admin_panel": "Panel Admin" } },
+  "search": { "button": "Buscar", "docs_suffix": "documentación", "placeholder": "Escribe un comando o busca...", "no_results": "No se encontraron resultados." },
+  "analytics": { "loading": "Cargando analytics...", "days": "{count} días", "syncing": "Sincronizando...", "sync_now": "Sincronizar ahora", "kpi_published_posts": "Publicaciones publicadas", "kpi_total_reach": "Reach total", "kpi_total_likes": "Likes totales", "kpi_total_shares": "Shares totales", "empty_title": "No hay publicaciones en los últimos {days} días", "empty_subtitle": "Publica tus primeras publicaciones para ver analytics.", "engagement_by_platform": "Engagement por plataforma", "metric_reach": "Reach", "metric_likes": "Likes", "metric_comments": "Comentarios", "metric_shares": "Compartidos", "post_distribution": "Distribución de publicaciones", "top_posts": "Top 5 publicaciones", "no_data": "No hay datos disponibles.", "not_available": "—", "score": "puntuación" },
+  "calendar": { "page_title": "Calendario Editorial", "page_subtitle": "Visualiza y reprograma tus publicaciones.", "today": "Hoy", "month": "Mes", "week": "Semana", "day": "Día", "status_legend": "Estado:", "scheduled_at": "Programado", "view_published_post": "Ver publicación publicada →", "publish_now": "Publicar ahora", "close": "Cerrar", "not_available": "—", "statuses": { "draft": "Borrador", "approved": "Aprobado", "scheduled": "Programado", "published": "Publicado", "failed": "Fallido", "skipped": "Omitido", "archived": "Archivado" } },
+  "campaigns": { "page_title": "Publicaciones", "page_subtitle": "Todas las publicaciones creadas desde el bot de Telegram.", "delete_confirm": "¿Eliminar esta publicación definitivamente?", "loading_campaigns": "Cargando campañas...", "empty_title": "Aún no hay publicaciones", "empty_subtitle": "Crea tu primera publicación desde el bot de Telegram con /start.", "loading_posts": "Cargando publicaciones...", "empty_campaign_posts": "No hay publicaciones en esta campaña.", "view_post": "Ver publicación →", "edit_text": "Editar texto", "reschedule": "Reprogramar", "pause": "Pausar", "resume": "Activar", "repost": "Republicar", "other_language": "Otro idioma", "other_social_network": "Otra red social", "delete": "Eliminar", "error_prefix": "Error", "dialog_edit_title": "Editar texto de la publicación", "dialog_reschedule_title": "Reprogramar publicación", "dialog_repost_title": "Republicar en otras redes", "dialog_translate_title": "Publicación en otro idioma", "select_platforms": "Selecciona las plataformas:", "scheduled_date_optional": "Fecha programada (opcional):", "cancel": "Cancelar", "saving": "Guardando...", "save": "Guardar", "creating": "Creando...", "create_posts": "Crear publicaciones", "language_label": "Idioma:", "platform_optional_label": "Plataforma (opcional, por defecto la misma):", "same_platform": "La misma plataforma", "generating": "Generando...", "generate": "Generar", "image_alt": "Imagen {index}", "platforms": { "instagram": "Instagram", "facebook": "Facebook", "linkedin": "LinkedIn", "x": "X / Twitter", "discord": "Discord", "blog": "Blog" }, "statuses": { "draft": "Borrador", "approved": "Aprobado", "scheduled": "Programado", "published": "Publicado", "failed": "Fallido", "skipped": "Omitido" } },
+  "account": { "delete_title": "Eliminar cuenta", "delete_description": "Esta es una zona peligrosa. Ten cuidado.", "delete_confirm_title": "¿Estás seguro?", "active_subscription": "Suscripción activa", "delete_warning": "Elimina permanentemente tu cuenta de {site}{suffix}. Esta acción no se puede deshacer. Continúa con cuidado.", "delete_warning_subscription_suffix": " y tu suscripción", "delete_button": "Eliminar cuenta", "name_title": "Tu nombre", "name_description": "Introduce un nombre visible con el que te sientas cómodo.", "name_label": "Nombre", "save_changes_suffix": "cambios", "name_hint": "Máximo 32 caracteres", "role_title": "Tu rol", "role_description": "Selecciona el rol que quieres usar mientras pruebas la app.", "role_label": "Rol", "role_placeholder": "Selecciona un rol", "role_hint": "Elimina este campo en producción real" },
+  "telegram": { "title": "Bot de Telegram", "description_before": "Conecta tu cuenta a", "description_after": "para crear y aprobar publicaciones directamente desde Telegram.", "generate_code": "Generar código de conexión", "token_error": "Error al generar el token.", "server_error": "No se puede conectar con el servidor. Inténtalo de nuevo.", "send_code_before": "Envía este código al bot", "send_code_after": ":", "copy": "Copiar", "expires_in": "El código expira en 10 minutos." }
 }

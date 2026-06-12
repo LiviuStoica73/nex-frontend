@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { useLocale, useTranslations } from "next-intl"
 import FullCalendar from "@fullcalendar/react"
 import dayGridPlugin from "@fullcalendar/daygrid"
 import timeGridPlugin from "@fullcalendar/timegrid"
@@ -14,6 +15,8 @@ interface Props {
 }
 
 export function EditorialCalendar({ orgId, token }: Props) {
+  const t = useTranslations("calendar")
+  const locale = useLocale()
   const calendarRef = useRef<FullCalendar>(null)
   const [posts, setPosts] = useState<Post[]>([])
   const [selected, setSelected] = useState<Post | null>(null)
@@ -79,17 +82,22 @@ export function EditorialCalendar({ orgId, token }: Props) {
         eventDrop={handleEventDrop}
         datesSet={(info) => fetchPosts(info.start, info.end)}
         height="auto"
-        locale="ro"
-        buttonText={{ today: "Azi", month: "Lună", week: "Săptămână", day: "Zi" }}
+        locale={locale}
+        buttonText={{
+          today: t("today"),
+          month: t("month"),
+          week: t("week"),
+          day: t("day"),
+        }}
       />
 
       {/* Legend */}
       <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-        <span className="font-medium">Status:</span>
+        <span className="font-medium">{t("status_legend")}</span>
         {Object.entries(STATUS_COLORS).map(([status, color]) => (
           <span key={status} className="flex items-center gap-1">
             <span className="inline-block h-3 w-3 rounded-full" style={{ backgroundColor: color }} />
-            {status}
+            {t(`statuses.${status}`)}
           </span>
         ))}
       </div>
@@ -99,6 +107,7 @@ export function EditorialCalendar({ orgId, token }: Props) {
         <PostDetailModal
           post={selected}
           token={token}
+          locale={locale}
           onClose={() => setSelected(null)}
           onPublishNow={async () => {
             await api.posts.publishNow(selected.id, token)
@@ -117,14 +126,18 @@ export function EditorialCalendar({ orgId, token }: Props) {
 function PostDetailModal({
   post,
   token,
+  locale,
   onClose,
   onPublishNow,
 }: {
   post: Post
   token: string
+  locale: string
   onClose: () => void
   onPublishNow: () => void
 }) {
+  const t = useTranslations("calendar")
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
       <div
@@ -142,17 +155,17 @@ function PostDetailModal({
             className="rounded-full px-3 py-1 text-xs font-semibold text-white"
             style={{ backgroundColor: STATUS_COLORS[post.status] }}
           >
-            {post.status}
+            {t(`statuses.${post.status}`)}
           </span>
         </div>
 
         <p className="mb-4 text-sm leading-relaxed text-foreground">
-          {post.text_content ?? "—"}
+          {post.text_content ?? t("not_available")}
         </p>
 
         {post.scheduled_at && (
           <p className="mb-4 text-xs text-muted-foreground">
-            Programat: {new Date(post.scheduled_at).toLocaleString("ro-RO")}
+            {t("scheduled_at")}: {new Date(post.scheduled_at).toLocaleString(locale)}
           </p>
         )}
 
@@ -163,7 +176,7 @@ function PostDetailModal({
             rel="noopener noreferrer"
             className="mb-4 block text-xs text-blue-500 underline"
           >
-            Vezi postarea publicată →
+            {t("view_published_post")}
           </a>
         )}
 
@@ -173,14 +186,14 @@ function PostDetailModal({
               onClick={onPublishNow}
               className="rounded bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
             >
-              Publică acum
+              {t("publish_now")}
             </button>
           )}
           <button
             onClick={onClose}
             className="rounded border px-4 py-2 text-sm font-medium hover:bg-muted"
           >
-            Închide
+            {t("close")}
           </button>
         </div>
       </div>

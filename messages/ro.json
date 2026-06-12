@@ -12,7 +12,7 @@
     "sign_out": "Deconectare",
     "sign_in_with_google": "Autentificare cu Google",
     "sign_in_with_email": "Autentificare cu Email",
-    "sign_up_with_email": "Înregistrare cu Email",
+    "sign_up_with_email": "Înregistrare",
     "welcome_back": "Bine ai revenit",
     "enter_email": "Introdu emailul pentru a te autentifica",
     "no_account": "Nu ai cont? Înregistrează-te",
@@ -26,7 +26,9 @@
     "edit": "Editează",
     "loading": "Se încarcă...",
     "error": "A apărut o eroare",
-    "success": "Salvat cu succes"
+    "success": "Salvat cu succes",
+    "toggle_sidebar": "Comută bara laterală",
+    "toggle_navigation_menu": "Comută meniul de navigare"
   },
   "settings": {
     "title": "Setări",
@@ -42,5 +44,169 @@
     "colors": "Culori",
     "typography": "Tipografie",
     "templates": "Șabloane"
+  },
+  "dashboard": {
+    "title": "Panou de control",
+    "subtitle": "Performanța conținutului tău în timp real."
+  },
+  "marketing_nav": {
+    "pricing": "Prețuri",
+    "features": "Funcționalități",
+    "blog": "Blog"
+  },
+  "docs_nav": {
+    "documentation": "Documentație",
+    "guides": "Ghiduri"
+  },
+  "dashboard_sidebar": {
+    "sections": {
+      "content": "CONȚINUT",
+      "brand": "BRAND",
+      "account": "CONT"
+    },
+    "items": {
+      "dashboard": "Dashboard",
+      "campaigns": "Postări",
+      "calendar": "Calendar",
+      "brand_kit": "Brand Kit",
+      "billing": "Abonament",
+      "settings": "Setări",
+      "admin_panel": "Panou Admin"
+    }
+  },
+  "search": {
+    "button": "Caută",
+    "docs_suffix": "documentație",
+    "placeholder": "Scrie o comandă sau caută...",
+    "no_results": "Nu am găsit rezultate."
+  },
+  "analytics": {
+    "loading": "Se încarcă analytics...",
+    "days": "{count} zile",
+    "syncing": "Se sincronizează...",
+    "sync_now": "Sync acum",
+    "kpi_published_posts": "Posturi publicate",
+    "kpi_total_reach": "Total Reach",
+    "kpi_total_likes": "Total Likes",
+    "kpi_total_shares": "Total Shares",
+    "empty_title": "Nicio postare publicată în ultimele {days} zile",
+    "empty_subtitle": "Publică primele posturi pentru a vedea analytics.",
+    "engagement_by_platform": "Engagement per platformă",
+    "metric_reach": "Reach",
+    "metric_likes": "Likes",
+    "metric_comments": "Comentarii",
+    "metric_shares": "Distribuiri",
+    "post_distribution": "Distribuție posturi",
+    "top_posts": "Top 5 posturi",
+    "no_data": "Nicio dată disponibilă.",
+    "not_available": "—",
+    "score": "scor"
+  },
+  "calendar": {
+    "page_title": "Calendar Editorial",
+    "page_subtitle": "Vizualizează și reprogramează postările.",
+    "today": "Azi",
+    "month": "Lună",
+    "week": "Săptămână",
+    "day": "Zi",
+    "status_legend": "Status:",
+    "scheduled_at": "Programat",
+    "view_published_post": "Vezi postarea publicată →",
+    "publish_now": "Publică acum",
+    "close": "Închide",
+    "not_available": "—",
+    "statuses": {
+      "draft": "Ciornă",
+      "approved": "Aprobat",
+      "scheduled": "Programat",
+      "published": "Publicat",
+      "failed": "Eșuat",
+      "skipped": "Omis",
+      "archived": "Arhivat"
+    }
+  },
+  "campaigns": {
+    "page_title": "Postări",
+    "page_subtitle": "Toate postările create din Telegram Bot.",
+    "delete_confirm": "Ștergi această postare definitiv?",
+    "loading_campaigns": "Se încarcă campaniile...",
+    "empty_title": "Nicio postare încă",
+    "empty_subtitle": "Creează prima postare din Telegram Bot cu comanda /start.",
+    "loading_posts": "Se încarcă postările...",
+    "empty_campaign_posts": "Nicio postare în această campanie.",
+    "view_post": "Vezi postarea →",
+    "edit_text": "Modifică text",
+    "reschedule": "Reprogramează",
+    "pause": "Pauză",
+    "resume": "Activează",
+    "repost": "Repostează",
+    "other_language": "Altă limbă",
+    "other_social_network": "Altă rețea socială",
+    "delete": "Șterge",
+    "error_prefix": "Eroare",
+    "dialog_edit_title": "Modifică textul postării",
+    "dialog_reschedule_title": "Reprogramează postarea",
+    "dialog_repost_title": "Repostează pe alte rețele",
+    "dialog_translate_title": "Postare în altă limbă",
+    "select_platforms": "Selectează platformele:",
+    "scheduled_date_optional": "Data programată (opțional):",
+    "cancel": "Anulează",
+    "saving": "Se salvează...",
+    "save": "Salvează",
+    "creating": "Se creează...",
+    "create_posts": "Creează postări",
+    "language_label": "Limba:",
+    "platform_optional_label": "Platformă (opțional, implicit aceeași):",
+    "same_platform": "Aceeași platformă",
+    "generating": "Se generează...",
+    "generate": "Generează",
+    "image_alt": "Imagine {index}",
+    "platforms": {
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "linkedin": "LinkedIn",
+      "x": "X / Twitter",
+      "discord": "Discord",
+      "blog": "Blog"
+    },
+    "statuses": {
+      "draft": "Ciornă",
+      "approved": "Aprobat",
+      "scheduled": "Programat",
+      "published": "Publicat",
+      "failed": "Eșuat",
+      "skipped": "Omis"
+    }
+  },
+  "account": {
+    "delete_title": "Șterge contul",
+    "delete_description": "Aceasta este o zonă periculoasă. Ai grijă.",
+    "delete_confirm_title": "Ești sigur?",
+    "active_subscription": "Abonament activ",
+    "delete_warning": "Șterge permanent contul tău {site}{suffix}. Această acțiune nu poate fi anulată. Continuă cu grijă.",
+    "delete_warning_subscription_suffix": " și abonamentul tău",
+    "delete_button": "Șterge contul",
+    "name_title": "Numele tău",
+    "name_description": "Introdu un nume afișat cu care te simți confortabil.",
+    "name_label": "Nume",
+    "save_changes_suffix": "modificările",
+    "name_hint": "Maxim 32 de caractere",
+    "role_title": "Rolul tău",
+    "role_description": "Selectează rolul pe care vrei să-l folosești cât timp testezi aplicația.",
+    "role_label": "Rol",
+    "role_placeholder": "Selectează un rol",
+    "role_hint": "Elimină acest câmp în producția reală"
+  },
+  "telegram": {
+    "title": "Telegram Bot",
+    "description_before": "Conectează-ți contul la",
+    "description_after": "pentru a crea și aproba postări direct din Telegram.",
+    "generate_code": "Generează cod de conectare",
+    "token_error": "Eroare la generarea token-ului.",
+    "server_error": "Nu se poate conecta la server. Încearcă din nou.",
+    "send_code_before": "Trimite acest cod botului",
+    "send_code_after": ":",
+    "copy": "Copiază",
+    "expires_in": "Codul expiră în 10 minute."
   }
 }

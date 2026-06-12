@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 
 import { docsConfig } from "@/config/docs";
 import { marketingConfig } from "@/config/marketing";
@@ -14,8 +15,13 @@ import { DocsSidebarNav } from "@/components/docs/sidebar-nav";
 import { Icons } from "@/components/shared/icons";
 
 import { ModeToggle } from "./mode-toggle";
+import {
+  translateDocsNavTitle,
+  translateMarketingNavTitle,
+} from "@/lib/i18n-navigation";
 
 export function NavMobile() {
+  const t = useTranslations();
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
   const selectedLayout = useSelectedLayoutSegment();
@@ -67,7 +73,9 @@ export function NavMobile() {
                 onClick={() => setOpen(false)}
                 className="flex w-full font-medium capitalize"
               >
-                {title}
+                {selectedLayout === "docs"
+                  ? translateDocsNavTitle(href, title, t)
+                  : translateMarketingNavTitle(href, title, t)}
               </Link>
             </li>
           ))}
@@ -81,7 +89,7 @@ export function NavMobile() {
                     onClick={() => setOpen(false)}
                     className="flex w-full font-medium capitalize"
                   >
-                    Admin
+                    {t("dashboard_sidebar.items.admin_panel")}
                   </Link>
                 </li>
               ) : null}
@@ -92,7 +100,7 @@ export function NavMobile() {
                   onClick={() => setOpen(false)}
                   className="flex w-full font-medium capitalize"
                 >
-                  Dashboard
+                  {t("nav.dashboard")}
                 </Link>
               </li>
             </>
@@ -104,7 +112,7 @@ export function NavMobile() {
                   onClick={() => setOpen(false)}
                   className="flex w-full font-medium capitalize"
                 >
-                  Login
+                  {t("auth.sign_in")}
                 </Link>
               </li>
 
@@ -114,7 +122,7 @@ export function NavMobile() {
                   onClick={() => setOpen(false)}
                   className="flex w-full font-medium capitalize"
                 >
-                  Sign up
+                  {t("auth.sign_up_with_email")}
                 </Link>
               </li>
             </>

@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useLocale, useTranslations } from "next-intl"
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, PieChart, Pie, Cell,
@@ -43,6 +44,8 @@ interface Props { orgId: string; token: string }
 const PERIODS = [7, 30, 90]
 
 export function AnalyticsDashboard({ orgId, token }: Props) {
+  const t = useTranslations("analytics")
+  const locale = useLocale()
   const [data, setData] = useState<AnalyticsData | null>(null)
   const [days, setDays] = useState(30)
   const [loading, setLoading] = useState(true)
@@ -65,7 +68,7 @@ export function AnalyticsDashboard({ orgId, token }: Props) {
 
   useEffect(() => { fetchAnalytics() }, [orgId, days])
 
-  if (loading) return <p className="text-muted-foreground">Se încarcă analytics...</p>
+  if (loading) return <p className="text-muted-foreground">{t("loading")}</p>
   if (!data) return null
 
   const engagementData = data.platforms.map((p) => ({
@@ -90,36 +93,36 @@ export function AnalyticsDashboard({ orgId, token }: Props) {
               className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                 days === d ? "bg-primary text-primary-foreground" : "border hover:bg-muted"
               }`}>
-              {d} zile
+              {t("days", { count: d })}
             </button>
           ))}
         </div>
         <button onClick={syncNow} disabled={syncing}
           className="flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm hover:bg-muted disabled:opacity-50">
           <RefreshCw className={`h-4 w-4 ${syncing ? "animate-spin" : ""}`} />
-          {syncing ? "Se sincronizează..." : "Sync acum"}
+          {syncing ? t("syncing") : t("sync_now")}
         </button>
       </div>
 
       {/* KPI cards */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        <KpiCard label="Posturi publicate" value={data.total_posts_published} />
-        <KpiCard label="Total Reach" value={data.platforms.reduce((s, p) => s + p.total_reach, 0)} />
-        <KpiCard label="Total Likes" value={data.platforms.reduce((s, p) => s + p.total_likes, 0)} />
-        <KpiCard label="Total Shares" value={data.platforms.reduce((s, p) => s + p.total_shares, 0)} />
+        <KpiCard label={t("kpi_published_posts")} value={data.total_posts_published} locale={locale} />
+        <KpiCard label={t("kpi_total_reach")} value={data.platforms.reduce((s, p) => s + p.total_reach, 0)} locale={locale} />
+        <KpiCard label={t("kpi_total_likes")} value={data.platforms.reduce((s, p) => s + p.total_likes, 0)} locale={locale} />
+        <KpiCard label={t("kpi_total_shares")} value={data.platforms.reduce((s, p) => s + p.total_shares, 0)} locale={locale} />
       </div>
 
       {data.total_posts_published === 0 ? (
         <div className="rounded-lg border border-dashed p-12 text-center text-muted-foreground">
           <TrendingUp className="mx-auto h-8 w-8 mb-3 opacity-40" />
-          <p className="font-medium">Nicio postare publicată în ultimele {days} zile</p>
-          <p className="text-sm">Publică primele posturi pentru a vedea analytics.</p>
+          <p className="font-medium">{t("empty_title", { days })}</p>
+          <p className="text-sm">{t("empty_subtitle")}</p>
         </div>
       ) : (
         <>
           {/* Engagement bar chart */}
           <div className="rounded-lg border bg-card p-5">
-            <h2 className="mb-4 font-semibold">Engagement per platformă</h2>
+            <h2 className="mb-4 font-semibold">{t("engagement_by_platform")}</h2>
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={engagementData}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
@@ -127,10 +130,10 @@ export function AnalyticsDashboard({ orgId, token }: Props) {
                 <YAxis className="text-xs" />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="Reach" fill="#6366F1" radius={[4,4,0,0]} />
-                <Bar dataKey="Likes" fill="#EC4899" radius={[4,4,0,0]} />
-                <Bar dataKey="Comments" fill="#F59E0B" radius={[4,4,0,0]} />
-                <Bar dataKey="Shares" fill="#10B981" radius={[4,4,0,0]} />
+                <Bar dataKey="Reach" name={t("metric_reach")} fill="#6366F1" radius={[4,4,0,0]} />
+                <Bar dataKey="Likes" name={t("metric_likes")} fill="#EC4899" radius={[4,4,0,0]} />
+                <Bar dataKey="Comments" name={t("metric_comments")} fill="#F59E0B" radius={[4,4,0,0]} />
+                <Bar dataKey="Shares" name={t("metric_shares")} fill="#10B981" radius={[4,4,0,0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -138,7 +141,7 @@ export function AnalyticsDashboard({ orgId, token }: Props) {
           {/* Distribution pie + Top posts */}
           <div className="grid gap-4 md:grid-cols-2">
             <div className="rounded-lg border bg-card p-5">
-              <h2 className="mb-4 font-semibold">Distribuție posturi</h2>
+              <h2 className="mb-4 font-semibold">{t("post_distribution")}</h2>
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <Pie data={pieData} dataKey="value" nameKey="name"
@@ -154,20 +157,20 @@ export function AnalyticsDashboard({ orgId, token }: Props) {
             </div>
 
             <div className="rounded-lg border bg-card p-5">
-              <h2 className="mb-4 font-semibold">Top 5 posturi</h2>
+              <h2 className="mb-4 font-semibold">{t("top_posts")}</h2>
               {data.top_posts.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Nicio dată disponibilă.</p>
+                <p className="text-sm text-muted-foreground">{t("no_data")}</p>
               ) : (
                 <ul className="space-y-2">
                   {data.top_posts.map((post) => (
                     <li key={post.post_id} className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <p className="text-xs font-medium uppercase text-muted-foreground">{post.platform}</p>
-                        <p className="text-sm line-clamp-1">{post.text_preview || "—"}</p>
+                        <p className="text-sm line-clamp-1">{post.text_preview || t("not_available")}</p>
                       </div>
                       <div className="shrink-0 text-right">
                         <p className="text-sm font-bold">{post.engagement_score}</p>
-                        <p className="text-xs text-muted-foreground">score</p>
+                        <p className="text-xs text-muted-foreground">{t("score")}</p>
                       </div>
                     </li>
                   ))}
@@ -181,11 +184,11 @@ export function AnalyticsDashboard({ orgId, token }: Props) {
   )
 }
 
-function KpiCard({ label, value }: { label: string; value: number }) {
+function KpiCard({ label, value, locale }: { label: string; value: number; locale: string }) {
   return (
     <div className="rounded-lg border bg-card p-4">
       <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="text-2xl font-bold">{value.toLocaleString("ro-RO")}</p>
+      <p className="text-2xl font-bold">{value.toLocaleString(locale)}</p>
     </div>
   )
 }

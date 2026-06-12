@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { NavItem, SidebarNavItem } from "@/types";
 import { Menu, PanelLeftClose, PanelRightClose } from "lucide-react";
 
@@ -21,12 +22,17 @@ import {
 } from "@/components/ui/tooltip";
 import { UpgradeCard } from "@/components/dashboard/upgrade-card";
 import { Icons } from "@/components/shared/icons";
+import {
+  translateSidebarItemTitle,
+  translateSidebarSectionTitle,
+} from "@/lib/i18n-navigation";
 
 interface DashboardSidebarProps {
   links: SidebarNavItem[];
 }
 
 export function DashboardSidebar({ links }: DashboardSidebarProps) {
+  const t = useTranslations();
   const path = usePathname();
 
   // NOTE: Use this if you want save in local storage -- Credits: Hosna Qasmei
@@ -95,7 +101,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                       className="stroke-muted-foreground"
                     />
                   )}
-                  <span className="sr-only">Toggle Sidebar</span>
+                  <span className="sr-only">{t("common.toggle_sidebar")}</span>
                 </Button>
               </div>
 
@@ -107,7 +113,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                   >
                     {isSidebarExpanded ? (
                       <p className="text-xs text-muted-foreground">
-                        {section.title}
+                        {translateSidebarSectionTitle(section.title, t)}
                       </p>
                     ) : (
                       <div className="h-4" />
@@ -131,7 +137,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                 )}
                               >
                                 <Icon className="size-5" />
-                                {item.title}
+                                {translateSidebarItemTitle(item.href, item.title, t)}
                                 {item.badge && (
                                   <Badge className="ml-auto flex size-5 shrink-0 items-center justify-center rounded-full">
                                     {item.badge}
@@ -159,7 +165,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                   </Link>
                                 </TooltipTrigger>
                                 <TooltipContent side="right">
-                                  {item.title}
+                                  {translateSidebarItemTitle(item.href, item.title, t)}
                                 </TooltipContent>
                               </Tooltip>
                             )}
@@ -183,6 +189,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
 }
 
 export function MobileSheetSidebar({ links }: DashboardSidebarProps) {
+  const t = useTranslations();
   const path = usePathname();
   const [open, setOpen] = useState(false);
   const { isSm, isMobile } = useMediaQuery();
@@ -197,7 +204,7 @@ export function MobileSheetSidebar({ links }: DashboardSidebarProps) {
             className="size-9 shrink-0 md:hidden"
           >
             <Menu className="size-5" />
-            <span className="sr-only">Toggle navigation menu</span>
+            <span className="sr-only">{t("common.toggle_navigation_menu")}</span>
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="flex flex-col p-0">
@@ -220,7 +227,7 @@ export function MobileSheetSidebar({ links }: DashboardSidebarProps) {
                     className="flex flex-col gap-0.5"
                   >
                     <p className="text-xs text-muted-foreground">
-                      {section.title}
+                      {translateSidebarSectionTitle(section.title, t)}
                     </p>
 
                     {section.items.map((item) => {
@@ -244,7 +251,7 @@ export function MobileSheetSidebar({ links }: DashboardSidebarProps) {
                               )}
                             >
                               <Icon className="size-5" />
-                              {item.title}
+                              {translateSidebarItemTitle(item.href, item.title, t)}
                               {item.badge && (
                                 <Badge className="ml-auto flex size-5 shrink-0 items-center justify-center rounded-full">
                                   {item.badge}

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { SidebarNavItem } from "@/types";
 
 import { cn } from "@/lib/utils";
@@ -15,8 +16,13 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Icons } from "@/components/shared/icons";
+import {
+  translateSidebarItemTitle,
+  translateSidebarSectionTitle,
+} from "@/lib/i18n-navigation";
 
 export function SearchCommand({ links }: { links: SidebarNavItem[] }) {
+  const t = useTranslations();
   const [open, setOpen] = React.useState(false);
   const router = useRouter();
 
@@ -46,8 +52,8 @@ export function SearchCommand({ links }: { links: SidebarNavItem[] }) {
         onClick={() => setOpen(true)}
       >
         <span className="inline-flex">
-          Search
-          <span className="hidden sm:inline-flex">&nbsp;documentation</span>...
+          {t("search.button")}
+          <span className="hidden sm:inline-flex">&nbsp;{t("search.docs_suffix")}</span>...
         </span>
         <kbd className="pointer-events-none absolute right-[0.3rem] top-[0.45rem] hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
           <span className="text-xs">⌘</span>K
@@ -55,11 +61,14 @@ export function SearchCommand({ links }: { links: SidebarNavItem[] }) {
       </Button>
 
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type a command or search..." />
+        <CommandInput placeholder={t("search.placeholder")} />
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandEmpty>{t("search.no_results")}</CommandEmpty>
           {links.map((section) => (
-            <CommandGroup key={section.title} heading={section.title}>
+            <CommandGroup
+              key={section.title}
+              heading={translateSidebarSectionTitle(section.title, t)}
+            >
               {section.items.map((item) => {
                 const Icon = Icons[item.icon || "arrowRight"];
                 return (
@@ -70,7 +79,7 @@ export function SearchCommand({ links }: { links: SidebarNavItem[] }) {
                     }}
                   >
                     <Icon className="mr-2 size-5" />
-                    {item.title}
+                    {translateSidebarItemTitle(item.href, item.title, t)}
                   </CommandItem>
                 );
               })}

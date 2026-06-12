@@ -4,6 +4,7 @@ import { useContext } from "react";
 import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 
 import { docsConfig } from "@/config/docs";
 import { marketingConfig } from "@/config/marketing";
@@ -18,6 +19,10 @@ import { Icons } from "@/components/shared/icons";
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
 import { ModeToggle } from "@/components/layout/mode-toggle";
 import { LocaleSwitcherCompact } from "@/components/ui/locale-switcher-compact";
+import {
+  translateDocsNavTitle,
+  translateMarketingNavTitle,
+} from "@/lib/i18n-navigation";
 
 interface NavBarProps {
   scroll?: boolean;
@@ -25,6 +30,7 @@ interface NavBarProps {
 }
 
 export function NavBar({ scroll = false }: NavBarProps) {
+  const t = useTranslations();
   const scrolled = useScroll(50);
   const { data: session, status } = useSession();
   const { setShowSignInModal } = useContext(ModalContext);
@@ -80,7 +86,9 @@ export function NavBar({ scroll = false }: NavBarProps) {
                     item.disabled && "cursor-not-allowed opacity-80",
                   )}
                 >
-                  {item.title}
+                  {selectedLayout === "docs"
+                    ? translateDocsNavTitle(item.href, item.title, t)
+                    : translateMarketingNavTitle(item.href, item.title, t)}
                 </Link>
               ))}
             </nav>
@@ -124,7 +132,7 @@ export function NavBar({ scroll = false }: NavBarProps) {
                 size="sm"
                 rounded="full"
               >
-                <span>Dashboard</span>
+                <span>{t("nav.dashboard")}</span>
               </Button>
             </Link>
           ) : status === "unauthenticated" ? (
@@ -135,7 +143,7 @@ export function NavBar({ scroll = false }: NavBarProps) {
               rounded="full"
               onClick={() => setShowSignInModal(true)}
             >
-              <span>Sign In</span>
+              <span>{t("auth.sign_in")}</span>
               <Icons.arrowRight className="size-4" />
             </Button>
           ) : (

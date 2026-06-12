@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
 import { getCurrentUser } from "@/lib/session";
 import { constructMetadata } from "@/lib/utils";
@@ -15,6 +16,7 @@ export const metadata = constructMetadata({
 });
 
 export default async function SettingsPage() {
+  const t = await getTranslations("settings");
   const user = await getCurrentUser();
 
   if (!user?.id) redirect("/login");
@@ -22,8 +24,8 @@ export default async function SettingsPage() {
   return (
     <>
       <DashboardHeader
-        heading="Settings"
-        text="Manage account and website settings."
+        heading={t("title")}
+        text={t("subtitle")}
       />
       <div className="divide-y divide-muted pb-10">
         <UserNameForm user={{ id: user.id, name: user.name || "" }} />

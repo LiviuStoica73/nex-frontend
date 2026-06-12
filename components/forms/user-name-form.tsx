@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { updateUserName, type FormData } from "@/actions/update-user-name";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { User } from "@prisma/client";
@@ -20,6 +21,7 @@ interface UserNameFormProps {
 }
 
 export function UserNameForm({ user }: UserNameFormProps) {
+  const t = useTranslations("account");
   const { update } = useSession();
   const [updated, setUpdated] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -58,13 +60,13 @@ export function UserNameForm({ user }: UserNameFormProps) {
 
   return (
     <form onSubmit={onSubmit}>
-      <SectionColumns
-        title="Your Name"
-        description="Please enter a display name you are comfortable with."
-      >
+        <SectionColumns
+          title={t("name_title")}
+          description={t("name_description")}
+        >
         <div className="flex w-full items-center gap-2">
           <Label className="sr-only" htmlFor="name">
-            Name
+            {t("name_label")}
           </Label>
           <Input
             id="name"
@@ -84,7 +86,7 @@ export function UserNameForm({ user }: UserNameFormProps) {
             ) : (
               <p>
                 Save
-                <span className="hidden sm:inline-flex">&nbsp;Changes</span>
+                <span className="hidden sm:inline-flex">&nbsp;{t("save_changes_suffix")}</span>
               </p>
             )}
           </Button>
@@ -95,7 +97,7 @@ export function UserNameForm({ user }: UserNameFormProps) {
               {errors.name.message}
             </p>
           )}
-          <p className="text-[13px] text-muted-foreground">Max 32 characters</p>
+          <p className="text-[13px] text-muted-foreground">{t("name_hint")}</p>
         </div>
       </SectionColumns>
     </form>

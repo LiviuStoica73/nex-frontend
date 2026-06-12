@@ -12,7 +12,7 @@
     "sign_out": "Sign out",
     "sign_in_with_google": "Sign in with Google",
     "sign_in_with_email": "Sign in with Email",
-    "sign_up_with_email": "Sign up with Email",
+    "sign_up_with_email": "Sign up",
     "welcome_back": "Welcome back",
     "enter_email": "Enter your email to sign in to your account",
     "no_account": "Don't have an account? Sign Up",
@@ -26,12 +26,14 @@
     "edit": "Edit",
     "loading": "Loading...",
     "error": "Something went wrong",
-    "success": "Saved successfully"
+    "success": "Saved successfully",
+    "toggle_sidebar": "Toggle sidebar",
+    "toggle_navigation_menu": "Toggle navigation menu"
   },
   "settings": {
     "title": "Settings",
     "subtitle": "Manage account and website settings.",
-    "language": "Interface Language",
+    "language": "Interface language",
     "language_description": "Choose the language for the interface",
     "timezone": "Timezone",
     "save_changes": "Save changes"
@@ -42,5 +44,169 @@
     "colors": "Colors",
     "typography": "Typography",
     "templates": "Templates"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Your content performance in real time."
+  },
+  "marketing_nav": {
+    "pricing": "Pricing",
+    "features": "Features",
+    "blog": "Blog"
+  },
+  "docs_nav": {
+    "documentation": "Documentation",
+    "guides": "Guides"
+  },
+  "dashboard_sidebar": {
+    "sections": {
+      "content": "CONTENT",
+      "brand": "BRAND",
+      "account": "ACCOUNT"
+    },
+    "items": {
+      "dashboard": "Dashboard",
+      "campaigns": "Posts",
+      "calendar": "Calendar",
+      "brand_kit": "Brand Kit",
+      "billing": "Billing",
+      "settings": "Settings",
+      "admin_panel": "Admin Panel"
+    }
+  },
+  "search": {
+    "button": "Search",
+    "docs_suffix": "documentation",
+    "placeholder": "Type a command or search...",
+    "no_results": "No results found."
+  },
+  "analytics": {
+    "loading": "Loading analytics...",
+    "days": "{count} days",
+    "syncing": "Syncing...",
+    "sync_now": "Sync now",
+    "kpi_published_posts": "Published posts",
+    "kpi_total_reach": "Total reach",
+    "kpi_total_likes": "Total likes",
+    "kpi_total_shares": "Total shares",
+    "empty_title": "No posts published in the last {days} days",
+    "empty_subtitle": "Publish your first posts to see analytics.",
+    "engagement_by_platform": "Engagement by platform",
+    "metric_reach": "Reach",
+    "metric_likes": "Likes",
+    "metric_comments": "Comments",
+    "metric_shares": "Shares",
+    "post_distribution": "Post distribution",
+    "top_posts": "Top 5 posts",
+    "no_data": "No data available.",
+    "not_available": "—",
+    "score": "score"
+  },
+  "calendar": {
+    "page_title": "Editorial Calendar",
+    "page_subtitle": "View and reschedule your posts.",
+    "today": "Today",
+    "month": "Month",
+    "week": "Week",
+    "day": "Day",
+    "status_legend": "Status:",
+    "scheduled_at": "Scheduled",
+    "view_published_post": "View published post →",
+    "publish_now": "Publish now",
+    "close": "Close",
+    "not_available": "—",
+    "statuses": {
+      "draft": "Draft",
+      "approved": "Approved",
+      "scheduled": "Scheduled",
+      "published": "Published",
+      "failed": "Failed",
+      "skipped": "Skipped",
+      "archived": "Archived"
+    }
+  },
+  "campaigns": {
+    "page_title": "Posts",
+    "page_subtitle": "All posts created from the Telegram bot.",
+    "delete_confirm": "Delete this post permanently?",
+    "loading_campaigns": "Loading campaigns...",
+    "empty_title": "No posts yet",
+    "empty_subtitle": "Create your first post from the Telegram bot with /start.",
+    "loading_posts": "Loading posts...",
+    "empty_campaign_posts": "No posts in this campaign.",
+    "view_post": "View post →",
+    "edit_text": "Edit text",
+    "reschedule": "Reschedule",
+    "pause": "Pause",
+    "resume": "Resume",
+    "repost": "Repost",
+    "other_language": "Another language",
+    "other_social_network": "Another social network",
+    "delete": "Delete",
+    "error_prefix": "Error",
+    "dialog_edit_title": "Edit post text",
+    "dialog_reschedule_title": "Reschedule post",
+    "dialog_repost_title": "Repost on other networks",
+    "dialog_translate_title": "Post in another language",
+    "select_platforms": "Select platforms:",
+    "scheduled_date_optional": "Scheduled date (optional):",
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "save": "Save",
+    "creating": "Creating...",
+    "create_posts": "Create posts",
+    "language_label": "Language:",
+    "platform_optional_label": "Platform (optional, default is the same):",
+    "same_platform": "Same platform",
+    "generating": "Generating...",
+    "generate": "Generate",
+    "image_alt": "Image {index}",
+    "platforms": {
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "linkedin": "LinkedIn",
+      "x": "X / Twitter",
+      "discord": "Discord",
+      "blog": "Blog"
+    },
+    "statuses": {
+      "draft": "Draft",
+      "approved": "Approved",
+      "scheduled": "Scheduled",
+      "published": "Published",
+      "failed": "Failed",
+      "skipped": "Skipped"
+    }
+  },
+  "account": {
+    "delete_title": "Delete account",
+    "delete_description": "This is a danger zone. Be careful.",
+    "delete_confirm_title": "Are you sure?",
+    "active_subscription": "Active subscription",
+    "delete_warning": "Permanently delete your {site} account{suffix}. This action cannot be undone. Please proceed carefully.",
+    "delete_warning_subscription_suffix": " and your subscription",
+    "delete_button": "Delete account",
+    "name_title": "Your name",
+    "name_description": "Enter a display name you are comfortable with.",
+    "name_label": "Name",
+    "save_changes_suffix": "Changes",
+    "name_hint": "Max 32 characters",
+    "role_title": "Your role",
+    "role_description": "Select the role you want to use while testing the app.",
+    "role_label": "Role",
+    "role_placeholder": "Select a role",
+    "role_hint": "Remove this field in real production"
+  },
+  "telegram": {
+    "title": "Telegram Bot",
+    "description_before": "Connect your account to",
+    "description_after": "to create and approve posts directly from Telegram.",
+    "generate_code": "Generate connection code",
+    "token_error": "Error generating the token.",
+    "server_error": "Cannot connect to the server. Try again.",
+    "send_code_before": "Send this code to the bot",
+    "send_code_after": ":",
+    "copy": "Copy",
+    "expires_in": "The code expires in 10 minutes."
   }
 }

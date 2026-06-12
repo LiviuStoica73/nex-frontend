@@ -107,6 +107,29 @@ export const api = {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       }),
+    update: (orgId: string, postId: string, data: { text_content?: string; scheduled_at?: string; status?: string }, token: string) =>
+      apiFetch<Post>(`/api/v1/orgs/${orgId}/posts/${postId}`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    delete: (orgId: string, postId: string, token: string) =>
+      apiFetch<void>(`/api/v1/orgs/${orgId}/posts/${postId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    repost: (orgId: string, postId: string, data: { platforms: string[]; scheduled_at?: string }, token: string) =>
+      apiFetch<Post[]>(`/api/v1/orgs/${orgId}/posts/${postId}/repost`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    translate: (orgId: string, postId: string, data: { language: string; platform?: string }, token: string) =>
+      apiFetch<Post>(`/api/v1/orgs/${orgId}/posts/${postId}/translate`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { Authorization: `Bearer ${token}` },
+      }),
   },
 
   generate: {
