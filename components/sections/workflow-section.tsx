@@ -1,88 +1,81 @@
 "use client";
 
-const steps = [
-  {
-    number: "01",
-    title: "AI învață business-ul tău",
-    description:
-      "Încarci documentele brandului — ghid de stil, produse, ton de comunicare. AI-ul tău personal învață totul și devine expertul brandului tău.",
-    image: "/_static/workflow/1-rag.webp",
-  },
-  {
-    number: "02",
-    title: "Ceri idei de postare",
-    description:
-      "Îi spui lui Nex-Nex despre ce vrei să postezi. Primești instant 5 idei creative, adaptate brandului și audienței tale.",
-    image: "/_static/workflow/2-idei.webp",
-  },
-  {
-    number: "03",
-    title: "Alegi ideea",
-    description:
-      "Selectezi ideea care ți se potrivește cel mai bine. Nex-Nex o dezvoltă în direcția pe care o alegi tu.",
-    image: "/_static/workflow/3-alegere.webp",
-  },
-  {
-    number: "04",
-    title: "AI scrie textul, SEO și hashtag-urile",
-    description:
-      "Primești textul complet, optimizat SEO, cu hashtag-urile potrivite pentru fiecare platformă. Editezi dacă vrei, sau publici direct.",
-    image: "/_static/workflow/4-text.webp",
-  },
-  {
-    number: "05",
-    title: "Urci poza sau ceri una AI",
-    description:
-      "Ai o poză? O încarci. Nu ai? Descrii ce vrei și AI-ul generează un prompt profesional pentru imaginea perfectă.",
-    image: "/_static/workflow/5-poza.webp",
-  },
-  {
-    number: "06",
-    title: "AI generează imaginea",
-    description:
-      "Din promptul tău, AI-ul creează imagini profesionale. Alegi varianta preferată direct din aplicație.",
-    image: "/_static/workflow/6-generare.webp",
-  },
-  {
-    number: "07",
-    title: "Postezi acum sau programezi",
-    description:
-      "Publici imediat sau alegi momentul optim. Nex-Nex îți arată când audiența ta e cel mai activă.",
-    image: "/_static/workflow/7-programare.webp",
-  },
-  {
-    number: "08",
-    title: "Moment optim per rețea",
-    description:
-      "Fiecare platformă are orele ei de aur. Nex-Nex calculează automat când să postezi pe Instagram, LinkedIn, TikTok și altele pentru reach maxim.",
-    image: "/_static/workflow/8-timing.webp",
-  },
-  {
-    number: "09",
-    title: "Publici pe toate rețelele",
-    description:
-      "Un singur click — postarea ajunge simultan pe toate platformele tale: Instagram, LinkedIn, Facebook, X, TikTok, Discord.",
-    image: "/_static/workflow/9-publicare.webp",
-  },
-  {
-    number: "10",
-    title: "În orice limbă",
-    description:
-      "Audiența ta e globală? Nex-Nex traduce și adaptează cultural postarea în peste 50 de limbi, menținând vocea brandului tău.",
-    image: "/_static/workflow/10-limbi.webp",
-  },
-];
+import { useTranslations } from "next-intl";
 
 export function WorkflowSection() {
+  const t = useTranslations("workflow_section");
+  const steps = [
+    {
+      number: "01",
+      title: t("steps.01.title"),
+      description: t("steps.01.description"),
+      image: "/_static/workflow/1-rag.webp",
+    },
+    {
+      number: "02",
+      title: t("steps.02.title"),
+      description: t("steps.02.description"),
+      image: "/_static/workflow/2-idei.webp",
+    },
+    {
+      number: "03",
+      title: t("steps.03.title"),
+      description: t("steps.03.description"),
+      image: "/_static/workflow/3-alegere.webp",
+    },
+    {
+      number: "04",
+      title: t("steps.04.title"),
+      description: t("steps.04.description"),
+      image: "/_static/workflow/4-text.webp",
+    },
+    {
+      number: "05",
+      title: t("steps.05.title"),
+      description: t("steps.05.description"),
+      image: "/_static/workflow/5-poza.webp",
+    },
+    {
+      number: "06",
+      title: t("steps.06.title"),
+      description: t("steps.06.description"),
+      image: "/_static/workflow/6-generare.webp",
+    },
+    {
+      number: "07",
+      title: t("steps.07.title"),
+      description: t("steps.07.description"),
+      image: "/_static/workflow/7-programare.webp",
+    },
+    {
+      number: "08",
+      title: t("steps.08.title"),
+      description: t("steps.08.description"),
+      image: "/_static/workflow/8-timing.webp",
+    },
+    {
+      number: "09",
+      title: t("steps.09.title"),
+      description: t("steps.09.description"),
+      image: "/_static/workflow/9-publicare.webp",
+    },
+    {
+      number: "10",
+      title: t("steps.10.title"),
+      description: t("steps.10.description"),
+      image: "/_static/workflow/10-limbi.webp",
+    },
+  ];
+
   return (
     <section className="py-16 md:py-24">
       <div className="container max-w-6xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-heading font-bold md:text-4xl">
-            Cum funcționează
+            {t("title")}
           </h2>
           <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto">
-            De la idee la publicare pe toate rețelele — în câteva minute.
+            {t("subtitle")}
           </p>
         </div>
 

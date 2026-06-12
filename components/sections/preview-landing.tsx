@@ -1,6 +1,10 @@
+import { getTranslations } from "next-intl/server";
+
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
 
-export default function PreviewLanding() {
+export default async function PreviewLanding() {
+  const t = await getTranslations("preview_landing");
+
   return (
     <div className="pb-6 sm:pb-16">
       <MaxWidthWrapper>
@@ -9,7 +13,7 @@ export default function PreviewLanding() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/_static/hero.webp"
-              alt="Nex-Nex — The Next Era of Content"
+              alt={t("image_alt")}
               className="w-full h-auto object-cover"
             />
           </div>

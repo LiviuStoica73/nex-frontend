@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 import { features } from "@/config/landing";
 import { Button } from "@/components/ui/button";
@@ -7,14 +8,16 @@ import { Icons } from "@/components/shared/icons";
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
 
 export default function Features() {
+  const t = useTranslations("features_section");
+
   return (
     <section>
       <div className="pb-6 pt-28">
         <MaxWidthWrapper>
           <HeaderSection
-            label="Funcționalități"
-            title="Tot ce face Nex-Nex pentru tine."
-            subtitle="De la generare de conținut la publicare automată — toate instrumentele într-o singură aplicație."
+            label={t("label")}
+            title={t("title")}
+            subtitle={t("subtitle")}
           />
 
           <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -46,7 +49,7 @@ export default function Features() {
                         className="px-4"
                       >
                         <Link href="/pricing" className="flex items-center gap-2">
-                          <span>Vezi planuri</span>
+                          <span>{t("cta")}</span>
                           <Icons.arrowUpRight className="size-4" />
                         </Link>
                       </Button>

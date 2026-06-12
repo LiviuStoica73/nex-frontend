@@ -1,20 +1,23 @@
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 import { testimonials } from "@/config/landing";
 
 export default function Testimonials() {
+  const t = useTranslations("testimonials_section");
+
   return (
     <section>
       <div className="container flex max-w-6xl flex-col gap-10 py-32 sm:gap-y-16">
         <div className="text-center">
           <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-3">
-            Testimoniale
+            {t("label")}
           </p>
           <h2 className="text-3xl font-heading font-bold md:text-4xl">
-            Ce ar spune clienții noștri — dacă am avea deja clienți 😄
+            {t("title")}
           </h2>
           <p className="mt-4 text-muted-foreground text-base italic max-w-2xl mx-auto">
-            Testimoniale ipotetice generate de AI. Cele reale vor apărea în curând.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -43,7 +46,7 @@ export default function Testimonials() {
                         </p>
                       </div>
                       <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                        🤖 AI
+                        {t("badge_ai")}
                       </span>
                     </div>
                     <q className="text-muted-foreground">{item.review}</q>

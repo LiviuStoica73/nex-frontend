@@ -1,8 +1,11 @@
 import Link from "next/link"
+import { getTranslations } from "next-intl/server"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 
 export default async function HeroLanding() {
+  const t = await getTranslations("hero_landing")
+
   return (
     <section className="space-y-6 py-12 sm:py-20 lg:py-24">
       <div className="container flex max-w-5xl flex-col items-center gap-5 text-center">
@@ -14,13 +17,13 @@ export default async function HeroLanding() {
           )}
         >
           <span className="mr-2">🚀</span>
-          14 zile trial gratuit · Fără card de credit
+          {t("trial_badge")}
         </Link>
 
         <h1 className="text-balance font-urban text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-[66px]">
-          Expert AI{" "}
+          {t("title_prefix")}{" "}
           <span className="text-gradient_indigo-purple font-extrabold">
-            de buzunar
+            {t("title_highlight")}
           </span>
         </h1>
 
@@ -28,8 +31,7 @@ export default async function HeroLanding() {
           className="max-w-2xl text-balance leading-normal text-muted-foreground sm:text-xl sm:leading-8"
           style={{ animationDelay: "0.35s", animationFillMode: "forwards" }}
         >
-          AI învață brandul tău, creează conținut profesionist și-l publică
-          automat pe rețele sociale.
+          {t("description")}
         </p>
 
         <div
@@ -44,7 +46,7 @@ export default async function HeroLanding() {
               "gap-2",
             )}
           >
-            <span>Încearcă gratuit</span>
+            <span>{t("primary_cta")}</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           </Link>
           <Link
@@ -54,12 +56,12 @@ export default async function HeroLanding() {
               "px-5",
             )}
           >
-            Vezi planuri
+            {t("secondary_cta")}
           </Link>
         </div>
 
         <p className="text-sm text-muted-foreground">
-          Facebook · Instagram · LinkedIn · X · Discord · Blog WordPress
+          {t("platforms")}
         </p>
       </div>
     </section>
