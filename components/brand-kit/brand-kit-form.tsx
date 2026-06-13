@@ -38,7 +38,10 @@ interface BrandKit {
   qp_default_tone: string
   qp_default_logo: boolean
   qp_default_sign: boolean
+  qp_default_logo_sign: boolean
   qp_default_template: boolean
+  qp_default_text_overlay: boolean
+  qp_default_schedule_mode: string
 }
 
 interface RagDoc {
@@ -80,7 +83,10 @@ export function BrandKitForm({ orgId, token }: Props) {
     qp_default_tone: "neutral",
     qp_default_logo: false,
     qp_default_sign: false,
+    qp_default_logo_sign: false,
     qp_default_template: false,
+    qp_default_text_overlay: false,
+    qp_default_schedule_mode: "best_time",
   })
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -115,7 +121,10 @@ export function BrandKitForm({ orgId, token }: Props) {
           qp_default_tone: data.qp_default_tone || "neutral",
           qp_default_logo: data.qp_default_logo ?? false,
           qp_default_sign: data.qp_default_sign ?? false,
+          qp_default_logo_sign: data.qp_default_logo_sign ?? false,
           qp_default_template: data.qp_default_template ?? false,
+          qp_default_text_overlay: data.qp_default_text_overlay ?? false,
+          qp_default_schedule_mode: data.qp_default_schedule_mode || "best_time",
         })
         setKeywordsInput((data.keywords || []).join(", "))
         setAvoidInput((data.avoid_words || []).join(", "))
@@ -170,7 +179,10 @@ export function BrandKitForm({ orgId, token }: Props) {
           qp_default_tone: kit.qp_default_tone,
           qp_default_logo: kit.qp_default_logo,
           qp_default_sign: kit.qp_default_sign,
+          qp_default_logo_sign: kit.qp_default_logo_sign,
           qp_default_template: kit.qp_default_template,
+          qp_default_text_overlay: kit.qp_default_text_overlay,
+          qp_default_schedule_mode: kit.qp_default_schedule_mode,
         }),
       })
       if (!res.ok) setError(`Eroare ${res.status}: ${await res.text()}`)
@@ -991,6 +1003,22 @@ export function BrandKitForm({ orgId, token }: Props) {
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
+                  checked={kit.qp_default_logo_sign}
+                  onChange={(e) => setKit((k) => ({ ...k, qp_default_logo_sign: e.target.checked }))}
+                  className="accent-primary"
+                />
+                <div>
+                  <span className="text-sm font-medium">Logo + Sign combinat</span>
+                  <span className="ml-1 text-xs text-muted-foreground">— trimite fișierul combinat ca referință unică</span>
+                  {kit.logo_sign_url
+                    ? <span className="ml-2 text-xs text-muted-foreground">(încărcat ✓)</span>
+                    : <span className="ml-2 text-xs text-destructive">(neîncărcat)</span>
+                  }
+                </div>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
                   checked={kit.qp_default_template}
                   onChange={(e) => setKit((k) => ({ ...k, qp_default_template: e.target.checked }))}
                   className="accent-primary"
@@ -1003,6 +1031,46 @@ export function BrandKitForm({ orgId, token }: Props) {
                   }
                 </div>
               </label>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={kit.qp_default_text_overlay}
+                  onChange={(e) => setKit((k) => ({ ...k, qp_default_text_overlay: e.target.checked }))}
+                  className="accent-primary"
+                />
+                <div>
+                  <span className="text-sm font-medium">Text postare pe imagine</span>
+                  <span className="ml-1 text-xs text-muted-foreground">— primele 80 de caractere din textul postării</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          {/* Programare implicită */}
+          <div className="rounded-lg border bg-card p-5 space-y-4">
+            <div>
+              <h2 className="font-semibold">Programare implicită</h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Momentul publicării ales automat în Quick Post. Poate fi schimbat la fiecare postare.
+              </p>
+            </div>
+            <div className="flex flex-col gap-2">
+              {[
+                { value: "best_time", label: "🎯 Best time — cel mai bun moment al zilei per platformă" },
+                { value: "now",       label: "⚡ Acum — publică imediat la confirmare" },
+              ].map(({ value, label }) => (
+                <label key={value} className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="qp_default_schedule_mode"
+                    value={value}
+                    checked={kit.qp_default_schedule_mode === value}
+                    onChange={() => setKit((k) => ({ ...k, qp_default_schedule_mode: value }))}
+                    className="accent-primary"
+                  />
+                  <span className="text-sm">{label}</span>
+                </label>
+              ))}
             </div>
           </div>
 
