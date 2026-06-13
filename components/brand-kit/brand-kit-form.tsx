@@ -45,6 +45,9 @@ interface BrandKit {
   qp_default_image_direction: string
   qp_default_image_format: string
   qp_image_format_instructions: Record<string, string>
+  qp_custom_image_format: string
+  qp_custom_image_direction: string
+  qp_custom_tone: string
   qp_default_use_emoji: boolean
   qp_default_use_hashtags: boolean
 }
@@ -95,6 +98,9 @@ export function BrandKitForm({ orgId, token }: Props) {
     qp_default_image_direction: "auto",
     qp_default_image_format: "square",
     qp_image_format_instructions: {},
+    qp_custom_image_format: "",
+    qp_custom_image_direction: "",
+    qp_custom_tone: "",
     qp_default_use_emoji: true,
     qp_default_use_hashtags: true,
   })
@@ -138,6 +144,9 @@ export function BrandKitForm({ orgId, token }: Props) {
           qp_default_image_direction: data.qp_default_image_direction || "auto",
           qp_default_image_format: data.qp_default_image_format || "square",
           qp_image_format_instructions: data.qp_image_format_instructions || {},
+          qp_custom_image_format: data.qp_custom_image_format || "",
+          qp_custom_image_direction: data.qp_custom_image_direction || "",
+          qp_custom_tone: data.qp_custom_tone || "",
           qp_default_use_emoji: data.qp_default_use_emoji ?? true,
           qp_default_use_hashtags: data.qp_default_use_hashtags ?? true,
         })
@@ -201,6 +210,9 @@ export function BrandKitForm({ orgId, token }: Props) {
           qp_default_image_direction: kit.qp_default_image_direction,
           qp_default_image_format: kit.qp_default_image_format,
           qp_image_format_instructions: kit.qp_image_format_instructions,
+          qp_custom_image_format: kit.qp_custom_image_format,
+          qp_custom_image_direction: kit.qp_custom_image_direction,
+          qp_custom_tone: kit.qp_custom_tone,
           qp_default_use_emoji: kit.qp_default_use_emoji,
           qp_default_use_hashtags: kit.qp_default_use_hashtags,
         }),
@@ -954,29 +966,64 @@ export function BrandKitForm({ orgId, token }: Props) {
             <div>
               <h2 className="font-semibold">Ton implicit pentru text</h2>
               <p className="text-xs text-muted-foreground mt-1">
-                Aplicat la generarea textului în Quick Post. "Neutru" înseamnă că AI-ul alege.
+                Aplicat la generarea textului în Quick Post. "Neutru" înseamnă că AI-ul alege stilul potrivit.
               </p>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {[
-                { value: "neutral",   label: "⚖️ Neutru" },
-                { value: "inspiring", label: "✨ Inspirațional" },
-                { value: "formal",    label: "💼 Formal" },
-                { value: "casual",    label: "😊 Casual" },
-              ].map(({ value, label }) => (
-                <button
+                { value: "neutral",   label: "⚖️ Neutru",         desc: "AI-ul alege stilul potrivit contextului" },
+                { value: "inspiring", label: "✨ Inspirațional",   desc: "Motivează, energizează — pentru brand awareness" },
+                { value: "formal",    label: "💼 Formal",          desc: "Profesional și de autoritate — pentru B2B, corporate" },
+                { value: "casual",    label: "😊 Casual",          desc: "Prietenos, relaxat, conversațional" },
+              ].map(({ value, label, desc }) => (
+                <label
                   key={value}
-                  type="button"
-                  onClick={() => setKit((k) => ({ ...k, qp_default_tone: value }))}
-                  className={`rounded-full border px-4 py-1.5 text-sm transition-colors ${
+                  className={`flex items-start gap-3 cursor-pointer rounded-md border p-3 transition-colors ${
                     kit.qp_default_tone === value
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-input hover:bg-muted"
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-primary/50"
                   }`}
                 >
-                  {label}
-                </button>
+                  <input
+                    type="radio"
+                    name="qp_default_tone"
+                    value={value}
+                    checked={kit.qp_default_tone === value}
+                    onChange={() => setKit((k) => ({ ...k, qp_default_tone: value }))}
+                    className="accent-primary mt-0.5"
+                  />
+                  <div>
+                    <span className="text-sm font-medium">{label}</span>
+                    <p className="text-xs text-muted-foreground">{desc}</p>
+                  </div>
+                </label>
               ))}
+            </div>
+            {/* Ton personalizat */}
+            <div className={`rounded-md border p-3 transition-colors ${kit.qp_default_tone === "custom" ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"}`}>
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="radio"
+                  name="qp_default_tone"
+                  value="custom"
+                  checked={kit.qp_default_tone === "custom"}
+                  onChange={() => setKit((k) => ({ ...k, qp_default_tone: "custom" }))}
+                  className="accent-primary mt-0.5"
+                />
+                <div>
+                  <span className="text-sm font-medium">✏️ Personalizat</span>
+                  <p className="text-xs text-muted-foreground">Scrie propriile instrucțiuni de ton pentru AI</p>
+                </div>
+              </label>
+              {kit.qp_default_tone === "custom" && (
+                <textarea
+                  rows={2}
+                  placeholder="Ex: tono entusiasta ma professionale, usa metafore visive, evita i clichè..."
+                  value={kit.qp_custom_tone}
+                  onChange={(e) => setKit((k) => ({ ...k, qp_custom_tone: e.target.value }))}
+                  className="mt-2 w-full rounded border border-input bg-background px-2 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                />
+              )}
             </div>
           </div>
 
@@ -1145,6 +1192,32 @@ export function BrandKitForm({ orgId, token }: Props) {
                 </label>
               ))}
             </div>
+            {/* Stil personalizat */}
+            <div className={`rounded-md border p-3 transition-colors ${kit.qp_default_image_direction === "custom" ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"}`}>
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="radio"
+                  name="qp_default_image_direction"
+                  value="custom"
+                  checked={kit.qp_default_image_direction === "custom"}
+                  onChange={() => setKit((k) => ({ ...k, qp_default_image_direction: "custom" }))}
+                  className="accent-primary mt-0.5"
+                />
+                <div>
+                  <span className="text-sm font-medium">✏️ Personalizat</span>
+                  <p className="text-xs text-muted-foreground">Descrie propriul stil vizual în engleză pentru promptul AI</p>
+                </div>
+              </label>
+              {kit.qp_default_image_direction === "custom" && (
+                <textarea
+                  rows={2}
+                  placeholder="Ex: dreamy watercolor illustration, pastel tones, soft brush strokes, romantic mood..."
+                  value={kit.qp_custom_image_direction}
+                  onChange={(e) => setKit((k) => ({ ...k, qp_custom_image_direction: e.target.value }))}
+                  className="mt-2 w-full rounded border border-input bg-background px-2 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                />
+              )}
+            </div>
           </div>
 
           {/* Format imagine implicit */}
@@ -1155,7 +1228,7 @@ export function BrandKitForm({ orgId, token }: Props) {
                 Dimensiunea imaginii generate în Quick Post. Alege formatul potrivit platformelor pe care publici cel mai des.
               </p>
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {[
                 { value: "square",    label: "⬜ Pătrat 1:1",          desc: "1024×1024 px — Instagram feed, Facebook" },
                 { value: "portrait",  label: "🖼️ Portret 4:5",          desc: "864×1080 px — Instagram feed portret" },
@@ -1163,45 +1236,54 @@ export function BrandKitForm({ orgId, token }: Props) {
                 { value: "landscape", label: "🖥️ Peisaj 1.91:1",        desc: "1024×536 px — Facebook, LinkedIn feed" },
                 { value: "wide",      label: "📺 Widescreen 16:9",      desc: "1024×576 px — YouTube, Twitter" },
               ].map(({ value, label, desc }) => (
-                <div
+                <label
                   key={value}
-                  className={`rounded-md border p-3 transition-colors ${
+                  className={`flex items-start gap-3 cursor-pointer rounded-md border p-3 transition-colors ${
                     kit.qp_default_image_format === value
                       ? "border-primary bg-primary/5"
-                      : "border-border"
+                      : "border-border hover:border-primary/50"
                   }`}
                 >
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="qp_default_image_format"
-                      value={value}
-                      checked={kit.qp_default_image_format === value}
-                      onChange={() => setKit((k) => ({ ...k, qp_default_image_format: value }))}
-                      className="accent-primary mt-0.5"
-                    />
-                    <div>
-                      <span className="text-sm font-medium">{label}</span>
-                      <p className="text-xs text-muted-foreground">{desc}</p>
-                    </div>
-                  </label>
-                  <textarea
-                    rows={2}
-                    placeholder="Instrucțiuni suplimentare pentru acest format... (opțional)"
-                    value={kit.qp_image_format_instructions[value] || ""}
-                    onChange={(e) =>
-                      setKit((k) => ({
-                        ...k,
-                        qp_image_format_instructions: {
-                          ...k.qp_image_format_instructions,
-                          [value]: e.target.value,
-                        },
-                      }))
-                    }
-                    className="mt-2 w-full rounded border border-input bg-background px-2 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                  <input
+                    type="radio"
+                    name="qp_default_image_format"
+                    value={value}
+                    checked={kit.qp_default_image_format === value}
+                    onChange={() => setKit((k) => ({ ...k, qp_default_image_format: value }))}
+                    className="accent-primary mt-0.5"
                   />
-                </div>
+                  <div>
+                    <span className="text-sm font-medium">{label}</span>
+                    <p className="text-xs text-muted-foreground">{desc}</p>
+                  </div>
+                </label>
               ))}
+            </div>
+            {/* Format personalizat */}
+            <div className={`rounded-md border p-3 transition-colors ${kit.qp_default_image_format === "custom" ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"}`}>
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="radio"
+                  name="qp_default_image_format"
+                  value="custom"
+                  checked={kit.qp_default_image_format === "custom"}
+                  onChange={() => setKit((k) => ({ ...k, qp_default_image_format: "custom" }))}
+                  className="accent-primary mt-0.5"
+                />
+                <div>
+                  <span className="text-sm font-medium">✏️ Personalizat</span>
+                  <p className="text-xs text-muted-foreground">Specifică propriul format/dimensiune în engleză</p>
+                </div>
+              </label>
+              {kit.qp_default_image_format === "custom" && (
+                <textarea
+                  rows={2}
+                  placeholder="Ex: square format 1:1 (800×800 px), optimized for Pinterest..."
+                  value={kit.qp_custom_image_format}
+                  onChange={(e) => setKit((k) => ({ ...k, qp_custom_image_format: e.target.value }))}
+                  className="mt-2 w-full rounded border border-input bg-background px-2 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                />
+              )}
             </div>
           </div>
 
