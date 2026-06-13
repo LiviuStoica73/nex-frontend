@@ -42,6 +42,7 @@ interface BrandKit {
   qp_default_template: boolean
   qp_default_text_overlay: boolean
   qp_default_schedule_mode: string
+  qp_default_image_direction: string
 }
 
 interface RagDoc {
@@ -87,6 +88,7 @@ export function BrandKitForm({ orgId, token }: Props) {
     qp_default_template: false,
     qp_default_text_overlay: false,
     qp_default_schedule_mode: "best_time",
+    qp_default_image_direction: "auto",
   })
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -125,6 +127,7 @@ export function BrandKitForm({ orgId, token }: Props) {
           qp_default_template: data.qp_default_template ?? false,
           qp_default_text_overlay: data.qp_default_text_overlay ?? false,
           qp_default_schedule_mode: data.qp_default_schedule_mode || "best_time",
+          qp_default_image_direction: data.qp_default_image_direction || "auto",
         })
         setKeywordsInput((data.keywords || []).join(", "))
         setAvoidInput((data.avoid_words || []).join(", "))
@@ -183,6 +186,7 @@ export function BrandKitForm({ orgId, token }: Props) {
           qp_default_template: kit.qp_default_template,
           qp_default_text_overlay: kit.qp_default_text_overlay,
           qp_default_schedule_mode: kit.qp_default_schedule_mode,
+          qp_default_image_direction: kit.qp_default_image_direction,
         }),
       })
       if (!res.ok) setError(`Eroare ${res.status}: ${await res.text()}`)
@@ -1043,6 +1047,51 @@ export function BrandKitForm({ orgId, token }: Props) {
                   <span className="ml-1 text-xs text-muted-foreground">— primele 80 de caractere din textul postării</span>
                 </div>
               </label>
+            </div>
+          </div>
+
+          {/* Stil vizual implicit */}
+          <div className="rounded-lg border bg-card p-5 space-y-4">
+            <div>
+              <h2 className="font-semibold">Stil vizual implicit</h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Stilul ales automat la generarea imaginii — sari peste pasul de selecție în Telegram.
+                Alege <strong>AI decide</strong> dacă preferi să alegi la fiecare postare.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {[
+                { value: "auto",         label: "⏭️ AI decide",       desc: "Alegi stilul la fiecare postare" },
+                { value: "clean",        label: "✨ Curat",            desc: "Minimalist, spațiu alb, tonuri neutre" },
+                { value: "bold",         label: "🔥 Îndrăzneț",       desc: "Culori vii, contrast mare, dinamic" },
+                { value: "professional", label: "💼 Profesional",      desc: "Corporate, structurat, autoritar" },
+                { value: "cinematic",    label: "🎬 Cinematic",        desc: "Lumini dramatice, calitate film" },
+                { value: "minimal",      label: "◻️ Minimalist",       desc: "Ultra-simplu, un singur punct focal" },
+                { value: "energetic",    label: "⚡ Energic",          desc: "Neon, motion, impact vizual maxim" },
+                { value: "elegant",      label: "💎 Elegant",          desc: "Lux, accente aurii, editorial rafinat" },
+              ].map(({ value, label, desc }) => (
+                <label
+                  key={value}
+                  className={`flex items-start gap-3 cursor-pointer rounded-md border p-3 transition-colors ${
+                    kit.qp_default_image_direction === value
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-primary/50"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="qp_default_image_direction"
+                    value={value}
+                    checked={kit.qp_default_image_direction === value}
+                    onChange={() => setKit((k) => ({ ...k, qp_default_image_direction: value }))}
+                    className="accent-primary mt-0.5"
+                  />
+                  <div>
+                    <span className="text-sm font-medium">{label}</span>
+                    <p className="text-xs text-muted-foreground">{desc}</p>
+                  </div>
+                </label>
+              ))}
             </div>
           </div>
 
