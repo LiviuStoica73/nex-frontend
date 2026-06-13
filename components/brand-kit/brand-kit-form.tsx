@@ -43,6 +43,8 @@ interface BrandKit {
   qp_default_text_overlay: boolean
   qp_default_schedule_mode: string
   qp_default_image_direction: string
+  qp_default_use_emoji: boolean
+  qp_default_use_hashtags: boolean
 }
 
 interface RagDoc {
@@ -89,6 +91,8 @@ export function BrandKitForm({ orgId, token }: Props) {
     qp_default_text_overlay: false,
     qp_default_schedule_mode: "best_time",
     qp_default_image_direction: "auto",
+    qp_default_use_emoji: true,
+    qp_default_use_hashtags: true,
   })
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -128,6 +132,8 @@ export function BrandKitForm({ orgId, token }: Props) {
           qp_default_text_overlay: data.qp_default_text_overlay ?? false,
           qp_default_schedule_mode: data.qp_default_schedule_mode || "best_time",
           qp_default_image_direction: data.qp_default_image_direction || "auto",
+          qp_default_use_emoji: data.qp_default_use_emoji ?? true,
+          qp_default_use_hashtags: data.qp_default_use_hashtags ?? true,
         })
         setKeywordsInput((data.keywords || []).join(", "))
         setAvoidInput((data.avoid_words || []).join(", "))
@@ -187,6 +193,8 @@ export function BrandKitForm({ orgId, token }: Props) {
           qp_default_text_overlay: kit.qp_default_text_overlay,
           qp_default_schedule_mode: kit.qp_default_schedule_mode,
           qp_default_image_direction: kit.qp_default_image_direction,
+          qp_default_use_emoji: kit.qp_default_use_emoji,
+          qp_default_use_hashtags: kit.qp_default_use_hashtags,
         }),
       })
       if (!res.ok) setError(`Eroare ${res.status}: ${await res.text()}`)
@@ -961,6 +969,42 @@ export function BrandKitForm({ orgId, token }: Props) {
                   {label}
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Format text */}
+          <div className="rounded-lg border bg-card p-5 space-y-4">
+            <div>
+              <h2 className="font-semibold">Format text implicit</h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Controlează dacă AI-ul include emoji și hashtag-uri în textul generat.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={kit.qp_default_use_emoji}
+                  onChange={(e) => setKit((k) => ({ ...k, qp_default_use_emoji: e.target.checked }))}
+                  className="accent-primary"
+                />
+                <div>
+                  <span className="text-sm font-medium">😊 Emoji în text</span>
+                  <p className="text-xs text-muted-foreground">AI-ul adaugă emoji relevante în corpul textului</p>
+                </div>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={kit.qp_default_use_hashtags}
+                  onChange={(e) => setKit((k) => ({ ...k, qp_default_use_hashtags: e.target.checked }))}
+                  className="accent-primary"
+                />
+                <div>
+                  <span className="text-sm font-medium"># Hashtag-uri</span>
+                  <p className="text-xs text-muted-foreground">3-5 hashtag-uri relevante adăugate la finalul postării</p>
+                </div>
+              </label>
             </div>
           </div>
 
