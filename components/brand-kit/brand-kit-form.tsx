@@ -44,6 +44,7 @@ interface BrandKit {
   qp_default_schedule_mode: string
   qp_default_image_direction: string
   qp_default_image_format: string
+  qp_image_format_instructions: Record<string, string>
   qp_default_use_emoji: boolean
   qp_default_use_hashtags: boolean
 }
@@ -93,6 +94,7 @@ export function BrandKitForm({ orgId, token }: Props) {
     qp_default_schedule_mode: "best_time",
     qp_default_image_direction: "auto",
     qp_default_image_format: "square",
+    qp_image_format_instructions: {},
     qp_default_use_emoji: true,
     qp_default_use_hashtags: true,
   })
@@ -135,6 +137,7 @@ export function BrandKitForm({ orgId, token }: Props) {
           qp_default_schedule_mode: data.qp_default_schedule_mode || "best_time",
           qp_default_image_direction: data.qp_default_image_direction || "auto",
           qp_default_image_format: data.qp_default_image_format || "square",
+          qp_image_format_instructions: data.qp_image_format_instructions || {},
           qp_default_use_emoji: data.qp_default_use_emoji ?? true,
           qp_default_use_hashtags: data.qp_default_use_hashtags ?? true,
         })
@@ -197,6 +200,7 @@ export function BrandKitForm({ orgId, token }: Props) {
           qp_default_schedule_mode: kit.qp_default_schedule_mode,
           qp_default_image_direction: kit.qp_default_image_direction,
           qp_default_image_format: kit.qp_default_image_format,
+          qp_image_format_instructions: kit.qp_image_format_instructions,
           qp_default_use_emoji: kit.qp_default_use_emoji,
           qp_default_use_hashtags: kit.qp_default_use_hashtags,
         }),
@@ -1151,7 +1155,7 @@ export function BrandKitForm({ orgId, token }: Props) {
                 Dimensiunea imaginii generate în Quick Post. Alege formatul potrivit platformelor pe care publici cel mai des.
               </p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="flex flex-col gap-2">
               {[
                 { value: "square",    label: "⬜ Pătrat 1:1",          desc: "1024×1024 px — Instagram feed, Facebook" },
                 { value: "portrait",  label: "🖼️ Portret 4:5",          desc: "864×1080 px — Instagram feed portret" },
@@ -1159,27 +1163,44 @@ export function BrandKitForm({ orgId, token }: Props) {
                 { value: "landscape", label: "🖥️ Peisaj 1.91:1",        desc: "1024×536 px — Facebook, LinkedIn feed" },
                 { value: "wide",      label: "📺 Widescreen 16:9",      desc: "1024×576 px — YouTube, Twitter" },
               ].map(({ value, label, desc }) => (
-                <label
+                <div
                   key={value}
-                  className={`flex items-start gap-3 cursor-pointer rounded-md border p-3 transition-colors ${
+                  className={`rounded-md border p-3 transition-colors ${
                     kit.qp_default_image_format === value
                       ? "border-primary bg-primary/5"
-                      : "border-border hover:border-primary/50"
+                      : "border-border"
                   }`}
                 >
-                  <input
-                    type="radio"
-                    name="qp_default_image_format"
-                    value={value}
-                    checked={kit.qp_default_image_format === value}
-                    onChange={() => setKit((k) => ({ ...k, qp_default_image_format: value }))}
-                    className="accent-primary mt-0.5"
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="qp_default_image_format"
+                      value={value}
+                      checked={kit.qp_default_image_format === value}
+                      onChange={() => setKit((k) => ({ ...k, qp_default_image_format: value }))}
+                      className="accent-primary mt-0.5"
+                    />
+                    <div>
+                      <span className="text-sm font-medium">{label}</span>
+                      <p className="text-xs text-muted-foreground">{desc}</p>
+                    </div>
+                  </label>
+                  <textarea
+                    rows={2}
+                    placeholder="Instrucțiuni suplimentare pentru acest format... (opțional)"
+                    value={kit.qp_image_format_instructions[value] || ""}
+                    onChange={(e) =>
+                      setKit((k) => ({
+                        ...k,
+                        qp_image_format_instructions: {
+                          ...k.qp_image_format_instructions,
+                          [value]: e.target.value,
+                        },
+                      }))
+                    }
+                    className="mt-2 w-full rounded border border-input bg-background px-2 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
                   />
-                  <div>
-                    <span className="text-sm font-medium">{label}</span>
-                    <p className="text-xs text-muted-foreground">{desc}</p>
-                  </div>
-                </label>
+                </div>
               ))}
             </div>
           </div>
