@@ -43,6 +43,7 @@ interface BrandKit {
   qp_default_text_overlay: boolean
   qp_default_schedule_mode: string
   qp_default_image_direction: string
+  qp_default_image_format: string
   qp_default_use_emoji: boolean
   qp_default_use_hashtags: boolean
 }
@@ -91,6 +92,7 @@ export function BrandKitForm({ orgId, token }: Props) {
     qp_default_text_overlay: false,
     qp_default_schedule_mode: "best_time",
     qp_default_image_direction: "auto",
+    qp_default_image_format: "square",
     qp_default_use_emoji: true,
     qp_default_use_hashtags: true,
   })
@@ -132,6 +134,7 @@ export function BrandKitForm({ orgId, token }: Props) {
           qp_default_text_overlay: data.qp_default_text_overlay ?? false,
           qp_default_schedule_mode: data.qp_default_schedule_mode || "best_time",
           qp_default_image_direction: data.qp_default_image_direction || "auto",
+          qp_default_image_format: data.qp_default_image_format || "square",
           qp_default_use_emoji: data.qp_default_use_emoji ?? true,
           qp_default_use_hashtags: data.qp_default_use_hashtags ?? true,
         })
@@ -193,6 +196,7 @@ export function BrandKitForm({ orgId, token }: Props) {
           qp_default_text_overlay: kit.qp_default_text_overlay,
           qp_default_schedule_mode: kit.qp_default_schedule_mode,
           qp_default_image_direction: kit.qp_default_image_direction,
+          qp_default_image_format: kit.qp_default_image_format,
           qp_default_use_emoji: kit.qp_default_use_emoji,
           qp_default_use_hashtags: kit.qp_default_use_hashtags,
         }),
@@ -1128,6 +1132,47 @@ export function BrandKitForm({ orgId, token }: Props) {
                     value={value}
                     checked={kit.qp_default_image_direction === value}
                     onChange={() => setKit((k) => ({ ...k, qp_default_image_direction: value }))}
+                    className="accent-primary mt-0.5"
+                  />
+                  <div>
+                    <span className="text-sm font-medium">{label}</span>
+                    <p className="text-xs text-muted-foreground">{desc}</p>
+                  </div>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Format imagine implicit */}
+          <div className="rounded-lg border bg-card p-5 space-y-4">
+            <div>
+              <h2 className="font-semibold">Format implicit imagine</h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Dimensiunea imaginii generate în Quick Post. Alege formatul potrivit platformelor pe care publici cel mai des.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {[
+                { value: "square",    label: "⬜ Pătrat 1:1",          desc: "1024×1024 px — Instagram feed, Facebook" },
+                { value: "portrait",  label: "🖼️ Portret 4:5",          desc: "864×1080 px — Instagram feed portret" },
+                { value: "story",     label: "📱 Story / Reel 9:16",    desc: "576×1024 px — Stories, Reels, TikTok" },
+                { value: "landscape", label: "🖥️ Peisaj 1.91:1",        desc: "1024×536 px — Facebook, LinkedIn feed" },
+                { value: "wide",      label: "📺 Widescreen 16:9",      desc: "1024×576 px — YouTube, Twitter" },
+              ].map(({ value, label, desc }) => (
+                <label
+                  key={value}
+                  className={`flex items-start gap-3 cursor-pointer rounded-md border p-3 transition-colors ${
+                    kit.qp_default_image_format === value
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-primary/50"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="qp_default_image_format"
+                    value={value}
+                    checked={kit.qp_default_image_format === value}
+                    onChange={() => setKit((k) => ({ ...k, qp_default_image_format: value }))}
                     className="accent-primary mt-0.5"
                   />
                   <div>
