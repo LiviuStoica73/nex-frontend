@@ -15,6 +15,12 @@ const POSITION_OPTIONS = [
   { value: "bot_right",   label: "Jos dreapta" },
 ] as const
 
+const GENERATOR_CAPABILITIES = [
+  { icon: "🖥️", name: "Nex-Nex RTX (ComfyUI)", supportsNative: true },
+  { icon: "⚡", name: "Fal.ai FLUX",            supportsNative: false },
+  { icon: "🎨", name: "Google Gemini",           supportsNative: true },
+] as const
+
 function PositionSelect({
   value,
   onChange,
@@ -1379,6 +1385,23 @@ export function BrandKitForm({ orgId, token }: Props) {
                 </label>
               ))}
             </div>
+          </div>
+
+          {/* Generator capabilities — read-only */}
+          <div className="mt-6 space-y-2">
+            <p className="text-sm font-medium">Generatoare de imagini</p>
+            <p className="text-xs text-muted-foreground mb-3">
+              Generatoarele care acceptă grafică nativă integrează logo-ul/sign-ul organic în scenă — overlay Pillow nu se aplică.
+            </p>
+            {GENERATOR_CAPABILITIES.map((gen) => (
+              <div key={gen.name} className="flex items-center gap-3 rounded border px-3 py-2 text-sm">
+                <span>{gen.icon}</span>
+                <span className="flex-1">{gen.name}</span>
+                <span className={gen.supportsNative ? "text-green-600 dark:text-green-400" : "text-muted-foreground"}>
+                  {gen.supportsNative ? "✅ integrare nativă" : "❌ overlay Pillow"}
+                </span>
+              </div>
+            ))}
           </div>
 
           {/* Salvează */}
