@@ -97,7 +97,9 @@ export function NavBar({ scroll = false }: NavBarProps) {
 
         <div className="flex items-center space-x-3">
           <LocaleSwitcherCompact />
-          <ModeToggle />
+          <div className="hidden md:flex">
+            <ModeToggle />
+          </div>
 
           {/* right header for docs */}
           {documentation ? (
