@@ -3,6 +3,45 @@
 import { useEffect, useRef, useState } from "react"
 import { Save, Upload, FileText, Trash2, Link, RefreshCw, X } from "lucide-react"
 
+const POSITION_OPTIONS = [
+  { value: "top_left",    label: "Sus stânga" },
+  { value: "top_center",  label: "Sus centru" },
+  { value: "top_right",   label: "Sus dreapta" },
+  { value: "mid_left",    label: "Mijloc stânga" },
+  { value: "center",      label: "Centru" },
+  { value: "mid_right",   label: "Mijloc dreapta" },
+  { value: "bot_left",    label: "Jos stânga" },
+  { value: "bot_center",  label: "Jos centru" },
+  { value: "bot_right",   label: "Jos dreapta" },
+] as const
+
+function PositionSelect({
+  value,
+  onChange,
+  label,
+}: {
+  value: string
+  onChange: (v: string) => void
+  label: string
+}) {
+  return (
+    <div className="flex items-center gap-2 mt-2">
+      <span className="text-xs text-muted-foreground whitespace-nowrap">{label}</span>
+      <select
+        value={value || "bot_right"}
+        onChange={(e) => onChange(e.target.value)}
+        className="text-xs border rounded px-2 py-1 bg-background text-foreground"
+      >
+        {POSITION_OPTIONS.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  )
+}
+
 interface BrandKit {
   brand_name: string | null
   description: string | null
@@ -10,6 +49,9 @@ interface BrandKit {
   logo_url: string | null
   sign_url: string | null
   logo_sign_url: string | null
+  logo_position: string | null
+  sign_position: string | null
+  logo_sign_position: string | null
   primary_color: string | null
   secondary_color: string | null
   accent_color: string | null
@@ -77,6 +119,9 @@ export function BrandKitForm({ orgId, token }: Props) {
   const [kit, setKit] = useState<BrandKit>({
     brand_name: null, description: null, slogan: null,
     logo_url: null, sign_url: null, logo_sign_url: null,
+    logo_position: "bot_right" as string,
+    sign_position: "bot_center" as string,
+    logo_sign_position: "bot_right" as string,
     primary_color: "#000000", secondary_color: "#ffffff",
     accent_color: "#3B82F6", background_color: "#ffffff",
     text_dark_color: "#111111", text_light_color: "#ffffff",
@@ -149,6 +194,9 @@ export function BrandKitForm({ orgId, token }: Props) {
           qp_custom_tone: data.qp_custom_tone || "",
           qp_default_use_emoji: data.qp_default_use_emoji ?? true,
           qp_default_use_hashtags: data.qp_default_use_hashtags ?? true,
+          logo_position: data.logo_position ?? "bot_right",
+          sign_position: data.sign_position ?? "bot_center",
+          logo_sign_position: data.logo_sign_position ?? "bot_right",
         })
         setKeywordsInput((data.keywords || []).join(", "))
         setAvoidInput((data.avoid_words || []).join(", "))
@@ -215,6 +263,9 @@ export function BrandKitForm({ orgId, token }: Props) {
           qp_custom_tone: kit.qp_custom_tone,
           qp_default_use_emoji: kit.qp_default_use_emoji,
           qp_default_use_hashtags: kit.qp_default_use_hashtags,
+          logo_position: kit.logo_position,
+          sign_position: kit.sign_position,
+          logo_sign_position: kit.logo_sign_position,
         }),
       })
       if (!res.ok) setError(`Eroare ${res.status}: ${await res.text()}`)
@@ -481,6 +532,11 @@ export function BrandKitForm({ orgId, token }: Props) {
                   <input type="file" accept="image/*" className="hidden"
                     onChange={(e) => e.target.files?.[0] && uploadLogo(e.target.files[0])} />
                 </label>
+                <PositionSelect
+                  value={kit.logo_position || "bot_right"}
+                  onChange={(v) => setKit((k) => ({ ...k, logo_position: v }))}
+                  label="Poziție (Fal.ai):"
+                />
               </div>
 
               {/* Sign */}
@@ -496,6 +552,11 @@ export function BrandKitForm({ orgId, token }: Props) {
                   <input type="file" accept="image/*" className="hidden"
                     onChange={(e) => e.target.files?.[0] && uploadSign(e.target.files[0])} />
                 </label>
+                <PositionSelect
+                  value={kit.sign_position || "bot_center"}
+                  onChange={(v) => setKit((k) => ({ ...k, sign_position: v }))}
+                  label="Poziție (Fal.ai):"
+                />
               </div>
             </div>
 
@@ -515,6 +576,11 @@ export function BrandKitForm({ orgId, token }: Props) {
                 <input type="file" accept="image/*" className="hidden"
                   onChange={(e) => e.target.files?.[0] && uploadLogoSign(e.target.files[0])} />
               </label>
+              <PositionSelect
+                value={kit.logo_sign_position || "bot_right"}
+                onChange={(v) => setKit((k) => ({ ...k, logo_sign_position: v }))}
+                label="Poziție (Fal.ai):"
+              />
             </div>
           </div>
 
