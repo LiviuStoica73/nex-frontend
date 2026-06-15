@@ -15,6 +15,7 @@ import { DocsSidebarNav } from "@/components/docs/sidebar-nav";
 import { Icons } from "@/components/shared/icons";
 
 import { ModeToggle } from "./mode-toggle";
+import { LocaleSwitcherCompact } from "@/components/ui/locale-switcher-compact";
 import {
   translateDocsNavTitle,
   translateMarketingNavTitle,
@@ -135,12 +136,15 @@ export function NavMobile() {
           </div>
         ) : null}
 
-        <div className="mt-5 flex items-center justify-end space-x-4">
-          <Link href={siteConfig.links.github} target="_blank" rel="noreferrer">
-            <Icons.gitHub className="size-6" />
-            <span className="sr-only">GitHub</span>
-          </Link>
-          <ModeToggle />
+        <div className="mt-5 flex items-center justify-between">
+          <LocaleSwitcherCompact />
+          <div className="flex items-center space-x-4">
+            <Link href={siteConfig.links.github} target="_blank" rel="noreferrer">
+              <Icons.gitHub className="size-6" />
+              <span className="sr-only">GitHub</span>
+            </Link>
+            <ModeToggle />
+          </div>
         </div>
       </nav>
     </>
