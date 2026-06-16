@@ -22,6 +22,15 @@ export type Platform =
 export type PostStatus = "draft" | "approved" | "scheduled" | "published" | "failed" | "skipped"
 export type CampaignStatus = "draft" | "approved" | "scheduled" | "published" | "archived"
 
+export interface Org {
+  id: string
+  name: string
+  slug: string
+  is_agency: boolean
+  timezone: string
+  default_languages: string[]
+}
+
 export interface Campaign {
   id: string
   name: string
@@ -29,16 +38,23 @@ export interface Campaign {
   topic: string | null
   status: CampaignStatus
   created_at: string
+  start_date: string | null
+  end_date: string | null
+  budget: string | null
+  currency: string | null
 }
 
 export interface Post {
   id: string
+  campaign_id: string
   platform: Platform
   post_type: string
   language: string
   text_content: string | null
   hashtags: string[]
   image_urls: string[]
+  image_prompt: string | null
+  video_urls: string[]
   scheduled_at: string | null
   status: PostStatus
   published_url: string | null
@@ -70,6 +86,18 @@ export const STATUS_COLORS: Record<PostStatus, string> = {
 // ── API calls ──────────────────────────────────────────────────────────────
 
 export const api = {
+  orgs: {
+    listMine: (token: string) =>
+      apiFetch<Org[]>(`/api/v1/me/orgs`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    switch: (orgId: string, token: string) =>
+      apiFetch<{ active_org_id: string }>(`/api/v1/orgs/${orgId}/switch`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+  },
+
   campaigns: {
     list: (orgId: string, token: string) =>
       apiFetch<Campaign[]>(`/api/v1/orgs/${orgId}/campaigns`, {
@@ -83,6 +111,20 @@ export const api = {
       }),
     listPosts: (orgId: string, campaignId: string, token: string) =>
       apiFetch<Post[]>(`/api/v1/orgs/${orgId}/campaigns/${campaignId}/posts`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    update: (orgId: string, campaignId: string, data: Partial<{
+      name: string; topic: string; status: string;
+      start_date: string; end_date: string; budget: string; currency: string
+    }>, token: string) =>
+      apiFetch<Campaign>(`/api/v1/orgs/${orgId}/campaigns/${campaignId}`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    deleteCampaign: (orgId: string, campaignId: string, token: string) =>
+      apiFetch<void>(`/api/v1/orgs/${orgId}/campaigns/${campaignId}`, {
+        method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       }),
   },
@@ -128,6 +170,11 @@ export const api = {
       apiFetch<Post>(`/api/v1/orgs/${orgId}/posts/${postId}/translate`, {
         method: "POST",
         body: JSON.stringify(data),
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    retry: (orgId: string, postId: string, token: string) =>
+      apiFetch<Post>(`/api/v1/orgs/${orgId}/posts/${postId}/retry`, {
+        method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       }),
   },

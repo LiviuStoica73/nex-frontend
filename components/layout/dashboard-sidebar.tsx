@@ -21,6 +21,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { UpgradeCard } from "@/components/dashboard/upgrade-card";
+import { OrgSwitcher } from "@/components/dashboard/org-switcher";
 import { Icons } from "@/components/shared/icons";
 import {
   translateSidebarItemTitle,
@@ -103,6 +104,10 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                   )}
                   <span className="sr-only">{t("common.toggle_sidebar")}</span>
                 </Button>
+              </div>
+
+              <div className="px-2 pb-2 border-b mb-2">
+                <OrgSwitcher />
               </div>
 
               <nav className="flex flex-1 flex-col gap-8 px-4 pt-4">
