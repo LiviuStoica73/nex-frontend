@@ -103,7 +103,10 @@ export const api = {
       apiFetch<Campaign[]>(`/api/v1/orgs/${orgId}/campaigns`, {
         headers: { Authorization: `Bearer ${token}` },
       }),
-    create: (orgId: string, data: { name: string; topic?: string }, token: string) =>
+    create: (orgId: string, data: {
+      name: string; topic?: string;
+      start_date?: string; end_date?: string; budget?: string; currency?: string
+    }, token: string) =>
       apiFetch<Campaign>(`/api/v1/orgs/${orgId}/campaigns`, {
         method: "POST",
         body: JSON.stringify(data),
@@ -149,7 +152,7 @@ export const api = {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       }),
-    update: (orgId: string, postId: string, data: { text_content?: string; scheduled_at?: string; status?: string }, token: string) =>
+    update: (orgId: string, postId: string, data: { text_content?: string; scheduled_at?: string; status?: string; image_prompt?: string }, token: string) =>
       apiFetch<Post>(`/api/v1/orgs/${orgId}/posts/${postId}`, {
         method: "PATCH",
         body: JSON.stringify(data),

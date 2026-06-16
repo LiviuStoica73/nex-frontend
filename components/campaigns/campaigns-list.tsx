@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useLocale, useTranslations } from "next-intl"
-import { ChevronDown, ChevronRight, MoreHorizontal, Pencil, Trash2, Pause, Play, RefreshCw, Languages, Share2, Clock } from "lucide-react"
+import { ChevronDown, ChevronRight, MoreHorizontal, Pencil, Trash2, Pause, Play, RefreshCw, Languages, Share2, Clock, Ban } from "lucide-react"
 import { api, PLATFORM_COLORS, STATUS_COLORS, type Campaign, type Platform, type Post } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -28,7 +28,7 @@ const LANGUAGES = [
 
 interface Props { orgId: string; token: string }
 
-type DialogType = "edit" | "reschedule" | "repost" | "translate" | null
+type DialogType = "edit" | "reschedule" | "repost" | "translate" | "create_campaign" | "edit_image_prompt" | null
 
 export function CampaignsList({ orgId, token }: Props) {
   const t = useTranslations("campaigns")
@@ -52,6 +52,17 @@ export function CampaignsList({ orgId, token }: Props) {
   const [repostSchedule, setRepostSchedule] = useState("")
   const [translateLang, setTranslateLang] = useState("en")
   const [translatePlatform, setTranslatePlatform] = useState("")
+
+  // Campaign CRUD
+  const [creating, setCreating] = useState(false)
+  const [newCampaignName, setNewCampaignName] = useState("")
+  const [newCampaignTopic, setNewCampaignTopic] = useState("")
+  const [newCampaignStart, setNewCampaignStart] = useState("")
+  const [newCampaignEnd, setNewCampaignEnd] = useState("")
+  const [newCampaignBudget, setNewCampaignBudget] = useState("")
+  const [newCampaignCurrency, setNewCampaignCurrency] = useState("RON")
+  // Image prompt edit
+  const [editImagePrompt, setEditImagePrompt] = useState("")
 
   useEffect(() => {
     api.campaigns.list(orgId, token).then(setCampaigns).finally(() => setLoading(false))
@@ -151,6 +162,51 @@ export function CampaignsList({ orgId, token }: Props) {
     } finally { setSaving(false) }
   }
 
+  const handleCreateCampaign = async () => {
+    if (!newCampaignName.trim()) return
+    setCreating(true)
+    try {
+      const campaign = await api.campaigns.create(orgId, {
+        name: newCampaignName,
+        topic: newCampaignTopic || undefined,
+        start_date: newCampaignStart ? new Date(newCampaignStart).toISOString() : undefined,
+        end_date: newCampaignEnd ? new Date(newCampaignEnd).toISOString() : undefined,
+        budget: newCampaignBudget || undefined,
+        currency: newCampaignBudget ? newCampaignCurrency : undefined,
+      }, token)
+      setCampaigns((prev) => [campaign, ...prev])
+      setNewCampaignName(""); setNewCampaignTopic(""); setNewCampaignStart("")
+      setNewCampaignEnd(""); setNewCampaignBudget(""); setNewCampaignCurrency("RON")
+      closeDialog()
+    } finally { setCreating(false) }
+  }
+
+  const handleCampaignStatus = async (campaign: Campaign, newStatus: string) => {
+    const updated = await api.campaigns.update(orgId, campaign.id, { status: newStatus }, token)
+    setCampaigns((prev) => prev.map((c) => c.id === campaign.id ? updated : c))
+  }
+
+  const handleDeleteCampaign = async (campaign: Campaign) => {
+    if (!confirm(`Ștergi campania "${campaign.name}"? Toate postările se vor șterge.`)) return
+    await api.campaigns.deleteCampaign(orgId, campaign.id, token)
+    setCampaigns((prev) => prev.filter((c) => c.id !== campaign.id))
+  }
+
+  const handleRetry = async (post: Post, campaignId: string) => {
+    await api.posts.retry(orgId, post.id, token)
+    await refreshPosts(campaignId)
+  }
+
+  const handleSaveImagePrompt = async () => {
+    if (!activePost || !activeCampaignId) return
+    setSaving(true)
+    try {
+      await api.posts.update(orgId, activePost.id, { image_prompt: editImagePrompt }, token)
+      await refreshPosts(activeCampaignId)
+      closeDialog()
+    } finally { setSaving(false) }
+  }
+
   const formatDate = (iso: string | null) => {
     if (!iso) return null
     return new Date(iso).toLocaleString(locale, { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })
@@ -174,6 +230,11 @@ export function CampaignsList({ orgId, token }: Props) {
 
   return (
     <>
+      <div className="flex justify-end">
+        <Button onClick={() => setActiveDialog("create_campaign")} size="sm">
+          + Campanie nouă
+        </Button>
+      </div>
       <div className="space-y-3">
         {campaigns.length === 0 ? (
           <div className="rounded-lg border border-dashed p-12 text-center text-muted-foreground">
@@ -198,8 +259,47 @@ export function CampaignsList({ orgId, token }: Props) {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0 ml-4">
+                  {campaign.start_date && (
+                    <span className="text-xs text-muted-foreground hidden sm:block">
+                      {formatDate(campaign.start_date)} → {campaign.end_date ? formatDate(campaign.end_date) : "∞"}
+                    </span>
+                  )}
+                  {campaign.budget && (
+                    <span className="text-xs font-medium text-muted-foreground hidden sm:block">
+                      {campaign.budget} {campaign.currency}
+                    </span>
+                  )}
                   <span className="text-xs text-muted-foreground">{formatDate(campaign.created_at)}</span>
                   <StatusBadge status={campaign.status} />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                      <Button variant="ghost" size="icon" className="h-7 w-7 flex-shrink-0">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-44">
+                      {campaign.status !== "archived" && campaign.status !== "published" && (
+                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCampaignStatus(campaign, "paused") }}>
+                          <Pause className="mr-2 h-4 w-4" /> Pauză campanie
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCampaignStatus(campaign, "approved") }}>
+                        <Play className="mr-2 h-4 w-4" /> Reluare campanie
+                      </DropdownMenuItem>
+                      {campaign.status !== "archived" && (
+                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCampaignStatus(campaign, "cancelled") }}>
+                          <Ban className="mr-2 h-4 w-4" /> Anulează campania
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={(e) => { e.stopPropagation(); handleDeleteCampaign(campaign) }}
+                        className="text-destructive focus:text-destructive"
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" /> Șterge campania
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </button>
 
@@ -245,6 +345,14 @@ export function CampaignsList({ orgId, token }: Props) {
                                 <DropdownMenuItem onClick={() => openDialog("edit", post, campaign.id)}>
                                   <Pencil className="mr-2 h-4 w-4" /> {t("edit_text")}
                                 </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => {
+                                  setActivePost(post)
+                                  setActiveCampaignId(campaign.id)
+                                  setActiveDialog("edit_image_prompt")
+                                  setEditImagePrompt(post.image_prompt ?? "")
+                                }}>
+                                  <Pencil className="mr-2 h-4 w-4" /> Prompt imagine
+                                </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => openDialog("reschedule", post, campaign.id)}>
                                   <Clock className="mr-2 h-4 w-4" /> {t("reschedule")}
                                 </DropdownMenuItem>
@@ -267,6 +375,14 @@ export function CampaignsList({ orgId, token }: Props) {
                                 <DropdownMenuItem onClick={() => openDialog("repost", post, campaign.id)}>
                                   <Share2 className="mr-2 h-4 w-4" /> {t("other_social_network")}
                                 </DropdownMenuItem>
+                                {post.status === "failed" && (
+                                  <>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem onClick={() => handleRetry(post, campaign.id)}>
+                                      <RefreshCw className="mr-2 h-4 w-4" /> Încearcă din nou
+                                    </DropdownMenuItem>
+                                  </>
+                                )}
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem onClick={() => handleDelete(post, campaign.id)}
                                   className="text-destructive focus:text-destructive">
@@ -406,6 +522,90 @@ export function CampaignsList({ orgId, token }: Props) {
             <Button variant="outline" onClick={closeDialog}>{t("cancel")}</Button>
             <Button onClick={handleTranslate} disabled={saving}>
               {saving ? t("generating") : t("generate")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog: Creare campanie */}
+      <Dialog open={activeDialog === "create_campaign"} onOpenChange={closeDialog}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader><DialogTitle>Campanie nouă</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">Nume campanie *</p>
+              <Input
+                placeholder="ex: Lansare produs mai 2026"
+                value={newCampaignName}
+                onChange={(e) => setNewCampaignName(e.target.value)}
+              />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">Topic / descriere</p>
+              <Textarea
+                placeholder="Despre ce e campania? AI-ul va folosi asta la generare."
+                value={newCampaignTopic}
+                onChange={(e) => setNewCampaignTopic(e.target.value)}
+                rows={3}
+                className="resize-none"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">Data start</p>
+                <Input type="date" value={newCampaignStart} onChange={(e) => setNewCampaignStart(e.target.value)} />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">Data end</p>
+                <Input type="date" value={newCampaignEnd} onChange={(e) => setNewCampaignEnd(e.target.value)} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">Buget (opțional)</p>
+                <Input placeholder="ex: 5000" value={newCampaignBudget} onChange={(e) => setNewCampaignBudget(e.target.value)} />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">Monedă</p>
+                <Select value={newCampaignCurrency} onValueChange={setNewCampaignCurrency}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="RON">RON</SelectItem>
+                    <SelectItem value="EUR">EUR</SelectItem>
+                    <SelectItem value="USD">USD</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={closeDialog}>Anulează</Button>
+            <Button onClick={handleCreateCampaign} disabled={creating || !newCampaignName.trim()}>
+              {creating ? "Se creează..." : "Creează campania"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog: Editare prompt imagine */}
+      <Dialog open={activeDialog === "edit_image_prompt"} onOpenChange={closeDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader><DialogTitle>Editează prompt imagine</DialogTitle></DialogHeader>
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground">
+              Promptul EN trimis la generatorul AI. Modifică și salvează.
+            </p>
+            <Textarea
+              value={editImagePrompt}
+              onChange={(e) => setEditImagePrompt(e.target.value)}
+              rows={8}
+              className="resize-none text-sm font-mono"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={closeDialog}>Anulează</Button>
+            <Button onClick={handleSaveImagePrompt} disabled={saving}>
+              {saving ? "Se salvează..." : "Salvează prompt"}
             </Button>
           </DialogFooter>
         </DialogContent>
