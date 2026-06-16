@@ -20,7 +20,7 @@ export type Platform =
   | "discord" | "blog" | "youtube" | "threads" | "bluesky"
 
 export type PostStatus = "draft" | "approved" | "scheduled" | "published" | "failed" | "skipped"
-export type CampaignStatus = "draft" | "approved" | "scheduled" | "published" | "archived"
+export type CampaignStatus = "draft" | "approved" | "scheduled" | "published" | "paused" | "cancelled" | "archived"
 
 export interface Org {
   id: string

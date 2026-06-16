@@ -8,6 +8,6 @@ export default async function OnboardingPage() {
   const session = await auth()
   if (!session) redirect("/login")
 
-  const token = (session as any)?.accessToken ?? ""
+  const token = session.user?.accessToken ?? ""
   return <OnboardingWizard token={token} />
 }

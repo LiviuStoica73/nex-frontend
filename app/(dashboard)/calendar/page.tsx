@@ -8,8 +8,8 @@ export default async function CalendarPage() {
   const session = await auth()
   if (!session) redirect("/login")
 
-  const orgId = (session as any)?.orgId ?? ""
-  const token = (session as any)?.accessToken ?? ""
+  const orgId = session.user?.orgId ?? ""
+  const token = session.user?.accessToken ?? ""
 
   return (
     <div className="space-y-6 p-6">

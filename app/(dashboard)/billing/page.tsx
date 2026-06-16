@@ -8,8 +8,8 @@ export default async function BillingPage() {
   const session = await auth()
   if (!session) redirect("/login")
 
-  const orgId = (session as any)?.orgId ?? ""
-  const token = (session as any)?.accessToken ?? ""
+  const orgId = session.user?.orgId ?? ""
+  const token = session.user?.accessToken ?? ""
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
 
   return (

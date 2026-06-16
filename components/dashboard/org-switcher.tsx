@@ -17,7 +17,7 @@ export function OrgSwitcher() {
   const [open, setOpen] = useState(false)
   const [switching, setSwitching] = useState(false)
 
-  const token = (session as any)?.accessToken ?? ""
+  const token = session?.user?.accessToken ?? ""
 
   useEffect(() => {
     if (!token) return
