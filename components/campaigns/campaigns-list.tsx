@@ -278,15 +278,17 @@ export function CampaignsList({ orgId, token }: Props) {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-44">
-                      {campaign.status !== "archived" && campaign.status !== "published" && (
+                      {campaign.status !== "paused" && campaign.status !== "published" && campaign.status !== "archived" && campaign.status !== "cancelled" && (
                         <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCampaignStatus(campaign, "paused") }}>
                           <Pause className="mr-2 h-4 w-4" /> Pauză campanie
                         </DropdownMenuItem>
                       )}
-                      <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCampaignStatus(campaign, "approved") }}>
-                        <Play className="mr-2 h-4 w-4" /> Reluare campanie
-                      </DropdownMenuItem>
-                      {campaign.status !== "archived" && (
+                      {campaign.status === "paused" && (
+                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCampaignStatus(campaign, "approved") }}>
+                          <Play className="mr-2 h-4 w-4" /> Reluare campanie
+                        </DropdownMenuItem>
+                      )}
+                      {campaign.status !== "cancelled" && campaign.status !== "archived" && campaign.status !== "published" && (
                         <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCampaignStatus(campaign, "cancelled") }}>
                           <Ban className="mr-2 h-4 w-4" /> Anulează campania
                         </DropdownMenuItem>
