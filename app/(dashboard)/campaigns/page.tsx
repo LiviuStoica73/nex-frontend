@@ -1,4 +1,5 @@
 import { auth } from "@/auth"
+import { getActiveOrgId } from "@/lib/active-org"
 import { redirect } from "next/navigation"
 import { CampaignsList } from "@/components/campaigns/campaigns-list"
 
@@ -8,7 +9,7 @@ export default async function CampaignsPage() {
   const session = await auth()
   if (!session) redirect("/login")
 
-  const orgId = session.user?.orgId ?? ""
+  const orgId = await getActiveOrgId()
   const token = session.user?.accessToken ?? ""
 
   return (

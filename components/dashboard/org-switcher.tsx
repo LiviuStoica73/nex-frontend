@@ -40,6 +40,11 @@ export function OrgSwitcher() {
     setSwitching(true)
     try {
       await api.orgs.switch(orgId, token)
+      await fetch("/api/org/switch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orgId }),
+      })
       localStorage.setItem(ORG_KEY, orgId)
       setActiveOrgId(orgId)
       setOpen(false)

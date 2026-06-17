@@ -1,4 +1,5 @@
 import { auth } from "@/auth"
+import { getActiveOrgId } from "@/lib/active-org"
 import { redirect } from "next/navigation"
 import { BillingDashboard } from "@/components/billing/billing-dashboard"
 
@@ -8,7 +9,7 @@ export default async function BillingPage() {
   const session = await auth()
   if (!session) redirect("/login")
 
-  const orgId = session.user?.orgId ?? ""
+  const orgId = await getActiveOrgId()
   const token = session.user?.accessToken ?? ""
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
 

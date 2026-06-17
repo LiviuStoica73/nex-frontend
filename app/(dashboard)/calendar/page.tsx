@@ -1,5 +1,6 @@
 import { EditorialCalendar } from "@/components/calendar/editorial-calendar"
 import { auth } from "@/auth"
+import { getActiveOrgId } from "@/lib/active-org"
 import { redirect } from "next/navigation"
 
 export const metadata = { title: "Calendar Editorial — Nex-Nex" }
@@ -8,7 +9,7 @@ export default async function CalendarPage() {
   const session = await auth()
   if (!session) redirect("/login")
 
-  const orgId = session.user?.orgId ?? ""
+  const orgId = await getActiveOrgId()
   const token = session.user?.accessToken ?? ""
 
   return (

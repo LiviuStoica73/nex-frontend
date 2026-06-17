@@ -63,7 +63,12 @@ export function ClientsManager({ orgId, token }: Props) {
 
   const switchToClient = async (clientOrgId: string) => {
     await fetch(`${API}/api/v1/orgs/${clientOrgId}/switch`, { method: "POST", headers })
-    // Reload page cu noul org activ
+    await fetch("/api/org/switch", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orgId: clientOrgId }),
+    })
+    localStorage.setItem("nex_active_org_id", clientOrgId)
     window.location.reload()
   }
 
