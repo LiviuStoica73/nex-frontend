@@ -83,10 +83,14 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
               <div className="flex h-14 items-center p-4 lg:h-[60px]">
                 {isSidebarExpanded ? (
                   <Link href="/dashboard" className="flex items-center gap-2">
-                    <Icons.logo className="size-6" />
-                    <span className="font-urban text-lg font-bold">Nex-Nex</span>
+                    <img src="/nex-nex-logo.svg" alt="Nex-Nex logo" className="size-8 flex-shrink-0" />
+                    <img src="/nex-nex-sign.svg" alt="Nex-Nex" className="h-5 w-auto" />
                   </Link>
-                ) : null}
+                ) : (
+                  <Link href="/dashboard">
+                    <img src="/nex-nex-logo.svg" alt="Nex-Nex logo" className="size-8" />
+                  </Link>
+                )}
 
                 <Button
                   variant="ghost"
@@ -225,14 +229,9 @@ export function MobileSheetSidebar({ links }: DashboardSidebarProps) {
           <ScrollArea className="h-full overflow-y-auto">
             <div className="flex h-screen flex-col">
               <nav className="flex flex-1 flex-col gap-y-8 p-6 text-lg font-medium">
-                <Link
-                  href="#"
-                  className="flex items-center gap-2 text-lg font-semibold"
-                >
-                  <Icons.logo className="size-6" />
-                  <span className="font-urban text-xl font-bold">
-                    {siteConfig.name}
-                  </span>
+                <Link href="/dashboard" className="flex items-center gap-2">
+                  <img src="/nex-nex-logo.svg" alt="Nex-Nex logo" className="size-8 flex-shrink-0" />
+                  <img src="/nex-nex-sign.svg" alt="Nex-Nex" className="h-5 w-auto" />
                 </Link>
 
                 {links.map((section) => (
