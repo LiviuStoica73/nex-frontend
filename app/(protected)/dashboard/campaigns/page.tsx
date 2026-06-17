@@ -1,3 +1,5 @@
+import { auth } from "@/auth"
+import { getActiveOrgId } from "@/lib/active-org"
 import { redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { getCurrentUser } from "@/lib/session"
@@ -10,8 +12,8 @@ export default async function CampaignsPage() {
   const user = await getCurrentUser()
   if (!user) redirect("/login")
 
-  const orgId = (user as any)?.orgId ?? ""
-  const token = (user as any)?.accessToken ?? ""
+  const orgId = await getActiveOrgId()
+  const token = user?.accessToken ?? ""
 
   return (
     <div className="space-y-6">
