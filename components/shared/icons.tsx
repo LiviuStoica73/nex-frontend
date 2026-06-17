@@ -30,6 +30,7 @@ import {
   SunMedium,
   Trash,
   User,
+  Users,
   X,
 } from "lucide-react";
 
@@ -133,5 +134,6 @@ export const Icons = {
     </svg>
   ),
   user: User,
+  users: Users,
   warning: AlertTriangle,
 };

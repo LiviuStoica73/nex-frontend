@@ -17,6 +17,12 @@ export const sidebarLinks: SidebarNavItem[] = [
     ],
   },
   {
+    title: "AGENȚIE",
+    items: [
+      { href: "/dashboard/clients", icon: "users", title: "Clienți", agencyOnly: true },
+    ],
+  },
+  {
     title: "CONT",
     items: [
       { href: "/dashboard/billing",  icon: "billing",  title: "Abonament",   authorizeOnly: UserRole.USER },

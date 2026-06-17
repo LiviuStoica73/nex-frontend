@@ -23,6 +23,7 @@ import {
 import { UpgradeCard } from "@/components/dashboard/upgrade-card";
 import { OrgSwitcher } from "@/components/dashboard/org-switcher";
 import { Icons } from "@/components/shared/icons";
+import { useOrg } from "@/contexts/org-context";
 import {
   translateSidebarItemTitle,
   translateSidebarSectionTitle,
@@ -35,6 +36,8 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({ links }: DashboardSidebarProps) {
   const t = useTranslations();
   const path = usePathname();
+  const { activeOrg } = useOrg();
+  const isAgency = activeOrg?.is_agency ?? false;
 
   // NOTE: Use this if you want save in local storage -- Credits: Hosna Qasmei
   //
@@ -111,7 +114,12 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
               </div>
 
               <nav className="flex flex-1 flex-col gap-8 px-4 pt-4">
-                {links.map((section) => (
+                {links.map((section) => {
+                  const visibleItems = section.items.filter(
+                    (item) => !item.agencyOnly || isAgency
+                  )
+                  if (visibleItems.length === 0) return null
+                  return (
                   <section
                     key={section.title}
                     className="flex flex-col gap-0.5"
@@ -123,7 +131,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                     ) : (
                       <div className="h-4" />
                     )}
-                    {section.items.map((item) => {
+                    {visibleItems.map((item) => {
                       const Icon = Icons[item.icon || "arrowRight"];
                       return (
                         item.href && (
@@ -179,7 +187,8 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                       );
                     })}
                   </section>
-                ))}
+                  )
+                })}
               </nav>
 
               <div className="mt-auto xl:p-4">

@@ -24,6 +24,7 @@ export type NavItem = {
   disabled?: boolean;
   external?: boolean;
   authorizeOnly?: UserRole;
+  agencyOnly?: boolean;
   icon?: keyof typeof Icons;
 };
 

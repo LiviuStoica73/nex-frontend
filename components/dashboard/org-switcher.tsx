@@ -1,58 +1,15 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
 import { Check, ChevronsUpDown, Building2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
-import { api, type Org } from "@/lib/api"
-
-const ORG_KEY = "nex_active_org_id"
+import { useOrg } from "@/contexts/org-context"
+import { useState } from "react"
 
 export function OrgSwitcher() {
-  const { data: session } = useSession()
-  const [orgs, setOrgs] = useState<Org[]>([])
-  const [activeOrgId, setActiveOrgId] = useState<string>("")
+  const { orgs, activeOrgId, activeOrg, switching, switchOrg } = useOrg()
   const [open, setOpen] = useState(false)
-  const [switching, setSwitching] = useState(false)
-
-  const token = session?.user?.accessToken ?? ""
-
-  useEffect(() => {
-    if (!token) return
-    api.orgs.listMine(token).then((data) => {
-      setOrgs(data)
-      const stored = localStorage.getItem(ORG_KEY)
-      if (stored && data.find((o) => o.id === stored)) {
-        setActiveOrgId(stored)
-      } else if (data.length > 0) {
-        setActiveOrgId(data[0].id)
-        localStorage.setItem(ORG_KEY, data[0].id)
-      }
-    })
-  }, [token])
-
-  const activeOrg = orgs.find((o) => o.id === activeOrgId)
-
-  const switchOrg = async (orgId: string) => {
-    if (orgId === activeOrgId || switching) return
-    setSwitching(true)
-    try {
-      await api.orgs.switch(orgId, token)
-      await fetch("/api/org/switch", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orgId }),
-      })
-      localStorage.setItem(ORG_KEY, orgId)
-      setActiveOrgId(orgId)
-      setOpen(false)
-      window.location.reload()
-    } finally {
-      setSwitching(false)
-    }
-  }
 
   if (orgs.length === 0) {
     return (
@@ -82,7 +39,7 @@ export function OrgSwitcher() {
           {orgs.map((org) => (
             <button
               key={org.id}
-              onClick={() => switchOrg(org.id)}
+              onClick={() => { switchOrg(org.id); setOpen(false) }}
               disabled={switching}
               className={cn(
                 "w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-left hover:bg-muted transition-colors",

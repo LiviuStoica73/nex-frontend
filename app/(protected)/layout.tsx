@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { sidebarLinks } from "@/config/dashboard";
 import { getCurrentUser } from "@/lib/session";
+import { OrgProvider } from "@/contexts/org-context";
 import { SearchCommand } from "@/components/dashboard/search-command";
 import {
   DashboardSidebar,
@@ -28,6 +29,7 @@ export default async function Dashboard({ children }: ProtectedLayoutProps) {
   }));
 
   return (
+    <OrgProvider>
     <div className="relative flex min-h-screen w-full">
       <DashboardSidebar links={filteredLinks} />
 
@@ -52,5 +54,6 @@ export default async function Dashboard({ children }: ProtectedLayoutProps) {
         </main>
       </div>
     </div>
+    </OrgProvider>
   );
 }
