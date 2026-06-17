@@ -4,6 +4,7 @@ import { sidebarLinks } from "@/config/dashboard";
 import { getCurrentUser } from "@/lib/session";
 import { OrgProvider } from "@/contexts/org-context";
 import { SearchCommand } from "@/components/dashboard/search-command";
+import { OrgSwitcher } from "@/components/dashboard/org-switcher";
 import {
   DashboardSidebar,
   MobileSheetSidebar,
@@ -42,6 +43,9 @@ export default async function Dashboard({ children }: ProtectedLayoutProps) {
               <SearchCommand links={filteredLinks} />
             </div>
 
+            <div className="md:hidden">
+              <OrgSwitcher />
+            </div>
             <ModeToggle />
             <UserAccountNav />
           </MaxWidthWrapper>
