@@ -1,5 +1,4 @@
 import { auth } from "@/auth"
-import { getActiveOrgId } from "@/lib/active-org"
 import { redirect } from "next/navigation"
 import { ClientsManager } from "@/components/agency/clients-manager"
 
@@ -9,7 +8,9 @@ export default async function ClientsPage() {
   const session = await auth()
   if (!session) redirect("/login")
 
-  const orgId = await getActiveOrgId()
+  // Pagina clienți folosește mereu org-ul HOME din JWT (agenția),
+  // nu org-ul activ din cookie (care poate fi un client).
+  const orgId = session.user?.orgId ?? ""
   const token = session.user?.accessToken ?? ""
 
   return (

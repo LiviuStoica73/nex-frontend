@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/auth"
+import { getActiveOrgId } from "@/lib/active-org"
 
 async function getSession() {
   const session = await auth()
   if (!session?.user) return null
-  const orgId = (session.user as any).orgId
-  const token = (session.user as any).accessToken
+  const orgId = await getActiveOrgId()
+  const token = session.user?.accessToken
   if (!orgId || !token) return null
   return { orgId, token }
 }

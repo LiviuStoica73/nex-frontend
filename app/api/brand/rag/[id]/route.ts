@@ -1,3 +1,4 @@
+import { getActiveOrgId } from "@/lib/active-org"
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/auth"
 
@@ -6,7 +7,7 @@ const API = process.env.API_URL_INTERNAL || process.env.NEXT_PUBLIC_API_URL || "
 export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
   const session = await auth()
   if (!session?.user) return NextResponse.json({ detail: "Unauthorized" }, { status: 401 })
-  const orgId = (session.user as any).orgId
+  const orgId = await getActiveOrgId()
   const token = (session.user as any).accessToken
   const upstream = await fetch(`${API}/api/v1/orgs/${orgId}/rag/${params.id}`, {
     method: "DELETE",
