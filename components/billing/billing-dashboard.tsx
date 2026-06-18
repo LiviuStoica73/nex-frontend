@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Zap, HardDrive, Users, Share2, CreditCard, Coins } from "lucide-react"
+import { Zap, HardDrive, Users, Share2, Coins, FlaskConical } from "lucide-react"
 
 interface Credits {
   remaining: number
@@ -21,60 +21,58 @@ interface Usage {
   stripe_subscription_id: string | null
 }
 
-const PLANS = [
-  { name: "starter",   label: "Starter",   price: "€19/lună",  color: "bg-blue-500" },
-  { name: "pro",       label: "Pro",        price: "€49/lună",  color: "bg-violet-500" },
-  { name: "business",  label: "Business",   price: "€99/lună",  color: "bg-amber-500" },
-  { name: "agency",    label: "Agency",     price: "€199/lună", color: "bg-rose-500" },
-  { name: "agency_xl", label: "Agency XL",  price: "€349/lună", color: "bg-red-600" },
-]
+interface MockPlan {
+  name: string
+  label: string
+  price_eur: number
+  credits_monthly: number
+}
 
-interface Props { orgId: string; token: string; appUrl: string }
+const PLAN_PRICES: Record<string, string> = {
+  free: "€0", starter: "€19", pro: "€49", business: "€99", agency: "€199",
+}
 
-export function BillingDashboard({ orgId, token, appUrl }: Props) {
+interface Props { orgId: string; token: string; appUrl: string; mockMode?: boolean }
+
+export function BillingDashboard({ orgId, token, appUrl, mockMode = false }: Props) {
   const [usage, setUsage] = useState<Usage | null>(null)
   const [loading, setLoading] = useState(true)
-  const [upgrading, setUpgrading] = useState<string | null>(null)
+  const [mockPlans, setMockPlans] = useState<MockPlan[]>([])
+  const [switching, setSwitching] = useState<string | null>(null)
   const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002"
   const headers = { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
 
-  useEffect(() => {
+  const loadUsage = () => {
     if (!orgId || !token) { setLoading(false); return }
     fetch(`${API}/api/v1/orgs/${orgId}/billing`, { headers })
       .then((r) => r.ok ? r.json() : null)
       .then(setUsage)
       .catch(() => setUsage(null))
       .finally(() => setLoading(false))
-  }, [orgId, token])
-
-  const upgrade = async (planName: string) => {
-    setUpgrading(planName)
-    const res = await fetch(`${API}/api/v1/orgs/${orgId}/billing/checkout`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        plan: planName,
-        billing_cycle: "monthly",
-        success_url: `${appUrl}/billing?success=1`,
-        cancel_url: `${appUrl}/billing`,
-      }),
-    })
-    if (res.ok) {
-      const data = await res.json()
-      window.location.href = data.checkout_url
-    }
-    setUpgrading(null)
   }
 
-  const openPortal = async () => {
-    const res = await fetch(
-      `${API}/api/v1/orgs/${orgId}/billing/portal?return_url=${appUrl}/billing`,
-      { method: "POST", headers },
-    )
-    if (res.ok) {
-      const data = await res.json()
-      window.location.href = data.portal_url
+  useEffect(() => {
+    loadUsage()
+    if (mockMode) {
+      fetch(`${API}/api/v1/admin/plans`, { headers })
+        .then((r) => r.ok ? r.json() : [])
+        .then(setMockPlans)
+        .catch(() => {})
     }
+  }, [orgId, token])
+
+  const switchPlan = async (planName: string) => {
+    setSwitching(planName)
+    const res = await fetch(`${API}/api/v1/admin/orgs/${orgId}/set-plan`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ plan: planName, reset_credits: true }),
+    })
+    if (res.ok) {
+      setLoading(true)
+      loadUsage()
+    }
+    setSwitching(null)
   }
 
   if (loading) return <p className="text-muted-foreground">Se încarcă...</p>
@@ -89,29 +87,52 @@ export function BillingDashboard({ orgId, token, appUrl }: Props) {
     </div>
   )
 
-  const formatLimit = (v: number) => v === -1 ? "∞" : String(v)
-
   return (
-    <div className="space-y-8">
-      {/* Plan curent + portal */}
+    <div className="space-y-6">
+
+      {/* Banner mod simulare */}
+      {mockMode && (
+        <div className="flex items-center gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          <FlaskConical className="h-4 w-4 shrink-0" />
+          <span><strong>Mod simulare</strong> — plățile nu sunt procesate. Schimbă planul direct pentru testare.</span>
+        </div>
+      )}
+
+      {/* Plan curent */}
       <div className="rounded-lg border bg-card p-5 flex items-center justify-between">
         <div>
           <p className="text-sm text-muted-foreground">Plan curent</p>
           <p className="text-2xl font-bold capitalize">{usage.plan}</p>
-          {usage.stripe_subscription_id && (
-            <p className="text-xs text-muted-foreground mt-1">Abonament activ</p>
-          )}
+          <p className="text-sm text-muted-foreground mt-0.5">
+            {PLAN_PRICES[usage.plan] ?? ""}/lună
+            {usage.stripe_subscription_id && " · Abonament activ"}
+          </p>
         </div>
-        {usage.stripe_subscription_id && (
-          <button onClick={openPortal}
-            className="flex items-center gap-2 rounded-md border px-4 py-2 text-sm hover:bg-muted">
-            <CreditCard className="h-4 w-4" />
-            Facturi & Setări
-          </button>
+
+        {/* Selector plan mock */}
+        {mockMode && mockPlans.length > 0 && (
+          <div className="flex flex-col items-end gap-2">
+            <p className="text-xs text-muted-foreground">Simulează upgrade:</p>
+            <div className="flex flex-wrap gap-1 justify-end">
+              {mockPlans.map((p) => (
+                <button
+                  key={p.name}
+                  onClick={() => switchPlan(p.name)}
+                  disabled={switching === p.name || usage.plan === p.name}
+                  className="rounded-full border px-3 py-1 text-xs font-medium transition-colors
+                    disabled:opacity-40 enabled:hover:bg-primary enabled:hover:text-primary-foreground
+                    data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
+                  data-active={usage.plan === p.name}
+                >
+                  {switching === p.name ? "..." : p.label}
+                </button>
+              ))}
+            </div>
+          </div>
         )}
       </div>
 
-      {/* Credits gauge — principal */}
+      {/* Credits gauge */}
       {usage.credits && (
         <div className="rounded-lg border bg-card p-5 space-y-3">
           <div className="flex items-center justify-between">
@@ -126,8 +147,12 @@ export function BillingDashboard({ orgId, token, appUrl }: Props) {
           </div>
           <div className="h-2 w-full rounded-full bg-muted">
             <div
-              className={`h-2 rounded-full transition-all ${usage.credits.percent_used > 90 ? "bg-red-500" : usage.credits.percent_used > 70 ? "bg-amber-500" : "bg-green-500"}`}
-              style={{ width: `${usage.credits.percent_used}%` }}
+              className={`h-2 rounded-full transition-all ${
+                usage.credits.percent_used > 90 ? "bg-red-500"
+                : usage.credits.percent_used > 70 ? "bg-amber-500"
+                : "bg-green-500"
+              }`}
+              style={{ width: `${Math.min(usage.credits.percent_used, 100)}%` }}
             />
           </div>
           <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -138,7 +163,7 @@ export function BillingDashboard({ orgId, token, appUrl }: Props) {
           </div>
           {usage.image_providers?.length > 0 && (
             <p className="text-xs text-muted-foreground">
-              Generatori imagine activi: <span className="font-medium">{usage.image_providers.join(", ")}</span>
+              Generatori imagine: <span className="font-medium">{usage.image_providers.join(", ")}</span>
             </p>
           )}
         </div>
@@ -146,7 +171,7 @@ export function BillingDashboard({ orgId, token, appUrl }: Props) {
 
       {/* Usage gauges */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        <UsageCard icon={<Zap className="h-4 w-4" />} label="Posturi luna aceasta"
+        <UsageCard icon={<Zap className="h-4 w-4" />} label="Postări luna aceasta"
           value={usage.posts_this_month.used} limit={usage.posts_this_month.limit}
           percent={usage.posts_this_month.percent} />
         <UsageCard icon={<HardDrive className="h-4 w-4" />} label="Storage"
@@ -158,27 +183,12 @@ export function BillingDashboard({ orgId, token, appUrl }: Props) {
           value={usage.agency_clients.count} limit={usage.agency_clients.limit} />
       </div>
 
-      {/* Upgrade plans */}
-      {usage.plan === "free" && (
-        <div>
-          <h2 className="mb-4 font-semibold">Upgrade plan</h2>
-          <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-5">
-            {PLANS.map((plan) => (
-              <div key={plan.name} className="rounded-lg border bg-card p-4 space-y-3">
-                <div className={`inline-block rounded px-2 py-0.5 text-xs font-bold text-white ${plan.color}`}>
-                  {plan.label}
-                </div>
-                <p className="text-lg font-bold">{plan.price}</p>
-                <button onClick={() => upgrade(plan.name)} disabled={upgrading === plan.name}
-                  className="w-full rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
-                  {upgrading === plan.name ? "Redirecționez..." : "Alege plan"}
-                </button>
-              </div>
-            ))}
-          </div>
-          <p className="mt-2 text-xs text-muted-foreground">
-            14 zile trial gratuit · Anulezi oricând · Fără card la trial
-          </p>
+      {/* Link upgrade real (non-mock) */}
+      {!mockMode && usage.plan === "free" && (
+        <div className="rounded-lg border bg-muted/30 p-4 text-center text-sm text-muted-foreground">
+          Upgrade disponibil pe{" "}
+          <a href="/pricing" className="font-medium underline">pagina de prețuri</a>.
+          · 14 zile trial gratuit · Anulezi oricând
         </div>
       )}
     </div>
@@ -201,7 +211,8 @@ function UsageCard({
         <span className="text-xs">{label}</span>
       </div>
       <p className="text-xl font-bold">
-        {value}{unit} <span className="text-sm font-normal text-muted-foreground">
+        {value}{unit}{" "}
+        <span className="text-sm font-normal text-muted-foreground">
           / {isUnlimited ? "∞" : `${limit}${unit}`}
         </span>
       </p>

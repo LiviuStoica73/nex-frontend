@@ -23,7 +23,7 @@ export default async function BillingPage() {
         <h1 className="text-2xl font-bold tracking-tight">Abonament & Plan</h1>
         <p className="text-muted-foreground">Plan curent, credite disponibile și opțiuni de upgrade.</p>
       </div>
-      <BillingDashboard orgId={orgId} token={token} appUrl={appUrl} />
+      <BillingDashboard orgId={orgId} token={token} appUrl={appUrl} mockMode={process.env.BILLING_MODE === "mock" || process.env.NODE_ENV !== "production"} />
     </div>
   )
 }
