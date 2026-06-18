@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Building2, Share2, BookOpen, Bot, Check } from "lucide-react"
 import { useRouter } from "next/navigation"
 
-interface Props { token: string }
+interface Props { token: string; existingOrgId?: string }
 
 const STEPS = [
   { id: 1, icon: Building2, title: "Brandul tău",       desc: "Cum se numește brandul sau compania ta?" },
@@ -15,14 +15,14 @@ const STEPS = [
 
 const PLATFORMS = ["facebook", "instagram", "linkedin", "x", "discord", "blog"]
 
-export function OnboardingWizard({ token }: Props) {
+export function OnboardingWizard({ token, existingOrgId }: Props) {
   const router = useRouter()
   const [step, setStep] = useState(1)
   const [orgName, setOrgName] = useState("")
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([])
   const [brandVoice, setBrandVoice] = useState("")
   const [creating, setCreating] = useState(false)
-  const [orgId, setOrgId] = useState("")
+  const [orgId, setOrgId] = useState(existingOrgId ?? "")
   const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002"
   const headers = { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
 
@@ -32,15 +32,25 @@ export function OnboardingWizard({ token }: Props) {
   const createOrg = async () => {
     if (!orgName.trim()) return
     setCreating(true)
-    const res = await fetch(`${API}/api/v1/orgs`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({ name: orgName }),
-    })
-    if (res.ok) {
-      const org = await res.json()
-      setOrgId(org.id)
-      setStep(2)
+    if (existingOrgId) {
+      // Redenumim org-ul auto-creat la sync
+      const res = await fetch(`${API}/api/v1/orgs/${existingOrgId}`, {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify({ name: orgName }),
+      })
+      if (res.ok) setStep(2)
+    } else {
+      const res = await fetch(`${API}/api/v1/orgs`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ name: orgName }),
+      })
+      if (res.ok) {
+        const org = await res.json()
+        setOrgId(org.id)
+        setStep(2)
+      }
     }
     setCreating(false)
   }

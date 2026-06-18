@@ -9,5 +9,6 @@ export default async function OnboardingPage() {
   if (!session) redirect("/login")
 
   const token = session.user?.accessToken ?? ""
-  return <OnboardingWizard token={token} />
+  const existingOrgId = session.user?.orgId ?? ""
+  return <OnboardingWizard token={token} existingOrgId={existingOrgId} />
 }
