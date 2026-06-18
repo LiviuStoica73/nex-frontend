@@ -1,10 +1,19 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Zap, HardDrive, Users, Share2, CreditCard } from "lucide-react"
+import { Zap, HardDrive, Users, Share2, CreditCard, Coins } from "lucide-react"
+
+interface Credits {
+  remaining: number
+  monthly: number
+  reset_at: string | null
+  percent_used: number
+}
 
 interface Usage {
   plan: string
+  credits: Credits
+  image_providers: string[]
   storage: { used_mb: number; limit_gb: number; percent: number }
   posts_this_month: { used: number; limit: number; percent: number }
   social_accounts: { count: number; limit: number }
@@ -91,6 +100,39 @@ export function BillingDashboard({ orgId, token, appUrl }: Props) {
         )}
       </div>
 
+      {/* Credits gauge — principal */}
+      {usage.credits && (
+        <div className="rounded-lg border bg-card p-5 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Coins className="h-5 w-5 text-amber-500" />
+              <span className="font-semibold">Credite disponibile</span>
+            </div>
+            <span className="text-2xl font-bold">
+              {usage.credits.remaining}
+              <span className="text-sm font-normal text-muted-foreground"> / {usage.credits.monthly}</span>
+            </span>
+          </div>
+          <div className="h-2 w-full rounded-full bg-muted">
+            <div
+              className={`h-2 rounded-full transition-all ${usage.credits.percent_used > 90 ? "bg-red-500" : usage.credits.percent_used > 70 ? "bg-amber-500" : "bg-green-500"}`}
+              style={{ width: `${usage.credits.percent_used}%` }}
+            />
+          </div>
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span>1 text = 1cr · 1 imagine RTX/Fal = 2cr · 1 imagine Gemini = 4cr · 1 video = 10cr</span>
+            {usage.credits.reset_at && (
+              <span>Reset: {new Date(usage.credits.reset_at).toLocaleDateString("ro-RO")}</span>
+            )}
+          </div>
+          {usage.image_providers?.length > 0 && (
+            <p className="text-xs text-muted-foreground">
+              Generatori imagine activi: <span className="font-medium">{usage.image_providers.join(", ")}</span>
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Usage gauges */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <UsageCard icon={<Zap className="h-4 w-4" />} label="Posturi luna aceasta"
@@ -124,7 +166,7 @@ export function BillingDashboard({ orgId, token, appUrl }: Props) {
             ))}
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            14 zile trial gratuit · Anulezi oricând · Fără card la trial
+            Fără angajament · Anulezi oricând · Plată securizată prin Stripe
           </p>
         </div>
       )}
