@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/session"
 import { constructMetadata } from "@/lib/utils"
 import { getActiveOrgId } from "@/lib/active-org"
 import { auth } from "@/auth"
+import { redirect } from "next/navigation"
 import { AnalyticsDashboard } from "@/components/analytics/analytics-dashboard"
 import { AgencyOverview } from "@/components/agency/agency-overview"
 
@@ -14,6 +15,8 @@ export const metadata = constructMetadata({
 export default async function DashboardPage() {
   const session = await auth()
   const orgId = await getActiveOrgId()
+
+  if (!orgId) redirect("/onboarding")
   const token = session?.user?.accessToken ?? ""
   const t = await getTranslations("dashboard")
 
