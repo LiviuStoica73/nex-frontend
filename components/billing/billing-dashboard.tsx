@@ -166,7 +166,7 @@ export function BillingDashboard({ orgId, token, appUrl }: Props) {
             ))}
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            Fără angajament · Anulezi oricând · Plată securizată prin Stripe
+            14 zile trial gratuit · Anulezi oricând · Fără card la trial
           </p>
         </div>
       )}
