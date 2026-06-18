@@ -446,12 +446,11 @@
       },
       "agency": {
         "description": "For agencies",
-        "cta": "Contact us",
+        "cta": "Start 14-day trial",
         "features": [
-          "Unlimited brands",
-          "Unlimited accounts",
-          "15 clients included",
-          "+ €10/month per additional client",
+          "20 brands included",
+          "+ €10/month per additional brand",
+          "Unlimited social accounts",
           "Isolated client portal",
           "Unified billing",
           "100 GB storage"

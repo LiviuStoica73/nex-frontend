@@ -119,10 +119,6 @@ export function PricingCards() {
         })}
       </div>
 
-      {/* Agency extra-client nota */}
-      <p className="text-sm text-muted-foreground text-center">
-        {t("agency_extra")}
-      </p>
     </section>
   )
 }
