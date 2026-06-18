@@ -12,6 +12,7 @@ interface OrgContextValue {
   activeOrg: Org | undefined
   switching: boolean
   switchOrg: (orgId: string) => Promise<void>
+  createBrand: (name: string) => Promise<{ ok: boolean; limitReached?: boolean }>
 }
 
 const OrgContext = createContext<OrgContextValue>({
@@ -20,6 +21,7 @@ const OrgContext = createContext<OrgContextValue>({
   activeOrg: undefined,
   switching: false,
   switchOrg: async () => {},
+  createBrand: async () => ({ ok: false }),
 })
 
 export function OrgProvider({ children }: { children: React.ReactNode }) {
@@ -62,10 +64,32 @@ export function OrgProvider({ children }: { children: React.ReactNode }) {
     }
   }, [activeOrgId, switching, token])
 
+  const createBrand = useCallback(async (name: string) => {
+    const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002"
+    const res = await fetch(`${API}/api/v1/orgs`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ name }),
+    })
+    if (res.status === 402) return { ok: false, limitReached: true }
+    if (!res.ok) return { ok: false }
+    const org: Org = await res.json()
+    setOrgs((prev) => [...prev, org])
+    await fetch("/api/org/switch", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orgId: org.id }),
+    })
+    localStorage.setItem(ORG_KEY, org.id)
+    setActiveOrgId(org.id)
+    window.location.reload()
+    return { ok: true }
+  }, [token])
+
   const activeOrg = orgs.find((o) => o.id === activeOrgId)
 
   return (
-    <OrgContext.Provider value={{ orgs, activeOrgId, activeOrg, switching, switchOrg }}>
+    <OrgContext.Provider value={{ orgs, activeOrgId, activeOrg, switching, switchOrg, createBrand }}>
       {children}
     </OrgContext.Provider>
   )

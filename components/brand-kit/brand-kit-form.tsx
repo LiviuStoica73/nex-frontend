@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Save, Upload, FileText, Trash2, Link, RefreshCw, X } from "lucide-react"
+import { Save, Upload, FileText, Trash2, Link, RefreshCw, X, Building2 } from "lucide-react"
 
 const POSITION_OPTIONS = [
   { value: "top_left",    label: "Sus stânga" },
@@ -115,6 +115,20 @@ type Tab = "identitate" | "voce" | "tipografie" | "documente" | "quick_post"
 interface Props { orgId: string; token: string }
 
 export function BrandKitForm({ orgId, token }: Props) {
+  if (!orgId) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-12 text-center">
+        <Building2 className="h-10 w-10 text-muted-foreground" />
+        <div>
+          <p className="font-medium">Niciun brand selectat</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Creează sau selectează un brand din meniul din stânga pentru a configura Brand Kit-ul.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   const [tab, setTab] = useState<Tab>("identitate")
 
   const [kit, setKit] = useState<BrandKit>({
