@@ -391,11 +391,7 @@
       "discount": "-17%",
       "billed_yearly": "€{total} facturat anual"
     },
-    "agency_xl": {
-      "prefix": "Agency XL (clienți nelimitați) —",
-      "price": "€349/lună",
-      "link": "Discount anual disponibil"
-    },
+    "agency_extra": "€10/lună per client suplimentar",
     "metadata": {
       "title": "Prețuri — Nex-Nex",
       "description": "Planuri simple pentru creatori individuali și agenții. 14 zile trial gratuit, fără card."
@@ -406,9 +402,9 @@
         "cta": "Încearcă gratuit",
         "features": [
           "1 brand",
-          "2 conturi sociale",
-          "10 posturi/lună",
-          "AI text basic"
+          "1 cont social",
+          "10 postări/lună",
+          "AI text + imagine basic"
         ]
       },
       "starter": {
@@ -417,7 +413,7 @@
         "features": [
           "1 brand",
           "5 conturi sociale",
-          "100 posturi/lună",
+          "100 postări/lună",
           "AI text + imagine",
           "Telegram Bot",
           "5 GB storage"
@@ -429,8 +425,8 @@
         "features": [
           "3 branduri",
           "15 conturi sociale",
-          "Posturi nelimitate",
-          "AI text + imagine + video",
+          "Postări nelimitate",
+          "AI text + imagine",
           "Analytics",
           "Multi-limbă",
           "20 GB storage"
@@ -442,7 +438,7 @@
         "features": [
           "10 branduri",
           "Conturi nelimitate",
-          "Posturi nelimitate",
+          "Postări nelimitate",
           "AI complet",
           "Analytics avansat",
           "50 GB storage"
@@ -454,7 +450,8 @@
         "features": [
           "Branduri nelimitate",
           "Conturi nelimitate",
-          "15 clienți",
+          "15 clienți incluși",
+          "+ €10/lună per client suplimentar",
           "Portal client izolat",
           "Billing unificat",
           "100 GB storage"

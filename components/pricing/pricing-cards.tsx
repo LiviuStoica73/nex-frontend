@@ -23,7 +23,6 @@ const PLANS: Plan[] = [
   { key: "agency",     name: "Agency",     monthly: 199, yearly: 1990, highlight: false, href: "/register" },
 ]
 
-const AGENCY_XL = { monthly: 349, yearly: 3490 }
 
 export function PricingCards() {
   const t = useTranslations("marketing_pricing_page")
@@ -120,15 +119,9 @@ export function PricingCards() {
         })}
       </div>
 
-      {/* Agency XL footer */}
+      {/* Agency extra-client nota */}
       <p className="text-sm text-muted-foreground text-center">
-        {t("agency_xl.prefix")}{" "}
-        <strong>
-          {isYearly
-            ? `€${Math.round(AGENCY_XL.yearly / 12)}/lună (€${AGENCY_XL.yearly}/an)`
-            : `€${AGENCY_XL.monthly}/lună`}
-        </strong>{" "}
-        · <Link href="/register" className="underline">{t("agency_xl.link")}</Link>
+        {t("agency_extra")}
       </p>
     </section>
   )

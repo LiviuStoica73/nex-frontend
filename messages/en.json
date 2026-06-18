@@ -395,20 +395,16 @@
       "discount": "-17%",
       "billed_yearly": "€{total} billed yearly"
     },
-    "agency_xl": {
-      "prefix": "Agency XL (unlimited clients) —",
-      "price": "€349/month",
-      "link": "Annual discount available"
-    },
+    "agency_extra": "€10/month per additional client",
     "plans": {
       "free": {
         "description": "To test the platform",
         "cta": "Try for free",
         "features": [
           "1 brand",
-          "2 social accounts",
+          "1 social account",
           "10 posts/month",
-          "Basic AI text"
+          "Basic AI text + image"
         ]
       },
       "starter": {
@@ -430,7 +426,7 @@
           "3 brands",
           "15 social accounts",
           "Unlimited posts",
-          "AI text + image + video",
+          "AI text + image",
           "Analytics",
           "Multi-language",
           "20 GB storage"
@@ -454,7 +450,8 @@
         "features": [
           "Unlimited brands",
           "Unlimited accounts",
-          "15 clients",
+          "15 clients included",
+          "+ €10/month per additional client",
           "Isolated client portal",
           "Unified billing",
           "100 GB storage"
