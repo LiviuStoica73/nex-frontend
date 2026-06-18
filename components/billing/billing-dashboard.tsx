@@ -39,9 +39,11 @@ export function BillingDashboard({ orgId, token, appUrl }: Props) {
   const headers = { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
 
   useEffect(() => {
+    if (!orgId || !token) { setLoading(false); return }
     fetch(`${API}/api/v1/orgs/${orgId}/billing`, { headers })
-      .then((r) => r.json())
+      .then((r) => r.ok ? r.json() : null)
       .then(setUsage)
+      .catch(() => setUsage(null))
       .finally(() => setLoading(false))
   }, [orgId, token])
 
@@ -76,7 +78,16 @@ export function BillingDashboard({ orgId, token, appUrl }: Props) {
   }
 
   if (loading) return <p className="text-muted-foreground">Se încarcă...</p>
-  if (!usage) return null
+  if (!orgId || !token) return (
+    <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+      Sesiunea nu conține un org activ. Încearcă să te reconectezi.
+    </div>
+  )
+  if (!usage) return (
+    <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+      Nu s-au putut încărca datele de billing. Verifică că backend-ul este activ.
+    </div>
+  )
 
   const formatLimit = (v: number) => v === -1 ? "∞" : String(v)
 
