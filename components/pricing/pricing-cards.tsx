@@ -1,193 +1,135 @@
-"use client";
+"use client"
 
-import { useContext, useState } from "react";
-import Link from "next/link";
-import { UserSubscriptionPlan } from "@/types";
+import { useState } from "react"
+import Link from "next/link"
+import { useTranslations } from "next-intl"
+import { cn } from "@/lib/utils"
+import { buttonVariants } from "@/components/ui/button"
 
-import { SubscriptionPlan } from "@/types/index";
-import { pricingData } from "@/config/subscriptions";
-import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { BillingFormButton } from "@/components/forms/billing-form-button";
-import { ModalContext } from "@/components/modals/providers";
-import { HeaderSection } from "@/components/shared/header-section";
-import { Icons } from "@/components/shared/icons";
-import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
-
-interface PricingCardsProps {
-  userId?: string;
-  subscriptionPlan?: UserSubscriptionPlan;
+interface Plan {
+  key: string
+  name: string
+  monthly: number
+  yearly: number  // total anual
+  highlight: boolean
+  href: string
 }
 
-export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
-  const isYearlyDefault =
-    !subscriptionPlan?.stripeCustomerId || subscriptionPlan.interval === "year"
-      ? true
-      : false;
-  const [isYearly, setIsYearly] = useState<boolean>(!!isYearlyDefault);
-  const { setShowSignInModal } = useContext(ModalContext);
+const PLANS: Plan[] = [
+  { key: "free",       name: "Free",       monthly: 0,   yearly: 0,    highlight: false, href: "/register" },
+  { key: "starter",    name: "Starter",    monthly: 19,  yearly: 190,  highlight: false, href: "/register" },
+  { key: "pro",        name: "Pro",        monthly: 49,  yearly: 490,  highlight: true,  href: "/register" },
+  { key: "business",   name: "Business",   monthly: 99,  yearly: 990,  highlight: false, href: "/register" },
+  { key: "agency",     name: "Agency",     monthly: 199, yearly: 1990, highlight: false, href: "/register" },
+]
 
-  const toggleBilling = () => {
-    setIsYearly(!isYearly);
-  };
+const AGENCY_XL = { monthly: 349, yearly: 3490 }
 
-  const PricingCard = ({ offer }: { offer: SubscriptionPlan }) => {
-    return (
-      <div
-        className={cn(
-          "relative flex flex-col overflow-hidden rounded-3xl border shadow-sm",
-          offer.title.toLocaleLowerCase() === "pro"
-            ? "-m-0.5 border-2 border-purple-400"
-            : "",
-        )}
-        key={offer.title}
-      >
-        <div className="min-h-[150px] items-start space-y-4 bg-muted/50 p-6">
-          <p className="flex font-urban text-sm font-bold uppercase tracking-wider text-muted-foreground">
-            {offer.title}
-          </p>
-
-          <div className="flex flex-row">
-            <div className="flex items-end">
-              <div className="flex text-left text-3xl font-semibold leading-6">
-                {isYearly && offer.prices.monthly > 0 ? (
-                  <>
-                    <span className="mr-2 text-muted-foreground/80 line-through">
-                      ${offer.prices.monthly}
-                    </span>
-                    <span>${offer.prices.yearly / 12}</span>
-                  </>
-                ) : (
-                  `$${offer.prices.monthly}`
-                )}
-              </div>
-              <div className="-mb-1 ml-2 text-left text-sm font-medium text-muted-foreground">
-                <div>/month</div>
-              </div>
-            </div>
-          </div>
-          {offer.prices.monthly > 0 ? (
-            <div className="text-left text-sm text-muted-foreground">
-              {isYearly
-                ? `$${offer.prices.yearly} will be charged when annual`
-                : "when charged monthly"}
-            </div>
-          ) : null}
-        </div>
-
-        <div className="flex h-full flex-col justify-between gap-16 p-6">
-          <ul className="space-y-2 text-left text-sm font-medium leading-normal">
-            {offer.benefits.map((feature) => (
-              <li className="flex items-start gap-x-3" key={feature}>
-                <Icons.check className="size-5 shrink-0 text-purple-500" />
-                <p>{feature}</p>
-              </li>
-            ))}
-
-            {offer.limitations.length > 0 &&
-              offer.limitations.map((feature) => (
-                <li
-                  className="flex items-start text-muted-foreground"
-                  key={feature}
-                >
-                  <Icons.close className="mr-3 size-5 shrink-0" />
-                  <p>{feature}</p>
-                </li>
-              ))}
-          </ul>
-
-          {userId && subscriptionPlan ? (
-            offer.title === "Starter" ? (
-              <Link
-                href="/dashboard"
-                className={cn(
-                  buttonVariants({
-                    variant: "outline",
-                    rounded: "full",
-                  }),
-                  "w-full",
-                )}
-              >
-                Go to dashboard
-              </Link>
-            ) : (
-              <BillingFormButton
-                year={isYearly}
-                offer={offer}
-                subscriptionPlan={subscriptionPlan}
-              />
-            )
-          ) : (
-            <Button
-              variant={
-                offer.title.toLocaleLowerCase() === "pro"
-                  ? "default"
-                  : "outline"
-              }
-              rounded="full"
-              onClick={() => setShowSignInModal(true)}
-            >
-              Sign in
-            </Button>
-          )}
-        </div>
-      </div>
-    );
-  };
+export function PricingCards() {
+  const t = useTranslations("marketing_pricing_page")
+  const [isYearly, setIsYearly] = useState(false)
 
   return (
-    <MaxWidthWrapper>
-      <section className="flex flex-col items-center text-center">
-        <HeaderSection label="Pricing" title="Start at full speed !" />
+    <section className="container flex flex-col items-center gap-8">
+      {/* Toggle lunar / anual */}
+      <div className="flex items-center gap-3 rounded-full border bg-muted/50 p-1">
+        <button
+          onClick={() => setIsYearly(false)}
+          className={cn(
+            "rounded-full px-5 py-1.5 text-sm font-medium transition-colors",
+            !isYearly ? "bg-background shadow text-foreground" : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          {t("toggle.monthly")}
+        </button>
+        <button
+          onClick={() => setIsYearly(true)}
+          className={cn(
+            "flex items-center gap-2 rounded-full px-5 py-1.5 text-sm font-medium transition-colors",
+            isYearly ? "bg-background shadow text-foreground" : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          {t("toggle.yearly")}
+          <span className="rounded-full bg-green-500 px-1.5 py-0.5 text-[10px] font-bold text-white leading-none">
+            {t("toggle.discount")}
+          </span>
+        </button>
+      </div>
 
-        <div className="mb-4 mt-10 flex items-center gap-5">
-          <ToggleGroup
-            type="single"
-            size="sm"
-            defaultValue={isYearly ? "yearly" : "monthly"}
-            onValueChange={toggleBilling}
-            aria-label="toggle-year"
-            className="h-9 overflow-hidden rounded-full border bg-background p-1 *:h-7 *:text-muted-foreground"
-          >
-            <ToggleGroupItem
-              value="yearly"
-              className="rounded-full px-5 data-[state=on]:!bg-primary data-[state=on]:!text-primary-foreground"
-              aria-label="Toggle yearly billing"
+      {/* Cards */}
+      <div className="grid w-full max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        {PLANS.map((plan) => {
+          const features = t.raw(`plans.${plan.key}.features`) as string[]
+          const displayPrice = isYearly && plan.monthly > 0
+            ? Math.round(plan.yearly / 12)
+            : plan.monthly
+
+          return (
+            <div
+              key={plan.key}
+              className={cn(
+                "relative flex flex-col rounded-xl border p-5 text-left",
+                plan.highlight
+                  ? "border-purple-500 bg-purple-50 dark:bg-purple-950/20 shadow-lg scale-105"
+                  : "bg-card",
+              )}
             >
-              Yearly (-20%)
-            </ToggleGroupItem>
-            <ToggleGroupItem
-              value="monthly"
-              className="rounded-full px-5 data-[state=on]:!bg-primary data-[state=on]:!text-primary-foreground"
-              aria-label="Toggle monthly billing"
-            >
-              Monthly
-            </ToggleGroupItem>
-          </ToggleGroup>
-        </div>
+              {plan.highlight && (
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-purple-600 px-3 py-0.5 text-xs font-semibold text-white">
+                  {t("popular_badge")}
+                </span>
+              )}
 
-        <div className="grid gap-5 bg-inherit py-5 lg:grid-cols-3">
-          {pricingData.map((offer) => (
-            <PricingCard offer={offer} key={offer.title} />
-          ))}
-        </div>
+              <div className="mb-4">
+                <h2 className="text-lg font-bold">{plan.name}</h2>
+                <p className="text-sm text-muted-foreground">{t(`plans.${plan.key}.description`)}</p>
+                <div className="mt-2 flex items-baseline gap-1">
+                  {isYearly && plan.monthly > 0 && (
+                    <span className="text-base text-muted-foreground/60 line-through">€{plan.monthly}</span>
+                  )}
+                  <span className="text-3xl font-extrabold">€{displayPrice}</span>
+                  <span className="text-muted-foreground text-sm">{t("per_month")}</span>
+                </div>
+                {isYearly && plan.yearly > 0 && (
+                  <p className="mt-1 text-xs text-muted-foreground">{t("toggle.billed_yearly", { total: plan.yearly })}</p>
+                )}
+              </div>
 
-        <p className="mt-3 text-balance text-center text-base text-muted-foreground">
-          Email{" "}
-          <a
-            className="font-medium text-primary hover:underline"
-            href="mailto:support@saas-starter.com"
-          >
-            support@saas-starter.com
-          </a>{" "}
-          for to contact our support team.
-          <br />
-          <strong>
-            You can test the subscriptions and won&apos;t be charged.
-          </strong>
-        </p>
-      </section>
-    </MaxWidthWrapper>
-  );
+              <ul className="mb-6 flex-1 space-y-1.5 text-sm">
+                {features.map((f) => (
+                  <li key={f} className="flex items-center gap-2">
+                    <svg className="h-4 w-4 shrink-0 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+
+              <Link
+                href={plan.href}
+                className={cn(
+                  buttonVariants({ variant: plan.highlight ? "default" : "outline", size: "sm", rounded: "full" }),
+                  "w-full text-center",
+                )}
+              >
+                {t(`plans.${plan.key}.cta`)}
+              </Link>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Agency XL footer */}
+      <p className="text-sm text-muted-foreground text-center">
+        {t("agency_xl.prefix")}{" "}
+        <strong>
+          {isYearly
+            ? `€${Math.round(AGENCY_XL.yearly / 12)}/lună (€${AGENCY_XL.yearly}/an)`
+            : `€${AGENCY_XL.monthly}/lună`}
+        </strong>{" "}
+        · <Link href="/register" className="underline">{t("agency_xl.link")}</Link>
+      </p>
+    </section>
+  )
 }

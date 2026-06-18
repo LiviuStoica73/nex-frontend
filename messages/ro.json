@@ -385,6 +385,12 @@
     "subtitle": "14 zile trial gratuit pe orice plan. Fără card de credit. Anulezi oricând.",
     "popular_badge": "Popular",
     "per_month": "/lună",
+    "toggle": {
+      "monthly": "Lunar",
+      "yearly": "Anual",
+      "discount": "-17%",
+      "billed_yearly": "€{total} facturat anual"
+    },
     "agency_xl": {
       "prefix": "Agency XL (clienți nelimitați) —",
       "price": "€349/lună",
@@ -455,6 +461,48 @@
         ]
       }
     }
+  },
+  "pricing_faq": {
+    "label": "FAQ",
+    "title": "Întrebări frecvente",
+    "subtitle": "Dacă nu găsești răspunsul, scrie-ne la support@nex-nex.com.",
+    "items": {
+      "item_1": {
+        "question": "Există trial gratuit?",
+        "answer": "Da — 14 zile trial gratuit la orice plan plătit. Cardul este cerut la start (Stripe previne abuzul de cont), dar nu ești taxat până la expirarea trial-ului. Anulezi oricând fără penalități."
+      },
+      "item_2": {
+        "question": "Pot anula oricând?",
+        "answer": "Da, anulezi oricând din dashboard, fără penalități. După anulare, rămâi pe planul plătit până la sfârșitul perioadei facturate, după care contul revine pe Free."
+      },
+      "item_3": {
+        "question": "Ce înseamnă RAG per brand?",
+        "answer": "RAG (Retrieval-Augmented Generation) înseamnă că AI citește documentele pe care le încarci — descrieri de produse, prețuri, FAQ — și generează conținut bazat pe informații reale, nu detalii inventate. Fiecare brand are setul lui izolat de documente."
+      },
+      "item_4": {
+        "question": "Ce rețele sociale sunt suportate?",
+        "answer": "Facebook, Instagram, LinkedIn, X (Twitter), Discord și WordPress Blog — prin API direct. YouTube, Threads și Bluesky vin în Faza 2. TikTok și Pinterest sunt în backlog și necesită un proces de review extern care poate dura luni."
+      },
+      "item_5": {
+        "question": "Cum funcționează Telegram Bot-ul?",
+        "answer": "Conectezi contul Nex-Nex cu Telegram din Setări. Apoi scrii orice subiect în chat — AI generează postarea folosind RAG-ul brandului tău, tu aprobi cu un buton și se publică sau se programează automat. Funcționează de pe orice telefon."
+      },
+      "item_6": {
+        "question": "Există discount pentru facturare anuală?",
+        "answer": "Da — aproximativ 17% reducere (echivalent cu 2 luni gratuite) la abonamentul anual față de cel lunar."
+      },
+      "item_7": {
+        "question": "Planul Agency acoperă toți clienții mei?",
+        "answer": "Da — un abonament Agency (€199/lună) acoperă până la 15 clienți. Agency XL (€349/lună) este nelimitat. Fiecare client are workspace izolat, login separat și RAG separat."
+      }
+    }
+  },
+  "billing_info": {
+    "title": "Plan Abonament",
+    "description": "Ești pe planul <strong>{plan}</strong>.",
+    "cancels_on": "Planul se anulează pe {date}.",
+    "renews_on": "Planul se reînnoiește pe {date}.",
+    "choose_plan": "Alege un plan"
   },
   "footer": {
     "tagline": "AI învață brandul tău, creează conținut profesionist și-l publică automat pe rețele sociale.",

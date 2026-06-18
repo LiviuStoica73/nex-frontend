@@ -389,6 +389,12 @@
     "subtitle": "14-day free trial on any plan. No credit card required. Cancel anytime.",
     "popular_badge": "Popular",
     "per_month": "/month",
+    "toggle": {
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "discount": "-17%",
+      "billed_yearly": "€{total} billed yearly"
+    },
     "agency_xl": {
       "prefix": "Agency XL (unlimited clients) —",
       "price": "€349/month",
