@@ -992,7 +992,7 @@ export function BrandKitForm({ orgId, token }: Props) {
             <div className="flex flex-col gap-2">
               {[
                 { value: "comfyui", label: "🖼️ Nex-Nex RTX (ComfyUI) — local, 1 credit · logo/sign adăugate mecanic" },
-                { value: "fal",     label: "⚡ Fal.ai FLUX — rapid, 1 credit · logo/sign adăugate mecanic" },
+                { value: "fal",     label: "⚡ Fal.ai FLUX — rapid, 1 credit (fără branding) / 2 credite (cu logo/sign integrate organic)" },
                 { value: "gemini",  label: "🎨 Google Gemini — 2 credite · logo/sign integrate organic în scenă" },
               ].map(({ value, label }) => (
                 <label key={value} className="flex items-center gap-3 cursor-pointer">
