@@ -13,7 +13,8 @@ export const sidebarLinks: SidebarNavItem[] = [
   {
     title: "BRAND",
     items: [
-      { href: "/dashboard/settings/brand-kit", icon: "page", title: "Brand Kit" },
+      { href: "/dashboard/settings/brand-kit",       icon: "page",    title: "Brand Kit" },
+      { href: "/dashboard/settings/social-accounts", icon: "twitter", title: "Conturi Sociale" },
     ],
   },
   {
