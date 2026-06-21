@@ -66,11 +66,8 @@ export default function SocialAccountsPage() {
   const [savingLang, setSavingLang] = useState<string | null>(null);
 
   const sessionToken = (session?.user as any)?.accessToken as string | undefined;
-  // JWT și org_id din URL (callback OAuth) disponibile imediat, fără să așteptăm sesiunea
-  const urlOrgId = searchParams.get("org_id") ?? undefined;
-  const urlToken = searchParams.get("jwt") ?? undefined;
-  const token = sessionToken || urlToken;
-  const orgId = urlOrgId || activeOrgId || (session?.user as any)?.orgId;
+  const token = sessionToken;
+  const orgId = activeOrgId || (session?.user as any)?.orgId;
 
   const fetchAccounts = async (currentOrgId: string, currentToken: string) => {
     setLoading(true);
@@ -92,23 +89,32 @@ export default function SocialAccountsPage() {
       return;
     }
     setAccounts([]);
-    if (!searchParams.get("fb_connect")) setFbPages([]);  // nu reseta dacă suntem în callback OAuth
+    setFbPages([]);
+    // Curăță URL-ul dacă mai are parametri OAuth din sesiunea anterioară
+    if (searchParams.get("fb_connect")) {
+      router.replace("/dashboard/settings/social-accounts");
+      return;
+    }
     fetchAccounts(orgId, token);
   }, [orgId, token]);
 
-  // Handle redirect from Facebook callback
+  // Handle redirect from Facebook callback — fetch pages din Redis via session_id
   useEffect(() => {
     const fbConnect = searchParams.get("fb_connect");
-    const pagesParam = searchParams.get("pages");
-    if (fbConnect === "1" && pagesParam) {
-      try {
-        const parsed: FbPage[] = JSON.parse(decodeURIComponent(pagesParam));
-        setFbPages(parsed);
+    const sessionId = searchParams.get("session_id");
+    if (fbConnect !== "1" || !sessionId) return;
+
+    fetch(`${API_URL}/api/v1/auth/facebook/session/${sessionId}`)
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (!data) return;
+        const pages: FbPage[] = data.pages;
+        setFbPages(pages);
         const defaults: Record<string, string> = {};
-        parsed.forEach((p) => { defaults[p.page_id] = "ro"; });
+        pages.forEach((p) => { defaults[p.page_id] = "ro"; });
         setPageLanguages(defaults);
-      } catch {}
-    }
+      })
+      .catch(() => {});
   }, [searchParams]);
 
   const handleConnectFacebook = () => {
