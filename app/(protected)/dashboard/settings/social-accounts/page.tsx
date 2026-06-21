@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Facebook, Instagram, Trash2, Plus, Globe } from "lucide-react";
+import { Facebook, Instagram, Trash2, Plus, Globe, Check } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,16 +15,17 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { DashboardHeader } from "@/components/dashboard/header";
+import { useOrg } from "@/contexts/org-context";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002";
 
 const LANGUAGES = [
-  { value: "ro", label: "Română" },
-  { value: "en", label: "English" },
-  { value: "fr", label: "Français" },
-  { value: "de", label: "Deutsch" },
-  { value: "it", label: "Italiano" },
-  { value: "es", label: "Español" },
+  { value: "ro", label: "RO" },
+  { value: "en", label: "EN" },
+  { value: "fr", label: "FR" },
+  { value: "de", label: "DE" },
+  { value: "it", label: "IT" },
+  { value: "es", label: "ES" },
 ];
 
 interface SocialAccount {
@@ -45,7 +46,7 @@ interface FbPage {
   ig_user_id: string | null;
 }
 
-function platformIcon(platform: string) {
+function PlatformIcon({ platform }: { platform: string }) {
   if (platform === "facebook") return <Facebook className="h-4 w-4 text-[#1877F2]" />;
   if (platform === "instagram") return <Instagram className="h-4 w-4 text-[#E1306C]" />;
   return <Globe className="h-4 w-4 text-muted-foreground" />;
@@ -53,6 +54,7 @@ function platformIcon(platform: string) {
 
 export default function SocialAccountsPage() {
   const { data: session, status } = useSession();
+  const { activeOrgId } = useOrg();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -61,20 +63,19 @@ export default function SocialAccountsPage() {
   const [fbPages, setFbPages] = useState<FbPage[]>([]);
   const [connecting, setConnecting] = useState<string | null>(null);
   const [pageLanguages, setPageLanguages] = useState<Record<string, string>>({});
+  const [savingLang, setSavingLang] = useState<string | null>(null);
 
-  const orgId = (session?.user as any)?.orgId as string | undefined;
   const token = (session?.user as any)?.accessToken as string | undefined;
+  const orgId = activeOrgId || (session?.user as any)?.orgId;
 
-  // Fetch existing accounts
   const fetchAccounts = async () => {
     if (!orgId || !token) return;
+    setLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/v1/orgs/${orgId}/social-accounts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.ok) {
-        setAccounts(await res.json());
-      }
+      if (res.ok) setAccounts(await res.json());
     } catch {}
     setLoading(false);
   };
@@ -99,10 +100,7 @@ export default function SocialAccountsPage() {
   }, [searchParams]);
 
   const handleConnectFacebook = () => {
-    if (!orgId || !token) {
-      alert(`Sesiunea nu e încărcată. orgId=${orgId} token=${token ? "ok" : "lipsă"}`);
-      return;
-    }
+    if (!orgId || !token) return;
     window.location.href = `${API_URL}/api/v1/auth/facebook?org_id=${orgId}&token=${token}`;
   };
 
@@ -112,10 +110,7 @@ export default function SocialAccountsPage() {
     try {
       const res = await fetch(`${API_URL}/api/v1/auth/facebook/connect`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           org_id: orgId,
           page_id: page.page_id,
@@ -129,12 +124,26 @@ export default function SocialAccountsPage() {
       if (res.ok) {
         setFbPages((prev) => prev.filter((p) => p.page_id !== page.page_id));
         await fetchAccounts();
-        if (fbPages.length <= 1) {
-          router.replace("/dashboard/settings/social-accounts");
-        }
+        if (fbPages.length <= 1) router.replace("/dashboard/settings/social-accounts");
       }
     } catch {}
     setConnecting(null);
+  };
+
+  const handleLanguageChange = async (accountId: string, lang: string) => {
+    if (!orgId || !token) return;
+    setSavingLang(accountId);
+    setAccounts((prev) =>
+      prev.map((a) => (a.id === accountId ? { ...a, post_language: lang } : a))
+    );
+    try {
+      await fetch(`${API_URL}/api/v1/orgs/${orgId}/social-accounts/${accountId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ post_language: lang }),
+      });
+    } catch {}
+    setSavingLang(null);
   };
 
   const handleDisconnect = async (accountId: string) => {
@@ -157,11 +166,10 @@ export default function SocialAccountsPage() {
       />
 
       <div className="space-y-6 pb-10">
-        {/* Buton conectare */}
-        <div className="flex items-center gap-3">
+        <div>
           <Button
             onClick={handleConnectFacebook}
-            disabled={status === "loading"}
+            disabled={status === "loading" || !orgId}
             className="gap-2"
           >
             <Facebook className="h-4 w-4" />
@@ -185,7 +193,7 @@ export default function SocialAccountsPage() {
                   <p className="font-medium truncate">{page.page_name}</p>
                   {page.ig_user_id && (
                     <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                      <Instagram className="h-3 w-3" /> Instagram conectat
+                      <Instagram className="h-3 w-3" /> + Instagram
                     </p>
                   )}
                 </div>
@@ -195,14 +203,12 @@ export default function SocialAccountsPage() {
                     setPageLanguages((prev) => ({ ...prev, [page.page_id]: v }))
                   }
                 >
-                  <SelectTrigger className="w-32">
+                  <SelectTrigger className="w-20">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {LANGUAGES.map((l) => (
-                      <SelectItem key={l.value} value={l.value}>
-                        {l.label}
-                      </SelectItem>
+                      <SelectItem key={l.value} value={l.value}>{l.label}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -213,7 +219,7 @@ export default function SocialAccountsPage() {
                   className="gap-1"
                 >
                   <Plus className="h-3 w-3" />
-                  {connecting === page.page_id ? "Se salvează..." : "Adaugă"}
+                  {connecting === page.page_id ? "..." : "Adaugă"}
                 </Button>
               </div>
             ))}
@@ -224,27 +230,36 @@ export default function SocialAccountsPage() {
         {loading ? (
           <p className="text-sm text-muted-foreground">Se încarcă...</p>
         ) : accounts.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            Niciun cont conectat încă.
-          </p>
+          <p className="text-sm text-muted-foreground">Niciun cont conectat încă.</p>
         ) : (
           <div className="space-y-2">
-            <p className="text-sm font-medium text-muted-foreground">
-              Conturi conectate
-            </p>
+            <p className="text-sm font-medium text-muted-foreground">Conturi conectate</p>
             {accounts.map((account) => (
               <div
                 key={account.id}
                 className="flex items-center gap-3 rounded-md border bg-background p-3"
               >
-                {platformIcon(account.platform)}
+                <PlatformIcon platform={account.platform} />
                 <div className="flex-1 min-w-0">
                   <p className="font-medium truncate">{account.account_name}</p>
-                  <p className="text-xs text-muted-foreground capitalize">
-                    {account.platform}
-                    {account.post_language && ` · ${account.post_language.toUpperCase()}`}
-                  </p>
+                  <p className="text-xs text-muted-foreground capitalize">{account.platform}</p>
                 </div>
+                <Select
+                  value={account.post_language || "ro"}
+                  onValueChange={(v) => handleLanguageChange(account.id, v)}
+                >
+                  <SelectTrigger className="w-20">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {LANGUAGES.map((l) => (
+                      <SelectItem key={l.value} value={l.value}>{l.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {savingLang === account.id && (
+                  <Check className="h-3 w-3 text-green-500 animate-pulse" />
+                )}
                 <Badge variant={account.is_active ? "default" : "secondary"}>
                   {account.is_active ? "Activ" : "Inactiv"}
                 </Badge>
