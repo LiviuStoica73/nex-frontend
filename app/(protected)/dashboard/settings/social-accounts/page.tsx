@@ -68,20 +68,28 @@ export default function SocialAccountsPage() {
   const token = (session?.user as any)?.accessToken as string | undefined;
   const orgId = activeOrgId || (session?.user as any)?.orgId;
 
-  const fetchAccounts = async () => {
-    if (!orgId || !token) return;
+  const fetchAccounts = async (currentOrgId: string, currentToken: string) => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/v1/orgs/${orgId}/social-accounts`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await fetch(`${API_URL}/api/v1/orgs/${currentOrgId}/social-accounts`, {
+        headers: { Authorization: `Bearer ${currentToken}` },
       });
       if (res.ok) setAccounts(await res.json());
-    } catch {}
+      else setAccounts([]);
+    } catch {
+      setAccounts([]);
+    }
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchAccounts();
+    if (!orgId || !token) {
+      setLoading(false);
+      return;
+    }
+    setAccounts([]);
+    setFbPages([]);  // resetează paginile FB la schimbarea orgului
+    fetchAccounts(orgId, token);
   }, [orgId, token]);
 
   // Handle redirect from Facebook callback
@@ -123,7 +131,7 @@ export default function SocialAccountsPage() {
       });
       if (res.ok) {
         setFbPages((prev) => prev.filter((p) => p.page_id !== page.page_id));
-        await fetchAccounts();
+        if (orgId && token) await fetchAccounts(orgId, token);
         if (fbPages.length <= 1) router.replace("/dashboard/settings/social-accounts");
       }
     } catch {}
