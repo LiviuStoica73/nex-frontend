@@ -66,7 +66,9 @@ export default function SocialAccountsPage() {
   const [savingLang, setSavingLang] = useState<string | null>(null);
 
   const token = (session?.user as any)?.accessToken as string | undefined;
-  const orgId = activeOrgId || (session?.user as any)?.orgId;
+  // org_id din URL (callback OAuth) are prioritate față de contextul activ
+  const urlOrgId = searchParams.get("org_id") ?? undefined;
+  const orgId = urlOrgId || activeOrgId || (session?.user as any)?.orgId;
 
   const fetchAccounts = async (currentOrgId: string, currentToken: string) => {
     setLoading(true);
@@ -88,7 +90,7 @@ export default function SocialAccountsPage() {
       return;
     }
     setAccounts([]);
-    setFbPages([]);  // resetează paginile FB la schimbarea orgului
+    if (!searchParams.get("fb_connect")) setFbPages([]);  // nu reseta dacă suntem în callback OAuth
     fetchAccounts(orgId, token);
   }, [orgId, token]);
 
