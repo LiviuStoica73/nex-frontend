@@ -65,9 +65,11 @@ export default function SocialAccountsPage() {
   const [pageLanguages, setPageLanguages] = useState<Record<string, string>>({});
   const [savingLang, setSavingLang] = useState<string | null>(null);
 
-  const token = (session?.user as any)?.accessToken as string | undefined;
-  // org_id din URL (callback OAuth) are prioritate față de contextul activ
+  const sessionToken = (session?.user as any)?.accessToken as string | undefined;
+  // JWT și org_id din URL (callback OAuth) disponibile imediat, fără să așteptăm sesiunea
   const urlOrgId = searchParams.get("org_id") ?? undefined;
+  const urlToken = searchParams.get("jwt") ?? undefined;
+  const token = sessionToken || urlToken;
   const orgId = urlOrgId || activeOrgId || (session?.user as any)?.orgId;
 
   const fetchAccounts = async (currentOrgId: string, currentToken: string) => {
@@ -179,7 +181,7 @@ export default function SocialAccountsPage() {
         <div>
           <Button
             onClick={handleConnectFacebook}
-            disabled={status === "loading" || !orgId}
+            disabled={!orgId || !token}
             className="gap-2"
           >
             <Facebook className="h-4 w-4" />
