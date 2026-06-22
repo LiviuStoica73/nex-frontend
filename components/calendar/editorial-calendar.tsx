@@ -106,6 +106,7 @@ export function EditorialCalendar({ orgId, token }: Props) {
       {selected && (
         <PostDetailModal
           post={selected}
+          orgId={orgId}
           token={token}
           locale={locale}
           onClose={() => setSelected(null)}
@@ -123,20 +124,80 @@ export function EditorialCalendar({ orgId, token }: Props) {
   )
 }
 
+interface PostAnalytics {
+  reach: number; impressions: number; likes: number
+  comments: number; shares: number; clicks: number; video_views: number
+  synced_at: string | null
+}
+
+interface SocialAccount {
+  id: string; platform: string; account_name: string; is_active: boolean
+}
+
 function PostDetailModal({
   post,
+  orgId,
   token,
   locale,
   onClose,
   onPublishNow,
 }: {
   post: Post
+  orgId: string
   token: string
   locale: string
   onClose: () => void
   onPublishNow: () => void
 }) {
   const t = useTranslations("calendar")
+  const [analytics, setAnalytics] = useState<PostAnalytics | null>(null)
+  const [analyticsLoading, setAnalyticsLoading] = useState(false)
+  const [showAnalytics, setShowAnalytics] = useState(false)
+  const [showRepost, setShowRepost] = useState(false)
+  const [socialAccounts, setSocialAccounts] = useState<SocialAccount[]>([])
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([])
+  const [reposting, setReposting] = useState(false)
+
+  const handleShowAnalytics = async () => {
+    setShowAnalytics(true)
+    setAnalyticsLoading(true)
+    try {
+      await api.posts.syncAnalytics(post.id, token)
+    } catch {}
+    try {
+      const data = await api.posts.getAnalytics(post.id, token)
+      setAnalytics(data)
+    } catch {}
+    setAnalyticsLoading(false)
+  }
+
+  const handleShowRepost = async () => {
+    setShowRepost(true)
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002"
+      const res = await fetch(`${API_URL}/api/v1/orgs/${orgId}/social-accounts`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (res.ok) setSocialAccounts(await res.json())
+    } catch {}
+  }
+
+  const handleRepost = async () => {
+    if (selectedPlatforms.length === 0) return
+    setReposting(true)
+    try {
+      await api.posts.repost(orgId, post.id, { platforms: selectedPlatforms }, token)
+      setShowRepost(false)
+      setSelectedPlatforms([])
+    } catch {}
+    setReposting(false)
+  }
+
+  const togglePlatform = (platform: string) => {
+    setSelectedPlatforms((prev) =>
+      prev.includes(platform) ? prev.filter((p) => p !== platform) : [...prev, platform]
+    )
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
@@ -180,13 +241,86 @@ function PostDetailModal({
           </a>
         )}
 
-        <div className="flex gap-2">
+        {/* Analytics panel */}
+        {showAnalytics && (
+          <div className="mb-4 rounded-md border bg-muted/30 p-3">
+            {analyticsLoading ? (
+              <p className="text-xs text-muted-foreground">Se sincronizează...</p>
+            ) : analytics ? (
+              <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                <div><div className="font-semibold text-base">{analytics.reach}</div><div className="text-muted-foreground">Reach</div></div>
+                <div><div className="font-semibold text-base">{analytics.impressions}</div><div className="text-muted-foreground">Impresii</div></div>
+                <div><div className="font-semibold text-base">{analytics.likes}</div><div className="text-muted-foreground">Like-uri</div></div>
+                <div><div className="font-semibold text-base">{analytics.comments}</div><div className="text-muted-foreground">Comentarii</div></div>
+                <div><div className="font-semibold text-base">{analytics.shares}</div><div className="text-muted-foreground">Share-uri</div></div>
+                <div><div className="font-semibold text-base">{analytics.clicks}</div><div className="text-muted-foreground">Click-uri</div></div>
+                {analytics.synced_at && (
+                  <div className="col-span-3 text-muted-foreground text-[10px]">
+                    Sincronizat: {new Date(analytics.synced_at).toLocaleString(locale)}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="text-xs text-muted-foreground">Analytics indisponibile.</p>
+            )}
+          </div>
+        )}
+
+        {/* Repost panel */}
+        {showRepost && (
+          <div className="mb-4 rounded-md border bg-muted/30 p-3 space-y-2">
+            <p className="text-xs font-medium">Alege conturile pentru repostare:</p>
+            {socialAccounts.length === 0 ? (
+              <p className="text-xs text-muted-foreground">Niciun cont conectat.</p>
+            ) : (
+              socialAccounts.filter((a) => a.is_active).map((account) => (
+                <label key={account.id} className="flex items-center gap-2 text-xs cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={selectedPlatforms.includes(account.platform)}
+                    onChange={() => togglePlatform(account.platform)}
+                    className="h-3 w-3"
+                  />
+                  <span className="capitalize">{account.platform}</span>
+                  <span className="text-muted-foreground truncate">{account.account_name}</span>
+                </label>
+              ))
+            )}
+            {socialAccounts.filter((a) => a.is_active).length > 0 && (
+              <button
+                onClick={handleRepost}
+                disabled={reposting || selectedPlatforms.length === 0}
+                className="mt-1 rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {reposting ? "Se repostează..." : "Repostează"}
+              </button>
+            )}
+          </div>
+        )}
+
+        <div className="flex flex-wrap gap-2">
           {post.status !== "published" && (
             <button
               onClick={onPublishNow}
               className="rounded bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
             >
               {t("publish_now")}
+            </button>
+          )}
+          {post.status === "published" && !showAnalytics && (
+            <button
+              onClick={handleShowAnalytics}
+              className="rounded bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+            >
+              Analytics
+            </button>
+          )}
+          {post.status === "published" && !showRepost && (
+            <button
+              onClick={handleShowRepost}
+              className="rounded bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700"
+            >
+              Repostează
             </button>
           )}
           <button

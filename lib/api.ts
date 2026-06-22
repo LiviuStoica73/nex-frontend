@@ -180,6 +180,19 @@ export const api = {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       }),
+    getAnalytics: (postId: string, token: string) =>
+      apiFetch<{
+        post_id: string; platform: string; synced_at: string | null
+        reach: number; impressions: number; likes: number
+        comments: number; shares: number; clicks: number; video_views: number
+      }>(`/api/v1/posts/${postId}/analytics`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    syncAnalytics: (postId: string, token: string) =>
+      apiFetch<{ message: string }>(`/api/v1/posts/${postId}/sync-analytics`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      }),
   },
 
   generate: {
