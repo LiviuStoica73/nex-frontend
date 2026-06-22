@@ -189,7 +189,7 @@ export const api = {
         headers: { Authorization: `Bearer ${token}` },
       }),
     syncAnalytics: (postId: string, token: string) =>
-      apiFetch<{ message: string }>(`/api/v1/posts/${postId}/sync-analytics`, {
+      apiFetch<{ message?: string; reach?: number; impressions?: number; likes?: number; comments?: number; shares?: number; clicks?: number; video_views?: number; synced_at?: string | null }>(`/api/v1/posts/${postId}/sync-analytics`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       }),

@@ -162,12 +162,20 @@ function PostDetailModal({
     setShowAnalytics(true)
     setAnalyticsLoading(true)
     try {
-      await api.posts.syncAnalytics(post.id, token)
-    } catch {}
-    try {
-      const data = await api.posts.getAnalytics(post.id, token)
-      setAnalytics(data)
-    } catch {}
+      const data = await api.posts.syncAnalytics(post.id, token)
+      if ("reach" in data) {
+        setAnalytics(data as unknown as PostAnalytics)
+      } else {
+        // fallback: fetch stored analytics
+        const stored = await api.posts.getAnalytics(post.id, token)
+        setAnalytics(stored)
+      }
+    } catch {
+      try {
+        const stored = await api.posts.getAnalytics(post.id, token)
+        setAnalytics(stored)
+      } catch {}
+    }
     setAnalyticsLoading(false)
   }
 
