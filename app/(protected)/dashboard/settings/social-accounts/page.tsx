@@ -118,8 +118,8 @@ export default function SocialAccountsPage() {
   }, [searchParams]);
 
   const handleConnectFacebook = () => {
-    if (!orgId || !token) return;
-    window.location.href = `${API_URL}/api/v1/auth/facebook?org_id=${orgId}&token=${token}`;
+    if (!activeOrgId || !token) return;
+    window.location.href = `${API_URL}/api/v1/auth/facebook?org_id=${activeOrgId}&token=${token}`;
   };
 
   const handleSavePage = async (page: FbPage) => {
@@ -187,7 +187,7 @@ export default function SocialAccountsPage() {
         <div>
           <Button
             onClick={handleConnectFacebook}
-            disabled={!orgId || !token}
+            disabled={!activeOrgId || !token}
             className="gap-2"
           >
             <Facebook className="h-4 w-4" />
