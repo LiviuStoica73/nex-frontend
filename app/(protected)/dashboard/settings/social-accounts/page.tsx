@@ -64,10 +64,12 @@ export default function SocialAccountsPage() {
   const [connecting, setConnecting] = useState<string | null>(null);
   const [pageLanguages, setPageLanguages] = useState<Record<string, string>>({});
   const [savingLang, setSavingLang] = useState<string | null>(null);
+  const [callbackOrgId, setCallbackOrgId] = useState<string | null>(null);
 
-  const sessionToken = (session?.user as any)?.accessToken as string | undefined;
-  const token = sessionToken;
+  const token = (session?.user as any)?.accessToken as string | undefined;
   const orgId = activeOrgId || (session?.user as any)?.orgId;
+  // În callback OAuth, org-ul corect vine din Redis (nu din activeOrgId care poate fi greșit)
+  const effectiveOrgId = callbackOrgId || orgId;
 
   const fetchAccounts = async (currentOrgId: string, currentToken: string) => {
     setLoading(true);
@@ -83,22 +85,19 @@ export default function SocialAccountsPage() {
     setLoading(false);
   };
 
+  // Fetch conturi la schimbare org (doar dacă nu suntem în callback OAuth)
   useEffect(() => {
+    if (searchParams.get("fb_connect")) return; // callback OAuth — lăsăm celălalt effect să preia
     if (!orgId || !token) {
       setLoading(false);
       return;
     }
     setAccounts([]);
     setFbPages([]);
-    // Curăță URL-ul dacă mai are parametri OAuth din sesiunea anterioară
-    if (searchParams.get("fb_connect")) {
-      router.replace("/dashboard/settings/social-accounts");
-      return;
-    }
     fetchAccounts(orgId, token);
   }, [orgId, token]);
 
-  // Handle redirect from Facebook callback — fetch pages din Redis via session_id
+  // Fetch pages din Redis după redirect Facebook OAuth
   useEffect(() => {
     const fbConnect = searchParams.get("fb_connect");
     const sessionId = searchParams.get("session_id");
@@ -110,12 +109,14 @@ export default function SocialAccountsPage() {
         if (!data) return;
         const pages: FbPage[] = data.pages;
         setFbPages(pages);
+        setCallbackOrgId(data.org_id);
         const defaults: Record<string, string> = {};
         pages.forEach((p) => { defaults[p.page_id] = "ro"; });
         setPageLanguages(defaults);
+        if (token && data.org_id) fetchAccounts(data.org_id, token);
       })
       .catch(() => {});
-  }, [searchParams]);
+  }, [searchParams, token]);
 
   const handleConnectFacebook = () => {
     if (!activeOrgId || !token) return;
@@ -130,7 +131,7 @@ export default function SocialAccountsPage() {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
-          org_id: orgId,
+          org_id: effectiveOrgId,
           page_id: page.page_id,
           page_name: page.page_name,
           page_token: page.page_token,
@@ -141,8 +142,11 @@ export default function SocialAccountsPage() {
       });
       if (res.ok) {
         setFbPages((prev) => prev.filter((p) => p.page_id !== page.page_id));
-        if (orgId && token) await fetchAccounts(orgId, token);
-        if (fbPages.length <= 1) router.replace("/dashboard/settings/social-accounts");
+        if (effectiveOrgId && token) await fetchAccounts(effectiveOrgId, token);
+        if (fbPages.length <= 1) {
+          setCallbackOrgId(null);
+          router.replace("/dashboard/settings/social-accounts");
+        }
       }
     } catch {}
     setConnecting(null);
