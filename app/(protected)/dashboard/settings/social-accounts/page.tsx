@@ -170,14 +170,14 @@ export default function SocialAccountsPage() {
   };
 
   const handleDisconnect = async (accountId: string) => {
-    if (!orgId || !token) return;
+    if (!effectiveOrgId || !token) return;
     if (!confirm("Dezconectezi acest cont?")) return;
     try {
-      await fetch(`${API_URL}/api/v1/orgs/${orgId}/social-accounts/${accountId}`, {
+      const res = await fetch(`${API_URL}/api/v1/orgs/${effectiveOrgId}/social-accounts/${accountId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-      setAccounts((prev) => prev.filter((a) => a.id !== accountId));
+      if (res.ok) setAccounts((prev) => prev.filter((a) => a.id !== accountId));
     } catch {}
   };
 
