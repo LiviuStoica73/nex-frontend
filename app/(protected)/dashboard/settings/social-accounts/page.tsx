@@ -69,8 +69,8 @@ export default function SocialAccountsPage() {
 
   const token = (session?.user as any)?.accessToken as string | undefined;
   const orgId = activeOrgId || (session?.user as any)?.orgId;
-  // În callback OAuth, org-ul corect vine din Redis (nu din activeOrgId care poate fi greșit)
-  const effectiveOrgId = callbackOrgId || orgId;
+  // callbackOrgId = org-ul care a inițiat OAuth — folosit DOAR la salvarea paginilor (handleSavePage)
+  // fetchAccounts și handleDisconnect folosesc întotdeauna orgId (org-ul activ curent)
 
   const fetchAccounts = async (currentOrgId: string, currentToken: string) => {
     setLoading(true);
@@ -86,11 +86,8 @@ export default function SocialAccountsPage() {
     setLoading(false);
   };
 
-  // Fetch conturi la schimbare org (doar dacă nu suntem în callback OAuth)
+  // Fetch conturi la orice schimbare de org — ÎNTOTDEAUNA, indiferent de fb_connect
   useEffect(() => {
-    if (searchParams.get("fb_connect")) return; // callback OAuth — lăsăm celălalt effect să preia
-    setCallbackOrgId(null); // resetăm callbackOrgId la orice navigare normală
-    setFbPages([]);
     if (!orgId || !token) {
       setLoading(false);
       return;
@@ -99,11 +96,11 @@ export default function SocialAccountsPage() {
     fetchAccounts(orgId, token);
   }, [orgId, token]);
 
-  // Fetch pages din Redis după redirect Facebook OAuth
+  // Fetch pages din Redis după redirect Facebook OAuth (o singură dată, la mount cu session_id)
   useEffect(() => {
     const fbConnect = searchParams.get("fb_connect");
     const sessionId = searchParams.get("session_id");
-    if (fbConnect !== "1" || !sessionId) return;
+    if (fbConnect !== "1" || !sessionId || !token) return;
 
     fetch(`${API_URL}/api/v1/auth/facebook/session/${sessionId}`)
       .then((r) => r.ok ? r.json() : null)
@@ -115,7 +112,6 @@ export default function SocialAccountsPage() {
         const defaults: Record<string, string> = {};
         pages.forEach((p) => { defaults[p.page_id] = "ro"; });
         setPageLanguages(defaults);
-        if (token && data.org_id) fetchAccounts(data.org_id, token);
       })
       .catch(() => {});
   }, [searchParams, token]);
@@ -126,14 +122,15 @@ export default function SocialAccountsPage() {
   };
 
   const handleSavePage = async (page: FbPage) => {
-    if (!orgId || !token) return;
+    const saveToOrgId = callbackOrgId || orgId; // org-ul care a inițiat OAuth
+    if (!saveToOrgId || !token) return;
     setConnecting(page.page_id);
     try {
       const res = await fetch(`${API_URL}/api/v1/auth/facebook/connect`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
-          org_id: effectiveOrgId,
+          org_id: saveToOrgId,
           page_id: page.page_id,
           page_name: page.page_name,
           page_token: page.page_token,
@@ -144,7 +141,8 @@ export default function SocialAccountsPage() {
       });
       if (res.ok) {
         setFbPages((prev) => prev.filter((p) => p.page_id !== page.page_id));
-        if (effectiveOrgId && token) await fetchAccounts(effectiveOrgId, token);
+        // Refresh conturi pentru org-ul activ curent (poate diferi de saveToOrgId)
+        if (orgId && token) await fetchAccounts(orgId, token);
         if (fbPages.length <= 1) {
           setCallbackOrgId(null);
           router.replace("/dashboard/settings/social-accounts");
@@ -171,10 +169,10 @@ export default function SocialAccountsPage() {
   };
 
   const handleDisconnect = async (accountId: string) => {
-    if (!effectiveOrgId || !token) return;
+    if (!orgId || !token) return;
     if (!confirm("Dezconectezi acest cont?")) return;
     try {
-      const res = await fetch(`${API_URL}/api/v1/orgs/${effectiveOrgId}/social-accounts/${accountId}`, {
+      const res = await fetch(`${API_URL}/api/v1/orgs/${orgId}/social-accounts/${accountId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
