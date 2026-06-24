@@ -89,12 +89,13 @@ export default function SocialAccountsPage() {
   // Fetch conturi la schimbare org (doar dacă nu suntem în callback OAuth)
   useEffect(() => {
     if (searchParams.get("fb_connect")) return; // callback OAuth — lăsăm celălalt effect să preia
+    setCallbackOrgId(null); // resetăm callbackOrgId la orice navigare normală
+    setFbPages([]);
     if (!orgId || !token) {
       setLoading(false);
       return;
     }
     setAccounts([]);
-    setFbPages([]);
     fetchAccounts(orgId, token);
   }, [orgId, token]);
 
