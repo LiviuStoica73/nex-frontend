@@ -66,7 +66,7 @@
     },
     "items": {
       "dashboard": "Dashboard",
-      "campaigns": "Beiträge",
+      "campaigns": "Kampagnen",
       "calendar": "Kalender",
       "brand_kit": "Marken-Kit",
       "billing": "Abonnement",
@@ -126,7 +126,7 @@
     }
   },
   "campaigns": {
-    "page_title": "Beiträge",
+    "page_title": "Kampagnen",
     "page_subtitle": "Alle aus dem Telegram-Bot erstellten Beiträge.",
     "delete_confirm": "Diesen Beitrag dauerhaft löschen?",
     "loading_campaigns": "Kampagnen werden geladen...",

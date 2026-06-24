@@ -66,7 +66,7 @@
     },
     "items": {
       "dashboard": "Dashboard",
-      "campaigns": "Postări",
+      "campaigns": "Campanii",
       "calendar": "Calendar",
       "brand_kit": "Brand Kit",
       "billing": "Abonament",
@@ -126,7 +126,7 @@
     }
   },
   "campaigns": {
-    "page_title": "Postări",
+    "page_title": "Campanii",
     "page_subtitle": "Toate postările create din Telegram Bot.",
     "delete_confirm": "Ștergi această postare definitiv?",
     "loading_campaigns": "Se încarcă campaniile...",

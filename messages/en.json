@@ -66,7 +66,7 @@
     },
     "items": {
       "dashboard": "Dashboard",
-      "campaigns": "Posts",
+      "campaigns": "Campaigns",
       "calendar": "Calendar",
       "brand_kit": "Brand Kit",
       "billing": "Billing",
@@ -126,7 +126,7 @@
     }
   },
   "campaigns": {
-    "page_title": "Posts",
+    "page_title": "Campaigns",
     "page_subtitle": "All posts created from the Telegram bot.",
     "delete_confirm": "Delete this post permanently?",
     "loading_campaigns": "Loading campaigns...",

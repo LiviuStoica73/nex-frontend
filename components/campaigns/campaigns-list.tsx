@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useLocale, useTranslations } from "next-intl"
-import { ChevronDown, ChevronRight, MoreHorizontal, Pencil, Trash2, Pause, Play, RefreshCw, Languages, Share2, Clock, Ban } from "lucide-react"
+import { ChevronDown, ChevronRight, MoreHorizontal, Pencil, Trash2, Pause, Play, RefreshCw, Languages, Share2, Clock, Ban, Archive, Copy } from "lucide-react"
 import { api, PLATFORM_COLORS, STATUS_COLORS, type Campaign, type Platform, type Post } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -18,7 +18,9 @@ const PLATFORM_LABELS: Record<string, string> = {
 const STATUS_LABELS: Record<string, string> = {
   draft: "Ciornă", approved: "Aprobat", scheduled: "Programat",
   published: "Publicat", failed: "Eșuat", skipped: "Omis",
+  paused: "Pauză", cancelled: "Anulată", archived: "Arhivată",
 }
+const PAGE_SIZES = [10, 25, 50, 100]
 const ALL_PLATFORMS = ["instagram", "facebook", "linkedin", "x"]
 const LANGUAGES = [
   { code: "ro", label: "Română" }, { code: "en", label: "English" },
@@ -38,6 +40,14 @@ export function CampaignsList({ orgId, token }: Props) {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [postsMap, setPostsMap] = useState<Record<string, Post[]>>({})
   const [loadingPosts, setLoadingPosts] = useState<string | null>(null)
+
+  // Paginație + selecție bulk
+  const [page, setPage] = useState(0)
+  const [pageSize, setPageSize] = useState(25)
+  const [total, setTotal] = useState(0)
+  const [includeArchived, setIncludeArchived] = useState(false)
+  const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [bulkBusy, setBulkBusy] = useState(false)
 
   // Dialog state
   const [activeDialog, setActiveDialog] = useState<DialogType>(null)
@@ -64,9 +74,48 @@ export function CampaignsList({ orgId, token }: Props) {
   // Image prompt edit
   const [editImagePrompt, setEditImagePrompt] = useState("")
 
-  useEffect(() => {
-    api.campaigns.list(orgId, token).then(setCampaigns).finally(() => setLoading(false))
-  }, [orgId, token])
+  const fetchCampaigns = async () => {
+    setLoading(true)
+    try {
+      const { items, total } = await api.campaigns.listPaged(orgId, token, {
+        limit: pageSize, offset: page * pageSize, includeArchived,
+      })
+      setCampaigns(items)
+      setTotal(total)
+    } finally { setLoading(false) }
+  }
+
+  useEffect(() => { fetchCampaigns() }, [orgId, token, page, pageSize, includeArchived])
+
+  const toggleSelect = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  }
+
+  const handleBulk = async (action: "archive" | "pause" | "clone") => {
+    if (selected.size === 0) return
+    const label = action === "archive" ? "arhivezi" : action === "pause" ? "pui pe pauză" : "clonezi"
+    if (!confirm(`Sigur ${label} ${selected.size} campanii?`)) return
+    setBulkBusy(true)
+    try {
+      await api.campaigns.bulk(orgId, action, Array.from(selected), token)
+      setSelected(new Set())
+      await fetchCampaigns()
+    } finally { setBulkBusy(false) }
+  }
+
+  const handleCloneCampaign = async (campaign: Campaign) => {
+    await api.campaigns.bulk(orgId, "clone", [campaign.id], token)
+    await fetchCampaigns()
+  }
+
+  const handleArchiveCampaign = async (campaign: Campaign) => {
+    await api.campaigns.bulk(orgId, "archive", [campaign.id], token)
+    await fetchCampaigns()
+  }
 
   const toggleCampaign = async (campaignId: string) => {
     if (expandedId === campaignId) { setExpandedId(null); return }
@@ -188,8 +237,12 @@ export function CampaignsList({ orgId, token }: Props) {
 
   const handleDeleteCampaign = async (campaign: Campaign) => {
     if (!confirm(`Ștergi campania "${campaign.name}"? Toate postările se vor șterge.`)) return
-    await api.campaigns.deleteCampaign(orgId, campaign.id, token)
-    setCampaigns((prev) => prev.filter((c) => c.id !== campaign.id))
+    try {
+      await api.campaigns.deleteCampaign(orgId, campaign.id, token)
+      setCampaigns((prev) => prev.filter((c) => c.id !== campaign.id))
+    } catch (e) {
+      alert("Nu se poate șterge: doar campaniile draft fără consum de credite pot fi șterse. Folosește Arhivare.")
+    }
   }
 
   const handleRetry = async (post: Post, campaignId: string) => {
@@ -228,13 +281,52 @@ export function CampaignsList({ orgId, token }: Props) {
 
   if (loading) return <p className="text-muted-foreground">{t("loading_campaigns")}</p>
 
+  const totalPages = Math.max(1, Math.ceil(total / pageSize))
+
   return (
     <>
-      <div className="flex justify-end">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-4">
+          <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <span>Pe pagină</span>
+            <select
+              value={pageSize}
+              onChange={(e) => { setPage(0); setPageSize(parseInt(e.target.value, 10)) }}
+              className="rounded-md border bg-background px-2 py-1 text-sm"
+            >
+              {PAGE_SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </label>
+          <label className="flex items-center gap-1.5 text-sm text-muted-foreground cursor-pointer">
+            <input
+              type="checkbox"
+              checked={includeArchived}
+              onChange={(e) => { setPage(0); setIncludeArchived(e.target.checked) }}
+            />
+            Arată arhivate
+          </label>
+        </div>
         <Button onClick={() => setActiveDialog("create_campaign")} size="sm">
           + Campanie nouă
         </Button>
       </div>
+
+      {selected.size > 0 && (
+        <div className="flex flex-wrap items-center gap-2 rounded-lg border bg-muted/40 p-2 text-sm">
+          <span className="px-1 font-medium">{selected.size} selectate</span>
+          <Button size="sm" variant="outline" disabled={bulkBusy} onClick={() => handleBulk("archive")}>
+            <Archive className="mr-1 h-3.5 w-3.5" /> Arhivează
+          </Button>
+          <Button size="sm" variant="outline" disabled={bulkBusy} onClick={() => handleBulk("pause")}>
+            <Pause className="mr-1 h-3.5 w-3.5" /> Pauză
+          </Button>
+          <Button size="sm" variant="outline" disabled={bulkBusy} onClick={() => handleBulk("clone")}>
+            <Copy className="mr-1 h-3.5 w-3.5" /> Clonează
+          </Button>
+          <Button size="sm" variant="ghost" onClick={() => setSelected(new Set())}>Deselectează</Button>
+        </div>
+      )}
+
       <div className="space-y-3">
         {campaigns.length === 0 ? (
           <div className="rounded-lg border border-dashed p-12 text-center text-muted-foreground">
@@ -246,8 +338,16 @@ export function CampaignsList({ orgId, token }: Props) {
           const posts = postsMap[campaign.id] ?? []
           return (
             <div key={campaign.id} className="rounded-lg border bg-card overflow-hidden">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  className="ml-4 flex-shrink-0"
+                  checked={selected.has(campaign.id)}
+                  onChange={() => toggleSelect(campaign.id)}
+                  aria-label="Selectează campania"
+                />
               <button onClick={() => toggleCampaign(campaign.id)}
-                className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors text-left">
+                className="flex-1 flex items-center justify-between p-4 hover:bg-muted/50 transition-colors text-left">
                 <div className="flex items-center gap-3 min-w-0">
                   {isExpanded ? <ChevronDown className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
                     : <ChevronRight className="h-4 w-4 flex-shrink-0 text-muted-foreground" />}
@@ -293,17 +393,26 @@ export function CampaignsList({ orgId, token }: Props) {
                           <Ban className="mr-2 h-4 w-4" /> Anulează campania
                         </DropdownMenuItem>
                       )}
+                      <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCloneCampaign(campaign) }}>
+                        <Copy className="mr-2 h-4 w-4" /> Clonează (cu pauză)
+                      </DropdownMenuItem>
+                      {campaign.status !== "archived" && (
+                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleArchiveCampaign(campaign) }}>
+                          <Archive className="mr-2 h-4 w-4" /> Arhivează
+                        </DropdownMenuItem>
+                      )}
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={(e) => { e.stopPropagation(); handleDeleteCampaign(campaign) }}
                         className="text-destructive focus:text-destructive"
                       >
-                        <Trash2 className="mr-2 h-4 w-4" /> Șterge campania
+                        <Trash2 className="mr-2 h-4 w-4" /> Șterge (doar draft)
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
               </button>
+              </div>
 
               {isExpanded && (
                 <div className="border-t bg-muted/20">
@@ -429,6 +538,21 @@ export function CampaignsList({ orgId, token }: Props) {
           )
         })}
       </div>
+
+      {/* Paginație */}
+      {total > pageSize && (
+        <div className="flex items-center justify-between pt-2 text-sm text-muted-foreground">
+          <span>Pagina {page + 1} din {totalPages} • {total} campanii</span>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" disabled={page === 0} onClick={() => setPage((p) => Math.max(0, p - 1))}>
+              Înapoi
+            </Button>
+            <Button size="sm" variant="outline" disabled={page + 1 >= totalPages} onClick={() => setPage((p) => p + 1)}>
+              Înainte
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Dialog: Modifică text */}
       <Dialog open={activeDialog === "edit"} onOpenChange={closeDialog}>

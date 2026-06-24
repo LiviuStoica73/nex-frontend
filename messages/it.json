@@ -66,7 +66,7 @@
     },
     "items": {
       "dashboard": "Dashboard",
-      "campaigns": "Post",
+      "campaigns": "Campagne",
       "calendar": "Calendario",
       "brand_kit": "Brand Kit",
       "billing": "Abbonamento",
@@ -126,7 +126,7 @@
     }
   },
   "campaigns": {
-    "page_title": "Post",
+    "page_title": "Campagne",
     "page_subtitle": "Tutti i post creati dal bot Telegram.",
     "delete_confirm": "Eliminare definitivamente questo post?",
     "loading_campaigns": "Caricamento campagne...",

@@ -15,6 +15,19 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   return res.json() as Promise<T>
 }
 
+async function apiFetchPaged<T>(path: string, options?: RequestInit): Promise<{ items: T; total: number }> {
+  const res = await fetch(`${API_URL}${path}`, {
+    ...options,
+    headers: { "Content-Type": "application/json", ...(options?.headers ?? {}) },
+  })
+  if (!res.ok) {
+    const err = await res.text()
+    throw new Error(`API ${res.status}: ${err}`)
+  }
+  const total = parseInt(res.headers.get("X-Total-Count") ?? "0", 10)
+  return { items: (await res.json()) as T, total }
+}
+
 export type Platform =
   | "facebook" | "instagram" | "linkedin" | "x"
   | "discord" | "blog" | "youtube" | "threads" | "bluesky"
@@ -101,6 +114,17 @@ export const api = {
   campaigns: {
     list: (orgId: string, token: string) =>
       apiFetch<Campaign[]>(`/api/v1/orgs/${orgId}/campaigns`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    listPaged: (orgId: string, token: string, opts: { limit: number; offset: number; includeArchived?: boolean }) =>
+      apiFetchPaged<Campaign[]>(
+        `/api/v1/orgs/${orgId}/campaigns?limit=${opts.limit}&offset=${opts.offset}&include_archived=${opts.includeArchived ? "true" : "false"}`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      ),
+    bulk: (orgId: string, action: "archive" | "pause" | "resume" | "clone", campaignIds: string[], token: string) =>
+      apiFetch<{ action: string; affected: number }>(`/api/v1/orgs/${orgId}/campaigns/bulk`, {
+        method: "POST",
+        body: JSON.stringify({ action, campaign_ids: campaignIds }),
         headers: { Authorization: `Bearer ${token}` },
       }),
     create: (orgId: string, data: {
