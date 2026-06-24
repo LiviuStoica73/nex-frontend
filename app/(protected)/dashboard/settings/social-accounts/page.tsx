@@ -68,9 +68,9 @@ export default function SocialAccountsPage() {
   const [callbackOrgId, setCallbackOrgId] = useState<string | null>(null);
 
   const token = (session?.user as any)?.accessToken as string | undefined;
-  const orgId = activeOrgId || (session?.user as any)?.orgId;
-  // callbackOrgId = org-ul care a inițiat OAuth — folosit DOAR la salvarea paginilor (handleSavePage)
-  // fetchAccounts și handleDisconnect folosesc întotdeauna orgId (org-ul activ curent)
+  // activeOrgId vine din OrgProvider (localStorage → API). NU folosim session.orgId ca fallback
+  // — session.orgId e fix din momentul login-ului și cauzează fetch pe org-ul greșit.
+  const orgId = activeOrgId; // gol ("") până când OrgProvider se inițializează
 
   const fetchAccounts = async (currentOrgId: string, currentToken: string) => {
     setLoading(true);
@@ -86,10 +86,11 @@ export default function SocialAccountsPage() {
     setLoading(false);
   };
 
-  // Fetch conturi la orice schimbare de org — ÎNTOTDEAUNA, indiferent de fb_connect
+  // Fetch conturi la orice schimbare de org.
+  // orgId = "" când OrgProvider încă se încarcă → nu facem fetch, rămânem în loading.
   useEffect(() => {
     if (!orgId || !token) {
-      setLoading(false);
+      // orgId gol = OrgProvider nu s-a inițializat încă, așteptăm
       return;
     }
     setAccounts([]);
