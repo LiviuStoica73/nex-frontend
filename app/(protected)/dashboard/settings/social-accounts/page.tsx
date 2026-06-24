@@ -44,6 +44,7 @@ interface FbPage {
   page_token: string;
   user_token: string;
   ig_user_id: string | null;
+  connected_to_org?: string | null;
 }
 
 function PlatformIcon({ platform }: { platform: string }) {
@@ -205,46 +206,68 @@ export default function SocialAccountsPage() {
             <p className="text-sm font-medium">
               Alege paginile pe care vrei să le conectezi:
             </p>
-            {fbPages.map((page) => (
-              <div
-                key={page.page_id}
-                className="flex items-center gap-3 rounded-md border bg-background p-3"
-              >
-                <Facebook className="h-4 w-4 shrink-0 text-[#1877F2]" />
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate">{page.page_name}</p>
-                  {page.ig_user_id && (
-                    <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                      <Instagram className="h-3 w-3" /> + Instagram
-                    </p>
+            <p className="text-xs text-muted-foreground">
+              ℹ️ Apar doar <strong>Paginile Facebook</strong> pe care le administrezi.
+              Conturile Instagram apar automat lângă pagina Facebook la care sunt legate.
+              Dacă un cont Instagram nu apare, du-te în Instagram → Setări → Tip cont → Business,
+              apoi leagă-l de o Pagină Facebook.
+            </p>
+            {fbPages.map((page) => {
+              const alreadyConnected = !!page.connected_to_org;
+              return (
+                <div
+                  key={page.page_id}
+                  className={`flex items-center gap-3 rounded-md border p-3 ${alreadyConnected ? "bg-muted/50 opacity-70" : "bg-background"}`}
+                >
+                  <Facebook className="h-4 w-4 shrink-0 text-[#1877F2]" />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{page.page_name}</p>
+                    {page.ig_user_id && (
+                      <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                        <Instagram className="h-3 w-3" /> + Instagram
+                      </p>
+                    )}
+                    {alreadyConnected && (
+                      <p className="text-xs text-amber-600 mt-0.5">
+                        Conectat la: {page.connected_to_org}
+                      </p>
+                    )}
+                  </div>
+                  {alreadyConnected ? (
+                    <Badge variant="secondary" className="gap-1 shrink-0">
+                      <Check className="h-3 w-3" /> Conectat
+                    </Badge>
+                  ) : (
+                    <>
+                      <Select
+                        value={pageLanguages[page.page_id] || "ro"}
+                        onValueChange={(v) =>
+                          setPageLanguages((prev) => ({ ...prev, [page.page_id]: v }))
+                        }
+                      >
+                        <SelectTrigger className="w-20">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {LANGUAGES.map((l) => (
+                            <SelectItem key={l.value} value={l.value}>{l.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        size="sm"
+                        onClick={() => handleSavePage(page)}
+                        disabled={connecting === page.page_id}
+                        className="gap-1"
+                      >
+                        <Plus className="h-3 w-3" />
+                        {connecting === page.page_id ? "..." : "Adaugă"}
+                      </Button>
+                    </>
                   )}
                 </div>
-                <Select
-                  value={pageLanguages[page.page_id] || "ro"}
-                  onValueChange={(v) =>
-                    setPageLanguages((prev) => ({ ...prev, [page.page_id]: v }))
-                  }
-                >
-                  <SelectTrigger className="w-20">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {LANGUAGES.map((l) => (
-                      <SelectItem key={l.value} value={l.value}>{l.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Button
-                  size="sm"
-                  onClick={() => handleSavePage(page)}
-                  disabled={connecting === page.page_id}
-                  className="gap-1"
-                >
-                  <Plus className="h-3 w-3" />
-                  {connecting === page.page_id ? "..." : "Adaugă"}
-                </Button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
