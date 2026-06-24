@@ -20,7 +20,8 @@ export const sidebarLinks: SidebarNavItem[] = [
   {
     title: "AGENȚIE",
     items: [
-      { href: "/dashboard/clients", icon: "users", title: "Clienți", agencyOnly: true },
+      { href: "/dashboard/clients",     icon: "users",   title: "Clienți",         agencyOnly: true },
+      { href: "/dashboard/allocations", icon: "billing", title: "Alocare credite", agencyOnly: true },
     ],
   },
   {
