@@ -59,6 +59,22 @@ export function ClientsManager({ orgId, token }: Props) {
     setAdding(false)
   }
 
+  const addSelfAsClient = async () => {
+    setAdding(true)
+    const res = await fetch(`${API}/api/v1/orgs/${orgId}/clients`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ client_org_id: orgId }),
+    })
+    if (res.ok) {
+      await fetchClients()
+    } else {
+      const err = await res.json().catch(() => ({}))
+      alert(err.detail || "Eroare la adăugare client propriu")
+    }
+    setAdding(false)
+  }
+
   const removeClient = async (clientId: string) => {
     if (!confirm("Ești sigur că vrei să elimini acest client?")) return
     await fetch(`${API}/api/v1/orgs/${orgId}/clients/${clientId}`, { method: "DELETE", headers })
@@ -98,72 +114,73 @@ export function ClientsManager({ orgId, token }: Props) {
             {adding ? "Se adaugă..." : "Adaugă"}
           </button>
         </div>
+        {/* Adaugă agenția ca propriul client dacă nu e deja */}
+        {!loading && !clients.some((c) => c.client_org_id === orgId) && (
+          <div className="flex items-center justify-between rounded-md border border-dashed p-3">
+            <div>
+              <p className="text-sm font-medium">Adaugă {agencyOrg?.name ?? "agenția"} ca client propriu</p>
+              <p className="text-xs text-muted-foreground">Permite alocarea de buget și rapoarte pentru postările proprii.</p>
+            </div>
+            <button
+              onClick={addSelfAsClient}
+              disabled={adding}
+              className="flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium hover:bg-muted disabled:opacity-50"
+            >
+              <Building2 className="h-3.5 w-3.5" />
+              Adaugă ca propriu
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Clients list */}
       <div className="rounded-lg border bg-card">
         <div className="p-4 border-b">
-          <h2 className="font-semibold">Clienți ({clients.length + (agencyOrg ? 1 : 0)}, inclusiv propriu)</h2>
+          <h2 className="font-semibold">Clienți ({clients.length})</h2>
         </div>
         {loading ? (
           <p className="p-4 text-sm text-muted-foreground">Se încarcă...</p>
+        ) : clients.length === 0 ? (
+          <p className="p-8 text-center text-muted-foreground text-sm">
+            Niciun client. Adaugă primul client sau adaugă agenția ca client propriu.
+          </p>
         ) : (
           <ul className="divide-y">
-            {/* Agenția proprie — mereu prima în listă */}
-            {agencyOrg && (
-              <li className="flex items-center justify-between px-4 py-3 bg-muted/30">
-                <div>
-                  <p className="font-medium flex items-center gap-1.5">
-                    <Building2 className="h-3.5 w-3.5 text-primary" />
-                    {agencyOrg.name}
-                    <span className="text-xs rounded-full bg-primary/10 text-primary px-2 py-0.5">propriu</span>
-                  </p>
-                  {agencyOrg.slug && <p className="text-xs text-muted-foreground">/{agencyOrg.slug}</p>}
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => switchToClient(orgId)}
-                    className="flex items-center gap-1 rounded-md border px-3 py-1.5 text-xs hover:bg-muted"
-                  >
-                    <ArrowRightLeft className="h-3 w-3" />
-                    Intră
-                  </button>
-                </div>
-              </li>
-            )}
-            {clients.length === 0 && !agencyOrg ? (
-              <li className="p-8 text-center text-muted-foreground">
-                <p className="font-medium">Niciun client încă</p>
-                <p className="text-sm">Adaugă primul client pentru a gestiona conținutul lor.</p>
-              </li>
-            ) : (
-              clients.map((client) => {
-                const org = orgs[client.client_org_id]
-                return (
-                  <li key={client.id} className="flex items-center justify-between px-4 py-3">
-                    <div>
-                      <p className="font-medium">{org?.name ?? client.client_org_id}</p>
-                      {org?.slug && <p className="text-xs text-muted-foreground">/{org.slug}</p>}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => switchToClient(client.client_org_id)}
-                        className="flex items-center gap-1 rounded-md border px-3 py-1.5 text-xs hover:bg-muted"
-                      >
-                        <ArrowRightLeft className="h-3 w-3" />
-                        Intră
-                      </button>
+            {clients.map((client) => {
+              const isSelf = client.client_org_id === orgId
+              const org = orgs[client.client_org_id]
+              return (
+                <li key={client.id} className={`flex items-center justify-between px-4 py-3 ${isSelf ? "bg-muted/30" : ""}`}>
+                  <div>
+                    <p className="font-medium flex items-center gap-1.5">
+                      {isSelf && <Building2 className="h-3.5 w-3.5 text-primary" />}
+                      {org?.name ?? client.client_org_id}
+                      {isSelf && (
+                        <span className="text-xs rounded-full bg-primary/10 text-primary px-2 py-0.5">propriu</span>
+                      )}
+                    </p>
+                    {org?.slug && <p className="text-xs text-muted-foreground">/{org.slug}</p>}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => switchToClient(client.client_org_id)}
+                      className="flex items-center gap-1 rounded-md border px-3 py-1.5 text-xs hover:bg-muted"
+                    >
+                      <ArrowRightLeft className="h-3 w-3" />
+                      Intră
+                    </button>
+                    {!isSelf && (
                       <button
                         onClick={() => removeClient(client.id)}
                         className="text-muted-foreground hover:text-destructive"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
-                    </div>
-                  </li>
-                )
-              })
-            )}
+                    )}
+                  </div>
+                </li>
+              )
+            })}
           </ul>
         )}
       </div>

@@ -11,6 +11,7 @@ interface ClientAllocation {
   consumed: number
   percent_used: number
   monthly_allocation: number
+  is_self?: boolean
 }
 
 interface AllocationsData {
@@ -113,36 +114,24 @@ export function AllocationsManager({ orgId, token }: Props) {
         </div>
 
         <ul className="divide-y">
-            {/* Rând special: bugetul propriu al agenției (pool nealocat) */}
-            <li className="space-y-2 px-4 py-3 bg-muted/30">
-              <div className="flex items-center justify-between gap-4">
-                <div className="min-w-0">
-                  <p className="truncate font-medium flex items-center gap-1.5">
-                    <span className="text-xs rounded-full bg-primary/10 text-primary px-2 py-0.5">propriu</span>
-                    Nex-Nex (pool nealocat)
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Credite disponibile pentru postările proprii ale agenției
-                  </p>
-                </div>
-                <div className="flex flex-shrink-0 items-center">
-                  <span className="text-lg font-bold">{data.pool_unallocated}</span>
-                  <span className="ml-1 text-xs text-muted-foreground">credite</span>
-                </div>
-              </div>
-            </li>
-
             {data.clients.length === 0 ? (
               <li className="p-6 text-center text-muted-foreground text-sm">
-                Adaugă clienți din pagina Clienți, apoi alocă-le buget aici.
+                Adaugă agenția ca client propriu și clienți din pagina Clienți, apoi alocă-le buget.
               </li>
             ) : data.clients.map((c) => (
-              <li key={c.client_org_id} className="space-y-2 px-4 py-3">
+              <li key={c.client_org_id} className={`space-y-2 px-4 py-3 ${c.is_self ? "bg-muted/30" : ""}`}>
                 <div className="flex items-center justify-between gap-4">
                   <div className="min-w-0">
-                    <p className="truncate font-medium">{c.name}</p>
+                    <p className="truncate font-medium flex items-center gap-1.5">
+                      {c.is_self && (
+                        <span className="text-xs rounded-full bg-primary/10 text-primary px-2 py-0.5">propriu</span>
+                      )}
+                      {c.name}
+                    </p>
                     <p className="text-xs text-muted-foreground">
-                      Consumat {c.consumed} / {c.allocated} • rest {c.remaining}
+                      {c.is_self
+                        ? `Pool disponibil ${c.remaining} • target ${c.allocated}`
+                        : `Consumat ${c.consumed} / ${c.allocated} • rest ${c.remaining}`}
                     </p>
                   </div>
                   <div className="flex flex-shrink-0 items-center gap-2">

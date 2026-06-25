@@ -75,6 +75,11 @@ export function CampaignsList({ orgId, token }: Props) {
   const [editImagePrompt, setEditImagePrompt] = useState("")
   // Move post
   const [moveTargetId, setMoveTargetId] = useState("")
+  // Bulk post selection
+  const [selectedPostIds, setSelectedPostIds] = useState<Set<string>>(new Set())
+  const [bulkPostCampaignId, setBulkPostCampaignId] = useState<string | null>(null)
+  const [bulkPostBusy, setBulkPostBusy] = useState(false)
+  const [bulkMoveTargetId, setBulkMoveTargetId] = useState("")
 
   const fetchCampaigns = async () => {
     setLoading(true)
@@ -271,6 +276,41 @@ export function CampaignsList({ orgId, token }: Props) {
     } finally { setSaving(false) }
   }
 
+  const togglePostSelect = (postId: string, campaignId: string) => {
+    if (bulkPostCampaignId !== null && bulkPostCampaignId !== campaignId) {
+      setSelectedPostIds(new Set([postId]))
+      setBulkPostCampaignId(campaignId)
+      return
+    }
+    setBulkPostCampaignId(campaignId)
+    setSelectedPostIds((prev) => {
+      const next = new Set(prev)
+      next.has(postId) ? next.delete(postId) : next.add(postId)
+      if (next.size === 0) setBulkPostCampaignId(null)
+      return next
+    })
+  }
+
+  const handleBulkPosts = async (action: "pause" | "resume" | "delete" | "move", targetCampaignId?: string) => {
+    if (selectedPostIds.size === 0 || !bulkPostCampaignId) return
+    const labels: Record<string, string> = { pause: "pui pe pauză", resume: "reiei", delete: "ștergi", move: "muți" }
+    if (!confirm(`Sigur ${labels[action]} ${selectedPostIds.size} postări?`)) return
+    setBulkPostBusy(true)
+    try {
+      await api.posts.bulk(orgId, {
+        action,
+        post_ids: Array.from(selectedPostIds),
+        target_campaign_id: targetCampaignId,
+      }, token)
+      const campaignId = bulkPostCampaignId
+      setSelectedPostIds(new Set())
+      setBulkPostCampaignId(null)
+      setBulkMoveTargetId("")
+      await refreshPosts(campaignId)
+      if (targetCampaignId && postsMap[targetCampaignId]) await refreshPosts(targetCampaignId)
+    } finally { setBulkPostBusy(false) }
+  }
+
   const handleMovePost = async () => {
     if (!activePost || !activeCampaignId || !moveTargetId) return
     setSaving(true)
@@ -453,11 +493,58 @@ export function CampaignsList({ orgId, token }: Props) {
                     <p className="text-sm text-muted-foreground p-4">{t("empty_campaign_posts")}</p>
                   ) : (
                     <div className="divide-y">
+                      {/* Bulk action bar pentru postările selectate */}
+                      {bulkPostCampaignId === campaign.id && selectedPostIds.size > 0 && (
+                        <div className="flex flex-wrap items-center gap-2 p-3 bg-primary/5 border-b">
+                          <span className="text-xs font-medium px-1">{selectedPostIds.size} postări selectate</span>
+                          <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkPostBusy}
+                            onClick={() => handleBulkPosts("pause")}>
+                            <Pause className="mr-1 h-3 w-3" /> Pauză
+                          </Button>
+                          <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkPostBusy}
+                            onClick={() => handleBulkPosts("resume")}>
+                            <Play className="mr-1 h-3 w-3" /> Reia
+                          </Button>
+                          <div className="flex items-center gap-1">
+                            <Select value={bulkMoveTargetId} onValueChange={setBulkMoveTargetId}>
+                              <SelectTrigger className="h-7 w-36 text-xs">
+                                <SelectValue placeholder="Mută în..." />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {campaigns.filter((c) => c.id !== campaign.id).map((c) => (
+                                  <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            {bulkMoveTargetId && (
+                              <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkPostBusy}
+                                onClick={() => handleBulkPosts("move", bulkMoveTargetId)}>
+                                <FolderInput className="mr-1 h-3 w-3" /> Mută
+                              </Button>
+                            )}
+                          </div>
+                          <Button size="sm" variant="destructive" className="h-7 text-xs" disabled={bulkPostBusy}
+                            onClick={() => handleBulkPosts("delete")}>
+                            <Trash2 className="mr-1 h-3 w-3" /> Șterge
+                          </Button>
+                          <Button size="sm" variant="ghost" className="h-7 text-xs"
+                            onClick={() => { setSelectedPostIds(new Set()); setBulkPostCampaignId(null) }}>
+                            Deselectează
+                          </Button>
+                        </div>
+                      )}
                       {posts.map((post) => (
                         <div key={post.id} className="p-4 space-y-3">
                           {/* Header: platformă, status, dată, acțiuni */}
                           <div className="flex items-center justify-between gap-2 flex-wrap">
                             <div className="flex items-center gap-2 flex-wrap">
+                              <input
+                                type="checkbox"
+                                className="flex-shrink-0 rounded"
+                                checked={selectedPostIds.has(post.id)}
+                                onChange={() => togglePostSelect(post.id, campaign.id)}
+                                onClick={(e) => e.stopPropagation()}
+                              />
                               <PlatformBadge platform={post.platform} />
                               <StatusBadge status={post.status} />
                               {post.language && post.language !== "ro" && (

@@ -198,6 +198,12 @@ export const api = {
         body: JSON.stringify(data),
         headers: { Authorization: `Bearer ${token}` },
       }),
+    bulk: (orgId: string, data: { action: "pause" | "resume" | "delete" | "move"; post_ids: string[]; target_campaign_id?: string }, token: string) =>
+      apiFetch<{ action: string; affected: number }>(`/api/v1/orgs/${orgId}/posts/bulk`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { Authorization: `Bearer ${token}` },
+      }),
     delete: (orgId: string, postId: string, token: string) =>
       apiFetch<void>(`/api/v1/orgs/${orgId}/posts/${postId}`, {
         method: "DELETE",
