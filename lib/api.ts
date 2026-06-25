@@ -126,9 +126,9 @@ export const api = {
       apiFetch<Campaign[]>(`/api/v1/orgs/${orgId}/campaigns`, {
         headers: { Authorization: `Bearer ${token}` },
       }),
-    listPaged: (orgId: string, token: string, opts: { limit: number; offset: number; showCancelled?: boolean }) =>
+    listPaged: (orgId: string, token: string, opts: { limit: number; offset: number; statusFilter?: string }) =>
       apiFetchPaged<Campaign[]>(
-        `/api/v1/orgs/${orgId}/campaigns?limit=${opts.limit}&offset=${opts.offset}&show_cancelled=${opts.showCancelled ? "true" : "false"}`,
+        `/api/v1/orgs/${orgId}/campaigns?limit=${opts.limit}&offset=${opts.offset}${opts.statusFilter ? `&status_filter=${opts.statusFilter}` : ""}`,
         { headers: { Authorization: `Bearer ${token}` } },
       ),
     bulk: (orgId: string, action: "archive" | "pause" | "resume" | "clone", campaignIds: string[], token: string) =>

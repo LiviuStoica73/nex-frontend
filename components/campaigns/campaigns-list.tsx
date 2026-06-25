@@ -45,7 +45,7 @@ export function CampaignsList({ orgId, token }: Props) {
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(25)
   const [total, setTotal] = useState(0)
-  const [showCancelled, setShowCancelled] = useState(false)
+  const [statusFilter, setStatusFilter] = useState("")
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [bulkBusy, setBulkBusy] = useState(false)
 
@@ -97,7 +97,7 @@ export function CampaignsList({ orgId, token }: Props) {
     setLoading(true)
     try {
       const { items, total } = await api.campaigns.listPaged(orgId, token, {
-        limit: pageSize, offset: page * pageSize, showCancelled,
+        limit: pageSize, offset: page * pageSize, statusFilter: statusFilter || undefined,
       })
       setCampaigns(items)
       setTotal(total)
@@ -112,7 +112,7 @@ export function CampaignsList({ orgId, token }: Props) {
     } finally { setLoadingInbox(false) }
   }
 
-  useEffect(() => { fetchCampaigns() }, [orgId, token, page, pageSize, showCancelled])
+  useEffect(() => { fetchCampaigns() }, [orgId, token, page, pageSize, statusFilter])
   useEffect(() => { fetchUncampaigned() }, [orgId, token])
 
   const toggleSelect = (id: string) => {
@@ -428,13 +428,23 @@ export function CampaignsList({ orgId, token }: Props) {
               {PAGE_SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
           </label>
-          <label className="flex items-center gap-1.5 text-sm text-muted-foreground cursor-pointer">
-            <input
-              type="checkbox"
-              checked={showCancelled}
-              onChange={(e) => { setPage(0); setShowCancelled(e.target.checked) }}
-            />
-            Afișează anulate
+          <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <span>Stare</span>
+            <select
+              value={statusFilter}
+              onChange={(e) => { setPage(0); setStatusFilter(e.target.value) }}
+              className="rounded-md border bg-background px-2 py-1 text-sm"
+            >
+              <option value="">Active</option>
+              <option value="all">Toate</option>
+              <option value="draft">Ciornă</option>
+              <option value="approved">Aprobat</option>
+              <option value="scheduled">Programat</option>
+              <option value="published">Publicat</option>
+              <option value="paused">Pauză</option>
+              <option value="cancelled">Anulat</option>
+              <option value="archived">Arhivat</option>
+            </select>
           </label>
         </div>
         <Button onClick={() => setActiveDialog("create_campaign")} size="sm">
