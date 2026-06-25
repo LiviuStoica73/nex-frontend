@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { useLocale, useTranslations } from "next-intl"
-import { ChevronDown, ChevronRight, MoreHorizontal, Pencil, Trash2, Pause, Play, RefreshCw, Languages, Share2, Clock, Ban, Archive, Copy, FolderInput, Star, FolderOpen, Folder, FileText, Inbox } from "lucide-react"
-import { api, PLATFORM_COLORS, STATUS_COLORS, type Campaign, type Platform, type Post } from "@/lib/api"
+import { ChevronDown, ChevronRight, MoreHorizontal, Pencil, Trash2, Pause, Play, RefreshCw, Languages, Share2, Clock, Ban, Archive, Copy, FolderInput, Star, FolderOpen, Folder, FileText, Inbox, BookOpen } from "lucide-react"
+import { api, PLATFORM_COLORS, STATUS_COLORS, type Campaign, type Platform, type Post, type Topic } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
@@ -84,6 +84,9 @@ export function CampaignsList({ orgId, token }: Props) {
   const [uncampaignedPosts, setUncampaignedPosts] = useState<Post[]>([])
   const [inboxExpanded, setInboxExpanded] = useState(false)
   const [loadingInbox, setLoadingInbox] = useState(false)
+  // Topics per campanie
+  const [topicsMap, setTopicsMap] = useState<Record<string, Topic[]>>({})
+  const [expandedTopicId, setExpandedTopicId] = useState<string | null>(null)
 
   const fetchCampaigns = async () => {
     setLoading(true)
@@ -149,18 +152,24 @@ export function CampaignsList({ orgId, token }: Props) {
   const toggleCampaign = async (campaignId: string) => {
     if (expandedId === campaignId) { setExpandedId(null); return }
     setExpandedId(campaignId)
-    if (!postsMap[campaignId]) {
-      setLoadingPosts(campaignId)
-      try {
-        const posts = await api.campaigns.listPosts(orgId, campaignId, token)
-        setPostsMap((prev) => ({ ...prev, [campaignId]: posts }))
-      } finally { setLoadingPosts(null) }
-    }
+    setLoadingPosts(campaignId)
+    try {
+      const [posts, topics] = await Promise.all([
+        postsMap[campaignId] ? Promise.resolve(postsMap[campaignId]) : api.campaigns.listPosts(orgId, campaignId, token),
+        topicsMap[campaignId] ? Promise.resolve(topicsMap[campaignId]) : api.campaigns.listTopics(orgId, campaignId, token),
+      ])
+      setPostsMap((prev) => ({ ...prev, [campaignId]: posts }))
+      setTopicsMap((prev) => ({ ...prev, [campaignId]: topics }))
+    } finally { setLoadingPosts(null) }
   }
 
   const refreshPosts = async (campaignId: string) => {
-    const posts = await api.campaigns.listPosts(orgId, campaignId, token)
+    const [posts, topics] = await Promise.all([
+      api.campaigns.listPosts(orgId, campaignId, token),
+      api.campaigns.listTopics(orgId, campaignId, token),
+    ])
     setPostsMap((prev) => ({ ...prev, [campaignId]: posts }))
+    setTopicsMap((prev) => ({ ...prev, [campaignId]: topics }))
   }
 
   const openDialog = (type: DialogType, post: Post, campaignId: string) => {
@@ -574,177 +583,135 @@ export function CampaignsList({ orgId, token }: Props) {
                 <div className="border-t bg-background">
                   {loadingPosts === campaign.id ? (
                     <p className="text-sm text-muted-foreground p-4 pl-10">{t("loading_posts")}</p>
-                  ) : posts.length === 0 ? (
+                  ) : posts.length === 0 && (topicsMap[campaign.id] ?? []).length === 0 ? (
                     <p className="text-sm text-muted-foreground p-4 pl-10 italic">{t("empty_campaign_posts")}</p>
-                  ) : (
-                    <div className="divide-y divide-border/50">
-                      {/* Bulk action bar pentru postările selectate */}
-                      {bulkPostCampaignId === campaign.id && selectedPostIds.size > 0 && (
-                        <div className="flex flex-wrap items-center gap-2 p-3 bg-primary/5 border-b">
-                          <span className="text-xs font-medium px-1">{selectedPostIds.size} postări selectate</span>
-                          <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkPostBusy}
-                            onClick={() => handleBulkPosts("pause")}>
-                            <Pause className="mr-1 h-3 w-3" /> Pauză
-                          </Button>
-                          <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkPostBusy}
-                            onClick={() => handleBulkPosts("resume")}>
-                            <Play className="mr-1 h-3 w-3" /> Reia
-                          </Button>
-                          <div className="flex items-center gap-1">
-                            <Select value={bulkMoveTargetId} onValueChange={setBulkMoveTargetId}>
-                              <SelectTrigger className="h-7 w-36 text-xs">
-                                <SelectValue placeholder="Mută în..." />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {campaigns.filter((c) => c.id !== campaign.id).map((c) => (
-                                  <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            {bulkMoveTargetId && (
-                              <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkPostBusy}
-                                onClick={() => handleBulkPosts("move", bulkMoveTargetId)}>
-                                <FolderInput className="mr-1 h-3 w-3" /> Mută
-                              </Button>
+                  ) : (() => {
+                    const topics = topicsMap[campaign.id] ?? []
+                    const topicIds = new Set(topics.map((tp) => tp.id))
+                    const ungroupedPosts = posts.filter((p) => !p.topic_id || !topicIds.has(p.topic_id))
+                    const postsByTopic: Record<string, Post[]> = {}
+                    for (const tp of topics) postsByTopic[tp.id] = posts.filter((p) => p.topic_id === tp.id)
+
+                    const renderPostRow = (post: Post, indent: string = "pl-10") => (
+                      <div key={post.id} className={`${indent} pr-4 py-3 space-y-2 hover:bg-muted/20 transition-colors`}>
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <input type="checkbox" className="flex-shrink-0 rounded"
+                              checked={selectedPostIds.has(post.id)}
+                              onChange={() => togglePostSelect(post.id, campaign.id)}
+                              onClick={(e) => e.stopPropagation()} />
+                            <FileText className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground/60" />
+                            <PlatformBadge platform={post.platform} />
+                            <StatusBadge status={post.status} />
+                            {post.language && post.language !== "ro" && (
+                              <span className="rounded-full px-2 py-0.5 text-xs font-medium bg-muted text-muted-foreground uppercase">{post.language}</span>
+                            )}
+                            {post.scheduled_at && (
+                              <span className="text-xs text-muted-foreground">📅 {formatDate(post.scheduled_at)}</span>
+                            )}
+                            {post.published_url && (
+                              <a href={post.published_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">{t("view_post")}</a>
                             )}
                           </div>
-                          <Button size="sm" variant="destructive" className="h-7 text-xs" disabled={bulkPostBusy}
-                            onClick={() => handleBulkPosts("delete")}>
-                            <Trash2 className="mr-1 h-3 w-3" /> Șterge
-                          </Button>
-                          <Button size="sm" variant="ghost" className="h-7 text-xs"
-                            onClick={() => { setSelectedPostIds(new Set()); setBulkPostCampaignId(null) }}>
-                            Deselectează
-                          </Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-7 w-7 flex-shrink-0"><MoreHorizontal className="h-4 w-4" /></Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48">
+                              <DropdownMenuItem onClick={() => openDialog("edit", post, campaign.id)}><Pencil className="mr-2 h-4 w-4" /> {t("edit_text")}</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => { setActivePost(post); setActiveCampaignId(campaign.id); setActiveDialog("edit_image_prompt"); setEditImagePrompt(post.image_prompt ?? "") }}><Pencil className="mr-2 h-4 w-4" /> Prompt imagine</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => openDialog("reschedule", post, campaign.id)}><Clock className="mr-2 h-4 w-4" /> {t("reschedule")}</DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              {post.status === "scheduled" ? (
+                                <DropdownMenuItem onClick={() => handlePause(post, campaign.id)}><Pause className="mr-2 h-4 w-4" /> {t("pause")}</DropdownMenuItem>
+                              ) : post.status === "approved" ? (
+                                <DropdownMenuItem onClick={() => handleResume(post, campaign.id)}><Play className="mr-2 h-4 w-4" /> {t("resume")}</DropdownMenuItem>
+                              ) : null}
+                              <DropdownMenuItem onClick={() => openDialog("repost", post, campaign.id)}><RefreshCw className="mr-2 h-4 w-4" /> {t("repost")}</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => openDialog("translate", post, campaign.id)}><Languages className="mr-2 h-4 w-4" /> {t("other_language")}</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => openDialog("repost", post, campaign.id)}><Share2 className="mr-2 h-4 w-4" /> {t("other_social_network")}</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => { setActivePost(post); setActiveCampaignId(campaign.id); setMoveTargetId(""); setActiveDialog("move_post") }}><FolderInput className="mr-2 h-4 w-4" /> Mută în campanie</DropdownMenuItem>
+                              {post.status === "failed" && (<><DropdownMenuSeparator /><DropdownMenuItem onClick={() => handleRetry(post, campaign.id)}><RefreshCw className="mr-2 h-4 w-4" /> Încearcă din nou</DropdownMenuItem></>)}
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem onClick={() => handleDelete(post, campaign.id)} className="text-destructive focus:text-destructive"><Trash2 className="mr-2 h-4 w-4" /> {t("delete")}</DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
-                      )}
-                      {posts.map((post) => (
-                        // Postare = item subordonat, vizual distinct față de campanie
-                        <div key={post.id} className="pl-10 pr-4 py-3 space-y-2 hover:bg-muted/20 transition-colors">
-                          {/* Header: platformă, status, dată, acțiuni */}
-                          <div className="flex items-center justify-between gap-2 flex-wrap">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <input
-                                type="checkbox"
-                                className="flex-shrink-0 rounded"
-                                checked={selectedPostIds.has(post.id)}
-                                onChange={() => togglePostSelect(post.id, campaign.id)}
-                                onClick={(e) => e.stopPropagation()}
-                              />
-                              <FileText className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground/60" />
-                              <PlatformBadge platform={post.platform} />
-                              <StatusBadge status={post.status} />
-                              {post.language && post.language !== "ro" && (
-                                <span className="rounded-full px-2 py-0.5 text-xs font-medium bg-muted text-muted-foreground uppercase">
-                                  {post.language}
-                                </span>
-                              )}
-                              {post.scheduled_at && (
-                                <span className="text-xs text-muted-foreground">📅 {formatDate(post.scheduled_at)}</span>
-                              )}
-                              {post.published_url && (
-                                <a href={post.published_url} target="_blank" rel="noopener noreferrer"
-                                  className="text-xs text-primary hover:underline">
-                                  {t("view_post")}
-                                </a>
-                              )}
-                            </div>
-
-                            {/* Meniu acțiuni */}
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-7 w-7 flex-shrink-0">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end" className="w-48">
-                                <DropdownMenuItem onClick={() => openDialog("edit", post, campaign.id)}>
-                                  <Pencil className="mr-2 h-4 w-4" /> {t("edit_text")}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => {
-                                  setActivePost(post)
-                                  setActiveCampaignId(campaign.id)
-                                  setActiveDialog("edit_image_prompt")
-                                  setEditImagePrompt(post.image_prompt ?? "")
-                                }}>
-                                  <Pencil className="mr-2 h-4 w-4" /> Prompt imagine
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => openDialog("reschedule", post, campaign.id)}>
-                                  <Clock className="mr-2 h-4 w-4" /> {t("reschedule")}
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                {post.status === "scheduled" ? (
-                                  <DropdownMenuItem onClick={() => handlePause(post, campaign.id)}>
-                                    <Pause className="mr-2 h-4 w-4" /> {t("pause")}
-                                  </DropdownMenuItem>
-                                ) : post.status === "approved" ? (
-                                  <DropdownMenuItem onClick={() => handleResume(post, campaign.id)}>
-                                    <Play className="mr-2 h-4 w-4" /> {t("resume")}
-                                  </DropdownMenuItem>
-                                ) : null}
-                                <DropdownMenuItem onClick={() => openDialog("repost", post, campaign.id)}>
-                                  <RefreshCw className="mr-2 h-4 w-4" /> {t("repost")}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => openDialog("translate", post, campaign.id)}>
-                                  <Languages className="mr-2 h-4 w-4" /> {t("other_language")}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => openDialog("repost", post, campaign.id)}>
-                                  <Share2 className="mr-2 h-4 w-4" /> {t("other_social_network")}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => {
-                                  setActivePost(post)
-                                  setActiveCampaignId(campaign.id)
-                                  setMoveTargetId("")
-                                  setActiveDialog("move_post")
-                                }}>
-                                  <FolderInput className="mr-2 h-4 w-4" /> Mută în campanie
-                                </DropdownMenuItem>
-                                {post.status === "failed" && (
-                                  <>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem onClick={() => handleRetry(post, campaign.id)}>
-                                      <RefreshCw className="mr-2 h-4 w-4" /> Încearcă din nou
-                                    </DropdownMenuItem>
-                                  </>
-                                )}
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem onClick={() => handleDelete(post, campaign.id)}
-                                  className="text-destructive focus:text-destructive">
-                                  <Trash2 className="mr-2 h-4 w-4" /> {t("delete")}
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
+                        {post.image_urls && post.image_urls.length > 0 && (
+                          <div className="flex gap-2 flex-wrap">
+                            {post.image_urls.map((url, i) => (
+                              <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                                <img src={url} alt={t("image_alt", { index: i + 1 })}
+                                  className="h-24 w-24 rounded-md object-cover border hover:opacity-80 transition-opacity"
+                                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }} />
+                              </a>
+                            ))}
                           </div>
+                        )}
+                        {post.text_content && (
+                          <p className="text-sm text-foreground whitespace-pre-wrap line-clamp-4">{post.text_content}</p>
+                        )}
+                        {post.status === "failed" && post.last_error && (
+                          <p className="text-xs text-destructive bg-destructive/10 rounded px-2 py-1">{t("error_prefix")}: {post.last_error}</p>
+                        )}
+                      </div>
+                    )
 
-                          {/* Imagini */}
-                          {post.image_urls && post.image_urls.length > 0 && (
-                            <div className="flex gap-2 flex-wrap">
-                              {post.image_urls.map((url, i) => (
-                                <a key={i} href={url} target="_blank" rel="noopener noreferrer">
-                                  <img src={url} alt={t("image_alt", { index: i + 1 })}
-                                    className="h-24 w-24 rounded-md object-cover border hover:opacity-80 transition-opacity"
-                                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }} />
-                                </a>
-                              ))}
+                    return (
+                      <div className="divide-y divide-border/50">
+                        {/* Bulk action bar */}
+                        {bulkPostCampaignId === campaign.id && selectedPostIds.size > 0 && (
+                          <div className="flex flex-wrap items-center gap-2 p-3 bg-primary/5 border-b">
+                            <span className="text-xs font-medium px-1">{selectedPostIds.size} postări selectate</span>
+                            <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkPostBusy} onClick={() => handleBulkPosts("pause")}><Pause className="mr-1 h-3 w-3" /> Pauză</Button>
+                            <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkPostBusy} onClick={() => handleBulkPosts("resume")}><Play className="mr-1 h-3 w-3" /> Reia</Button>
+                            <div className="flex items-center gap-1">
+                              <Select value={bulkMoveTargetId} onValueChange={setBulkMoveTargetId}>
+                                <SelectTrigger className="h-7 w-36 text-xs"><SelectValue placeholder="Mută în..." /></SelectTrigger>
+                                <SelectContent>{campaigns.filter((c) => c.id !== campaign.id).map((c) => (<SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>))}</SelectContent>
+                              </Select>
+                              {bulkMoveTargetId && (
+                                <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkPostBusy} onClick={() => handleBulkPosts("move", bulkMoveTargetId)}><FolderInput className="mr-1 h-3 w-3" /> Mută</Button>
+                              )}
                             </div>
-                          )}
+                            <Button size="sm" variant="destructive" className="h-7 text-xs" disabled={bulkPostBusy} onClick={() => handleBulkPosts("delete")}><Trash2 className="mr-1 h-3 w-3" /> Șterge</Button>
+                            <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => { setSelectedPostIds(new Set()); setBulkPostCampaignId(null) }}>Deselectează</Button>
+                          </div>
+                        )}
 
-                          {/* Text */}
-                          {post.text_content && (
-                            <p className="text-sm text-foreground whitespace-pre-wrap line-clamp-4">
-                              {post.text_content}
-                            </p>
-                          )}
+                        {/* Topics cu postările lor */}
+                        {topics.map((topic) => {
+                          const tPosts = postsByTopic[topic.id] ?? []
+                          const isTopicExpanded = expandedTopicId === topic.id
+                          return (
+                            <div key={topic.id} className="border-l-2 border-primary/20 ml-6">
+                              <button
+                                onClick={() => setExpandedTopicId(isTopicExpanded ? null : topic.id)}
+                                className="w-full flex items-center gap-2 px-4 py-2.5 bg-muted/10 hover:bg-muted/25 transition-colors text-left"
+                              >
+                                {isTopicExpanded
+                                  ? <ChevronDown className="h-3.5 w-3.5 flex-shrink-0 text-primary/70" />
+                                  : <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-primary/70" />}
+                                <BookOpen className="h-3.5 w-3.5 flex-shrink-0 text-primary/60" />
+                                <span className="text-sm font-medium text-foreground/80 flex-1 truncate">{topic.name}</span>
+                                <span className="text-xs text-muted-foreground">{tPosts.length} postări</span>
+                              </button>
+                              {isTopicExpanded && (
+                                <div className="divide-y divide-border/30">
+                                  {tPosts.length === 0
+                                    ? <p className="text-sm text-muted-foreground pl-14 py-3 italic">Nicio postare în această temă.</p>
+                                    : tPosts.map((post) => renderPostRow(post, "pl-14"))}
+                                </div>
+                              )}
+                            </div>
+                          )
+                        })}
 
-                          {post.status === "failed" && post.last_error && (
-                            <p className="text-xs text-destructive bg-destructive/10 rounded px-2 py-1">
-                              {t("error_prefix")}: {post.last_error}
-                            </p>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                        {/* Postări fără temă (moștenite sau manuale) */}
+                        {ungroupedPosts.map((post) => renderPostRow(post, "pl-10"))}
+                      </div>
+                    )
+                  })()}
                 </div>
               )}
             </div>

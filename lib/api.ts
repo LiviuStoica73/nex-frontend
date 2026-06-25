@@ -58,9 +58,18 @@ export interface Org {
   default_languages: string[]
 }
 
+export interface Topic {
+  id: string
+  campaign_id: string
+  org_id: string
+  name: string
+  created_at: string
+}
+
 export interface Post {
   id: string
   campaign_id: string | null
+  topic_id: string | null
   platform: Platform
   post_type: string
   language: string
@@ -143,6 +152,20 @@ export const api = {
       }),
     listUncampaigned: (orgId: string, token: string) =>
       apiFetch<Post[]>(`/api/v1/orgs/${orgId}/posts/uncampaigned`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    listTopics: (orgId: string, campaignId: string, token: string) =>
+      apiFetch<Topic[]>(`/api/v1/orgs/${orgId}/campaigns/${campaignId}/topics`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    createTopic: (orgId: string, campaignId: string, name: string, token: string) =>
+      apiFetch<Topic>(`/api/v1/orgs/${orgId}/campaigns/${campaignId}/topics`, {
+        method: "POST",
+        body: JSON.stringify({ name }),
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    listTopicPosts: (orgId: string, topicId: string, token: string) =>
+      apiFetch<Post[]>(`/api/v1/orgs/${orgId}/topics/${topicId}/posts`, {
         headers: { Authorization: `Bearer ${token}` },
       }),
     update: (orgId: string, campaignId: string, data: Partial<{
