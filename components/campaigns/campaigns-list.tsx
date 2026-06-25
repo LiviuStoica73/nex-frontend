@@ -45,7 +45,7 @@ export function CampaignsList({ orgId, token }: Props) {
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(25)
   const [total, setTotal] = useState(0)
-  const [includeArchived, setIncludeArchived] = useState(false)
+  const [showCancelled, setShowCancelled] = useState(false)
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [bulkBusy, setBulkBusy] = useState(false)
 
@@ -97,7 +97,7 @@ export function CampaignsList({ orgId, token }: Props) {
     setLoading(true)
     try {
       const { items, total } = await api.campaigns.listPaged(orgId, token, {
-        limit: pageSize, offset: page * pageSize, includeArchived,
+        limit: pageSize, offset: page * pageSize, showCancelled,
       })
       setCampaigns(items)
       setTotal(total)
@@ -112,7 +112,7 @@ export function CampaignsList({ orgId, token }: Props) {
     } finally { setLoadingInbox(false) }
   }
 
-  useEffect(() => { fetchCampaigns() }, [orgId, token, page, pageSize, includeArchived])
+  useEffect(() => { fetchCampaigns() }, [orgId, token, page, pageSize, showCancelled])
   useEffect(() => { fetchUncampaigned() }, [orgId, token])
 
   const toggleSelect = (id: string) => {
@@ -431,10 +431,10 @@ export function CampaignsList({ orgId, token }: Props) {
           <label className="flex items-center gap-1.5 text-sm text-muted-foreground cursor-pointer">
             <input
               type="checkbox"
-              checked={includeArchived}
-              onChange={(e) => { setPage(0); setIncludeArchived(e.target.checked) }}
+              checked={showCancelled}
+              onChange={(e) => { setPage(0); setShowCancelled(e.target.checked) }}
             />
-            {includeArchived ? "Includ arhivate" : "Arată arhivate"}
+            Afișează anulate
           </label>
         </div>
         <Button onClick={() => setActiveDialog("create_campaign")} size="sm">
@@ -538,7 +538,7 @@ export function CampaignsList({ orgId, token }: Props) {
           const posts = postsMap[campaign.id] ?? []
           return (
             // Campanie = container folder
-            <div key={campaign.id} className={`rounded-lg border-2 bg-card overflow-hidden shadow-sm ${campaign.status === "archived" ? "opacity-60" : ""}`}>
+            <div key={campaign.id} className="rounded-lg border-2 bg-card overflow-hidden shadow-sm">
               <div className="flex items-center bg-muted/30">
                 <input
                   type="checkbox"
