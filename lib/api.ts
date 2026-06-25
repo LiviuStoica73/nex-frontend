@@ -60,7 +60,7 @@ export interface Org {
 
 export interface Post {
   id: string
-  campaign_id: string
+  campaign_id: string | null
   platform: Platform
   post_type: string
   language: string
@@ -139,6 +139,10 @@ export const api = {
       }),
     listPosts: (orgId: string, campaignId: string, token: string) =>
       apiFetch<Post[]>(`/api/v1/orgs/${orgId}/campaigns/${campaignId}/posts`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    listUncampaigned: (orgId: string, token: string) =>
+      apiFetch<Post[]>(`/api/v1/orgs/${orgId}/posts/uncampaigned`, {
         headers: { Authorization: `Bearer ${token}` },
       }),
     update: (orgId: string, campaignId: string, data: Partial<{

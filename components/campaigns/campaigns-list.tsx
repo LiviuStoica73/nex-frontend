@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useLocale, useTranslations } from "next-intl"
-import { ChevronDown, ChevronRight, MoreHorizontal, Pencil, Trash2, Pause, Play, RefreshCw, Languages, Share2, Clock, Ban, Archive, Copy, FolderInput, Star } from "lucide-react"
+import { ChevronDown, ChevronRight, MoreHorizontal, Pencil, Trash2, Pause, Play, RefreshCw, Languages, Share2, Clock, Ban, Archive, Copy, FolderInput, Star, FolderOpen, Folder, FileText, Inbox } from "lucide-react"
 import { api, PLATFORM_COLORS, STATUS_COLORS, type Campaign, type Platform, type Post } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -80,6 +80,10 @@ export function CampaignsList({ orgId, token }: Props) {
   const [bulkPostCampaignId, setBulkPostCampaignId] = useState<string | null>(null)
   const [bulkPostBusy, setBulkPostBusy] = useState(false)
   const [bulkMoveTargetId, setBulkMoveTargetId] = useState("")
+  // Posturi fără campanie (inbox)
+  const [uncampaignedPosts, setUncampaignedPosts] = useState<Post[]>([])
+  const [inboxExpanded, setInboxExpanded] = useState(false)
+  const [loadingInbox, setLoadingInbox] = useState(false)
 
   const fetchCampaigns = async () => {
     setLoading(true)
@@ -92,7 +96,16 @@ export function CampaignsList({ orgId, token }: Props) {
     } finally { setLoading(false) }
   }
 
+  const fetchUncampaigned = async () => {
+    setLoadingInbox(true)
+    try {
+      const posts = await api.campaigns.listUncampaigned(orgId, token)
+      setUncampaignedPosts(posts)
+    } finally { setLoadingInbox(false) }
+  }
+
   useEffect(() => { fetchCampaigns() }, [orgId, token, page, pageSize, archivedOnly])
+  useEffect(() => { fetchUncampaigned() }, [orgId, token])
 
   const toggleSelect = (id: string) => {
     setSelected((prev) => {
@@ -312,11 +325,12 @@ export function CampaignsList({ orgId, token }: Props) {
   }
 
   const handleMovePost = async () => {
-    if (!activePost || !activeCampaignId || !moveTargetId) return
+    if (!activePost || !moveTargetId) return
     setSaving(true)
     try {
       await api.posts.update(orgId, activePost.id, { campaign_id: moveTargetId }, token)
-      await refreshPosts(activeCampaignId)
+      if (activeCampaignId) await refreshPosts(activeCampaignId)
+      else await fetchUncampaigned()  // post venea din inbox
       if (postsMap[moveTargetId]) await refreshPosts(moveTargetId)
       closeDialog()
     } finally { setSaving(false) }
@@ -389,6 +403,75 @@ export function CampaignsList({ orgId, token }: Props) {
         </div>
       )}
 
+      {/* Inbox: posturi fără campanie */}
+      {(uncampaignedPosts.length > 0 || loadingInbox) && (
+        <div className="rounded-lg border-2 border-dashed border-amber-300/60 bg-amber-50/30 dark:bg-amber-950/10 overflow-hidden">
+          <button
+            onClick={() => setInboxExpanded((v) => !v)}
+            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-amber-50/50 dark:hover:bg-amber-950/20 transition-colors text-left"
+          >
+            {inboxExpanded
+              ? <ChevronDown className="h-4 w-4 flex-shrink-0 text-amber-600" />
+              : <ChevronRight className="h-4 w-4 flex-shrink-0 text-amber-600" />}
+            <Inbox className="h-4 w-4 flex-shrink-0 text-amber-600" />
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold text-amber-800 dark:text-amber-300 text-sm">
+                Posturi fără campanie
+                <span className="ml-2 text-xs font-normal bg-amber-200 dark:bg-amber-800 text-amber-800 dark:text-amber-200 rounded-full px-2 py-0.5">
+                  {uncampaignedPosts.length}
+                </span>
+              </p>
+              <p className="text-xs text-amber-600 dark:text-amber-400">Trimise din Telegram fără campanie curentă selectată. Atribuie-le unei campanii.</p>
+            </div>
+          </button>
+          {inboxExpanded && (
+            <div className="border-t border-amber-200/60 divide-y divide-amber-100/60">
+              {loadingInbox ? (
+                <p className="text-sm text-muted-foreground p-4">Se încarcă...</p>
+              ) : uncampaignedPosts.map((post) => (
+                <div key={post.id} className="p-4 pl-11 space-y-2 bg-amber-50/20 dark:bg-amber-950/5">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <FileText className="h-3.5 w-3.5 text-amber-500 flex-shrink-0" />
+                      <PlatformBadge platform={post.platform} />
+                      <StatusBadge status={post.status} />
+                      {post.scheduled_at && (
+                        <span className="text-xs text-muted-foreground">📅 {formatDate(post.scheduled_at)}</span>
+                      )}
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem onClick={() => {
+                          setActivePost(post); setActiveCampaignId(null); setMoveTargetId(""); setActiveDialog("move_post")
+                        }}>
+                          <FolderInput className="mr-2 h-4 w-4" /> Atribuie campanie
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={async () => {
+                          if (!confirm(t("delete_confirm"))) return
+                          await api.posts.delete(orgId, post.id, token)
+                          await fetchUncampaigned()
+                        }} className="text-destructive focus:text-destructive">
+                          <Trash2 className="mr-2 h-4 w-4" /> {t("delete")}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                  {post.text_content && (
+                    <p className="text-sm text-foreground whitespace-pre-wrap line-clamp-3 pl-5">{post.text_content}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="space-y-3">
         {campaigns.length === 0 ? (
           <div className="rounded-lg border border-dashed p-12 text-center text-muted-foreground">
@@ -399,8 +482,9 @@ export function CampaignsList({ orgId, token }: Props) {
           const isExpanded = expandedId === campaign.id
           const posts = postsMap[campaign.id] ?? []
           return (
-            <div key={campaign.id} className="rounded-lg border bg-card overflow-hidden">
-              <div className="flex items-center">
+            // Campanie = container folder
+            <div key={campaign.id} className="rounded-lg border-2 bg-card overflow-hidden shadow-sm">
+              <div className="flex items-center bg-muted/30">
                 <input
                   type="checkbox"
                   className="ml-4 flex-shrink-0"
@@ -411,10 +495,11 @@ export function CampaignsList({ orgId, token }: Props) {
               <button onClick={() => toggleCampaign(campaign.id)}
                 className="flex-1 flex items-center justify-between p-4 hover:bg-muted/50 transition-colors text-left">
                 <div className="flex items-center gap-3 min-w-0">
-                  {isExpanded ? <ChevronDown className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
-                    : <ChevronRight className="h-4 w-4 flex-shrink-0 text-muted-foreground" />}
+                  {isExpanded
+                    ? <FolderOpen className="h-4 w-4 flex-shrink-0 text-primary" />
+                    : <Folder className="h-4 w-4 flex-shrink-0 text-muted-foreground" />}
                   <div className="min-w-0">
-                    <p className="font-medium truncate flex items-center gap-1.5">
+                    <p className="font-semibold truncate flex items-center gap-1.5 text-sm">
                       {campaign.is_current && (
                         <Star className="h-3.5 w-3.5 flex-shrink-0 fill-amber-400 text-amber-400" />
                       )}
@@ -486,13 +571,13 @@ export function CampaignsList({ orgId, token }: Props) {
               </div>
 
               {isExpanded && (
-                <div className="border-t bg-muted/20">
+                <div className="border-t bg-background">
                   {loadingPosts === campaign.id ? (
-                    <p className="text-sm text-muted-foreground p-4">{t("loading_posts")}</p>
+                    <p className="text-sm text-muted-foreground p-4 pl-10">{t("loading_posts")}</p>
                   ) : posts.length === 0 ? (
-                    <p className="text-sm text-muted-foreground p-4">{t("empty_campaign_posts")}</p>
+                    <p className="text-sm text-muted-foreground p-4 pl-10 italic">{t("empty_campaign_posts")}</p>
                   ) : (
-                    <div className="divide-y">
+                    <div className="divide-y divide-border/50">
                       {/* Bulk action bar pentru postările selectate */}
                       {bulkPostCampaignId === campaign.id && selectedPostIds.size > 0 && (
                         <div className="flex flex-wrap items-center gap-2 p-3 bg-primary/5 border-b">
@@ -534,7 +619,8 @@ export function CampaignsList({ orgId, token }: Props) {
                         </div>
                       )}
                       {posts.map((post) => (
-                        <div key={post.id} className="p-4 space-y-3">
+                        // Postare = item subordonat, vizual distinct față de campanie
+                        <div key={post.id} className="pl-10 pr-4 py-3 space-y-2 hover:bg-muted/20 transition-colors">
                           {/* Header: platformă, status, dată, acțiuni */}
                           <div className="flex items-center justify-between gap-2 flex-wrap">
                             <div className="flex items-center gap-2 flex-wrap">
@@ -545,6 +631,7 @@ export function CampaignsList({ orgId, token }: Props) {
                                 onChange={() => togglePostSelect(post.id, campaign.id)}
                                 onClick={(e) => e.stopPropagation()}
                               />
+                              <FileText className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground/60" />
                               <PlatformBadge platform={post.platform} />
                               <StatusBadge status={post.status} />
                               {post.language && post.language !== "ro" && (
