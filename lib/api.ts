@@ -35,15 +35,6 @@ export type Platform =
 export type PostStatus = "draft" | "approved" | "scheduled" | "published" | "failed" | "skipped"
 export type CampaignStatus = "draft" | "approved" | "scheduled" | "published" | "paused" | "cancelled" | "archived"
 
-export interface Org {
-  id: string
-  name: string
-  slug: string
-  is_agency: boolean
-  timezone: string
-  default_languages: string[]
-}
-
 export interface Campaign {
   id: string
   name: string
@@ -55,6 +46,16 @@ export interface Campaign {
   end_date: string | null
   budget: string | null
   currency: string | null
+  is_current: boolean
+}
+
+export interface Org {
+  id: string
+  name: string
+  slug: string
+  is_agency: boolean
+  timezone: string
+  default_languages: string[]
 }
 
 export interface Post {
@@ -116,9 +117,9 @@ export const api = {
       apiFetch<Campaign[]>(`/api/v1/orgs/${orgId}/campaigns`, {
         headers: { Authorization: `Bearer ${token}` },
       }),
-    listPaged: (orgId: string, token: string, opts: { limit: number; offset: number; includeArchived?: boolean }) =>
+    listPaged: (orgId: string, token: string, opts: { limit: number; offset: number; archivedOnly?: boolean }) =>
       apiFetchPaged<Campaign[]>(
-        `/api/v1/orgs/${orgId}/campaigns?limit=${opts.limit}&offset=${opts.offset}&include_archived=${opts.includeArchived ? "true" : "false"}`,
+        `/api/v1/orgs/${orgId}/campaigns?limit=${opts.limit}&offset=${opts.offset}&archived_only=${opts.archivedOnly ? "true" : "false"}`,
         { headers: { Authorization: `Bearer ${token}` } },
       ),
     bulk: (orgId: string, action: "archive" | "pause" | "resume" | "clone", campaignIds: string[], token: string) =>
@@ -154,12 +155,27 @@ export const api = {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       }),
+    setCurrent: (orgId: string, campaignId: string, token: string) =>
+      apiFetch<Campaign>(`/api/v1/orgs/${orgId}/campaigns/${campaignId}/set-current`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    unsetCurrent: (orgId: string, token: string) =>
+      apiFetch<void>(`/api/v1/orgs/${orgId}/campaigns/current`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      }),
   },
 
   calendar: {
     getPosts: (orgId: string, start: string, end: string, token: string) =>
       apiFetch<Post[]>(
         `/api/v1/orgs/${orgId}/calendar?start=${start}&end=${end}`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      ),
+    getAgencyPosts: (orgId: string, start: string, end: string, token: string) =>
+      apiFetch<(Post & { org_name?: string })[]>(
+        `/api/v1/orgs/${orgId}/calendar/agency?start=${start}&end=${end}`,
         { headers: { Authorization: `Bearer ${token}` } },
       ),
   },
@@ -176,7 +192,7 @@ export const api = {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       }),
-    update: (orgId: string, postId: string, data: { text_content?: string; scheduled_at?: string; status?: string; image_prompt?: string }, token: string) =>
+    update: (orgId: string, postId: string, data: { text_content?: string; scheduled_at?: string; status?: string; image_prompt?: string; campaign_id?: string }, token: string) =>
       apiFetch<Post>(`/api/v1/orgs/${orgId}/posts/${postId}`, {
         method: "PATCH",
         body: JSON.stringify(data),

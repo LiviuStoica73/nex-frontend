@@ -112,14 +112,31 @@ export function AllocationsManager({ orgId, token }: Props) {
           </span>
         </div>
 
-        {data.clients.length === 0 ? (
-          <div className="p-8 text-center text-muted-foreground">
-            <p className="font-medium">Niciun client de alocat</p>
-            <p className="text-sm">Adaugă clienți din pagina Clienți, apoi alocă-le buget aici.</p>
-          </div>
-        ) : (
-          <ul className="divide-y">
-            {data.clients.map((c) => (
+        <ul className="divide-y">
+            {/* Rând special: bugetul propriu al agenției (pool nealocat) */}
+            <li className="space-y-2 px-4 py-3 bg-muted/30">
+              <div className="flex items-center justify-between gap-4">
+                <div className="min-w-0">
+                  <p className="truncate font-medium flex items-center gap-1.5">
+                    <span className="text-xs rounded-full bg-primary/10 text-primary px-2 py-0.5">propriu</span>
+                    Nex-Nex (pool nealocat)
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Credite disponibile pentru postările proprii ale agenției
+                  </p>
+                </div>
+                <div className="flex flex-shrink-0 items-center">
+                  <span className="text-lg font-bold">{data.pool_unallocated}</span>
+                  <span className="ml-1 text-xs text-muted-foreground">credite</span>
+                </div>
+              </div>
+            </li>
+
+            {data.clients.length === 0 ? (
+              <li className="p-6 text-center text-muted-foreground text-sm">
+                Adaugă clienți din pagina Clienți, apoi alocă-le buget aici.
+              </li>
+            ) : data.clients.map((c) => (
               <li key={c.client_org_id} className="space-y-2 px-4 py-3">
                 <div className="flex items-center justify-between gap-4">
                   <div className="min-w-0">
@@ -157,8 +174,7 @@ export function AllocationsManager({ orgId, token }: Props) {
                 </div>
               </li>
             ))}
-          </ul>
-        )}
+        </ul>
       </div>
     </div>
   )

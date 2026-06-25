@@ -1,17 +1,16 @@
-import { auth } from "@/auth"
 import { redirect } from "next/navigation"
+import { getCurrentUser } from "@/lib/session"
+import { getActiveOrgId } from "@/lib/active-org"
 import { AllocationsManager } from "@/components/agency/allocations-manager"
 
 export const metadata = { title: "Alocare credite — Nex-Nex" }
 
 export default async function AllocationsPage() {
-  const session = await auth()
-  if (!session) redirect("/login")
+  const user = await getCurrentUser()
+  if (!user) redirect("/login")
 
-  // Alocarea e o operație de agenție → folosim org-ul HOME din JWT (agenția),
-  // nu org-ul activ din cookie (care poate fi un client).
-  const orgId = session.user?.orgId ?? ""
-  const token = session.user?.accessToken ?? ""
+  const orgId = await getActiveOrgId()
+  const token = user?.accessToken ?? ""
 
   return (
     <div className="space-y-6 p-6">

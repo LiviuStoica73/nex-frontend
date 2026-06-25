@@ -9,26 +9,26 @@ import interactionPlugin from "@fullcalendar/interaction"
 import type { EventClickArg, EventDropArg } from "@fullcalendar/core"
 import { api, PLATFORM_COLORS, STATUS_COLORS, type Post } from "@/lib/api"
 
+type CalendarPost = Post & { org_name?: string }
+
 interface Props {
   orgId: string
   token: string
+  isAgency?: boolean
 }
 
-export function EditorialCalendar({ orgId, token }: Props) {
+export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
   const t = useTranslations("calendar")
   const locale = useLocale()
   const calendarRef = useRef<FullCalendar>(null)
-  const [posts, setPosts] = useState<Post[]>([])
-  const [selected, setSelected] = useState<Post | null>(null)
+  const [posts, setPosts] = useState<CalendarPost[]>([])
+  const [selected, setSelected] = useState<CalendarPost | null>(null)
 
   const fetchPosts = async (start: Date, end: Date) => {
     try {
-      const data = await api.calendar.getPosts(
-        orgId,
-        start.toISOString(),
-        end.toISOString(),
-        token,
-      )
+      const data = isAgency
+        ? await api.calendar.getAgencyPosts(orgId, start.toISOString(), end.toISOString(), token)
+        : await api.calendar.getPosts(orgId, start.toISOString(), end.toISOString(), token)
       setPosts(data)
     } catch (err) {
       console.error("Calendar fetch error:", err)
@@ -39,7 +39,9 @@ export function EditorialCalendar({ orgId, token }: Props) {
     .filter((p) => p.scheduled_at)
     .map((p) => ({
       id: p.id,
-      title: `${p.platform.toUpperCase()} — ${p.text_content?.slice(0, 40) ?? ""}`,
+      title: p.org_name
+        ? `[${p.org_name}] ${p.platform.toUpperCase()} — ${p.text_content?.slice(0, 30) ?? ""}`
+        : `${p.platform.toUpperCase()} — ${p.text_content?.slice(0, 40) ?? ""}`,
       start: p.scheduled_at!,
       backgroundColor: PLATFORM_COLORS[p.platform] ?? "#6B7280",
       borderColor: STATUS_COLORS[p.status],

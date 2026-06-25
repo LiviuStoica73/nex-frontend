@@ -1,16 +1,17 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Plus, Trash2, ArrowRightLeft } from "lucide-react"
+import { Plus, Trash2, ArrowRightLeft, Building2 } from "lucide-react"
 
 interface Client { id: string; client_org_id: string }
-interface Org { id: string; name: string; slug: string }
+interface Org { id: string; name: string; slug: string; is_agency: boolean }
 
 interface Props { orgId: string; token: string }
 
 export function ClientsManager({ orgId, token }: Props) {
   const [clients, setClients] = useState<Client[]>([])
   const [orgs, setOrgs] = useState<Record<string, Org>>({})
+  const [agencyOrg, setAgencyOrg] = useState<Org | null>(null)
   const [newOrgName, setNewOrgName] = useState("")
   const [adding, setAdding] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -18,11 +19,14 @@ export function ClientsManager({ orgId, token }: Props) {
   const headers = { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
 
   const fetchClients = async () => {
-    const res = await fetch(`${API}/api/v1/orgs/${orgId}/clients`, { headers })
-    if (res.ok) {
-      const data: Client[] = await res.json()
+    const [agRes, clientsRes] = await Promise.all([
+      fetch(`${API}/api/v1/orgs/${orgId}`, { headers }),
+      fetch(`${API}/api/v1/orgs/${orgId}/clients`, { headers }),
+    ])
+    if (agRes.ok) setAgencyOrg(await agRes.json())
+    if (clientsRes.ok) {
+      const data: Client[] = await clientsRes.json()
       setClients(data)
-      // Fetch org details pentru fiecare client
       const orgDetails: Record<string, Org> = {}
       await Promise.all(
         data.map(async (c) => {
@@ -99,43 +103,67 @@ export function ClientsManager({ orgId, token }: Props) {
       {/* Clients list */}
       <div className="rounded-lg border bg-card">
         <div className="p-4 border-b">
-          <h2 className="font-semibold">Clienți ({clients.length})</h2>
+          <h2 className="font-semibold">Clienți ({clients.length + (agencyOrg ? 1 : 0)}, inclusiv propriu)</h2>
         </div>
         {loading ? (
           <p className="p-4 text-sm text-muted-foreground">Se încarcă...</p>
-        ) : clients.length === 0 ? (
-          <div className="p-8 text-center text-muted-foreground">
-            <p className="font-medium">Niciun client încă</p>
-            <p className="text-sm">Adaugă primul client pentru a gestiona conținutul lor.</p>
-          </div>
         ) : (
           <ul className="divide-y">
-            {clients.map((client) => {
-              const org = orgs[client.client_org_id]
-              return (
-                <li key={client.id} className="flex items-center justify-between px-4 py-3">
-                  <div>
-                    <p className="font-medium">{org?.name ?? client.client_org_id}</p>
-                    {org?.slug && <p className="text-xs text-muted-foreground">/{org.slug}</p>}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => switchToClient(client.client_org_id)}
-                      className="flex items-center gap-1 rounded-md border px-3 py-1.5 text-xs hover:bg-muted"
-                    >
-                      <ArrowRightLeft className="h-3 w-3" />
-                      Switch
-                    </button>
-                    <button
-                      onClick={() => removeClient(client.id)}
-                      className="text-muted-foreground hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </li>
-              )
-            })}
+            {/* Agenția proprie — mereu prima în listă */}
+            {agencyOrg && (
+              <li className="flex items-center justify-between px-4 py-3 bg-muted/30">
+                <div>
+                  <p className="font-medium flex items-center gap-1.5">
+                    <Building2 className="h-3.5 w-3.5 text-primary" />
+                    {agencyOrg.name}
+                    <span className="text-xs rounded-full bg-primary/10 text-primary px-2 py-0.5">propriu</span>
+                  </p>
+                  {agencyOrg.slug && <p className="text-xs text-muted-foreground">/{agencyOrg.slug}</p>}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => switchToClient(orgId)}
+                    className="flex items-center gap-1 rounded-md border px-3 py-1.5 text-xs hover:bg-muted"
+                  >
+                    <ArrowRightLeft className="h-3 w-3" />
+                    Intră
+                  </button>
+                </div>
+              </li>
+            )}
+            {clients.length === 0 && !agencyOrg ? (
+              <li className="p-8 text-center text-muted-foreground">
+                <p className="font-medium">Niciun client încă</p>
+                <p className="text-sm">Adaugă primul client pentru a gestiona conținutul lor.</p>
+              </li>
+            ) : (
+              clients.map((client) => {
+                const org = orgs[client.client_org_id]
+                return (
+                  <li key={client.id} className="flex items-center justify-between px-4 py-3">
+                    <div>
+                      <p className="font-medium">{org?.name ?? client.client_org_id}</p>
+                      {org?.slug && <p className="text-xs text-muted-foreground">/{org.slug}</p>}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => switchToClient(client.client_org_id)}
+                        className="flex items-center gap-1 rounded-md border px-3 py-1.5 text-xs hover:bg-muted"
+                      >
+                        <ArrowRightLeft className="h-3 w-3" />
+                        Intră
+                      </button>
+                      <button
+                        onClick={() => removeClient(client.id)}
+                        className="text-muted-foreground hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </li>
+                )
+              })
+            )}
           </ul>
         )}
       </div>

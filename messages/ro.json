@@ -175,7 +175,10 @@
       "scheduled": "Programat",
       "published": "Publicat",
       "failed": "Eșuat",
-      "skipped": "Omis"
+      "skipped": "Omis",
+      "paused": "Pauză",
+      "cancelled": "Anulată",
+      "archived": "Arhivată"
     }
   },
   "account": {

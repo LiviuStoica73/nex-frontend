@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useLocale, useTranslations } from "next-intl"
-import { ChevronDown, ChevronRight, MoreHorizontal, Pencil, Trash2, Pause, Play, RefreshCw, Languages, Share2, Clock, Ban, Archive, Copy } from "lucide-react"
+import { ChevronDown, ChevronRight, MoreHorizontal, Pencil, Trash2, Pause, Play, RefreshCw, Languages, Share2, Clock, Ban, Archive, Copy, FolderInput, Star } from "lucide-react"
 import { api, PLATFORM_COLORS, STATUS_COLORS, type Campaign, type Platform, type Post } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -30,7 +30,7 @@ const LANGUAGES = [
 
 interface Props { orgId: string; token: string }
 
-type DialogType = "edit" | "reschedule" | "repost" | "translate" | "create_campaign" | "edit_image_prompt" | null
+type DialogType = "edit" | "reschedule" | "repost" | "translate" | "create_campaign" | "edit_image_prompt" | "move_post" | null
 
 export function CampaignsList({ orgId, token }: Props) {
   const t = useTranslations("campaigns")
@@ -45,7 +45,7 @@ export function CampaignsList({ orgId, token }: Props) {
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(25)
   const [total, setTotal] = useState(0)
-  const [includeArchived, setIncludeArchived] = useState(false)
+  const [archivedOnly, setArchivedOnly] = useState(false)
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [bulkBusy, setBulkBusy] = useState(false)
 
@@ -73,19 +73,21 @@ export function CampaignsList({ orgId, token }: Props) {
   const [newCampaignCurrency, setNewCampaignCurrency] = useState("RON")
   // Image prompt edit
   const [editImagePrompt, setEditImagePrompt] = useState("")
+  // Move post
+  const [moveTargetId, setMoveTargetId] = useState("")
 
   const fetchCampaigns = async () => {
     setLoading(true)
     try {
       const { items, total } = await api.campaigns.listPaged(orgId, token, {
-        limit: pageSize, offset: page * pageSize, includeArchived,
+        limit: pageSize, offset: page * pageSize, archivedOnly,
       })
       setCampaigns(items)
       setTotal(total)
     } finally { setLoading(false) }
   }
 
-  useEffect(() => { fetchCampaigns() }, [orgId, token, page, pageSize, includeArchived])
+  useEffect(() => { fetchCampaigns() }, [orgId, token, page, pageSize, archivedOnly])
 
   const toggleSelect = (id: string) => {
     setSelected((prev) => {
@@ -105,6 +107,15 @@ export function CampaignsList({ orgId, token }: Props) {
       setSelected(new Set())
       await fetchCampaigns()
     } finally { setBulkBusy(false) }
+  }
+
+  const handleSetCurrent = async (campaign: Campaign) => {
+    if (campaign.is_current) {
+      await api.campaigns.unsetCurrent(orgId, token)
+    } else {
+      await api.campaigns.setCurrent(orgId, campaign.id, token)
+    }
+    await fetchCampaigns()
   }
 
   const handleCloneCampaign = async (campaign: Campaign) => {
@@ -260,6 +271,17 @@ export function CampaignsList({ orgId, token }: Props) {
     } finally { setSaving(false) }
   }
 
+  const handleMovePost = async () => {
+    if (!activePost || !activeCampaignId || !moveTargetId) return
+    setSaving(true)
+    try {
+      await api.posts.update(orgId, activePost.id, { campaign_id: moveTargetId }, token)
+      await refreshPosts(activeCampaignId)
+      if (postsMap[moveTargetId]) await refreshPosts(moveTargetId)
+      closeDialog()
+    } finally { setSaving(false) }
+  }
+
   const formatDate = (iso: string | null) => {
     if (!iso) return null
     return new Date(iso).toLocaleString(locale, { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })
@@ -300,10 +322,10 @@ export function CampaignsList({ orgId, token }: Props) {
           <label className="flex items-center gap-1.5 text-sm text-muted-foreground cursor-pointer">
             <input
               type="checkbox"
-              checked={includeArchived}
-              onChange={(e) => { setPage(0); setIncludeArchived(e.target.checked) }}
+              checked={archivedOnly}
+              onChange={(e) => { setPage(0); setArchivedOnly(e.target.checked) }}
             />
-            Arată arhivate
+            {archivedOnly ? "Arhivate (activ)" : "Arată arhivate"}
           </label>
         </div>
         <Button onClick={() => setActiveDialog("create_campaign")} size="sm">
@@ -352,7 +374,12 @@ export function CampaignsList({ orgId, token }: Props) {
                   {isExpanded ? <ChevronDown className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
                     : <ChevronRight className="h-4 w-4 flex-shrink-0 text-muted-foreground" />}
                   <div className="min-w-0">
-                    <p className="font-medium truncate">{campaign.name}</p>
+                    <p className="font-medium truncate flex items-center gap-1.5">
+                      {campaign.is_current && (
+                        <Star className="h-3.5 w-3.5 flex-shrink-0 fill-amber-400 text-amber-400" />
+                      )}
+                      {campaign.name}
+                    </p>
                     {campaign.topic && campaign.topic !== campaign.name && (
                       <p className="text-xs text-muted-foreground truncate">{campaign.topic}</p>
                     )}
@@ -393,6 +420,10 @@ export function CampaignsList({ orgId, token }: Props) {
                           <Ban className="mr-2 h-4 w-4" /> Anulează campania
                         </DropdownMenuItem>
                       )}
+                      <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleSetCurrent(campaign) }}>
+                        <Star className="mr-2 h-4 w-4" />
+                        {campaign.is_current ? "Elimină marcajul curent" : "Marchează ca curentă"}
+                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCloneCampaign(campaign) }}>
                         <Copy className="mr-2 h-4 w-4" /> Clonează (cu pauză)
                       </DropdownMenuItem>
@@ -485,6 +516,14 @@ export function CampaignsList({ orgId, token }: Props) {
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => openDialog("repost", post, campaign.id)}>
                                   <Share2 className="mr-2 h-4 w-4" /> {t("other_social_network")}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => {
+                                  setActivePost(post)
+                                  setActiveCampaignId(campaign.id)
+                                  setMoveTargetId("")
+                                  setActiveDialog("move_post")
+                                }}>
+                                  <FolderInput className="mr-2 h-4 w-4" /> Mută în campanie
                                 </DropdownMenuItem>
                                 {post.status === "failed" && (
                                   <>
@@ -708,6 +747,32 @@ export function CampaignsList({ orgId, token }: Props) {
             <Button variant="outline" onClick={closeDialog}>Anulează</Button>
             <Button onClick={handleCreateCampaign} disabled={creating || !newCampaignName.trim()}>
               {creating ? "Se creează..." : "Creează campania"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog: Mută postare în altă campanie */}
+      <Dialog open={activeDialog === "move_post"} onOpenChange={closeDialog}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Mută postarea în altă campanie</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">Selectează campania destinație:</p>
+            <Select value={moveTargetId} onValueChange={setMoveTargetId}>
+              <SelectTrigger><SelectValue placeholder="Alege campania..." /></SelectTrigger>
+              <SelectContent>
+                {campaigns
+                  .filter((c) => c.id !== activeCampaignId)
+                  .map((c) => (
+                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={closeDialog}>Anulează</Button>
+            <Button onClick={handleMovePost} disabled={saving || !moveTargetId}>
+              {saving ? "Se mută..." : "Mută postarea"}
             </Button>
           </DialogFooter>
         </DialogContent>

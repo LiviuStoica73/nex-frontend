@@ -175,7 +175,10 @@
       "scheduled": "Planifié",
       "published": "Publié",
       "failed": "Échoué",
-      "skipped": "Ignoré"
+      "skipped": "Ignoré",
+      "paused": "En pause",
+      "cancelled": "Annulée",
+      "archived": "Archivée"
     }
   },
   "account": {
