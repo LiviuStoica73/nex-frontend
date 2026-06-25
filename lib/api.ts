@@ -168,6 +168,17 @@ export const api = {
       apiFetch<Post[]>(`/api/v1/orgs/${orgId}/topics/${topicId}/posts`, {
         headers: { Authorization: `Bearer ${token}` },
       }),
+    bulkTopics: (orgId: string, data: { action: "pause" | "resume" | "delete" | "move"; topic_ids: string[]; target_campaign_id?: string }, token: string) =>
+      apiFetch<{ action: string; affected: number }>(`/api/v1/orgs/${orgId}/topics/bulk`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    deleteTopic: (orgId: string, topicId: string, token: string) =>
+      apiFetch<void>(`/api/v1/orgs/${orgId}/topics/${topicId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      }),
     update: (orgId: string, campaignId: string, data: Partial<{
       name: string; topic: string; status: string;
       start_date: string; end_date: string; budget: string; currency: string

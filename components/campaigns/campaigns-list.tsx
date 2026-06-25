@@ -87,6 +87,11 @@ export function CampaignsList({ orgId, token }: Props) {
   // Topics per campanie
   const [topicsMap, setTopicsMap] = useState<Record<string, Topic[]>>({})
   const [expandedTopicId, setExpandedTopicId] = useState<string | null>(null)
+  // Selecție bulk teme
+  const [selectedTopicIds, setSelectedTopicIds] = useState<Set<string>>(new Set())
+  const [bulkTopicCampaignId, setBulkTopicCampaignId] = useState<string | null>(null)
+  const [bulkTopicBusy, setBulkTopicBusy] = useState(false)
+  const [bulkTopicMoveTargetId, setBulkTopicMoveTargetId] = useState("")
 
   const fetchCampaigns = async () => {
     setLoading(true)
@@ -331,6 +336,47 @@ export function CampaignsList({ orgId, token }: Props) {
       await refreshPosts(campaignId)
       if (targetCampaignId && postsMap[targetCampaignId]) await refreshPosts(targetCampaignId)
     } finally { setBulkPostBusy(false) }
+  }
+
+  const toggleTopicSelect = (topicId: string, campaignId: string) => {
+    if (bulkTopicCampaignId !== null && bulkTopicCampaignId !== campaignId) {
+      setSelectedTopicIds(new Set([topicId]))
+      setBulkTopicCampaignId(campaignId)
+      return
+    }
+    setBulkTopicCampaignId(campaignId)
+    setSelectedTopicIds((prev) => {
+      const next = new Set(prev)
+      next.has(topicId) ? next.delete(topicId) : next.add(topicId)
+      if (next.size === 0) setBulkTopicCampaignId(null)
+      return next
+    })
+  }
+
+  const handleBulkTopics = async (action: "pause" | "resume" | "delete" | "move", targetCampaignId?: string) => {
+    if (selectedTopicIds.size === 0 || !bulkTopicCampaignId) return
+    const labels: Record<string, string> = { pause: "pui pe pauză", resume: "reiei", delete: "ștergi", move: "muți" }
+    if (!confirm(`Sigur ${labels[action]} ${selectedTopicIds.size} teme (cu toate postările lor)?`)) return
+    setBulkTopicBusy(true)
+    try {
+      await api.campaigns.bulkTopics(orgId, {
+        action,
+        topic_ids: Array.from(selectedTopicIds),
+        target_campaign_id: targetCampaignId,
+      }, token)
+      const campaignId = bulkTopicCampaignId
+      setSelectedTopicIds(new Set())
+      setBulkTopicCampaignId(null)
+      setBulkTopicMoveTargetId("")
+      await refreshPosts(campaignId)
+      if (targetCampaignId && postsMap[targetCampaignId]) await refreshPosts(targetCampaignId)
+    } finally { setBulkTopicBusy(false) }
+  }
+
+  const handleDeleteTopic = async (topicId: string, campaignId: string) => {
+    if (!confirm("Ștergi această temă și toate postările din ea?")) return
+    await api.campaigns.deleteTopic(orgId, topicId, token)
+    await refreshPosts(campaignId)
   }
 
   const handleMovePost = async () => {
@@ -679,23 +725,113 @@ export function CampaignsList({ orgId, token }: Props) {
                           </div>
                         )}
 
+                        {/* Bulk action bar pentru temele selectate */}
+                        {bulkTopicCampaignId === campaign.id && selectedTopicIds.size > 0 && (
+                          <div className="flex flex-wrap items-center gap-2 p-3 bg-primary/10 border-b">
+                            <span className="text-xs font-medium px-1">{selectedTopicIds.size} teme selectate</span>
+                            <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkTopicBusy}
+                              onClick={() => handleBulkTopics("pause")}>
+                              <Pause className="mr-1 h-3 w-3" /> Pauză toate postările
+                            </Button>
+                            <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkTopicBusy}
+                              onClick={() => handleBulkTopics("resume")}>
+                              <Play className="mr-1 h-3 w-3" /> Reia toate postările
+                            </Button>
+                            <div className="flex items-center gap-1">
+                              <Select value={bulkTopicMoveTargetId} onValueChange={setBulkTopicMoveTargetId}>
+                                <SelectTrigger className="h-7 w-40 text-xs">
+                                  <SelectValue placeholder="Mută temele în..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {campaigns.filter((c) => c.id !== campaign.id).map((c) => (
+                                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              {bulkTopicMoveTargetId && (
+                                <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkTopicBusy}
+                                  onClick={() => handleBulkTopics("move", bulkTopicMoveTargetId)}>
+                                  <FolderInput className="mr-1 h-3 w-3" /> Mută
+                                </Button>
+                              )}
+                            </div>
+                            <Button size="sm" variant="destructive" className="h-7 text-xs" disabled={bulkTopicBusy}
+                              onClick={() => handleBulkTopics("delete")}>
+                              <Trash2 className="mr-1 h-3 w-3" /> Șterge + postări
+                            </Button>
+                            <Button size="sm" variant="ghost" className="h-7 text-xs"
+                              onClick={() => { setSelectedTopicIds(new Set()); setBulkTopicCampaignId(null) }}>
+                              Deselectează
+                            </Button>
+                          </div>
+                        )}
+
                         {/* Topics cu postările lor */}
                         {topics.map((topic) => {
                           const tPosts = postsByTopic[topic.id] ?? []
                           const isTopicExpanded = expandedTopicId === topic.id
+                          const isTopicSelected = selectedTopicIds.has(topic.id)
                           return (
-                            <div key={topic.id} className="border-l-2 border-primary/20 ml-6">
-                              <button
-                                onClick={() => setExpandedTopicId(isTopicExpanded ? null : topic.id)}
-                                className="w-full flex items-center gap-2 px-4 py-2.5 bg-muted/10 hover:bg-muted/25 transition-colors text-left"
-                              >
-                                {isTopicExpanded
-                                  ? <ChevronDown className="h-3.5 w-3.5 flex-shrink-0 text-primary/70" />
-                                  : <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-primary/70" />}
-                                <BookOpen className="h-3.5 w-3.5 flex-shrink-0 text-primary/60" />
-                                <span className="text-sm font-medium text-foreground/80 flex-1 truncate">{topic.name}</span>
-                                <span className="text-xs text-muted-foreground">{tPosts.length} postări</span>
-                              </button>
+                            <div key={topic.id} className={`border-l-2 ml-6 ${isTopicSelected ? "border-primary/60 bg-primary/5" : "border-primary/20"}`}>
+                              <div className="flex items-center bg-muted/10 hover:bg-muted/25 transition-colors">
+                                <input
+                                  type="checkbox"
+                                  className="ml-3 flex-shrink-0"
+                                  checked={isTopicSelected}
+                                  onChange={() => toggleTopicSelect(topic.id, campaign.id)}
+                                  onClick={(e) => e.stopPropagation()}
+                                />
+                                <button
+                                  onClick={() => setExpandedTopicId(isTopicExpanded ? null : topic.id)}
+                                  className="flex-1 flex items-center gap-2 px-3 py-2.5 text-left"
+                                >
+                                  {isTopicExpanded
+                                    ? <ChevronDown className="h-3.5 w-3.5 flex-shrink-0 text-primary/70" />
+                                    : <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-primary/70" />}
+                                  <BookOpen className="h-3.5 w-3.5 flex-shrink-0 text-primary/60" />
+                                  <span className="text-sm font-medium text-foreground/80 flex-1 truncate">{topic.name}</span>
+                                  <span className="text-xs text-muted-foreground mr-2">{tPosts.length} postări</span>
+                                </button>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-7 w-7 mr-2 flex-shrink-0">
+                                      <MoreHorizontal className="h-4 w-4" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end" className="w-52">
+                                    <DropdownMenuItem onClick={async () => {
+                                      await api.campaigns.bulkTopics(orgId, { action: "pause", topic_ids: [topic.id] }, token)
+                                      await refreshPosts(campaign.id)
+                                    }}>
+                                      <Pause className="mr-2 h-4 w-4" /> Pauză toate postările
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={async () => {
+                                      await api.campaigns.bulkTopics(orgId, { action: "resume", topic_ids: [topic.id] }, token)
+                                      await refreshPosts(campaign.id)
+                                    }}>
+                                      <Play className="mr-2 h-4 w-4" /> Reia toate postările
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    {campaigns.filter((c) => c.id !== campaign.id).map((c) => (
+                                      <DropdownMenuItem key={c.id} onClick={async () => {
+                                        if (!confirm(`Muți tema "${topic.name}" (${tPosts.length} postări) în "${c.name}"?`)) return
+                                        await api.campaigns.bulkTopics(orgId, { action: "move", topic_ids: [topic.id], target_campaign_id: c.id }, token)
+                                        await refreshPosts(campaign.id)
+                                        if (postsMap[c.id]) await refreshPosts(c.id)
+                                      }}>
+                                        <FolderInput className="mr-2 h-4 w-4" /> Mută în: {c.name}
+                                      </DropdownMenuItem>
+                                    ))}
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                      onClick={() => handleDeleteTopic(topic.id, campaign.id)}
+                                      className="text-destructive focus:text-destructive"
+                                    >
+                                      <Trash2 className="mr-2 h-4 w-4" /> Șterge tema + postări
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </div>
                               {isTopicExpanded && (
                                 <div className="divide-y divide-border/30">
                                   {tPosts.length === 0
