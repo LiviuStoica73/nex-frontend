@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useLocale, useTranslations } from "next-intl"
-import { ChevronDown, ChevronRight, MoreHorizontal, Pencil, Trash2, Pause, Play, RefreshCw, Languages, Share2, Clock, Ban, Archive, Copy, FolderInput, Star, FolderOpen, Folder, FileText, Inbox, BookOpen } from "lucide-react"
+import { ChevronDown, ChevronRight, MoreHorizontal, Pencil, Trash2, Pause, Play, RefreshCw, Languages, Share2, Clock, Ban, Archive, Copy, FolderInput, Star, FolderOpen, Folder, FileText, Inbox, BookOpen, CheckCircle } from "lucide-react"
 import { api, PLATFORM_COLORS, STATUS_COLORS, type Campaign, type Platform, type Post, type Topic } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -92,6 +92,10 @@ export function CampaignsList({ orgId, token }: Props) {
   const [bulkTopicCampaignId, setBulkTopicCampaignId] = useState<string | null>(null)
   const [bulkTopicBusy, setBulkTopicBusy] = useState(false)
   const [bulkTopicMoveTargetId, setBulkTopicMoveTargetId] = useState("")
+  // Reprogramator campanie
+  const [rescheduleCampaignId, setRescheduleCampaignId] = useState<string | null>(null)
+  const [rescheduleMode, setRescheduleMode] = useState<"next_best" | "1_per_day" | "2_per_day">("next_best")
+  const [rescheduleBusy, setRescheduleBusy] = useState(false)
 
   const fetchCampaigns = async () => {
     setLoading(true)
@@ -152,6 +156,31 @@ export function CampaignsList({ orgId, token }: Props) {
   const handleArchiveCampaign = async (campaign: Campaign) => {
     await api.campaigns.bulk(orgId, "archive", [campaign.id], token)
     await fetchCampaigns()
+  }
+
+  const openRescheduleDialog = (campaignId: string) => {
+    setRescheduleCampaignId(campaignId)
+    setRescheduleMode("next_best")
+  }
+
+  const handleCampaignReschedule = async () => {
+    if (!rescheduleCampaignId) return
+    setRescheduleBusy(true)
+    try {
+      await fetch(`/api/v1/orgs/${orgId}/campaigns/${rescheduleCampaignId}/reschedule`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ mode: rescheduleMode }),
+      })
+      await fetchCampaigns()
+      if (postsMap[rescheduleCampaignId]) {
+        const posts = await api.campaigns.listPosts(orgId, rescheduleCampaignId, token)
+        setPostsMap((prev) => ({ ...prev, [rescheduleCampaignId]: posts }))
+      }
+    } finally {
+      setRescheduleBusy(false)
+      setRescheduleCampaignId(null)
+    }
   }
 
   const toggleCampaign = async (campaignId: string) => {
@@ -376,6 +405,15 @@ export function CampaignsList({ orgId, token }: Props) {
   const handleDeleteTopic = async (topicId: string, campaignId: string) => {
     if (!confirm("Ștergi această temă și toate postările din ea?")) return
     await api.campaigns.deleteTopic(orgId, topicId, token)
+    await refreshPosts(campaignId)
+  }
+
+  const handleMarkPublished = async (post: Post, campaignId: string) => {
+    await fetch(`/api/v1/orgs/${orgId}/campaigns/${campaignId}/posts/${post.id}/mark-published`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({}),
+    })
     await refreshPosts(campaignId)
   }
 
@@ -617,6 +655,9 @@ export function CampaignsList({ orgId, token }: Props) {
                       <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCloneCampaign(campaign) }}>
                         <Copy className="mr-2 h-4 w-4" /> Clonează (cu pauză)
                       </DropdownMenuItem>
+                      <DropdownMenuItem onClick={(e) => { e.stopPropagation(); openRescheduleDialog(campaign.id) }}>
+                        <Clock className="mr-2 h-4 w-4" /> Reprogramează campania
+                      </DropdownMenuItem>
                       {campaign.status !== "archived" && (
                         <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleArchiveCampaign(campaign) }}>
                           <Archive className="mr-2 h-4 w-4" /> Arhivează
@@ -688,6 +729,12 @@ export function CampaignsList({ orgId, token }: Props) {
                               <DropdownMenuItem onClick={() => openDialog("repost", post, campaign.id)}><Share2 className="mr-2 h-4 w-4" /> {t("other_social_network")}</DropdownMenuItem>
                               <DropdownMenuItem onClick={() => { setActivePost(post); setActiveCampaignId(campaign.id); setMoveTargetId(""); setActiveDialog("move_post") }}><FolderInput className="mr-2 h-4 w-4" /> Mută în campanie</DropdownMenuItem>
                               {post.status === "failed" && (<><DropdownMenuSeparator /><DropdownMenuItem onClick={() => handleRetry(post, campaign.id)}><RefreshCw className="mr-2 h-4 w-4" /> Încearcă din nou</DropdownMenuItem></>)}
+                              {post.status !== "published" && (
+                                <><DropdownMenuSeparator />
+                                <DropdownMenuItem onClick={() => handleMarkPublished(post, campaign.id)}>
+                                  <CheckCircle className="mr-2 h-4 w-4 text-green-500" /> Marcat publicat extern
+                                </DropdownMenuItem></>
+                              )}
                               <DropdownMenuSeparator />
                               <DropdownMenuItem onClick={() => handleDelete(post, campaign.id)} className="text-destructive focus:text-destructive"><Trash2 className="mr-2 h-4 w-4" /> {t("delete")}</DropdownMenuItem>
                             </DropdownMenuContent>
@@ -1084,6 +1131,36 @@ export function CampaignsList({ orgId, token }: Props) {
             <Button variant="outline" onClick={closeDialog}>Anulează</Button>
             <Button onClick={handleSaveImagePrompt} disabled={saving}>
               {saving ? "Se salvează..." : "Salvează prompt"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!rescheduleCampaignId} onOpenChange={(open) => { if (!open) setRescheduleCampaignId(null) }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reprogramează campania</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            {([
+              { value: "next_best", label: "Next best time", desc: "Primul slot liber disponibil" },
+              { value: "1_per_day", label: "1 post pe zi", desc: "Distribuie postările câte una pe zi" },
+              { value: "2_per_day", label: "2 posturi pe zi", desc: "Distribuie postările câte două pe zi" },
+            ] as const).map(({ value, label, desc }) => (
+              <button
+                key={value}
+                onClick={() => setRescheduleMode(value)}
+                className={`w-full text-left rounded-lg border p-3 transition-colors ${rescheduleMode === value ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"}`}
+              >
+                <div className="font-medium text-sm">{label}</div>
+                <div className="text-xs text-muted-foreground">{desc}</div>
+              </button>
+            ))}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRescheduleCampaignId(null)}>Anulează</Button>
+            <Button onClick={handleCampaignReschedule} disabled={rescheduleBusy}>
+              {rescheduleBusy ? "Se procesează..." : "Reprogramează"}
             </Button>
           </DialogFooter>
         </DialogContent>
