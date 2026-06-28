@@ -429,16 +429,18 @@ export default function SocialAccountsPage() {
           </div>
         </div>
 
-        {/* Discord webhook input */}
-        {!connectedPlatforms.has("discord") && (
+        {/* Discord webhook input — mereu vizibil, permite multiple webhooks */}
+        {(
           <div className="rounded-lg border p-4 space-y-3">
             <div className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4 text-[#5865F2]" />
-              <span className="text-sm font-medium">Conectează Discord</span>
+              <span className="text-sm font-medium">
+                {connectedPlatforms.has("discord") ? "Adaugă alt webhook Discord" : "Conectează Discord"}
+              </span>
             </div>
             <p className="text-xs text-muted-foreground">
               În serverul Discord: <strong>Server Settings → Integrations → Webhooks → New Webhook</strong>.
-              Copiază URL-ul și lipește-l mai jos.
+              Copiază URL-ul și lipește-l mai jos. Poți adăuga mai multe webhookuri (canale diferite).
             </p>
             <div className="flex gap-2">
               <Input
