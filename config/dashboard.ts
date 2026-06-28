@@ -13,24 +13,26 @@ export const sidebarLinks: SidebarNavItem[] = [
   {
     title: "BRAND",
     items: [
-      { href: "/dashboard/settings/brand-kit",       icon: "page",    title: "Brand Kit" },
-      { href: "/dashboard/settings/social-accounts", icon: "twitter", title: "Conturi Sociale" },
+      { href: "/dashboard/settings/brand-kit",       icon: "page",      title: "Brand Kit" },
+      { href: "/dashboard/settings/social-accounts", icon: "twitter",   title: "Conturi Sociale" },
+      { href: "/dashboard/settings/best-times",      icon: "lineChart", title: "Best Times" },
     ],
   },
   {
     title: "AGENȚIE",
     items: [
-      { href: "/dashboard/clients",     icon: "users",   title: "Clienți",         agencyOnly: true },
-      { href: "/dashboard/allocations", icon: "billing", title: "Alocare credite", agencyOnly: true },
-      { href: "/dashboard/reports",     icon: "lineChart", title: "Rapoarte",      agencyOnly: true },
+      { href: "/dashboard/clients",     icon: "users",     title: "Clienți",         agencyOnly: true },
+      { href: "/dashboard/allocations", icon: "billing",   title: "Alocare credite", agencyOnly: true },
+      { href: "/dashboard/reports",     icon: "lineChart", title: "Rapoarte",        agencyOnly: true },
     ],
   },
   {
     title: "CONT",
     items: [
-      { href: "/dashboard/billing",  icon: "billing",  title: "Abonament",   authorizeOnly: UserRole.USER },
-      { href: "/dashboard/settings", icon: "settings", title: "Setări" },
-      { href: "/admin",              icon: "laptop",   title: "Admin Panel",  authorizeOnly: UserRole.ADMIN },
+      { href: "/dashboard/billing",        icon: "billing",  title: "Abonament" },
+      { href: "/dashboard/billing/topup",  icon: "billing",  title: "Cumpără credite" },
+      { href: "/dashboard/settings",       icon: "settings", title: "Setări" },
+      { href: "/dashboard/admin",          icon: "laptop",   title: "Super Admin" },
     ],
   },
 ];
