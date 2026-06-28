@@ -32,7 +32,7 @@ export const sidebarLinks: SidebarNavItem[] = [
       { href: "/dashboard/billing",        icon: "billing",  title: "Abonament" },
       { href: "/dashboard/billing/topup",  icon: "billing",  title: "Cumpără credite" },
       { href: "/dashboard/settings",       icon: "settings", title: "Setări" },
-      { href: "/dashboard/admin",          icon: "laptop",   title: "Super Admin" },
+      { href: "/dashboard/admin",          icon: "laptop",   title: "Super Admin", superadminOnly: true },
     ],
   },
 ];

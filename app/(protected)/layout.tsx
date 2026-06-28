@@ -22,11 +22,29 @@ export default async function Dashboard({ children }: ProtectedLayoutProps) {
 
   if (!user) redirect("/login");
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || ""
+  const token = user.accessToken ?? ""
+  let isSuperuser = false
+  if (token) {
+    try {
+      const meRes = await fetch(`${apiUrl}/api/v1/users/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: "no-store",
+      })
+      if (meRes.ok) {
+        const me = await meRes.json()
+        isSuperuser = me.is_superuser === true
+      }
+    } catch {}
+  }
+
   const filteredLinks = sidebarLinks.map((section) => ({
     ...section,
-    items: section.items.filter(
-      ({ authorizeOnly }) => !authorizeOnly || authorizeOnly === user.role,
-    ),
+    items: section.items.filter((item) => {
+      if (item.superadminOnly && !isSuperuser) return false
+      if (item.authorizeOnly && item.authorizeOnly !== user.role) return false
+      return true
+    }),
   }));
 
   return (

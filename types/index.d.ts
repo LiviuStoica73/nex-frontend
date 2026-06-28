@@ -25,6 +25,7 @@ export type NavItem = {
   external?: boolean;
   authorizeOnly?: UserRole;
   agencyOnly?: boolean;
+  superadminOnly?: boolean;
   icon?: keyof typeof Icons;
 };
 
