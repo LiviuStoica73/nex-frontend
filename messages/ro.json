@@ -412,7 +412,7 @@
       },
       "starter": {
         "description": "Pentru creatori individuali",
-        "cta": "Începe trial 14 zile",
+        "cta": "Abonează-te acum",
         "features": [
           "1 brand",
           "5 conturi sociale",
@@ -424,7 +424,7 @@
       },
       "pro": {
         "description": "Cel mai popular",
-        "cta": "Începe trial 14 zile",
+        "cta": "Abonează-te acum",
         "features": [
           "3 branduri",
           "15 conturi sociale",
@@ -437,7 +437,7 @@
       },
       "business": {
         "description": "Pentru echipe",
-        "cta": "Începe trial 14 zile",
+        "cta": "Abonează-te acum",
         "features": [
           "10 branduri",
           "Conturi nelimitate",
@@ -449,7 +449,7 @@
       },
       "agency": {
         "description": "Pentru agenții",
-        "cta": "Începe trial 14 zile",
+        "cta": "Abonează-te acum",
         "features": [
           "20 branduri incluse",
           "+ €10/lună per brand suplimentar, fără plafon",
@@ -471,7 +471,9 @@
         "1.000 credite — €22"
       ],
       "brand_title": "Brand suplimentar",
-      "brand_line": "€10/lună per brand suplimentar — disponibil pe orice plan plătit, nu doar Agency"
+      "brand_line": "€10/lună per brand suplimentar — disponibil pe orice plan plătit, nu doar Agency",
+      "credits_cta": "Cumpără credite",
+      "brand_cta": "Adaugă brand"
     }
   },
   "pricing_faq": {

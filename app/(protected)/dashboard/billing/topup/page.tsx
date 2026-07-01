@@ -13,28 +13,28 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002";
 const PACKAGES = [
   {
     credits: 100,
-    price: "5€",
+    price: "3€",
     label: "Starter",
     icon: <Zap className="h-6 w-6 text-yellow-500" />,
     description: "Perfect pentru teste și postări ocazionale",
-    perCredit: "0.05€/credit",
+    perCredit: "0.03€/credit",
   },
   {
     credits: 500,
-    price: "20€",
+    price: "12€",
     label: "Standard",
     icon: <Star className="h-6 w-6 text-blue-500" />,
     description: "Ideal pentru branduri active",
-    perCredit: "0.04€/credit",
+    perCredit: "0.024€/credit",
     popular: true,
   },
   {
     credits: 1000,
-    price: "35€",
+    price: "22€",
     label: "Pro",
     icon: <Rocket className="h-6 w-6 text-purple-500" />,
     description: "Cel mai bun raport calitate-preț",
-    perCredit: "0.035€/credit",
+    perCredit: "0.022€/credit",
   },
 ];
 
@@ -76,13 +76,14 @@ export default function TopUpPage() {
     <>
       <DashboardHeader
         heading="Cumpără credite extra"
-        text="Creditele se adaugă imediat după plată și nu expiră."
+        text="Creditele se adaugă imediat după plată și expiră la finalul lunii curente."
       />
 
       <div className="space-y-6 pb-10 max-w-2xl">
         <p className="text-sm text-muted-foreground">
           1 credit = 1 generare text sau imagine standard. Creditele lunare din plan se resetează
-          la fiecare ciclu de facturare. Creditele extra rămân în cont până le folosești.
+          la fiecare ciclu de facturare. Creditele extra cumpărate expiră la finalul lunii
+          calendaristice curente (nu se reportează).
         </p>
 
         <div className="grid gap-4 sm:grid-cols-3">

@@ -412,7 +412,7 @@
       },
       "starter": {
         "description": "For individual creators",
-        "cta": "Start 14-day trial",
+        "cta": "Subscribe now",
         "features": [
           "1 brand",
           "5 social accounts",
@@ -424,7 +424,7 @@
       },
       "pro": {
         "description": "Most popular",
-        "cta": "Start 14-day trial",
+        "cta": "Subscribe now",
         "features": [
           "3 brands",
           "15 social accounts",
@@ -437,7 +437,7 @@
       },
       "business": {
         "description": "For teams",
-        "cta": "Start 14-day trial",
+        "cta": "Subscribe now",
         "features": [
           "10 brands",
           "Unlimited accounts",
@@ -449,7 +449,7 @@
       },
       "agency": {
         "description": "For agencies",
-        "cta": "Start 14-day trial",
+        "cta": "Subscribe now",
         "features": [
           "20 brands included",
           "+ €10/month per additional brand, no cap",
@@ -471,7 +471,9 @@
         "1,000 credits — €22"
       ],
       "brand_title": "Extra brand",
-      "brand_line": "€10/month per additional brand — available on any paid plan, not just Agency"
+      "brand_line": "€10/month per additional brand — available on any paid plan, not just Agency",
+      "credits_cta": "Buy credits",
+      "brand_cta": "Add a brand"
     }
   },
   "pricing_cards": {

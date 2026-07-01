@@ -1,6 +1,9 @@
 "use client"
 
+import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { cn } from "@/lib/utils"
+import { buttonVariants } from "@/components/ui/button"
 
 export function TopUpSection() {
   const t = useTranslations("marketing_pricing_page.topup")
@@ -12,18 +15,30 @@ export function TopUpSection() {
       <p className="max-w-xl text-muted-foreground">{t("subtitle")}</p>
 
       <div className="mt-4 grid w-full max-w-3xl gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border p-5 text-left">
+        <div className="flex flex-col rounded-xl border p-5 text-left">
           <h3 className="mb-2 font-semibold">{t("credits_title")}</h3>
-          <ul className="space-y-1 text-sm text-muted-foreground">
+          <ul className="mb-4 flex-1 space-y-1 text-sm text-muted-foreground">
             {credits.map((c) => (
               <li key={c}>{c}</li>
             ))}
           </ul>
+          <Link
+            href="/register"
+            className={cn(buttonVariants({ variant: "outline", size: "sm", rounded: "full" }), "w-full text-center")}
+          >
+            {t("credits_cta")}
+          </Link>
         </div>
 
-        <div className="rounded-xl border p-5 text-left">
+        <div className="flex flex-col rounded-xl border p-5 text-left">
           <h3 className="mb-2 font-semibold">{t("brand_title")}</h3>
-          <p className="text-sm text-muted-foreground">{t("brand_line")}</p>
+          <p className="mb-4 flex-1 text-sm text-muted-foreground">{t("brand_line")}</p>
+          <Link
+            href="/register"
+            className={cn(buttonVariants({ variant: "outline", size: "sm", rounded: "full" }), "w-full text-center")}
+          >
+            {t("brand_cta")}
+          </Link>
         </div>
       </div>
     </section>
