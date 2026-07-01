@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server"
 import { constructMetadata } from "@/lib/utils"
 import { PricingCards } from "@/components/pricing/pricing-cards"
+import { TopUpSection } from "@/components/pricing/topup-section"
 import { PricingFaq } from "@/components/pricing/pricing-faq"
 
 export async function generateMetadata() {
@@ -18,6 +19,8 @@ export default async function PricingPage() {
       </section>
 
       <PricingCards />
+
+      <TopUpSection />
 
       <PricingFaq />
     </div>

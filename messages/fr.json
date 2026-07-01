@@ -389,7 +389,7 @@
       "description": "Simple plans for individual creators and agencies. 14-day free trial, no card required."
     },
     "title": "Simple and transparent pricing",
-    "subtitle": "14-day free trial on any plan. No credit card required. Cancel anytime.",
+    "subtitle": "14-day free trial on any plan. Card required at signup, no charge until trial ends. Cancel anytime.",
     "popular_badge": "Popular",
     "per_month": "/month",
     "plans": {
@@ -454,7 +454,19 @@
         ]
       }
     },
-    "agency_extra": "€10/month per additional brand, no cap"
+    "agency_extra": "€10/month per additional brand, no cap",
+    "topup": {
+      "title": "Need more?",
+      "subtitle": "Buy extra AI credits anytime, or add more brands to any paid plan — no need to upgrade tiers.",
+      "credits_title": "Extra AI credits (one-time, valid until end of month)",
+      "credits": [
+        "100 credits — €3",
+        "500 credits — €12",
+        "1,000 credits — €22"
+      ],
+      "brand_title": "Extra brand",
+      "brand_line": "€10/month per additional brand — available on any paid plan, not just Agency"
+    }
   },
   "pricing_cards": {
     "label": "Pricing",
@@ -480,7 +492,7 @@
     "items": {
       "item_1": {
         "question": "Is there a free trial?",
-        "answer": "Yes — a 14-day free trial on the Pro plan, no credit card required. You can explore all features before making any commitment."
+        "answer": "Yes — a 14-day free trial on any paid plan. A card is required at signup (charged only after the trial ends) so you can explore all features before committing."
       },
       "item_2": {
         "question": "Can I cancel anytime?",

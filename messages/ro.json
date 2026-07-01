@@ -385,7 +385,7 @@
   },
   "marketing_pricing_page": {
     "title": "Prețuri simple și transparente",
-    "subtitle": "14 zile trial gratuit pe orice plan. Fără card de credit. Anulezi oricând.",
+    "subtitle": "Trial de 14 zile pe orice plan. Card cerut la înregistrare, fără taxare până la finalul trial-ului. Anulezi oricând.",
     "popular_badge": "Popular",
     "per_month": "/lună",
     "toggle": {
@@ -460,6 +460,18 @@
           "100 GB storage"
         ]
       }
+    },
+    "topup": {
+      "title": "Ai nevoie de mai mult?",
+      "subtitle": "Cumperi credite AI extra oricând, sau adaugi branduri suplimentare la orice plan plătit — fără să faci upgrade de tier.",
+      "credits_title": "Credite AI extra (o singură dată, valabile până la finalul lunii)",
+      "credits": [
+        "100 credite — €3",
+        "500 credite — €12",
+        "1.000 credite — €22"
+      ],
+      "brand_title": "Brand suplimentar",
+      "brand_line": "€10/lună per brand suplimentar — disponibil pe orice plan plătit, nu doar Agency"
     }
   },
   "pricing_faq": {
@@ -469,7 +481,7 @@
     "items": {
       "item_1": {
         "question": "Există trial gratuit?",
-        "answer": "Da — 14 zile trial gratuit la orice plan plătit. Cardul este cerut la start (Stripe previne abuzul de cont), dar nu ești taxat până la expirarea trial-ului. Anulezi oricând fără penalități."
+        "answer": "Da — trial de 14 zile pe orice plan plătit. Cardul este cerut la înregistrare (taxat abia după finalul trial-ului), ca să poți explora toate funcționalitățile înainte să te angajezi."
       },
       "item_2": {
         "question": "Pot anula oricând?",
