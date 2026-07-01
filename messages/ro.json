@@ -394,7 +394,7 @@
       "discount": "-17%",
       "billed_yearly": "€{total} facturat anual"
     },
-    "agency_extra": "€10/lună per client suplimentar",
+    "agency_extra": "€10/lună per brand suplimentar, fără plafon",
     "metadata": {
       "title": "Prețuri — Nex-Nex",
       "description": "Planuri simple pentru creatori individuali și agenții. 14 zile trial gratuit, fără card."
@@ -406,7 +406,7 @@
         "features": [
           "1 brand",
           "1 cont social",
-          "10 postări/lună",
+          "30 credite AI/lună",
           "AI text + imagine basic"
         ]
       },
@@ -416,7 +416,7 @@
         "features": [
           "1 brand",
           "5 conturi sociale",
-          "100 postări/lună",
+          "250 credite AI/lună",
           "AI text + imagine",
           "Telegram Bot",
           "5 GB storage"
@@ -428,7 +428,7 @@
         "features": [
           "3 branduri",
           "15 conturi sociale",
-          "Postări nelimitate",
+          "700 credite AI/lună",
           "AI text + imagine",
           "Analytics",
           "Multi-limbă",
@@ -441,8 +441,8 @@
         "features": [
           "10 branduri",
           "Conturi nelimitate",
-          "Postări nelimitate",
-          "AI complet",
+          "2.500 credite AI/lună",
+          "AI complet (incl. video)",
           "Analytics avansat",
           "50 GB storage"
         ]
@@ -452,8 +452,9 @@
         "cta": "Începe trial 14 zile",
         "features": [
           "20 branduri incluse",
-          "+ €10/lună per brand suplimentar",
+          "+ €10/lună per brand suplimentar, fără plafon",
           "Conturi sociale nelimitate",
+          "7.000 credite AI/lună",
           "Portal client izolat",
           "Billing unificat",
           "100 GB storage"
@@ -492,7 +493,7 @@
       },
       "item_7": {
         "question": "Planul Agency acoperă toți clienții mei?",
-        "answer": "Da — un abonament Agency (€199/lună) acoperă până la 15 clienți. Agency XL (€349/lună) este nelimitat. Fiecare client are workspace izolat, login separat și RAG separat."
+        "answer": "Da — planul Agency (€199/lună) include 20 branduri. Fiecare brand suplimentar costă €10/lună, fără plafon. Fiecare client are workspace izolat, login separat și RAG separat."
       }
     }
   },

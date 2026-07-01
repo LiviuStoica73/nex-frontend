@@ -392,20 +392,15 @@
     "subtitle": "14-day free trial on any plan. No credit card required. Cancel anytime.",
     "popular_badge": "Popular",
     "per_month": "/month",
-    "agency_xl": {
-      "prefix": "Agency XL (unlimited clients) —",
-      "price": "€349/month",
-      "link": "Annual discount available"
-    },
     "plans": {
       "free": {
         "description": "To test the platform",
         "cta": "Try for free",
         "features": [
           "1 brand",
-          "2 social accounts",
-          "10 posts/month",
-          "Basic AI text"
+          "1 social account",
+          "30 AI credits/month",
+          "Basic AI text + image"
         ]
       },
       "starter": {
@@ -414,7 +409,7 @@
         "features": [
           "1 brand",
           "5 social accounts",
-          "100 posts/month",
+          "250 AI credits/month",
           "AI text + image",
           "Telegram Bot",
           "5 GB storage"
@@ -426,8 +421,8 @@
         "features": [
           "3 brands",
           "15 social accounts",
-          "Unlimited posts",
-          "AI text + image + video",
+          "700 AI credits/month",
+          "AI text + image",
           "Analytics",
           "Multi-language",
           "20 GB storage"
@@ -439,25 +434,27 @@
         "features": [
           "10 brands",
           "Unlimited accounts",
-          "Unlimited posts",
-          "Full AI",
+          "2,500 AI credits/month",
+          "Full AI (incl. video)",
           "Advanced analytics",
           "50 GB storage"
         ]
       },
       "agency": {
         "description": "For agencies",
-        "cta": "Contact us",
+        "cta": "Start 14-day trial",
         "features": [
-          "Unlimited brands",
-          "Unlimited accounts",
-          "15 clients",
+          "20 brands included",
+          "+ €10/month per additional brand, no cap",
+          "Unlimited social accounts",
+          "7,000 AI credits/month",
           "Isolated client portal",
           "Unified billing",
           "100 GB storage"
         ]
       }
-    }
+    },
+    "agency_extra": "€10/month per additional brand, no cap"
   },
   "pricing_cards": {
     "label": "Pricing",
@@ -507,7 +504,7 @@
       },
       "item_7": {
         "question": "Does the Agency plan cover all my clients?",
-        "answer": "Yes — one Agency subscription (€199/month) covers up to 15 clients. Agency XL (€349/month) is unlimited. Each client has an isolated workspace, separate login, and separate RAG."
+        "answer": "Yes — the Agency plan (€199/month) includes 20 brands. Additional brands are €10/month each, with no hard cap. Each client has an isolated workspace, separate login, and separate RAG."
       }
     }
   },

@@ -47,7 +47,7 @@ interface Props {
   apiUrl: string
 }
 
-const PLANS = ["free", "starter", "pro", "agency", "agency_xl"]
+const PLANS = ["free", "starter", "pro", "business", "agency"]
 
 function OrgTableRow({
   org, indent, headers, apiUrl, editCredits, setEditCredits, busy, setBusy, router,

@@ -398,7 +398,7 @@
       "discount": "-17%",
       "billed_yearly": "€{total} billed yearly"
     },
-    "agency_extra": "€10/month per additional client",
+    "agency_extra": "€10/month per additional brand, no cap",
     "plans": {
       "free": {
         "description": "To test the platform",
@@ -406,7 +406,7 @@
         "features": [
           "1 brand",
           "1 social account",
-          "10 posts/month",
+          "30 AI credits/month",
           "Basic AI text + image"
         ]
       },
@@ -416,7 +416,7 @@
         "features": [
           "1 brand",
           "5 social accounts",
-          "100 posts/month",
+          "250 AI credits/month",
           "AI text + image",
           "Telegram Bot",
           "5 GB storage"
@@ -428,7 +428,7 @@
         "features": [
           "3 brands",
           "15 social accounts",
-          "Unlimited posts",
+          "700 AI credits/month",
           "AI text + image",
           "Analytics",
           "Multi-language",
@@ -441,8 +441,8 @@
         "features": [
           "10 brands",
           "Unlimited accounts",
-          "Unlimited posts",
-          "Full AI",
+          "2,500 AI credits/month",
+          "Full AI (incl. video)",
           "Advanced analytics",
           "50 GB storage"
         ]
@@ -452,8 +452,9 @@
         "cta": "Start 14-day trial",
         "features": [
           "20 brands included",
-          "+ €10/month per additional brand",
+          "+ €10/month per additional brand, no cap",
           "Unlimited social accounts",
+          "7,000 AI credits/month",
           "Isolated client portal",
           "Unified billing",
           "100 GB storage"
@@ -509,7 +510,7 @@
       },
       "item_7": {
         "question": "Does the Agency plan cover all my clients?",
-        "answer": "Yes — one Agency subscription (€199/month) covers up to 15 clients. Agency XL (€349/month) is unlimited. Each client has an isolated workspace, separate login, and separate RAG."
+        "answer": "Yes — the Agency plan (€199/month) includes 20 brands. Additional brands are €10/month each, with no hard cap. Each client has an isolated workspace, separate login, and separate RAG."
       }
     }
   },
