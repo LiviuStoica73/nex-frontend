@@ -213,7 +213,7 @@
     "expires_in": "Codul expiră în 10 minute."
   },
   "hero_landing": {
-    "trial_badge": "Încearcă gratuit 14 zile",
+    "trial_badge": "Trial gratuit 14 zile · card cerut, fără taxare",
     "title_prefix": "Conținut social media",
     "title_highlight": "creat de AI, aprobat de tine",
     "description": "Trimite o idee din Telegram. AI-ul generează textul, imaginea și alege momentul optim de publicare. Tu aprobi cu un tap.",
@@ -397,7 +397,7 @@
     "agency_extra": "€10/lună per brand suplimentar, fără plafon",
     "metadata": {
       "title": "Prețuri — Nex-Nex",
-      "description": "Planuri simple pentru creatori individuali și agenții. 14 zile trial gratuit, fără card."
+      "description": "Planuri simple pentru creatori individuali și agenții. Trial 14 zile, card cerut (fără taxare)."
     },
     "plans": {
       "free": {

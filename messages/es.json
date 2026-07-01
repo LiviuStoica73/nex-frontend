@@ -213,7 +213,7 @@
     "expires_in": "El código expira en 10 minutos."
   },
   "hero_landing": {
-    "trial_badge": "14-day free trial · No credit card required",
+    "trial_badge": "14-day free trial · Card required, no charge",
     "title_prefix": "Pocket AI",
     "title_highlight": "expert",
     "description": "AI learns your brand, creates professional content, and publishes it automatically on social networks.",
@@ -386,7 +386,7 @@
   "marketing_pricing_page": {
     "metadata": {
       "title": "Pricing — Nex-Nex",
-      "description": "Simple plans for individual creators and agencies. 14-day free trial, no card required."
+      "description": "Simple plans for individual creators and agencies. 14-day free trial, card required (no charge)."
     },
     "title": "Simple and transparent pricing",
     "subtitle": "14-day free trial on any plan. Card required at signup, no charge until trial ends. Cancel anytime.",
