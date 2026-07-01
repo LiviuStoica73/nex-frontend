@@ -15,6 +15,7 @@ export const sidebarLinks: SidebarNavItem[] = [
     items: [
       { href: "/dashboard/settings/brand-kit",       icon: "page",      title: "Brand Kit" },
       { href: "/dashboard/settings/social-accounts", icon: "twitter",   title: "Conturi Sociale" },
+      { href: "/dashboard/settings/blog-connectors", icon: "page",      title: "Blog Connectors" },
       { href: "/dashboard/settings/best-times",      icon: "lineChart", title: "Best Times" },
     ],
   },

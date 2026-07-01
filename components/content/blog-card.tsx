@@ -1,22 +1,19 @@
-import Link from "next/link";
-import { Post } from "contentlayer/generated";
-
-import { cn, formatDate, placeholderBlurhash } from "@/lib/utils";
-import BlurImage from "@/components/shared/blur-image";
-
-import Author from "./author";
+import Link from "next/link"
+import Image from "next/image"
+import { BlogPost } from "@/types/blog"
+import { cn, formatDate } from "@/lib/utils"
 
 export function BlogCard({
   data,
-  priority,
+  priority = false,
   horizontale = false,
 }: {
-  data: Post & {
-    blurDataURL: string;
-  };
-  priority?: boolean;
-  horizontale?: boolean;
+  data: BlogPost
+  priority?: boolean
+  horizontale?: boolean
 }) {
+  const href = `/blog/${data.slug ?? data.id}`
+
   return (
     <article
       className={cn(
@@ -26,11 +23,10 @@ export function BlogCard({
           : "flex flex-col space-y-2",
       )}
     >
-      {data.image && (
+      {data.image_url && (
         <div className="w-full overflow-hidden rounded-xl border">
-          <BlurImage
-            alt={data.title}
-            blurDataURL={data.blurDataURL ?? placeholderBlurhash}
+          <Image
+            alt={data.image_alt || data.title}
             className={cn(
               "size-full object-cover object-center",
               horizontale ? "lg:h-72" : null,
@@ -38,8 +34,7 @@ export function BlogCard({
             width={800}
             height={400}
             priority={priority}
-            placeholder="blur"
-            src={data.image}
+            src={data.image_url}
             sizes="(max-width: 768px) 750px, 600px"
           />
         </div>
@@ -54,29 +49,23 @@ export function BlogCard({
           <h2 className="my-1.5 line-clamp-2 font-heading text-2xl">
             {data.title}
           </h2>
-          {data.description && (
-            <p className="line-clamp-2 text-muted-foreground">
-              {data.description}
-            </p>
+          {data.excerpt && (
+            <p className="line-clamp-2 text-muted-foreground">{data.excerpt}</p>
           )}
         </div>
-        <div className="mt-4 flex items-center space-x-3">
-          <div className="flex items-center -space-x-2">
-            {data.authors.map((author) => (
-              <Author username={author} key={data._id + author} imageOnly />
-            ))}
-          </div>
-
-          {data.date && (
-            <p className="text-sm text-muted-foreground">
-              {formatDate(data.date)}
-            </p>
+        <div className="mt-4 flex items-center gap-3 text-sm text-muted-foreground">
+          {data.author_name && <span>{data.author_name}</span>}
+          {data.published_at && (
+            <span>{formatDate(data.published_at)}</span>
+          )}
+          {data.reading_time_minutes && (
+            <span>{data.reading_time_minutes} min citire</span>
           )}
         </div>
       </div>
-      <Link href={data.slug} className="absolute inset-0">
-        <span className="sr-only">View Article</span>
+      <Link href={href} className="absolute inset-0">
+        <span className="sr-only">Citește articolul</span>
       </Link>
     </article>
-  );
+  )
 }

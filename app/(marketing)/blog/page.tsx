@@ -1,23 +1,13 @@
-import { allPosts } from "contentlayer/generated";
-
-import { constructMetadata, getBlurDataURL } from "@/lib/utils";
-import { BlogPosts } from "@/components/content/blog-posts";
+import { constructMetadata } from "@/lib/utils"
+import { getBlogPosts } from "@/lib/blog-api"
+import { BlogPosts } from "@/components/content/blog-posts"
 
 export const metadata = constructMetadata({
-  title: "Blog – SaaS Starter",
-  description: "Latest news and updates from Next SaaS Starter.",
-});
+  title: "Blog – Nex-Nex",
+  description: "Articole, ghiduri și noutăți despre AI content creation de la echipa Nex-Nex.",
+})
 
 export default async function BlogPage() {
-  const posts = await Promise.all(
-    allPosts
-      .filter((post) => post.published)
-      .sort((a, b) => b.date.localeCompare(a.date))
-      .map(async (post) => ({
-        ...post,
-        blurDataURL: await getBlurDataURL(post.image),
-      })),
-  );
-
-  return <BlogPosts posts={posts} />;
+  const posts = await getBlogPosts({ limit: 30 })
+  return <BlogPosts posts={posts} />
 }
