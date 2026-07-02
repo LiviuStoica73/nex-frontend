@@ -213,7 +213,7 @@
     "expires_in": "Le code expire dans 10 minutes."
   },
   "hero_landing": {
-    "trial_badge": "14-day free trial · Card required, no charge",
+    "trial_badge": "14-day free trial on Starter · No charge until it ends",
     "title_prefix": "Pocket AI",
     "title_highlight": "expert",
     "description": "AI learns your brand, creates professional content, and publishes it automatically on social networks.",
@@ -386,10 +386,10 @@
   "marketing_pricing_page": {
     "metadata": {
       "title": "Pricing — Nex-Nex",
-      "description": "Simple plans for individual creators and agencies. 14-day free trial, card required (no charge)."
+      "description": "Simple plans for individual creators and agencies. 14-day free trial on Starter. Pro, Business and Agency billed immediately."
     },
     "title": "Simple and transparent pricing",
-    "subtitle": "14-day free trial on any plan. Card required at signup, no charge until trial ends. Cancel anytime.",
+    "subtitle": "Starter includes a 14-day free trial (card required, no charge until it ends). Pro, Business and Agency are billed immediately. Cancel anytime.",
     "popular_badge": "Popular",
     "per_month": "/month",
     "plans": {
@@ -405,7 +405,7 @@
       },
       "starter": {
         "description": "For individual creators",
-        "cta": "Subscribe now",
+        "cta": "Start 14-day trial",
         "features": [
           "1 brand",
           "5 social accounts",
@@ -494,7 +494,7 @@
     "items": {
       "item_1": {
         "question": "Is there a free trial?",
-        "answer": "Yes — a 14-day free trial on any paid plan. A card is required at signup (charged only after the trial ends) so you can explore all features before committing."
+        "answer": "Yes — the Starter plan includes a 14-day free trial. A card is required at signup but you are not charged until the trial ends. Pro, Business and Agency plans are billed immediately upon signup."
       },
       "item_2": {
         "question": "Can I cancel anytime?",

@@ -213,7 +213,7 @@
     "expires_in": "Codul expiră în 10 minute."
   },
   "hero_landing": {
-    "trial_badge": "Trial gratuit 14 zile · card cerut, fără taxare",
+    "trial_badge": "Trial gratuit 14 zile pe Starter · fără taxare până la final",
     "title_prefix": "Conținut social media",
     "title_highlight": "creat de AI, aprobat de tine",
     "description": "Trimite o idee din Telegram. AI-ul generează textul, imaginea și alege momentul optim de publicare. Tu aprobi cu un tap.",
@@ -385,7 +385,7 @@
   },
   "marketing_pricing_page": {
     "title": "Prețuri simple și transparente",
-    "subtitle": "Trial de 14 zile pe orice plan. Card cerut la înregistrare, fără taxare până la finalul trial-ului. Anulezi oricând.",
+    "subtitle": "Starter include trial gratuit 14 zile (card cerut, fără taxare până la final). Pro, Business și Agency se facturează imediat. Anulezi oricând.",
     "popular_badge": "Popular",
     "per_month": "/lună",
     "toggle": {
@@ -397,7 +397,7 @@
     "agency_extra": "€10/lună per brand suplimentar, fără plafon",
     "metadata": {
       "title": "Prețuri — Nex-Nex",
-      "description": "Planuri simple pentru creatori individuali și agenții. Trial 14 zile, card cerut (fără taxare)."
+      "description": "Planuri simple pentru creatori individuali și agenții. Trial 14 zile pe Starter. Pro, Business și Agency se facturează imediat."
     },
     "plans": {
       "free": {
@@ -412,7 +412,7 @@
       },
       "starter": {
         "description": "Pentru creatori individuali",
-        "cta": "Abonează-te acum",
+        "cta": "Începe trial 14 zile",
         "features": [
           "1 brand",
           "5 conturi sociale",
@@ -483,7 +483,7 @@
     "items": {
       "item_1": {
         "question": "Există trial gratuit?",
-        "answer": "Da — trial de 14 zile pe orice plan plătit. Cardul este cerut la înregistrare (taxat abia după finalul trial-ului), ca să poți explora toate funcționalitățile înainte să te angajezi."
+        "answer": "Da — planul Starter include trial gratuit 14 zile. Cardul este cerut la înregistrare, dar nu ești taxat până la finalul trial-ului. Pro, Business și Agency se facturează imediat la abonare."
       },
       "item_2": {
         "question": "Pot anula oricând?",
