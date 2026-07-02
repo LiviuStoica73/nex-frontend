@@ -112,7 +112,7 @@ export default function SocialAccountsPage() {
 
   // Blog connectors
   const [blogConnectors, setBlogConnectors] = useState<BlogConnector[]>([]);
-  const [blogForm, setBlogForm] = useState({ name: "", platform_type: "wordpress", site_url: "", api_key: "", post_language: "ro" });
+  const [blogForm, setBlogForm] = useState({ name: "", platform_type: "wordpress", site_url: "", wp_username: "", api_key: "", post_language: "ro" });
   const [blogSaving, setBlogSaving] = useState(false);
   const [blogError, setBlogError] = useState("");
   const [testingBlog, setTestingBlog] = useState<string | null>(null);
@@ -232,8 +232,12 @@ export default function SocialAccountsPage() {
   };
 
   const handleAddBlogConnector = async () => {
-    if (!orgId || !token || !blogForm.name || !blogForm.site_url || !blogForm.api_key) return;
+    const wpMissing = blogForm.platform_type === "wordpress" && (!blogForm.site_url || !blogForm.wp_username || !blogForm.api_key);
+    const otherMissing = blogForm.platform_type !== "wordpress" && blogForm.platform_type !== "nex_blog" && (!blogForm.site_url || !blogForm.api_key);
+    if (!orgId || !token || !blogForm.name || wpMissing || otherMissing) return;
     setBlogSaving(true); setBlogError("");
+    const extraConfig: Record<string, string> = { post_language: blogForm.post_language };
+    if (blogForm.platform_type === "wordpress") extraConfig.wp_username = blogForm.wp_username;
     try {
       const res = await fetch(`${API_URL}/api/v1/orgs/${orgId}/blog-connectors`, {
         method: "POST",
@@ -244,11 +248,11 @@ export default function SocialAccountsPage() {
           site_url: blogForm.platform_type !== "custom_rest" ? blogForm.site_url : undefined,
           api_url: blogForm.platform_type === "custom_rest" ? blogForm.site_url : undefined,
           api_key: blogForm.api_key,
-          extra_config: { post_language: blogForm.post_language },
+          extra_config: extraConfig,
         }),
       });
       if (res.ok) {
-        setBlogForm({ name: "", platform_type: "wordpress", site_url: "", api_key: "", post_language: "ro" });
+        setBlogForm({ name: "", platform_type: "wordpress", site_url: "", wp_username: "", api_key: "", post_language: "ro" });
         await fetchBlogConnectors(orgId, token);
       } else {
         const err = await res.json();
@@ -586,10 +590,11 @@ export default function SocialAccountsPage() {
               {/* Hint per platformă */}
               {blogForm.platform_type === "wordpress" && (
                 <div className="rounded-md bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 px-3 py-2 text-xs text-blue-800 dark:text-blue-300 space-y-1">
-                  <p className="font-medium">Ce trebuie făcut în WordPress:</p>
-                  <p>1. Instalează plugin-ul <strong>Nex-Nex Blog API</strong> (fișier .zip din echipa Nex-Nex)</p>
-                  <p>2. Copiază API Key-ul din <strong>Settings → Nex-Nex Blog API</strong></p>
-                  <p>3. Dacă site-ul e în spatele Cloudflare, adaugă IP <strong>95.217.16.236</strong> în IP Access Rules → Allow</p>
+                  <p className="font-medium">Cum generezi credențialele din WordPress (fără plugin):</p>
+                  <p>1. <strong>WP Admin → Users → Profile</strong> → secțiunea <strong>Application Passwords</strong></p>
+                  <p>2. Introdu un nume (ex: <em>Nex-Nex</em>) → <strong>Add New Application Password</strong></p>
+                  <p>3. Copiază parola generată (format: <code>xxxx xxxx xxxx xxxx xxxx xxxx</code>)</p>
+                  <p>4. Introdu mai jos: username-ul tău WP + parola copiată</p>
                 </div>
               )}
               {blogForm.platform_type === "ghost" && (
@@ -647,7 +652,7 @@ export default function SocialAccountsPage() {
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 <select className="rounded-md border bg-background px-3 py-2 text-sm"
                   value={blogForm.platform_type}
-                  onChange={(e) => { setBlogForm((f) => ({ ...f, platform_type: e.target.value, site_url: "", api_key: "" })); setDetectSignals(null); }}>
+                  onChange={(e) => { setBlogForm((f) => ({ ...f, platform_type: e.target.value, site_url: "", wp_username: "", api_key: "" })); setDetectSignals(null); }}>
                   <option value="wordpress">WordPress</option>
                   <option value="ghost">Ghost CMS</option>
                   <option value="custom_rest">Custom REST API</option>
@@ -664,9 +669,18 @@ export default function SocialAccountsPage() {
                   value={blogForm.name}
                   onChange={(e) => setBlogForm((f) => ({ ...f, name: e.target.value }))}
                   className="text-sm sm:col-span-2" />
+                {blogForm.platform_type === "wordpress" && (
+                  <Input placeholder="Username WordPress"
+                    value={blogForm.wp_username}
+                    onChange={(e) => setBlogForm((f) => ({ ...f, wp_username: e.target.value }))}
+                    className="text-sm sm:col-span-2" />
+                )}
                 {blogForm.platform_type !== "nex_blog" && (
                   <Input type="password"
-                    placeholder={blogForm.platform_type === "ghost" ? "Admin API Key (id:secret)" : "API Key"}
+                    placeholder={
+                      blogForm.platform_type === "wordpress" ? "Application Password (generat din WP Admin)" :
+                      blogForm.platform_type === "ghost" ? "Admin API Key (id:secret)" : "API Key"
+                    }
                     value={blogForm.api_key}
                     onChange={(e) => setBlogForm((f) => ({ ...f, api_key: e.target.value }))}
                     className="text-sm sm:col-span-2" />
@@ -679,7 +693,11 @@ export default function SocialAccountsPage() {
               )}
               {blogError && <p className="text-xs text-destructive">{blogError}</p>}
               <Button size="sm" onClick={handleAddBlogConnector}
-                disabled={blogSaving || !blogForm.name || (blogForm.platform_type !== "nex_blog" && (!blogForm.site_url || !blogForm.api_key))}>
+                disabled={
+                  blogSaving || !blogForm.name ||
+                  (blogForm.platform_type === "wordpress" && (!blogForm.site_url || !blogForm.wp_username || !blogForm.api_key)) ||
+                  (blogForm.platform_type !== "wordpress" && blogForm.platform_type !== "nex_blog" && (!blogForm.site_url || !blogForm.api_key))
+                }>
                 {blogSaving ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Plus className="h-3 w-3 mr-1" />}
                 Conectează
               </Button>
