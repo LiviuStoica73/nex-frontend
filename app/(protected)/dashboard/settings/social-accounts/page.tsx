@@ -116,6 +116,7 @@ export default function SocialAccountsPage() {
   const [blogSaving, setBlogSaving] = useState(false);
   const [blogError, setBlogError] = useState("");
   const [testingBlog, setTestingBlog] = useState<string | null>(null);
+  const [testBlogResult, setTestBlogResult] = useState<Record<string, boolean | null>>({});
   const [deletingBlog, setDeletingBlog] = useState<string | null>(null);
   const [detecting, setDetecting] = useState(false);
   const [detectSignals, setDetectSignals] = useState<{ confidence: string; signals: string[] } | null>(null);
@@ -286,12 +287,16 @@ export default function SocialAccountsPage() {
   const handleTestBlog = async (connectorId: string) => {
     if (!orgId || !token) return;
     setTestingBlog(connectorId);
+    setTestBlogResult((prev) => ({ ...prev, [connectorId]: null }));
     try {
-      await fetch(`${API_URL}/api/v1/orgs/${orgId}/blog-connectors/${connectorId}/test`, {
+      const res = await fetch(`${API_URL}/api/v1/orgs/${orgId}/blog-connectors/${connectorId}/test`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
+      const data = await res.json();
+      setTestBlogResult((prev) => ({ ...prev, [connectorId]: data.success === true }));
       await fetchBlogConnectors(orgId, token);
+      setTimeout(() => setTestBlogResult((prev) => { const next = { ...prev }; delete next[connectorId]; return next; }), 4000);
     } finally { setTestingBlog(null); }
   };
 
@@ -764,6 +769,12 @@ export default function SocialAccountsPage() {
                 <Badge variant={bc.last_test_ok ? "default" : "secondary"}>
                   {bc.last_test_ok ? "Activ" : "Inactiv"}
                 </Badge>
+                {testBlogResult[bc.id] === true && (
+                  <span className="flex items-center gap-1 text-xs text-green-600 shrink-0"><CheckCircle2 className="h-3.5 w-3.5" /> OK</span>
+                )}
+                {testBlogResult[bc.id] === false && (
+                  <span className="flex items-center gap-1 text-xs text-red-500 shrink-0"><XCircle className="h-3.5 w-3.5" /> Eșuat</span>
+                )}
                 <Button variant="ghost" size="sm" className="text-xs h-8 px-2 shrink-0"
                   onClick={() => handleTestBlog(bc.id)} disabled={testingBlog === bc.id}>
                   {testingBlog === bc.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Test"}
