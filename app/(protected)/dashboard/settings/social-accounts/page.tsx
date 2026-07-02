@@ -547,45 +547,6 @@ export default function SocialAccountsPage() {
                 Poți adăuga mai mulți conectori — util pentru RO + EN sau clienți diferiți.
               </p>
 
-              {/* Conectori existenți */}
-              {hasBlogConnectors && (
-                <div className="divide-y rounded-md border bg-background">
-                  {blogConnectors.map((bc) => (
-                    <div key={bc.id} className="flex items-center gap-3 px-3 py-2.5">
-                      <Rss className="h-4 w-4 text-muted-foreground shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{bc.name}</p>
-                        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                          <Badge variant="secondary" className="text-[10px]">{BLOG_PLATFORM_LABELS[bc.platform_type] || bc.platform_type}</Badge>
-                          {bc.extra_config?.post_language && (
-                            <Badge variant="outline" className="text-[10px] uppercase">{bc.extra_config.post_language}</Badge>
-                          )}
-                          {bc.site_url && (
-                            <a href={bc.site_url} target="_blank" rel="noopener noreferrer"
-                              className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-0.5">
-                              {bc.site_url.replace(/^https?:\/\//, "").replace(/\/$/, "")}
-                              <ExternalLink className="h-2.5 w-2.5 ml-0.5" />
-                            </a>
-                          )}
-                          {bc.last_tested_at && (
-                            bc.last_test_ok
-                              ? <span className="flex items-center gap-0.5 text-[10px] text-green-600"><CheckCircle2 className="h-3 w-3" /> OK</span>
-                              : <span className="flex items-center gap-0.5 text-[10px] text-red-500"><XCircle className="h-3 w-3" /> Eșuat</span>
-                          )}
-                        </div>
-                      </div>
-                      <Button variant="ghost" size="sm" className="text-xs h-7 px-2 shrink-0"
-                        onClick={() => handleTestBlog(bc.id)} disabled={testingBlog === bc.id}>
-                        {testingBlog === bc.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Test"}
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive shrink-0"
-                        onClick={() => handleDeleteBlog(bc.id)} disabled={deletingBlog === bc.id}>
-                        {deletingBlog === bc.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
 
               {/* Hint per platformă */}
               {blogForm.platform_type === "wordpress" && (
@@ -753,7 +714,7 @@ export default function SocialAccountsPage() {
         {/* ── Lista conturi conectate ───────────────────────────────── */}
         {loading ? (
           <p className="text-sm text-muted-foreground">Se încarcă...</p>
-        ) : accounts.length === 0 ? (
+        ) : accounts.length === 0 && blogConnectors.length === 0 ? (
           <p className="text-sm text-muted-foreground">Niciun cont conectat încă.</p>
         ) : (
           <div className="space-y-2">
@@ -778,6 +739,38 @@ export default function SocialAccountsPage() {
                 <Button variant="ghost" size="icon" onClick={() => handleDisconnect(account.id)}
                   className="text-destructive hover:text-destructive">
                   <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+            {blogConnectors.map((bc) => (
+              <div key={bc.id} className="flex items-center gap-3 rounded-md border bg-background p-3">
+                <Rss className="h-5 w-5 text-[#F97316] shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium truncate">{bc.name}</p>
+                  <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                    <span className="text-xs text-muted-foreground">{BLOG_PLATFORM_LABELS[bc.platform_type] || bc.platform_type}</span>
+                    {bc.site_url && (
+                      <a href={bc.site_url} target="_blank" rel="noopener noreferrer"
+                        className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-0.5">
+                        {bc.site_url.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                        <ExternalLink className="h-2.5 w-2.5 ml-0.5" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+                <Badge variant="outline" className="uppercase text-[11px]">
+                  {bc.extra_config?.post_language || "ro"}
+                </Badge>
+                <Badge variant={bc.last_test_ok ? "default" : "secondary"}>
+                  {bc.last_test_ok ? "Activ" : "Inactiv"}
+                </Badge>
+                <Button variant="ghost" size="sm" className="text-xs h-8 px-2 shrink-0"
+                  onClick={() => handleTestBlog(bc.id)} disabled={testingBlog === bc.id}>
+                  {testingBlog === bc.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Test"}
+                </Button>
+                <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive shrink-0"
+                  onClick={() => handleDeleteBlog(bc.id)} disabled={deletingBlog === bc.id}>
+                  {deletingBlog === bc.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                 </Button>
               </div>
             ))}
