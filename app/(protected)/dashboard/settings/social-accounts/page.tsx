@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import {
   Facebook, Instagram, Trash2, Plus, Globe, Check, X as XIcon,
   MessageSquare, Linkedin, Youtube, Music2, AtSign, ExternalLink,
-  Rss, Loader2, CheckCircle2, XCircle,
+  Rss, Loader2, CheckCircle2, XCircle, ScanSearch, Info,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -117,6 +117,8 @@ export default function SocialAccountsPage() {
   const [blogError, setBlogError] = useState("");
   const [testingBlog, setTestingBlog] = useState<string | null>(null);
   const [deletingBlog, setDeletingBlog] = useState<string | null>(null);
+  const [detecting, setDetecting] = useState(false);
+  const [detectSignals, setDetectSignals] = useState<{ confidence: string; signals: string[] } | null>(null);
 
   const token = (session?.user as any)?.accessToken as string | undefined;
   const orgId = activeOrgId;
@@ -249,6 +251,27 @@ export default function SocialAccountsPage() {
       }
     } catch { setBlogError("Eroare de rețea."); }
     setBlogSaving(false);
+  };
+
+  const handleDetect = async () => {
+    if (!token || !blogForm.site_url.trim()) return;
+    setDetecting(true);
+    setDetectSignals(null);
+    setBlogError("");
+    try {
+      const res = await fetch(
+        `${API_URL}/api/v1/blog/detect?url=${encodeURIComponent(blogForm.site_url.trim())}`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      if (res.ok) {
+        const data = await res.json();
+        setBlogForm((f) => ({ ...f, platform_type: data.platform_type, site_url: data.site_url }));
+        setDetectSignals({ confidence: data.confidence, signals: data.signals });
+      } else {
+        setBlogError("Detecție eșuată. Verifică URL-ul.");
+      }
+    } catch { setBlogError("Eroare de rețea la detecție."); }
+    setDetecting(false);
   };
 
   const handleTestBlog = async (connectorId: string) => {
@@ -528,6 +551,41 @@ export default function SocialAccountsPage() {
           )}
 
           {/* Formular adăugare — mereu vizibil (ca Discord) */}
+
+          {/* Pas 1: URL + Detectează */}
+          <div className="flex gap-2">
+            <Input
+              placeholder="https://site-client.com"
+              value={blogForm.site_url}
+              onChange={(e) => { setBlogForm((f) => ({ ...f, site_url: e.target.value })); setDetectSignals(null); }}
+              className="text-sm flex-1"
+            />
+            <Button variant="outline" size="sm" onClick={handleDetect}
+              disabled={detecting || !blogForm.site_url.trim()} className="shrink-0 gap-1">
+              {detecting ? <Loader2 className="h-3 w-3 animate-spin" /> : <ScanSearch className="h-3 w-3" />}
+              Detectează
+            </Button>
+          </div>
+
+          {/* Semnale detecție */}
+          {detectSignals && (
+            <div className={`rounded-md border px-3 py-2 space-y-1 text-xs ${
+              detectSignals.confidence === "high" ? "border-green-200 bg-green-50 dark:bg-green-950/20" :
+              detectSignals.confidence === "medium" ? "border-yellow-200 bg-yellow-50 dark:bg-yellow-950/20" :
+              "border-muted bg-muted/30"
+            }`}>
+              <div className="flex items-center gap-1.5 font-medium">
+                <Info className="h-3 w-3" />
+                Platformă detectată: <span className="capitalize">{BLOG_PLATFORM_LABELS[blogForm.platform_type] || blogForm.platform_type}</span>
+                <Badge variant="outline" className="text-[10px] ml-1">{detectSignals.confidence}</Badge>
+              </div>
+              {detectSignals.signals.map((s, i) => (
+                <p key={i} className="text-muted-foreground pl-4">· {s}</p>
+              ))}
+            </div>
+          )}
+
+          {/* Pas 2: restul câmpurilor */}
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <select
               className="rounded-md border bg-background px-3 py-2 text-sm"
@@ -550,12 +608,7 @@ export default function SocialAccountsPage() {
             <Input placeholder="Nume (ex: Blog AllMeters RO)"
               value={blogForm.name}
               onChange={(e) => setBlogForm((f) => ({ ...f, name: e.target.value }))}
-              className="text-sm" />
-            <Input
-              placeholder={blogForm.platform_type === "custom_rest" ? "https://api.site.com/blog" : "https://site-client.com"}
-              value={blogForm.site_url}
-              onChange={(e) => setBlogForm((f) => ({ ...f, site_url: e.target.value }))}
-              className="text-sm" />
+              className="text-sm sm:col-span-2" />
             <Input type="password"
               placeholder={blogForm.platform_type === "ghost" ? "Admin API Key (id:secret)" : "API Key"}
               value={blogForm.api_key}
