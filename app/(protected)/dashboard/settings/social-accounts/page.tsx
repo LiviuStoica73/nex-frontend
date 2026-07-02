@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import {
   Facebook, Instagram, Trash2, Plus, Globe, Check, X as XIcon,
   MessageSquare, Linkedin, Youtube, Music2, AtSign, ExternalLink,
-  Rss, ChevronDown, ChevronUp, Loader2, CheckCircle2, XCircle,
+  Rss, Loader2, CheckCircle2, XCircle,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -57,6 +57,7 @@ interface BlogConnector {
   is_active: boolean;
   last_tested_at: string | null;
   last_test_ok: boolean | null;
+  extra_config: { post_language?: string } | null;
 }
 
 interface FbPage {
@@ -111,8 +112,7 @@ export default function SocialAccountsPage() {
 
   // Blog connectors
   const [blogConnectors, setBlogConnectors] = useState<BlogConnector[]>([]);
-  const [showBlogForm, setShowBlogForm] = useState(false);
-  const [blogForm, setBlogForm] = useState({ name: "", platform_type: "wordpress", site_url: "", api_key: "" });
+  const [blogForm, setBlogForm] = useState({ name: "", platform_type: "wordpress", site_url: "", api_key: "", post_language: "ro" });
   const [blogSaving, setBlogSaving] = useState(false);
   const [blogError, setBlogError] = useState("");
   const [testingBlog, setTestingBlog] = useState<string | null>(null);
@@ -237,11 +237,11 @@ export default function SocialAccountsPage() {
           site_url: blogForm.platform_type !== "custom_rest" ? blogForm.site_url : undefined,
           api_url: blogForm.platform_type === "custom_rest" ? blogForm.site_url : undefined,
           api_key: blogForm.api_key,
+          extra_config: { post_language: blogForm.post_language },
         }),
       });
       if (res.ok) {
-        setBlogForm({ name: "", platform_type: "wordpress", site_url: "", api_key: "" });
-        setShowBlogForm(false);
+        setBlogForm({ name: "", platform_type: "wordpress", site_url: "", api_key: "", post_language: "ro" });
         await fetchBlogConnectors(orgId, token);
       } else {
         const err = await res.json();
@@ -364,23 +364,19 @@ export default function SocialAccountsPage() {
                 );
               }
 
-              // Card Blog — stare bazată pe blog connectors, nu social accounts
+              // Card Blog — indicator stare (formularul e mereu vizibil jos)
               if (net.key === "blog") {
                 return (
                   <Tooltip key={net.key}>
                     <TooltipTrigger asChild>
-                      <button
-                        onClick={() => setShowBlogForm((v) => !v)}
-                        className="flex flex-col items-center gap-2 rounded-lg border p-4 hover:bg-muted/50 transition-colors cursor-pointer"
-                        style={hasBlogConnectors ? { background: "var(--primary-5, rgba(0,0,0,0.03))" } : {}}
-                      >
+                      <div className={`flex flex-col items-center gap-2 rounded-lg border p-4 ${hasBlogConnectors ? "bg-primary/5" : ""}`}>
                         {net.icon}
                         <span className="text-xs font-medium">{net.label}</span>
                         {hasBlogConnectors
-                          ? <Badge className="text-[10px] gap-1"><Check className="h-2.5 w-2.5" /> Conectat</Badge>
-                          : <span className="text-[10px] text-muted-foreground">Conectează</span>
+                          ? <Badge className="text-[10px] gap-1"><Check className="h-2.5 w-2.5" /> {blogConnectors.length} conectat{blogConnectors.length > 1 ? "e" : ""}</Badge>
+                          : <span className="text-[10px] text-muted-foreground">Mai jos ↓</span>
                         }
-                      </button>
+                      </div>
                     </TooltipTrigger>
                     <TooltipContent><p>{net.description}</p></TooltipContent>
                   </Tooltip>
@@ -479,48 +475,50 @@ export default function SocialAccountsPage() {
         )}
 
         {/* ── Blog connectors ───────────────────────────────────────── */}
-        <div className="rounded-lg border overflow-hidden">
-          {/* Header — mereu vizibil, toggle form */}
-          <button
-            onClick={() => setShowBlogForm((v) => !v)}
-            className="flex w-full items-center gap-2 p-4 hover:bg-muted/40 transition-colors text-left"
-          >
-            <Rss className="h-4 w-4 text-[#F97316] shrink-0" />
-            <span className="text-sm font-medium flex-1">
-              {hasBlogConnectors ? `Blog (${blogConnectors.length} conectat${blogConnectors.length > 1 ? "e" : ""})` : "Conectează Blog"}
+        <div className="rounded-lg border p-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <Rss className="h-4 w-4 text-[#F97316]" />
+            <span className="text-sm font-medium">
+              {hasBlogConnectors ? "Adaugă alt conector blog" : "Conectează Blog"}
             </span>
-            {showBlogForm ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
-          </button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            WordPress (plugin Nex-Nex), Ghost CMS sau orice blog cu REST API.
+            Poți adăuga mai mulți conectori — util pentru blog RO + EN sau clienți diferiți.
+          </p>
 
-          {/* Connectors existenți — mereu vizibili dacă există */}
+          {/* Connectors existenți */}
           {hasBlogConnectors && (
-            <div className="border-t divide-y">
+            <div className="divide-y rounded-md border">
               {blogConnectors.map((bc) => (
-                <div key={bc.id} className="flex items-center gap-3 px-4 py-3">
+                <div key={bc.id} className="flex items-center gap-3 px-3 py-2.5">
                   <Rss className="h-4 w-4 text-muted-foreground shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{bc.name}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-xs text-muted-foreground">{BLOG_PLATFORM_LABELS[bc.platform_type] || bc.platform_type}</span>
+                    <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                      <Badge variant="secondary" className="text-[10px]">{BLOG_PLATFORM_LABELS[bc.platform_type] || bc.platform_type}</Badge>
+                      {bc.extra_config?.post_language && (
+                        <Badge variant="outline" className="text-[10px] uppercase">{bc.extra_config.post_language}</Badge>
+                      )}
                       {bc.site_url && (
                         <a href={bc.site_url} target="_blank" rel="noopener noreferrer"
                           className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-0.5">
-                          {bc.site_url.replace(/^https?:\/\//, "")}
-                          <ExternalLink className="h-2.5 w-2.5" />
+                          {bc.site_url.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                          <ExternalLink className="h-2.5 w-2.5 ml-0.5" />
                         </a>
                       )}
                       {bc.last_tested_at && (
                         bc.last_test_ok
-                          ? <CheckCircle2 className="h-3 w-3 text-green-500" />
-                          : <XCircle className="h-3 w-3 text-red-500" />
+                          ? <span className="flex items-center gap-0.5 text-[10px] text-green-600"><CheckCircle2 className="h-3 w-3" /> OK</span>
+                          : <span className="flex items-center gap-0.5 text-[10px] text-red-500"><XCircle className="h-3 w-3" /> Eșuat</span>
                       )}
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm" className="text-xs h-7 px-2"
+                  <Button variant="ghost" size="sm" className="text-xs h-7 px-2 shrink-0"
                     onClick={() => handleTestBlog(bc.id)} disabled={testingBlog === bc.id}>
                     {testingBlog === bc.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Test"}
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive"
+                  <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive shrink-0"
                     onClick={() => handleDeleteBlog(bc.id)} disabled={deletingBlog === bc.id}>
                     {deletingBlog === bc.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
                   </Button>
@@ -529,50 +527,47 @@ export default function SocialAccountsPage() {
             </div>
           )}
 
-          {/* Formular adăugare — expandabil */}
-          {showBlogForm && (
-            <div className="border-t bg-muted/20 p-4 space-y-3">
-              <p className="text-xs text-muted-foreground">
-                Conectează orice blog: <strong>WordPress</strong> (cu plugin-ul Nex-Nex),
-                <strong> Ghost CMS</strong> sau <strong>Custom REST API</strong> (orice blog cu endpoint + cheie).
-              </p>
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                <select
-                  className="rounded-md border bg-background px-3 py-2 text-sm"
-                  value={blogForm.platform_type}
-                  onChange={(e) => setBlogForm((f) => ({ ...f, platform_type: e.target.value }))}
-                >
-                  <option value="wordpress">WordPress</option>
-                  <option value="ghost">Ghost CMS</option>
-                  <option value="custom_rest">Custom REST API</option>
-                </select>
-                <Input placeholder="Nume (ex: Blog client ABC)"
-                  value={blogForm.name}
-                  onChange={(e) => setBlogForm((f) => ({ ...f, name: e.target.value }))}
-                  className="text-sm" />
-                <Input
-                  placeholder={blogForm.platform_type === "custom_rest" ? "https://api.site.com/blog" : "https://site-client.com"}
-                  value={blogForm.site_url}
-                  onChange={(e) => setBlogForm((f) => ({ ...f, site_url: e.target.value }))}
-                  className="text-sm" />
-                <Input type="password"
-                  placeholder={blogForm.platform_type === "ghost" ? "Admin API Key (id:secret)" : "API Key"}
-                  value={blogForm.api_key}
-                  onChange={(e) => setBlogForm((f) => ({ ...f, api_key: e.target.value }))}
-                  className="text-sm" />
-              </div>
-              {blogError && <p className="text-xs text-destructive">{blogError}</p>}
-              <div className="flex gap-2">
-                <Button size="sm" onClick={handleAddBlogConnector}
-                  disabled={blogSaving || !blogForm.name || !blogForm.site_url || !blogForm.api_key}>
-                  {blogSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <><Plus className="h-3 w-3 mr-1" />Adaugă</>}
-                </Button>
-                <Button variant="ghost" size="sm" onClick={() => { setShowBlogForm(false); setBlogError(""); }}>
-                  Anulează
-                </Button>
-              </div>
-            </div>
-          )}
+          {/* Formular adăugare — mereu vizibil (ca Discord) */}
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <select
+              className="rounded-md border bg-background px-3 py-2 text-sm"
+              value={blogForm.platform_type}
+              onChange={(e) => setBlogForm((f) => ({ ...f, platform_type: e.target.value }))}
+            >
+              <option value="wordpress">WordPress</option>
+              <option value="ghost">Ghost CMS</option>
+              <option value="custom_rest">Custom REST API</option>
+            </select>
+            <select
+              className="rounded-md border bg-background px-3 py-2 text-sm"
+              value={blogForm.post_language}
+              onChange={(e) => setBlogForm((f) => ({ ...f, post_language: e.target.value }))}
+            >
+              {LANGUAGES.map((l) => (
+                <option key={l.value} value={l.value}>{l.label} — {l.value.toUpperCase()}</option>
+              ))}
+            </select>
+            <Input placeholder="Nume (ex: Blog AllMeters RO)"
+              value={blogForm.name}
+              onChange={(e) => setBlogForm((f) => ({ ...f, name: e.target.value }))}
+              className="text-sm" />
+            <Input
+              placeholder={blogForm.platform_type === "custom_rest" ? "https://api.site.com/blog" : "https://site-client.com"}
+              value={blogForm.site_url}
+              onChange={(e) => setBlogForm((f) => ({ ...f, site_url: e.target.value }))}
+              className="text-sm" />
+            <Input type="password"
+              placeholder={blogForm.platform_type === "ghost" ? "Admin API Key (id:secret)" : "API Key"}
+              value={blogForm.api_key}
+              onChange={(e) => setBlogForm((f) => ({ ...f, api_key: e.target.value }))}
+              className="text-sm sm:col-span-2" />
+          </div>
+          {blogError && <p className="text-xs text-destructive">{blogError}</p>}
+          <Button size="sm" onClick={handleAddBlogConnector}
+            disabled={blogSaving || !blogForm.name || !blogForm.site_url || !blogForm.api_key}>
+            {blogSaving ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Plus className="h-3 w-3 mr-1" />}
+            Conectează
+          </Button>
         </div>
 
         {/* ── Pagini FB după OAuth ──────────────────────────────────── */}
