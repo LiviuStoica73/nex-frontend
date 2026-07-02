@@ -583,6 +583,33 @@ export default function SocialAccountsPage() {
                 </div>
               )}
 
+              {/* Hint per platformă */}
+              {blogForm.platform_type === "wordpress" && (
+                <div className="rounded-md bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 px-3 py-2 text-xs text-blue-800 dark:text-blue-300 space-y-1">
+                  <p className="font-medium">Ce trebuie făcut în WordPress:</p>
+                  <p>1. Instalează plugin-ul <strong>Nex-Nex Blog API</strong> (fișier .zip din echipa Nex-Nex)</p>
+                  <p>2. Copiază API Key-ul din <strong>Settings → Nex-Nex Blog API</strong></p>
+                  <p>3. Dacă site-ul e în spatele Cloudflare, adaugă IP <strong>95.217.16.236</strong> în IP Access Rules → Allow</p>
+                </div>
+              )}
+              {blogForm.platform_type === "ghost" && (
+                <div className="rounded-md bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 px-3 py-2 text-xs text-blue-800 dark:text-blue-300 space-y-1">
+                  <p className="font-medium">Ce trebuie făcut în Ghost:</p>
+                  <p>1. <strong>Settings → Integrations → Add custom integration</strong></p>
+                  <p>2. Copiază <strong>Admin API Key</strong> (format: <code>id:secret</code>)</p>
+                  <p>3. Dacă e în spatele Cloudflare, adaugă IP <strong>95.217.16.236</strong> în IP Access Rules → Allow</p>
+                </div>
+              )}
+              {blogForm.platform_type === "custom_rest" && (
+                <div className="rounded-md bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 px-3 py-2 text-xs text-blue-800 dark:text-blue-300 space-y-1">
+                  <p className="font-medium">Ce trebuie implementat pe blog:</p>
+                  <p>• <code>POST {"{api_url}"}</code> — publică articol, răspuns: <code>{"{"}"ok": true, "post_id", "post_url"{"}"}</code></p>
+                  <p>• <code>GET {"{api_url}"}/ping</code> — verifică conexiunea, răspuns: <code>{"{"}"ok": true{"}"}</code></p>
+                  <p>• Header de autentificare: <code>X-Api-Key: &lt;cheie&gt;</code></p>
+                  <p>• Dacă e în spatele Cloudflare: dezactivează <strong>Bot Fight Mode</strong> sau adaugă IP <strong>95.217.16.236</strong> în Security → WAF → Tools → IP Access Rules → Allow</p>
+                </div>
+              )}
+
               {/* URL + Detectează */}
               {blogForm.platform_type !== "nex_blog" && (
                 <div className="flex gap-2">
