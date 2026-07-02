@@ -234,7 +234,7 @@ export default function SocialAccountsPage() {
 
   const handleAddBlogConnector = async () => {
     const wpMissing = blogForm.platform_type === "wordpress" && (!blogForm.site_url || !blogForm.wp_username || !blogForm.api_key);
-    const otherMissing = blogForm.platform_type !== "wordpress" && blogForm.platform_type !== "nex_blog" && (!blogForm.site_url || !blogForm.api_key);
+    const otherMissing = blogForm.platform_type !== "wordpress" && (!blogForm.site_url || !blogForm.api_key);
     if (!orgId || !token || !blogForm.name || wpMissing || otherMissing) return;
     setBlogSaving(true); setBlogError("");
     const extraConfig: Record<string, string> = { post_language: blogForm.post_language };
@@ -582,7 +582,7 @@ export default function SocialAccountsPage() {
               )}
 
               {/* URL + Detectează */}
-              {blogForm.platform_type !== "nex_blog" && (
+              {(
                 <div className="flex gap-2">
                   <Input placeholder="https://site-client.com"
                     value={blogForm.site_url}
@@ -597,7 +597,7 @@ export default function SocialAccountsPage() {
               )}
 
               {/* Semnale detecție */}
-              {detectSignals && blogForm.platform_type !== "nex_blog" && (
+              {detectSignals && (
                 <div className={`rounded-md border px-3 py-2 space-y-1 text-xs ${
                   detectSignals.confidence === "high" ? "border-green-200 bg-green-50 dark:bg-green-950/20" :
                   detectSignals.confidence === "medium" ? "border-yellow-200 bg-yellow-50 dark:bg-yellow-950/20" :
@@ -622,7 +622,6 @@ export default function SocialAccountsPage() {
                   <option value="wordpress">WordPress</option>
                   <option value="ghost">Ghost CMS</option>
                   <option value="custom_rest">Custom REST API</option>
-                  <option value="nex_blog">Nex-Nex Blog (intern)</option>
                 </select>
                 <select className="rounded-md border bg-background px-3 py-2 text-sm"
                   value={blogForm.post_language}
@@ -631,7 +630,7 @@ export default function SocialAccountsPage() {
                     <option key={l.value} value={l.value}>{l.label} — {l.value.toUpperCase()}</option>
                   ))}
                 </select>
-                <Input placeholder={blogForm.platform_type === "nex_blog" ? "Nume (ex: Blog Nex-Nex RO)" : "Nume (ex: Blog AllMeters RO)"}
+                <Input placeholder="Nume (ex: Blog AllMeters RO)"
                   value={blogForm.name}
                   onChange={(e) => setBlogForm((f) => ({ ...f, name: e.target.value }))}
                   className="text-sm sm:col-span-2" />
@@ -641,28 +640,21 @@ export default function SocialAccountsPage() {
                     onChange={(e) => setBlogForm((f) => ({ ...f, wp_username: e.target.value }))}
                     className="text-sm sm:col-span-2" />
                 )}
-                {blogForm.platform_type !== "nex_blog" && (
-                  <Input type="password"
-                    placeholder={
-                      blogForm.platform_type === "wordpress" ? "Application Password (generat din WP Admin)" :
-                      blogForm.platform_type === "ghost" ? "Admin API Key (id:secret)" : "API Key"
-                    }
-                    value={blogForm.api_key}
-                    onChange={(e) => setBlogForm((f) => ({ ...f, api_key: e.target.value }))}
-                    className="text-sm sm:col-span-2" />
-                )}
+                <Input type="password"
+                  placeholder={
+                    blogForm.platform_type === "wordpress" ? "Application Password (generat din WP Admin)" :
+                    blogForm.platform_type === "ghost" ? "Admin API Key (id:secret)" : "API Key"
+                  }
+                  value={blogForm.api_key}
+                  onChange={(e) => setBlogForm((f) => ({ ...f, api_key: e.target.value }))}
+                  className="text-sm sm:col-span-2" />
               </div>
-              {blogForm.platform_type === "nex_blog" && (
-                <p className="text-xs text-muted-foreground">
-                  Blog intern — articolele se scriu direct în baza de date Nex-Nex. Nu necesită URL sau cheie API.
-                </p>
-              )}
               {blogError && <p className="text-xs text-destructive">{blogError}</p>}
               <Button size="sm" onClick={handleAddBlogConnector}
                 disabled={
                   blogSaving || !blogForm.name ||
                   (blogForm.platform_type === "wordpress" && (!blogForm.site_url || !blogForm.wp_username || !blogForm.api_key)) ||
-                  (blogForm.platform_type !== "wordpress" && blogForm.platform_type !== "nex_blog" && (!blogForm.site_url || !blogForm.api_key))
+                  (blogForm.platform_type !== "wordpress" && (!blogForm.site_url || !blogForm.api_key))
                 }>
                 {blogSaving ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Plus className="h-3 w-3 mr-1" />}
                 Conectează
