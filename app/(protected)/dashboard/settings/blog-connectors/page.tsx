@@ -25,9 +25,8 @@ interface BlogConnector {
 
 const PLATFORM_LABELS: Record<string, string> = {
   wordpress: "WordPress",
-  ghost: "Ghost",
-  nex_blog: "Blog Nex-Nex (intern)",
-  substack: "Substack",
+  ghost: "Ghost CMS",
+  custom_rest: "Custom REST API",
 }
 
 export default function BlogConnectorsPage() {
@@ -141,8 +140,8 @@ export default function BlogConnectorsPage() {
                 onChange={(e) => setForm((f) => ({ ...f, platform_type: e.target.value }))}
               >
                 <option value="wordpress">WordPress</option>
-                <option value="ghost">Ghost</option>
-                <option value="substack">Substack</option>
+                <option value="ghost">Ghost CMS</option>
+                <option value="custom_rest">Custom REST API</option>
               </select>
             </div>
             <div className="flex flex-col gap-1">
@@ -154,18 +153,42 @@ export default function BlogConnectorsPage() {
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-muted-foreground">URL site</label>
+              <label className="text-sm font-medium text-muted-foreground">
+                {form.platform_type === "custom_rest" ? "URL endpoint API" : "URL site"}
+              </label>
               <Input
-                placeholder="https://all-meters.com"
+                placeholder={
+                  form.platform_type === "wordpress"
+                    ? "https://site-client.com"
+                    : form.platform_type === "ghost"
+                    ? "https://site-client.com"
+                    : "https://api.site-client.com/blog"
+                }
                 value={form.site_url}
                 onChange={(e) => setForm((f) => ({ ...f, site_url: e.target.value }))}
               />
+              {form.platform_type === "custom_rest" && (
+                <p className="text-xs text-muted-foreground">
+                  Endpoint-ul care acceptă <code>POST</code> cu contractul Nex-Nex
+                </p>
+              )}
+              {form.platform_type === "ghost" && (
+                <p className="text-xs text-muted-foreground">
+                  URL-ul rădăcină al site-ului Ghost (fără <code>/ghost/api/</code>)
+                </p>
+              )}
             </div>
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium text-muted-foreground">API Key</label>
               <Input
                 type="password"
-                placeholder="Din Settings → Nex-Nex Blog API în WordPress"
+                placeholder={
+                  form.platform_type === "ghost"
+                    ? "Admin API Key — format: id:secret"
+                    : form.platform_type === "custom_rest"
+                    ? "X-Api-Key setat pe serverul clientului"
+                    : "Din Settings → Nex-Nex Blog API în WordPress"
+                }
                 value={form.api_key}
                 onChange={(e) => setForm((f) => ({ ...f, api_key: e.target.value }))}
               />
