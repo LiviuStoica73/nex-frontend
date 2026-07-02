@@ -7,6 +7,20 @@ const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async redirects() {
+    return [
+      {
+        source: "/blog",
+        destination: "https://blog.nex-nex.com",
+        permanent: false,
+      },
+      {
+        source: "/blog/:path*",
+        destination: "https://blog.nex-nex.com/:path*",
+        permanent: false,
+      },
+    ];
+  },
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
   reactStrictMode: true,
