@@ -348,6 +348,20 @@ export default function SocialAccountsPage() {
     setSavingLang(null);
   };
 
+  const handleToggleActive = async (accountId: string, nextActive: boolean) => {
+    if (!orgId || !token) return;
+    setAccounts((prev) => prev.map((a) => (a.id === accountId ? { ...a, is_active: nextActive } : a)));
+    try {
+      await fetch(`${API_URL}/api/v1/orgs/${orgId}/social-accounts/${accountId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ is_active: nextActive }),
+      });
+    } catch {
+      setAccounts((prev) => prev.map((a) => (a.id === accountId ? { ...a, is_active: !nextActive } : a)));
+    }
+  };
+
   const handleDisconnect = async (accountId: string) => {
     if (!orgId || !token || !confirm("Dezconectezi acest cont?")) return;
     try {
@@ -730,9 +744,20 @@ export default function SocialAccountsPage() {
                   </SelectContent>
                 </Select>
                 {savingLang === account.id && <Check className="h-3 w-3 text-green-500 animate-pulse" />}
-                <Badge variant={account.is_active ? "default" : "secondary"}>
-                  {account.is_active ? "Activ" : "Inactiv"}
-                </Badge>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Badge
+                      variant={account.is_active ? "default" : "secondary"}
+                      className="cursor-pointer select-none"
+                      onClick={() => handleToggleActive(account.id, !account.is_active)}
+                    >
+                      {account.is_active ? "Activ" : "Inactiv"}
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {account.is_active ? "Dezactivează postarea pe acest cont" : "Activează postarea pe acest cont"}
+                  </TooltipContent>
+                </Tooltip>
                 <Button variant="ghost" size="icon" onClick={() => handleDisconnect(account.id)}
                   className="text-destructive hover:text-destructive">
                   <Trash2 className="h-4 w-4" />
