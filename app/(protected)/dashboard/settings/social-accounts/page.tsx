@@ -780,12 +780,6 @@ export default function SocialAccountsPage() {
                     )}
                   </div>
                 </div>
-                <Badge variant="outline" className="uppercase text-[11px]">
-                  {bc.extra_config?.post_language || "ro"}
-                </Badge>
-                <Badge variant={bc.last_test_ok ? "default" : "secondary"}>
-                  {bc.last_test_ok ? "Activ" : "Inactiv"}
-                </Badge>
                 {testBlogResult[bc.id] === true && (
                   <span className="flex items-center gap-1 text-xs text-green-600 shrink-0"><CheckCircle2 className="h-3.5 w-3.5" /> OK</span>
                 )}
@@ -796,6 +790,12 @@ export default function SocialAccountsPage() {
                   onClick={() => handleTestBlog(bc.id)} disabled={testingBlog === bc.id}>
                   {testingBlog === bc.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Test"}
                 </Button>
+                <Badge variant="outline" className="uppercase text-[11px]">
+                  {bc.extra_config?.post_language || "ro"}
+                </Badge>
+                <Badge variant={bc.last_test_ok ? "default" : "secondary"}>
+                  {bc.last_test_ok ? "Activ" : "Inactiv"}
+                </Badge>
                 <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive shrink-0"
                   onClick={() => handleDeleteBlog(bc.id)} disabled={deletingBlog === bc.id}>
                   {deletingBlog === bc.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-4 w-4" />}
