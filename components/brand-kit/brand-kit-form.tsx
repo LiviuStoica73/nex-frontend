@@ -1010,38 +1010,6 @@ export function BrandKitForm({ orgId, token }: Props) {
             </div>
           </div>
 
-          {/* Rețele sociale implicite */}
-          <div className="rounded-lg border bg-card p-5 space-y-4">
-            <div>
-              <h2 className="font-semibold">Rețele sociale implicite</h2>
-              <p className="text-xs text-muted-foreground mt-1">
-                Selectate automat la Quick Post. Dacă nu alegi nimic, se folosesc conturile active.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {["instagram", "linkedin", "facebook", "x"].map((platform) => {
-                const ICONS: Record<string, string> = { instagram: "📸", linkedin: "💼", facebook: "📘", x: "𝕏" }
-                const checked = kit.qp_default_platforms.includes(platform)
-                return (
-                  <label key={platform} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => {
-                        const next = checked
-                          ? kit.qp_default_platforms.filter((p) => p !== platform)
-                          : [...kit.qp_default_platforms, platform]
-                        setKit((k) => ({ ...k, qp_default_platforms: next }))
-                      }}
-                      className="accent-primary"
-                    />
-                    <span className="text-sm capitalize">{ICONS[platform]} {platform}</span>
-                  </label>
-                )
-              })}
-            </div>
-          </div>
-
           {/* Ton implicit */}
           <div className="rounded-lg border bg-card p-5 space-y-4">
             <div>
