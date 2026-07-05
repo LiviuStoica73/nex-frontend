@@ -24,23 +24,25 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
   const [posts, setPosts] = useState<CalendarPost[]>([])
   const [selected, setSelected] = useState<CalendarPost | null>(null)
   const [statusFilter, setStatusFilter] = useState("")
+  const [postStatusFilter, setPostStatusFilter] = useState("")
 
-  const fetchPosts = async (start: Date, end: Date, statusFilterOverride?: string) => {
+  const fetchPosts = async (start: Date, end: Date, statusFilterOverride?: string, postStatusFilterOverride?: string) => {
     const filter = statusFilterOverride !== undefined ? statusFilterOverride : statusFilter
+    const postFilter = postStatusFilterOverride !== undefined ? postStatusFilterOverride : postStatusFilter
     try {
       const data = isAgency
-        ? await api.calendar.getAgencyPosts(orgId, start.toISOString(), end.toISOString(), token, filter || undefined)
-        : await api.calendar.getPosts(orgId, start.toISOString(), end.toISOString(), token, filter || undefined)
+        ? await api.calendar.getAgencyPosts(orgId, start.toISOString(), end.toISOString(), token, filter || undefined, postFilter || undefined)
+        : await api.calendar.getPosts(orgId, start.toISOString(), end.toISOString(), token, filter || undefined, postFilter || undefined)
       setPosts(data)
     } catch (err) {
       console.error("Calendar fetch error:", err)
     }
   }
 
-  const refetchCurrentRange = (statusFilterOverride?: string) => {
+  const refetchCurrentRange = (statusFilterOverride?: string, postStatusFilterOverride?: string) => {
     const calApi = calendarRef.current?.getApi()
     if (!calApi) return
-    fetchPosts(calApi.view.currentStart, calApi.view.currentEnd, statusFilterOverride)
+    fetchPosts(calApi.view.currentStart, calApi.view.currentEnd, statusFilterOverride, postStatusFilterOverride)
   }
 
   const events = posts
@@ -76,7 +78,7 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex flex-wrap justify-end gap-3">
         <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
           <span>Stare campanie</span>
           <select
@@ -97,6 +99,26 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
             <option value="paused">Pauză</option>
             <option value="cancelled">Anulat</option>
             <option value="archived">Arhivat</option>
+          </select>
+        </label>
+        <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <span>Stare postare</span>
+          <select
+            value={postStatusFilter}
+            onChange={(e) => {
+              const value = e.target.value
+              setPostStatusFilter(value)
+              refetchCurrentRange(undefined, value)
+            }}
+            className="rounded-md border bg-background px-2 py-1 text-sm"
+          >
+            <option value="">Toate</option>
+            <option value="draft">Ciornă</option>
+            <option value="approved">Aprobat</option>
+            <option value="scheduled">Programat</option>
+            <option value="published">Publicat</option>
+            <option value="failed">Eșuat</option>
+            <option value="skipped">Omis</option>
           </select>
         </label>
       </div>
