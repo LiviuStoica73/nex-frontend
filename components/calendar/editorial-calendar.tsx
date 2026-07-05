@@ -23,16 +23,24 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
   const calendarRef = useRef<FullCalendar>(null)
   const [posts, setPosts] = useState<CalendarPost[]>([])
   const [selected, setSelected] = useState<CalendarPost | null>(null)
+  const [statusFilter, setStatusFilter] = useState("")
 
-  const fetchPosts = async (start: Date, end: Date) => {
+  const fetchPosts = async (start: Date, end: Date, statusFilterOverride?: string) => {
+    const filter = statusFilterOverride !== undefined ? statusFilterOverride : statusFilter
     try {
       const data = isAgency
-        ? await api.calendar.getAgencyPosts(orgId, start.toISOString(), end.toISOString(), token)
-        : await api.calendar.getPosts(orgId, start.toISOString(), end.toISOString(), token)
+        ? await api.calendar.getAgencyPosts(orgId, start.toISOString(), end.toISOString(), token, filter || undefined)
+        : await api.calendar.getPosts(orgId, start.toISOString(), end.toISOString(), token, filter || undefined)
       setPosts(data)
     } catch (err) {
       console.error("Calendar fetch error:", err)
     }
+  }
+
+  const refetchCurrentRange = (statusFilterOverride?: string) => {
+    const calApi = calendarRef.current?.getApi()
+    if (!calApi) return
+    fetchPosts(calApi.view.currentStart, calApi.view.currentEnd, statusFilterOverride)
   }
 
   const events = posts
@@ -68,6 +76,30 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
 
   return (
     <div className="space-y-4">
+      <div className="flex justify-end">
+        <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <span>Stare campanie</span>
+          <select
+            value={statusFilter}
+            onChange={(e) => {
+              const value = e.target.value
+              setStatusFilter(value)
+              refetchCurrentRange(value)
+            }}
+            className="rounded-md border bg-background px-2 py-1 text-sm"
+          >
+            <option value="">Active</option>
+            <option value="all">Toate</option>
+            <option value="draft">Ciornă</option>
+            <option value="approved">Aprobat</option>
+            <option value="scheduled">Programat</option>
+            <option value="published">Publicat</option>
+            <option value="paused">Pauză</option>
+            <option value="cancelled">Anulat</option>
+            <option value="archived">Arhivat</option>
+          </select>
+        </label>
+      </div>
       <FullCalendar
         ref={calendarRef}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}

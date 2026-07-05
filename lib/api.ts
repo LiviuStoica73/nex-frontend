@@ -206,14 +206,14 @@ export const api = {
   },
 
   calendar: {
-    getPosts: (orgId: string, start: string, end: string, token: string) =>
+    getPosts: (orgId: string, start: string, end: string, token: string, campaignStatusFilter?: string) =>
       apiFetch<Post[]>(
-        `/api/v1/orgs/${orgId}/calendar?start=${start}&end=${end}`,
+        `/api/v1/orgs/${orgId}/calendar?start=${start}&end=${end}${campaignStatusFilter ? `&campaign_status_filter=${campaignStatusFilter}` : ""}`,
         { headers: { Authorization: `Bearer ${token}` } },
       ),
-    getAgencyPosts: (orgId: string, start: string, end: string, token: string) =>
+    getAgencyPosts: (orgId: string, start: string, end: string, token: string, campaignStatusFilter?: string) =>
       apiFetch<(Post & { org_name?: string })[]>(
-        `/api/v1/orgs/${orgId}/calendar/agency?start=${start}&end=${end}`,
+        `/api/v1/orgs/${orgId}/calendar/agency?start=${start}&end=${end}${campaignStatusFilter ? `&campaign_status_filter=${campaignStatusFilter}` : ""}`,
         { headers: { Authorization: `Bearer ${token}` } },
       ),
   },
