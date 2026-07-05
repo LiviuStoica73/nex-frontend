@@ -50,8 +50,8 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
     .map((p) => ({
       id: p.id,
       title: p.org_name
-        ? `[${p.org_name}] ${p.platform.toUpperCase()} — ${p.text_content?.slice(0, 30) ?? ""}`
-        : `${p.platform.toUpperCase()} — ${p.text_content?.slice(0, 40) ?? ""}`,
+        ? `[${p.org_name}] ${p.platform.toUpperCase()} — ${p.blog_title ?? p.text_content?.slice(0, 30) ?? ""}`
+        : `${p.platform.toUpperCase()} — ${p.blog_title ?? p.text_content?.slice(0, 40) ?? ""}`,
       start: p.scheduled_at!,
       backgroundColor: PLATFORM_COLORS[p.platform] ?? "#6B7280",
       borderColor: STATUS_COLORS[p.status],
@@ -284,6 +284,9 @@ function PostDetailModal({
           </span>
         </div>
 
+        {post.blog_title && (
+          <p className="mb-1 text-sm font-semibold text-foreground">{post.blog_title}</p>
+        )}
         <p className="mb-4 text-sm leading-relaxed text-foreground">
           {post.text_content ?? t("not_available")}
         </p>

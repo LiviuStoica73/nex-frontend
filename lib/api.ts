@@ -70,6 +70,8 @@ export interface Post {
   id: string
   campaign_id: string | null
   topic_id: string | null
+  blog_connector_id: string | null
+  blog_title: string | null
   platform: Platform
   post_type: string
   language: string
