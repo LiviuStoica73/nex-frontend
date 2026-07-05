@@ -183,6 +183,9 @@ export function BrandKitForm({ orgId, token }: Props) {
   const [question, setQuestion] = useState("")
   const [answer, setAnswer] = useState("")
   const [querying, setQuerying] = useState(false)
+  const [previewTitle, setPreviewTitle] = useState("")
+  const [previewSubtitle, setPreviewSubtitle] = useState("")
+  const [previewOverlay, setPreviewOverlay] = useState("")
   const fileRef = useRef<HTMLInputElement>(null)
 
   // Încarcă fonturile reale (aceleași bundle-uite pe server pentru Pillow) o
@@ -730,195 +733,293 @@ export function BrandKitForm({ orgId, token }: Props) {
 
       {/* ── Tab: Tipografie ─────────────────────────────────────────────────── */}
       {tab === "tipografie" && (
-        <div className="space-y-6">
+        <div className="space-y-8">
           <p className="text-sm text-muted-foreground">
             Setările de tipografie sunt folosite la generarea imaginilor cu <strong>Produs în template</strong> și la <strong>Text pe imagine</strong>.
           </p>
 
-          {/* Preview live — fontul e cel real folosit și de generatorul de imagini */}
-          <div
-            className="rounded-lg border p-6 space-y-2"
-            style={{ backgroundColor: kit.background_color || "#FFFFFF" }}
-          >
-            <p
-              style={{
-                fontFamily: `"${kit.title_font || "Inter"}", sans-serif`,
-                fontSize: `${Number(kit.title_font_size) || 48}px`,
-                fontWeight: kit.title_bold === "true" ? 700 : 400,
-                fontStyle: kit.title_italic === "true" ? "italic" : "normal",
-                color: kit.title_color || "#1A1A1A",
-                lineHeight: 1.2,
-                margin: 0,
-              }}
-            >
-              Pantaloni bărbați
-            </p>
-            <p
-              style={{
-                fontFamily: `"${kit.subtitle_font || "Inter"}", sans-serif`,
-                fontSize: `${Number(kit.subtitle_font_size) || 32}px`,
-                fontWeight: kit.subtitle_bold === "true" ? 700 : 400,
-                fontStyle: kit.subtitle_italic === "true" ? "italic" : "normal",
-                color: kit.subtitle_color || "#555555",
-                lineHeight: 1.2,
-                margin: 0,
-              }}
-            >
-              Din bumbac 100% · Preț 149 lei
-            </p>
-            <p className="text-xs text-muted-foreground pt-2">
-              Preview aproximativ (font web) — rezultatul din Telegram folosește exact aceleași fișiere TTF.
-            </p>
-          </div>
+          {/* ══════════════════ Secțiune: Produs în template ══════════════════ */}
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold">📦 Produs în template</h2>
 
-          {/* Titlu */}
-          <div className="rounded-lg border bg-card p-5 space-y-4">
-            <h2 className="font-semibold">Titlu</h2>
+            {/* Preview live — fontul e cel real folosit și de generatorul de imagini */}
+            <div
+              className="rounded-lg border p-6 space-y-2"
+              style={{ backgroundColor: kit.background_color || "#FFFFFF" }}
+            >
+              <p
+                style={{
+                  fontFamily: `"${kit.title_font || "Inter"}", sans-serif`,
+                  fontSize: `${Number(kit.title_font_size) || 48}px`,
+                  fontWeight: kit.title_bold === "true" ? 700 : 400,
+                  fontStyle: kit.title_italic === "true" ? "italic" : "normal",
+                  color: kit.title_color || "#1A1A1A",
+                  lineHeight: 1.2,
+                  margin: 0,
+                }}
+              >
+                {previewTitle || "Titlu produs"}
+              </p>
+              <p
+                style={{
+                  fontFamily: `"${kit.subtitle_font || "Inter"}", sans-serif`,
+                  fontSize: `${Number(kit.subtitle_font_size) || 32}px`,
+                  fontWeight: kit.subtitle_bold === "true" ? 700 : 400,
+                  fontStyle: kit.subtitle_italic === "true" ? "italic" : "normal",
+                  color: kit.subtitle_color || "#555555",
+                  lineHeight: 1.2,
+                  margin: 0,
+                }}
+              >
+                {previewSubtitle || "Subtitlu / preț"}
+              </p>
+              <p className="text-xs text-muted-foreground pt-2">
+                Preview aproximativ (font web) — rezultatul din Telegram folosește exact aceleași fișiere TTF.
+                Fundalul e cel din tab-ul Identitate → Culori brand ("Fundal"); apare doar în zonele
+                template-ului fără poză/text, dacă template-ul are transparență acolo.
+              </p>
+            </div>
+
+            {/* Texte de test — doar pentru preview, nu se salvează */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-sm text-muted-foreground">Font</label>
-                <select
+                <label className="text-sm text-muted-foreground">Text de test — Titlu</label>
+                <input
+                  type="text"
                   className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                  value={kit.title_font || ""}
-                  onChange={(e) => setKit((k) => ({ ...k, title_font: e.target.value || null }))}
-                >
-                  <option value="">— Default (Inter) —</option>
-                  {FONT_OPTIONS.map((f) => <option key={f} value={f}>{f}</option>)}
-                </select>
+                  placeholder="Pantaloni bărbați"
+                  value={previewTitle}
+                  onChange={(e) => setPreviewTitle(e.target.value)}
+                />
               </div>
               <div className="space-y-1">
-                <label className="text-sm text-muted-foreground">Dimensiune (px)</label>
+                <label className="text-sm text-muted-foreground">Text de test — Subtitlu</label>
                 <input
-                  type="number" min={12} max={120}
+                  type="text"
                   className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                  placeholder="48"
-                  value={kit.title_font_size || ""}
-                  onChange={(e) => setKit((k) => ({ ...k, title_font_size: e.target.value || null }))}
+                  placeholder="Din bumbac 100% · Preț 149 lei"
+                  value={previewSubtitle}
+                  onChange={(e) => setPreviewSubtitle(e.target.value)}
                 />
               </div>
             </div>
-            <div className="flex items-center gap-6">
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={kit.title_bold === "true"}
-                  onChange={(e) => setKit((k) => ({ ...k, title_bold: e.target.checked ? "true" : "false" }))}
-                  className="h-4 w-4 rounded border"
-                />
-                <span className="text-sm font-bold">Bold</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={kit.title_italic === "true"}
-                  onChange={(e) => setKit((k) => ({ ...k, title_italic: e.target.checked ? "true" : "false" }))}
-                  className="h-4 w-4 rounded border"
-                />
-                <span className="text-sm italic">Italic</span>
-              </label>
-              <div className="flex items-center gap-2">
-                <label className="text-sm text-muted-foreground">Culoare</label>
-                <input
-                  type="color"
-                  value={kit.title_color || "#1A1A1A"}
-                  onChange={(e) => setKit((k) => ({ ...k, title_color: e.target.value }))}
-                  className="h-9 w-9 cursor-pointer rounded border p-0.5"
-                />
-                <input
-                  type="text"
-                  value={kit.title_color || ""}
-                  onChange={(e) => setKit((k) => ({ ...k, title_color: e.target.value || null }))}
-                  className="w-24 rounded border bg-background px-2 py-1.5 text-sm font-mono"
-                  placeholder="#1A1A1A"
-                />
+
+            {/* Titlu */}
+            <div className="rounded-lg border bg-card p-5 space-y-4">
+              <h3 className="font-semibold">Titlu</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-sm text-muted-foreground">Font</label>
+                  <select
+                    className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+                    value={kit.title_font || ""}
+                    onChange={(e) => setKit((k) => ({ ...k, title_font: e.target.value || null }))}
+                  >
+                    <option value="">— Default (Inter) —</option>
+                    {FONT_OPTIONS.map((f) => <option key={f} value={f}>{f}</option>)}
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-sm text-muted-foreground">Dimensiune (px)</label>
+                  <input
+                    type="number" min={12} max={120}
+                    className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+                    placeholder="48"
+                    value={kit.title_font_size || ""}
+                    onChange={(e) => setKit((k) => ({ ...k, title_font_size: e.target.value || null }))}
+                  />
+                </div>
+              </div>
+              <div className="flex items-center gap-6">
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={kit.title_bold === "true"}
+                    onChange={(e) => setKit((k) => ({ ...k, title_bold: e.target.checked ? "true" : "false" }))}
+                    className="h-4 w-4 rounded border"
+                  />
+                  <span className="text-sm font-bold">Bold</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={kit.title_italic === "true"}
+                    onChange={(e) => setKit((k) => ({ ...k, title_italic: e.target.checked ? "true" : "false" }))}
+                    className="h-4 w-4 rounded border"
+                  />
+                  <span className="text-sm italic">Italic</span>
+                </label>
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-muted-foreground">Culoare</label>
+                  <input
+                    type="color"
+                    value={kit.title_color || "#1A1A1A"}
+                    onChange={(e) => setKit((k) => ({ ...k, title_color: e.target.value }))}
+                    className="h-9 w-9 cursor-pointer rounded border p-0.5"
+                  />
+                  <input
+                    type="text"
+                    value={kit.title_color || ""}
+                    onChange={(e) => setKit((k) => ({ ...k, title_color: e.target.value || null }))}
+                    className="w-24 rounded border bg-background px-2 py-1.5 text-sm font-mono"
+                    placeholder="#1A1A1A"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Subtitlu */}
+            <div className="rounded-lg border bg-card p-5 space-y-4">
+              <h3 className="font-semibold">Subtitlu / Preț</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-sm text-muted-foreground">Font</label>
+                  <select
+                    className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+                    value={kit.subtitle_font || ""}
+                    onChange={(e) => setKit((k) => ({ ...k, subtitle_font: e.target.value || null }))}
+                  >
+                    <option value="">— Default (Inter) —</option>
+                    {FONT_OPTIONS.map((f) => <option key={f} value={f}>{f}</option>)}
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-sm text-muted-foreground">Dimensiune (px)</label>
+                  <input
+                    type="number" min={12} max={120}
+                    className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+                    placeholder="32"
+                    value={kit.subtitle_font_size || ""}
+                    onChange={(e) => setKit((k) => ({ ...k, subtitle_font_size: e.target.value || null }))}
+                  />
+                </div>
+              </div>
+              <div className="flex items-center gap-6">
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={kit.subtitle_bold === "true"}
+                    onChange={(e) => setKit((k) => ({ ...k, subtitle_bold: e.target.checked ? "true" : "false" }))}
+                    className="h-4 w-4 rounded border"
+                  />
+                  <span className="text-sm font-bold">Bold</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={kit.subtitle_italic === "true"}
+                    onChange={(e) => setKit((k) => ({ ...k, subtitle_italic: e.target.checked ? "true" : "false" }))}
+                    className="h-4 w-4 rounded border"
+                  />
+                  <span className="text-sm italic">Italic</span>
+                </label>
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-muted-foreground">Culoare</label>
+                  <input
+                    type="color"
+                    value={kit.subtitle_color || "#555555"}
+                    onChange={(e) => setKit((k) => ({ ...k, subtitle_color: e.target.value }))}
+                    className="h-9 w-9 cursor-pointer rounded border p-0.5"
+                  />
+                  <input
+                    type="text"
+                    value={kit.subtitle_color || ""}
+                    onChange={(e) => setKit((k) => ({ ...k, subtitle_color: e.target.value || null }))}
+                    className="w-24 rounded border bg-background px-2 py-1.5 text-sm font-mono"
+                    placeholder="#555555"
+                  />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Subtitlu */}
-          <div className="rounded-lg border bg-card p-5 space-y-4">
-            <h2 className="font-semibold">Subtitlu / Preț</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-sm text-muted-foreground">Font</label>
-                <select
-                  className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                  value={kit.subtitle_font || ""}
-                  onChange={(e) => setKit((k) => ({ ...k, subtitle_font: e.target.value || null }))}
-                >
-                  <option value="">— Default (Inter) —</option>
-                  {FONT_OPTIONS.map((f) => <option key={f} value={f}>{f}</option>)}
-                </select>
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm text-muted-foreground">Dimensiune (px)</label>
-                <input
-                  type="number" min={12} max={120}
-                  className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                  placeholder="32"
-                  value={kit.subtitle_font_size || ""}
-                  onChange={(e) => setKit((k) => ({ ...k, subtitle_font_size: e.target.value || null }))}
-                />
-              </div>
-            </div>
-            <div className="flex items-center gap-6">
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={kit.subtitle_bold === "true"}
-                  onChange={(e) => setKit((k) => ({ ...k, subtitle_bold: e.target.checked ? "true" : "false" }))}
-                  className="h-4 w-4 rounded border"
-                />
-                <span className="text-sm font-bold">Bold</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={kit.subtitle_italic === "true"}
-                  onChange={(e) => setKit((k) => ({ ...k, subtitle_italic: e.target.checked ? "true" : "false" }))}
-                  className="h-4 w-4 rounded border"
-                />
-                <span className="text-sm italic">Italic</span>
-              </label>
-              <div className="flex items-center gap-2">
-                <label className="text-sm text-muted-foreground">Culoare</label>
-                <input
-                  type="color"
-                  value={kit.subtitle_color || "#555555"}
-                  onChange={(e) => setKit((k) => ({ ...k, subtitle_color: e.target.value }))}
-                  className="h-9 w-9 cursor-pointer rounded border p-0.5"
-                />
-                <input
-                  type="text"
-                  value={kit.subtitle_color || ""}
-                  onChange={(e) => setKit((k) => ({ ...k, subtitle_color: e.target.value || null }))}
-                  className="w-24 rounded border bg-background px-2 py-1.5 text-sm font-mono"
-                  placeholder="#555555"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Fundal bandă text overlay */}
-          <div className="rounded-lg border bg-card p-5 space-y-3">
-            <h2 className="font-semibold">Fundal text overlay</h2>
+          {/* ══════════════════ Secțiune: Text pe imagine ══════════════════ */}
+          <div className="space-y-4 border-t pt-6">
+            <h2 className="text-lg font-semibold">🖼️ Text pe imagine</h2>
             <p className="text-sm text-muted-foreground">
-              Culoarea benzii semi-transparente din spatele textului scris pe imagine. Poți include alpha (ex: <code className="font-mono text-xs bg-muted px-1 rounded">#00000088</code>).
+              Textul scurt suprapus pe imaginile generate cu AI (Quick Post / Advanced Post).
+              Folosește fontul și italicul de la <strong>Titlu</strong> (mai sus); culoarea textului
+              se alege automat (alb sau negru) pentru contrast maxim — nu e configurabilă.
             </p>
-            <div className="flex items-center gap-3">
-              <input
-                type="color"
-                value={(kit.text_bg_color || "#000000").slice(0, 7)}
-                onChange={(e) => setKit((k) => ({ ...k, text_bg_color: e.target.value }))}
-                className="h-9 w-9 cursor-pointer rounded border p-0.5"
-              />
+
+            {/* Text de test */}
+            <div className="space-y-1">
+              <label className="text-sm text-muted-foreground">Text de test — Subiect</label>
               <input
                 type="text"
-                value={kit.text_bg_color || ""}
-                onChange={(e) => setKit((k) => ({ ...k, text_bg_color: e.target.value || null }))}
-                className="w-32 rounded border bg-background px-2 py-1.5 text-sm font-mono"
-                placeholder="#00000088"
+                className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+                placeholder="Ofertă specială -20% azi!"
+                value={previewOverlay}
+                onChange={(e) => setPreviewOverlay(e.target.value)}
               />
+            </div>
+
+            {/* Preview pe fundal deschis și închis, ca să se vadă contrastul automat */}
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { bg: "#E8E4D8", label: "Fundal deschis" },
+                { bg: "#20281E", label: "Fundal închis" },
+              ].map(({ bg, label }) => {
+                const bandColor = kit.text_bg_color || "#00000088"
+                const bandOpaqueColor = bandColor.length >= 8 ? `#${bandColor.slice(1, 7)}` : bandColor
+                const bandAlpha = bandColor.length >= 9 ? parseInt(bandColor.slice(7, 9), 16) / 255 : 0.55
+                // Contrast automat aproximativ (aceeași logică ca backend-ul: luminanță fundal+bandă)
+                const hexToRgb = (hex: string) => {
+                  const v = hex.replace("#", "")
+                  return [parseInt(v.slice(0, 2), 16), parseInt(v.slice(2, 4), 16), parseInt(v.slice(4, 6), 16)]
+                }
+                const [br, bgc, bb] = hexToRgb(bg)
+                const [rr, rg, rb] = hexToRgb(bandOpaqueColor.length === 7 ? bandOpaqueColor : "#000000")
+                const luma = (0.299 * br + 0.587 * bgc + 0.114 * bb) * (1 - bandAlpha) +
+                             (0.299 * rr + 0.587 * rg + 0.114 * rb) * bandAlpha
+                const textColor = luma > 150 ? "#111111" : "#FFFFFF"
+                return (
+                  <div key={label} className="relative overflow-hidden rounded-lg border h-40" style={{ backgroundColor: bg }}>
+                    <div
+                      className="absolute bottom-0 left-0 right-0 flex items-center justify-center px-3 py-3 text-center"
+                      style={{ backgroundColor: bandColor.length >= 8 ? bandColor : `${bandColor}88` }}
+                    >
+                      <span
+                        style={{
+                          fontFamily: `"${kit.title_font || "Inter"}", sans-serif`,
+                          fontStyle: kit.title_italic === "true" ? "italic" : "normal",
+                          fontWeight: 700,
+                          color: textColor,
+                          fontSize: "15px",
+                        }}
+                      >
+                        {previewOverlay || "Ofertă specială -20% azi!"}
+                      </span>
+                    </div>
+                    <span className="absolute top-2 left-2 text-[11px] text-muted-foreground bg-background/70 rounded px-1.5 py-0.5">
+                      {label}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Fundal bandă text overlay */}
+            <div className="rounded-lg border bg-card p-5 space-y-3">
+              <h3 className="font-semibold">Fundal text overlay</h3>
+              <p className="text-sm text-muted-foreground">
+                Culoarea benzii semi-transparente din spatele textului. Poți include alpha (ex: <code className="font-mono text-xs bg-muted px-1 rounded">#00000088</code>).
+              </p>
+              <div className="flex items-center gap-3">
+                <input
+                  type="color"
+                  value={(kit.text_bg_color || "#000000").slice(0, 7)}
+                  onChange={(e) => setKit((k) => ({ ...k, text_bg_color: e.target.value }))}
+                  className="h-9 w-9 cursor-pointer rounded border p-0.5"
+                />
+                <input
+                  type="text"
+                  value={kit.text_bg_color || ""}
+                  onChange={(e) => setKit((k) => ({ ...k, text_bg_color: e.target.value || null }))}
+                  className="w-32 rounded border bg-background px-2 py-1.5 text-sm font-mono"
+                  placeholder="#00000088"
+                />
+              </div>
             </div>
           </div>
 
