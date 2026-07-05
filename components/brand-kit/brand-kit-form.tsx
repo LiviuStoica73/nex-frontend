@@ -185,6 +185,18 @@ export function BrandKitForm({ orgId, token }: Props) {
   const [querying, setQuerying] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
+  // Încarcă fonturile reale (aceleași bundle-uite pe server pentru Pillow) o
+  // singură dată, ca preview-ul din tab-ul Tipografie să fie fidel rezultatului.
+  useEffect(() => {
+    const id = "nexnex-typography-fonts"
+    if (document.getElementById(id)) return
+    const link = document.createElement("link")
+    link.id = id
+    link.rel = "stylesheet"
+    link.href = "https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,700;1,400;1,700&family=Roboto:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:ital,wght@0,400;0,700;1,400;1,700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+    document.head.appendChild(link)
+  }, [])
+
   useEffect(() => {
     fetch(`/api/brand/kit`)
       .then((r) => r.json())
@@ -456,11 +468,9 @@ export function BrandKitForm({ orgId, token }: Props) {
     { id: "quick_post",  label: "⚡ Quick Post" },
   ]
 
-  const FONT_OPTIONS = [
-    "Inter", "Roboto", "Open Sans", "Lato", "Montserrat",
-    "Poppins", "Raleway", "Oswald", "Playfair Display",
-    "Merriweather", "Ubuntu", "Nunito", "Source Sans Pro",
-  ]
+  // Doar fonturi bundle-uite fizic pe server (app/assets/fonts/) — orice altă
+  // valoare cade pe Inter la generare, deci nu le mai oferim ca opțiuni false.
+  const FONT_OPTIONS = ["Inter", "Roboto", "Montserrat", "Playfair Display"]
 
   const colorFields = [
     { label: "Primară",      desc: "Culoarea principală a brandului",         key: "primary_color" },
@@ -724,6 +734,42 @@ export function BrandKitForm({ orgId, token }: Props) {
           <p className="text-sm text-muted-foreground">
             Setările de tipografie sunt folosite la generarea imaginilor cu <strong>Produs în template</strong> și la <strong>Text pe imagine</strong>.
           </p>
+
+          {/* Preview live — fontul e cel real folosit și de generatorul de imagini */}
+          <div
+            className="rounded-lg border p-6 space-y-2"
+            style={{ backgroundColor: kit.background_color || "#FFFFFF" }}
+          >
+            <p
+              style={{
+                fontFamily: `"${kit.title_font || "Inter"}", sans-serif`,
+                fontSize: `${Number(kit.title_font_size) || 48}px`,
+                fontWeight: kit.title_bold === "true" ? 700 : 400,
+                fontStyle: kit.title_italic === "true" ? "italic" : "normal",
+                color: kit.title_color || "#1A1A1A",
+                lineHeight: 1.2,
+                margin: 0,
+              }}
+            >
+              Pantaloni bărbați
+            </p>
+            <p
+              style={{
+                fontFamily: `"${kit.subtitle_font || "Inter"}", sans-serif`,
+                fontSize: `${Number(kit.subtitle_font_size) || 32}px`,
+                fontWeight: kit.subtitle_bold === "true" ? 700 : 400,
+                fontStyle: kit.subtitle_italic === "true" ? "italic" : "normal",
+                color: kit.subtitle_color || "#555555",
+                lineHeight: 1.2,
+                margin: 0,
+              }}
+            >
+              Din bumbac 100% · Preț 149 lei
+            </p>
+            <p className="text-xs text-muted-foreground pt-2">
+              Preview aproximativ (font web) — rezultatul din Telegram folosește exact aceleași fișiere TTF.
+            </p>
+          </div>
 
           {/* Titlu */}
           <div className="rounded-lg border bg-card p-5 space-y-4">
