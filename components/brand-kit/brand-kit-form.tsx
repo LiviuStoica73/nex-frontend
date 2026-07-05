@@ -83,7 +83,6 @@ interface BrandKit {
   qp_default_sign: boolean
   qp_default_logo_sign: boolean
   qp_default_template: boolean
-  qp_default_text_overlay: boolean
   qp_default_schedule_mode: string
   qp_default_image_direction: string
   qp_default_image_format: string
@@ -153,7 +152,6 @@ export function BrandKitForm({ orgId, token }: Props) {
     qp_default_sign: false,
     qp_default_logo_sign: false,
     qp_default_template: false,
-    qp_default_text_overlay: false,
     qp_default_schedule_mode: "best_time",
     qp_default_image_direction: "auto",
     qp_default_image_format: "square",
@@ -214,7 +212,6 @@ export function BrandKitForm({ orgId, token }: Props) {
           qp_default_sign: data.qp_default_sign ?? false,
           qp_default_logo_sign: data.qp_default_logo_sign ?? false,
           qp_default_template: data.qp_default_template ?? false,
-          qp_default_text_overlay: data.qp_default_text_overlay ?? false,
           qp_default_schedule_mode: data.qp_default_schedule_mode || "best_time",
           qp_default_image_direction: data.qp_default_image_direction || "auto",
           qp_default_image_format: data.qp_default_image_format || "square",
@@ -283,7 +280,6 @@ export function BrandKitForm({ orgId, token }: Props) {
           qp_default_sign: kit.qp_default_sign,
           qp_default_logo_sign: kit.qp_default_logo_sign,
           qp_default_template: kit.qp_default_template,
-          qp_default_text_overlay: kit.qp_default_text_overlay,
           qp_default_schedule_mode: kit.qp_default_schedule_mode,
           qp_default_image_direction: kit.qp_default_image_direction,
           qp_default_image_format: kit.qp_default_image_format,
@@ -1328,18 +1324,6 @@ export function BrandKitForm({ orgId, token }: Props) {
                     ? <span className="ml-2 text-xs text-muted-foreground">({kit.visual_templates.length} template{kit.visual_templates.length > 1 ? "-uri" : ""} ✓)</span>
                     : <span className="ml-2 text-xs text-destructive">(niciun template — adaugă din tab Identitate)</span>
                   }
-                </div>
-              </label>
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={kit.qp_default_text_overlay}
-                  onChange={(e) => setKit((k) => ({ ...k, qp_default_text_overlay: e.target.checked }))}
-                  className="accent-primary"
-                />
-                <div>
-                  <span className="text-sm font-medium">Text postare pe imagine</span>
-                  <span className="ml-1 text-xs text-muted-foreground">— primele 80 de caractere din textul postării</span>
                 </div>
               </label>
             </div>
