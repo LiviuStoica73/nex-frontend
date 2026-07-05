@@ -83,10 +83,21 @@ export default function BestTimesPage() {
         .then((r) => r.json()).catch(() => []),
       fetch(`${API}/api/v1/orgs/${orgId}/best-times`, { headers: { Authorization: `Bearer ${token}` } })
         .then((r) => r.json()).catch(() => ({})),
-    ]).then(([accounts, bestTimes]: [Array<{ platform: string; is_active: boolean }>, Record<string, unknown>]) => {
+      fetch(`${API}/api/v1/orgs/${orgId}/blog-connectors`, { headers: { Authorization: `Bearer ${token}` } })
+        .then((r) => r.json()).catch(() => []),
+    ]).then(([accounts, bestTimes, blogConnectors]: [
+      Array<{ platform: string; is_active: boolean }>,
+      Record<string, unknown>,
+      Array<{ is_active: boolean }>,
+    ]) => {
       const activePlatforms = Array.from(
         new Set((Array.isArray(accounts) ? accounts : []).filter((a) => a.is_active).map((a) => a.platform))
       )
+      // Blog e o rețea ca oricare alta pentru Best Time — tratată identic,
+      // deși conectorii de blog trăiesc într-un model separat de SocialAccount.
+      if ((Array.isArray(blogConnectors) ? blogConnectors : []).some((c) => c.is_active)) {
+        activePlatforms.push("blog")
+      }
       setPlatforms(activePlatforms)
       const d: Record<string, { days: number[]; slots: string[] }> = {}
       for (const p of activePlatforms) d[p] = normalizeSchedule(bestTimes?.[p], p)
