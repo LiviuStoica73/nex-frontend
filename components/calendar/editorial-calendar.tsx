@@ -167,12 +167,17 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
           locale={locale}
           onClose={() => setSelected(null)}
           onPublishNow={async () => {
-            await api.posts.publishNow(selected.id, token)
-            setSelected(null)
-            await fetchPosts(
-              calendarRef.current!.getApi().view.currentStart,
-              calendarRef.current!.getApi().view.currentEnd,
-            )
+            try {
+              await api.posts.publishNow(selected.id, token)
+              setSelected(null)
+              await fetchPosts(
+                calendarRef.current!.getApi().view.currentStart,
+                calendarRef.current!.getApi().view.currentEnd,
+              )
+            } catch (err: unknown) {
+              const msg = err instanceof Error ? err.message : String(err)
+              alert(`Eroare la publicare: ${msg}`)
+            }
           }}
         />
       )}
