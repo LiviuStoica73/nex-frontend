@@ -7,6 +7,7 @@ import {
   Facebook, Instagram, Trash2, Plus, Globe, Check, X as XIcon,
   MessageSquare, Linkedin, Youtube, Music2, AtSign, ExternalLink,
   Rss, Loader2, CheckCircle2, XCircle, ScanSearch, Info, ChevronDown, ChevronUp,
+  RefreshCw,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -370,6 +371,12 @@ export default function SocialAccountsPage() {
       });
       if (res.ok) setAccounts((prev) => prev.filter((a) => a.id !== accountId));
     } catch {}
+  };
+
+  const OAUTH_RECONNECT: Record<string, () => void> = {
+    facebook: handleConnectFacebook,
+    x: handleConnectX,
+    linkedin: handleConnectLinkedIn,
   };
 
   const connectedPlatforms = new Set(accounts.map((a) => a.platform));
@@ -758,6 +765,16 @@ export default function SocialAccountsPage() {
                     {account.is_active ? "Dezactivează postarea pe acest cont" : "Activează postarea pe acest cont"}
                   </TooltipContent>
                 </Tooltip>
+                {OAUTH_RECONNECT[account.platform] && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" onClick={OAUTH_RECONNECT[account.platform]}>
+                        <RefreshCw className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Reconectează (token expirat sau invalid)</TooltipContent>
+                  </Tooltip>
+                )}
                 <Button variant="ghost" size="icon" onClick={() => handleDisconnect(account.id)}
                   className="text-destructive hover:text-destructive">
                   <Trash2 className="h-4 w-4" />
