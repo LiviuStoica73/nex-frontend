@@ -47,6 +47,7 @@ interface SocialAccount {
   post_language: string | null;
   is_active: boolean;
   created_at: string;
+  has_oauth1: boolean;
 }
 
 interface BlogConnector {
@@ -828,14 +829,25 @@ export default function SocialAccountsPage() {
                   </TooltipContent>
                 </Tooltip>
                 {OAUTH_RECONNECT[account.platform] && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" onClick={OAUTH_RECONNECT[account.platform]}>
-                        <RefreshCw className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Reconectează (token expirat sau invalid)</TooltipContent>
-                  </Tooltip>
+                  account.has_oauth1 ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant="ghost" size="icon" onClick={OAUTH_RECONNECT[account.platform]}>
+                          <RefreshCw className="h-4 w-4 text-muted-foreground" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>OAuth 1.0a activ — tokens permanenți. Click pentru a actualiza credențialele.</TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant="ghost" size="icon" onClick={OAUTH_RECONNECT[account.platform]}>
+                          <RefreshCw className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Reconectează (token expirat sau invalid)</TooltipContent>
+                    </Tooltip>
+                  )
                 )}
                 <Button variant="ghost" size="icon" onClick={() => handleDisconnect(account.id)}
                   className="text-destructive hover:text-destructive">
