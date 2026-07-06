@@ -279,6 +279,22 @@ export const api = {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       }),
+    reschedule: (postId: string, scheduledAt: string, token: string) =>
+      apiFetch<Post>(`/api/v1/posts/${postId}/reschedule`, {
+        method: "POST",
+        body: JSON.stringify({ scheduled_at: scheduledAt }),
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    pause: (postId: string, token: string) =>
+      apiFetch<Post>(`/api/v1/posts/${postId}/pause`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    deleteById: (postId: string, token: string) =>
+      apiFetch<void>(`/api/v1/posts/${postId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      }),
   },
 
   generate: {

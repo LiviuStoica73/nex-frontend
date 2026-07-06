@@ -45,19 +45,28 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
     fetchPosts(calApi.view.currentStart, calApi.view.currentEnd, statusFilterOverride, postStatusFilterOverride)
   }
 
+  const STATUS_DOTS: Record<string, string> = {
+    draft: "⚪", approved: "🔵", scheduled: "🟡", published: "🟢", failed: "🔴", skipped: "⚫",
+  }
+
   const events = posts
     .filter((p) => p.scheduled_at)
-    .map((p) => ({
-      id: p.id,
-      title: p.org_name
-        ? `[${p.org_name}] ${p.platform.toUpperCase()} — ${p.blog_title ?? p.text_content?.slice(0, 30) ?? ""}`
-        : `${p.platform.toUpperCase()} — ${p.blog_title ?? p.text_content?.slice(0, 40) ?? ""}`,
-      start: p.scheduled_at!,
-      backgroundColor: PLATFORM_COLORS[p.platform] ?? "#6B7280",
-      borderColor: STATUS_COLORS[p.status],
-      textColor: "#fff",
-      extendedProps: { post: p },
-    }))
+    .map((p) => {
+      const dot = STATUS_DOTS[p.status] ?? "⚪"
+      const preview = p.blog_title ?? p.text_content?.slice(0, 30) ?? ""
+      const title = p.org_name
+        ? `${dot} [${p.org_name}] ${p.platform.toUpperCase()} — ${preview}`
+        : `${dot} ${p.platform.toUpperCase()} — ${preview}`
+      return {
+        id: p.id,
+        title,
+        start: p.scheduled_at!,
+        backgroundColor: PLATFORM_COLORS[p.platform] ?? "#6B7280",
+        borderColor: STATUS_COLORS[p.status],
+        textColor: "#fff",
+        extendedProps: { post: p },
+      }
+    })
 
   const handleEventClick = (info: EventClickArg) => {
     setSelected(info.event.extendedProps.post as Post)
@@ -166,14 +175,12 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
           token={token}
           locale={locale}
           onClose={() => setSelected(null)}
+          onRefresh={() => refetchCurrentRange()}
           onPublishNow={async () => {
             try {
               await api.posts.publishNow(selected.id, token)
               setSelected(null)
-              await fetchPosts(
-                calendarRef.current!.getApi().view.currentStart,
-                calendarRef.current!.getApi().view.currentEnd,
-              )
+              refetchCurrentRange()
             } catch (err: unknown) {
               const msg = err instanceof Error ? err.message : String(err)
               alert(`Eroare la publicare: ${msg}`)
@@ -201,6 +208,7 @@ function PostDetailModal({
   token,
   locale,
   onClose,
+  onRefresh,
   onPublishNow,
 }: {
   post: Post
@@ -208,16 +216,22 @@ function PostDetailModal({
   token: string
   locale: string
   onClose: () => void
+  onRefresh: () => void
   onPublishNow: () => void
 }) {
   const t = useTranslations("calendar")
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002"
   const [analytics, setAnalytics] = useState<PostAnalytics | null>(null)
   const [analyticsLoading, setAnalyticsLoading] = useState(false)
   const [showAnalytics, setShowAnalytics] = useState(false)
   const [showRepost, setShowRepost] = useState(false)
+  const [showReschedule, setShowReschedule] = useState(false)
+  const [rescheduleDate, setRescheduleDate] = useState("")
   const [socialAccounts, setSocialAccounts] = useState<SocialAccount[]>([])
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([])
   const [reposting, setReposting] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [pausing, setPausing] = useState(false)
 
   const handleShowAnalytics = async () => {
     setShowAnalytics(true)
@@ -268,6 +282,51 @@ function PostDetailModal({
     )
   }
 
+  const handleDelete = async () => {
+    if (!confirm("Ștergi definitiv această postare?")) return
+    setDeleting(true)
+    try {
+      const res = await fetch(`${API_URL}/api/v1/posts/${post.id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (!res.ok) throw new Error(await res.text())
+      onClose()
+      onRefresh()
+    } catch (err) {
+      alert(`Eroare: ${err instanceof Error ? err.message : String(err)}`)
+    }
+    setDeleting(false)
+  }
+
+  const handlePause = async () => {
+    setPausing(true)
+    try {
+      const res = await fetch(`${API_URL}/api/v1/posts/${post.id}/pause`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (!res.ok) throw new Error(await res.text())
+      onClose()
+      onRefresh()
+    } catch (err) {
+      alert(`Eroare: ${err instanceof Error ? err.message : String(err)}`)
+    }
+    setPausing(false)
+  }
+
+  const handleReschedule = async () => {
+    if (!rescheduleDate) return
+    try {
+      await api.posts.reschedule(post.id, new Date(rescheduleDate).toISOString(), token)
+      setShowReschedule(false)
+      onClose()
+      onRefresh()
+    } catch (err) {
+      alert(`Eroare: ${err instanceof Error ? err.message : String(err)}`)
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
       <div
@@ -297,9 +356,19 @@ function PostDetailModal({
         </p>
 
         {post.scheduled_at && (
-          <p className="mb-4 text-xs text-muted-foreground">
+          <p className="mb-2 text-xs text-muted-foreground">
             {t("scheduled_at")}: {new Date(post.scheduled_at).toLocaleString(locale)}
           </p>
+        )}
+
+        {/* Link temă — toate postările corelate */}
+        {post.topic_id && (
+          <a
+            href={`/dashboard/campaigns?topic=${post.topic_id}`}
+            className="mb-4 block text-xs text-blue-500 underline"
+          >
+            🗂️ Vezi toate postările din această temă →
+          </a>
         )}
 
         {post.published_url && (
@@ -335,6 +404,26 @@ function PostDetailModal({
             ) : (
               <p className="text-xs text-muted-foreground">Analytics indisponibile.</p>
             )}
+          </div>
+        )}
+
+        {/* Reschedule panel */}
+        {showReschedule && (
+          <div className="mb-4 rounded-md border bg-muted/30 p-3 space-y-2">
+            <p className="text-xs font-medium">Alege noua dată și oră:</p>
+            <input
+              type="datetime-local"
+              value={rescheduleDate}
+              onChange={(e) => setRescheduleDate(e.target.value)}
+              className="w-full rounded border bg-background px-2 py-1 text-xs"
+            />
+            <button
+              onClick={handleReschedule}
+              disabled={!rescheduleDate}
+              className="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            >
+              Confirmă reprogramarea
+            </button>
           </div>
         )}
 
@@ -377,6 +466,32 @@ function PostDetailModal({
               className="rounded bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
             >
               {t("publish_now")}
+            </button>
+          )}
+          {post.status !== "published" && (
+            <button
+              onClick={() => setShowReschedule((v) => !v)}
+              className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            >
+              📅 Reprogramează
+            </button>
+          )}
+          {post.status !== "published" && post.status !== "draft" && (
+            <button
+              onClick={handlePause}
+              disabled={pausing}
+              className="rounded bg-yellow-600 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-700 disabled:opacity-50"
+            >
+              {pausing ? "..." : "⏸ Pauză"}
+            </button>
+          )}
+          {post.status !== "published" && (
+            <button
+              onClick={handleDelete}
+              disabled={deleting}
+              className="rounded bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
+            >
+              {deleting ? "..." : "🗑 Șterge"}
             </button>
           )}
           {post.status === "published" && !showAnalytics && (
