@@ -8,6 +8,7 @@ import timeGridPlugin from "@fullcalendar/timegrid"
 import interactionPlugin from "@fullcalendar/interaction"
 import type { EventClickArg, EventDropArg } from "@fullcalendar/core"
 import { api, PLATFORM_COLORS, STATUS_COLORS, type Post } from "@/lib/api"
+import { toast } from "@/components/ui/use-toast"
 
 type CalendarPost = Post & { org_name?: string }
 
@@ -184,10 +185,11 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
             try {
               await api.posts.publishNow(selected.id, token)
               setSelected(null)
-              refetchCurrentRange()
+              toast({ title: "Publicare inițiată", description: "Postarea va apărea ca publicată în câteva secunde." })
+              setTimeout(() => refetchCurrentRange(), 5000)
             } catch (err: unknown) {
               const msg = err instanceof Error ? err.message : String(err)
-              alert(`Eroare la publicare: ${msg}`)
+              toast({ title: "Eroare la publicare", description: msg, variant: "destructive" })
             }
           }}
         />
