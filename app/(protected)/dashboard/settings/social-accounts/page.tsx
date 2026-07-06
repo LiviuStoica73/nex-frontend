@@ -126,6 +126,10 @@ export default function SocialAccountsPage() {
   const [openDiscord, setOpenDiscord] = useState(false);
   const [openBluesky, setOpenBluesky] = useState(false);
   const [openBlog, setOpenBlog] = useState(false);
+  const [openXOAuth1, setOpenXOAuth1] = useState(false);
+  const [xOauth1Form, setXOauth1Form] = useState({ consumer_key: "", consumer_secret: "", access_token: "", access_token_secret: "" });
+  const [xOauth1Saving, setXOauth1Saving] = useState(false);
+  const [xOauth1Error, setXOauth1Error] = useState("");
 
   const token = (session?.user as any)?.accessToken as string | undefined;
   const orgId = activeOrgId;
@@ -195,7 +199,28 @@ export default function SocialAccountsPage() {
 
   const handleConnectX = () => {
     if (!orgId || !token) return;
-    window.location.href = `${API_URL}/api/v1/auth/x?org_id=${orgId}&jwt=${token}`;
+    setOpenXOAuth1(v => !v);
+  };
+
+  const handleSaveXOAuth1 = async () => {
+    if (!orgId || !token) return;
+    const { consumer_key, consumer_secret, access_token, access_token_secret } = xOauth1Form;
+    if (!consumer_key || !consumer_secret || !access_token || !access_token_secret) {
+      setXOauth1Error("Toate cele 4 câmpuri sunt obligatorii."); return;
+    }
+    setXOauth1Saving(true); setXOauth1Error("");
+    try {
+      const res = await fetch(`${API_URL}/api/v1/auth/x/oauth1`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ org_id: orgId, consumer_key, consumer_secret, access_token, access_token_secret }),
+      });
+      if (!res.ok) { const d = await res.json(); throw new Error(d.detail || "Eroare"); }
+      setOpenXOAuth1(false);
+      setXOauth1Form({ consumer_key: "", consumer_secret: "", access_token: "", access_token_secret: "" });
+      fetchAccounts(orgId, token);
+    } catch (e: any) { setXOauth1Error(e.message); }
+    setXOauth1Saving(false);
   };
 
   const handleConnectLinkedIn = () => {
@@ -481,6 +506,43 @@ export default function SocialAccountsPage() {
             })}
           </div>
         </div>
+
+        {/* ── X OAuth 1.0a form ────────────────────────────────────── */}
+        {openXOAuth1 && (
+          <div className="rounded-lg border p-4 space-y-3">
+            <div>
+              <p className="text-sm font-medium">Conectare X cu OAuth 1.0a</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Tokens permanenți din <strong>X Developer Console → Apps → All_Meters → Keys &amp; Tokens → OAuth 1.0 Keys</strong>.
+                Nu expiră, nu necesită reconectare periodică.
+              </p>
+            </div>
+            {[
+              { key: "consumer_key", label: "API Key (Consumer Key)" },
+              { key: "consumer_secret", label: "API Secret (Consumer Secret)" },
+              { key: "access_token", label: "Access Token" },
+              { key: "access_token_secret", label: "Access Token Secret" },
+            ].map(({ key, label }) => (
+              <div key={key} className="space-y-1">
+                <label className="text-xs text-muted-foreground">{label}</label>
+                <Input
+                  type="password"
+                  placeholder={label}
+                  value={(xOauth1Form as any)[key]}
+                  onChange={e => setXOauth1Form(f => ({ ...f, [key]: e.target.value }))}
+                />
+              </div>
+            ))}
+            {xOauth1Error && <p className="text-xs text-destructive">{xOauth1Error}</p>}
+            <div className="flex gap-2">
+              <Button size="sm" onClick={handleSaveXOAuth1} disabled={xOauth1Saving}>
+                {xOauth1Saving ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : null}
+                Conectează
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => setOpenXOAuth1(false)}>Anulează</Button>
+            </div>
+          </div>
+        )}
 
         {/* ── Acordeon helper ──────────────────────────────────────── */}
         {/* Discord */}
