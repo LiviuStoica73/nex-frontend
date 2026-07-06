@@ -128,6 +128,7 @@ export default function SocialAccountsPage() {
   const [openBluesky, setOpenBluesky] = useState(false);
   const [openBlog, setOpenBlog] = useState(false);
   const [openXOAuth1, setOpenXOAuth1] = useState(false);
+  const [showXAdvanced, setShowXAdvanced] = useState(false);
   const [xOauth1Form, setXOauth1Form] = useState({ consumer_key: "", consumer_secret: "", access_token: "", access_token_secret: "" });
   const [xOauth1Saving, setXOauth1Saving] = useState(false);
   const [xOauth1Error, setXOauth1Error] = useState("");
@@ -200,7 +201,7 @@ export default function SocialAccountsPage() {
 
   const handleConnectX = () => {
     if (!orgId || !token) return;
-    setOpenXOAuth1(v => !v);
+    window.location.href = `${API_URL}/api/v1/auth/x?org_id=${orgId}&jwt=${token}`;
   };
 
   const handleSaveXOAuth1 = async () => {
@@ -508,14 +509,24 @@ export default function SocialAccountsPage() {
           </div>
         </div>
 
-        {/* ── X OAuth 1.0a form ────────────────────────────────────── */}
+        {/* ── X OAuth 1.0a form (opțiune avansată, doar dacă X nu e conectat) ── */}
+        {!connectedPlatforms.has("x") && (
+          <div className="text-center">
+            <button
+              onClick={() => { setShowXAdvanced(v => !v); setOpenXOAuth1(v => !v); }}
+              className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+            >
+              {showXAdvanced ? "Ascunde opțiuni avansate" : "Configurare avansată X (OAuth 1.0a — conturi proprii cu Developer App)"}
+            </button>
+          </div>
+        )}
         {openXOAuth1 && (
           <div className="rounded-lg border p-4 space-y-3">
             <div>
               <p className="text-sm font-medium">Conectare X cu OAuth 1.0a</p>
               <p className="text-xs text-muted-foreground mt-1">
-                Tokens permanenți din <strong>X Developer Console → Apps → All_Meters → Keys &amp; Tokens → OAuth 1.0 Keys</strong>.
-                Nu expiră, nu necesită reconectare periodică.
+                Pentru conturi proprii cu acces la <strong>X Developer Console → Apps → Keys &amp; Tokens → OAuth 1.0 Keys</strong>.
+                Tokens permanenți, fără expirare.
               </p>
             </div>
             {[
@@ -540,7 +551,7 @@ export default function SocialAccountsPage() {
                 {xOauth1Saving ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : null}
                 Conectează
               </Button>
-              <Button size="sm" variant="outline" onClick={() => setOpenXOAuth1(false)}>Anulează</Button>
+              <Button size="sm" variant="outline" onClick={() => { setOpenXOAuth1(false); setShowXAdvanced(false); }}>Anulează</Button>
             </div>
           </div>
         )}
