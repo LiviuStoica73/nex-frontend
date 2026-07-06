@@ -74,8 +74,12 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
 
   const handleEventDrop = async (info: EventDropArg) => {
     const post = info.event.extendedProps.post as Post
+    if (post.status === "published") {
+      info.revert()
+      return
+    }
     try {
-      await api.posts.schedule(post.id, info.event.startStr, token)
+      await api.posts.reschedule(post.id, info.event.startStr, token)
       await fetchPosts(
         calendarRef.current!.getApi().view.currentStart,
         calendarRef.current!.getApi().view.currentEnd,
