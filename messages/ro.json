@@ -219,7 +219,8 @@
     "description": "Trimite o idee din Telegram. AI-ul generează textul, imaginea și alege momentul optim de publicare. Tu aprobi cu un tap.",
     "primary_cta": "Începe gratuit",
     "secondary_cta": "Vezi prețurile",
-    "platforms": "Facebook · Instagram · LinkedIn · X · TikTok"
+    "platforms": "Facebook · Instagram · LinkedIn · X · Discord · WordPress Blog",
+    "coming_soon_toast": "Lucrăm încă la conectorul {network} — revino curând!"
   },
   "preview_landing": {
     "image_alt": "Interfața Nex-Nex — dashboard postări"

@@ -219,7 +219,8 @@
     "description": "AI learns your brand, creates professional content, and publishes it automatically on social networks.",
     "primary_cta": "Try it free",
     "secondary_cta": "View plans",
-    "platforms": "Facebook · Instagram · LinkedIn · X · Discord · WordPress Blog"
+    "platforms": "Facebook · Instagram · LinkedIn · X · Discord · WordPress Blog",
+    "coming_soon_toast": "Nous travaillons encore sur le connecteur {network} — revenez bientôt !"
   },
   "preview_landing": {
     "image_alt": "Nex-Nex — The Next Era of Content"

@@ -1,6 +1,7 @@
 "use client";
 
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { toast } from "sonner";
 import {
   Facebook,
   Instagram,
@@ -9,6 +10,9 @@ import {
   AtSign,
   Rss,
   MessageSquare,
+  Youtube,
+  Music2,
+  Clapperboard,
 } from "lucide-react";
 
 const ACTIVE_NETWORKS = [
@@ -50,6 +54,12 @@ const ACTIVE_NETWORKS = [
   },
 ] as const;
 
+const COMING_SOON_NETWORKS = [
+  { key: "tiktok", label: "TikTok", icon: Music2 },
+  { key: "youtube", label: "YouTube", icon: Youtube },
+  { key: "shorts", label: "Shorts", icon: Clapperboard },
+] as const;
+
 const DISCORD_HREF_BY_LOCALE: Record<string, string> = {
   ro: "https://discord.com/channels/1521138949643571260/1521140695656566844",
 };
@@ -58,6 +68,7 @@ const DISCORD_HREF_DEFAULT =
 
 export default function HeroSocialLinks() {
   const locale = useLocale();
+  const t = useTranslations("hero_landing");
   const discordHref = DISCORD_HREF_BY_LOCALE[locale] ?? DISCORD_HREF_DEFAULT;
 
   return (
@@ -85,6 +96,18 @@ export default function HeroSocialLinks() {
       >
         <MessageSquare className="h-5 w-5" />
       </a>
+      {COMING_SOON_NETWORKS.map(({ key, label, icon: Icon }) => (
+        <button
+          key={key}
+          type="button"
+          onClick={() => toast(t("coming_soon_toast", { network: label }))}
+          title={label}
+          aria-label={label}
+          className="transition-colors hover:text-foreground"
+        >
+          <Icon className="h-5 w-5" />
+        </button>
+      ))}
     </div>
   );
 }
