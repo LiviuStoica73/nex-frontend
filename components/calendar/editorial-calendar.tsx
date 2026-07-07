@@ -361,6 +361,31 @@ function PostDetailModal({
           {post.text_content ?? t("not_available")}
         </p>
 
+        {/* Media thumbnail */}
+        {post.image_urls && post.image_urls.length > 0 && (
+          <div className="mb-4 overflow-hidden rounded-md">
+            <img
+              src={post.image_urls[0]}
+              alt="thumbnail"
+              className="max-h-48 w-full object-cover"
+            />
+            {post.image_urls.length > 1 && (
+              <p className="mt-1 text-xs text-muted-foreground">+{post.image_urls.length - 1} imagini</p>
+            )}
+          </div>
+        )}
+        {post.video_urls && post.video_urls.length > 0 && !(post.image_urls && post.image_urls.length > 0) && (
+          <div className="mb-4 overflow-hidden rounded-md bg-black">
+            <video
+              src={post.video_urls[0]}
+              className="max-h-48 w-full object-contain"
+              preload="metadata"
+              muted
+              playsInline
+            />
+          </div>
+        )}
+
         {post.scheduled_at && (
           <p className="mb-2 text-xs text-muted-foreground">
             {t("scheduled_at")}: {new Date(post.scheduled_at).toLocaleString(locale)}
