@@ -275,7 +275,7 @@ function PostDetailModal({
     if (selectedPlatforms.length === 0) return
     setReposting(true)
     try {
-      await api.posts.repost(orgId, post.id, { platforms: selectedPlatforms }, token)
+      await api.posts.repost(post.org_id ?? orgId, post.id, { platforms: selectedPlatforms }, token)
       setShowRepost(false)
       setSelectedPlatforms([])
     } catch {}

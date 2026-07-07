@@ -68,6 +68,7 @@ export interface Topic {
 
 export interface Post {
   id: string
+  org_id: string | null
   campaign_id: string | null
   topic_id: string | null
   blog_connector_id: string | null
