@@ -2,6 +2,7 @@ import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
+import HeroSocialLinks from "@/components/sections/hero-social-links"
 
 export default async function HeroLanding() {
   const t = await getTranslations("hero_landing")
@@ -60,9 +61,7 @@ export default async function HeroLanding() {
           </Link>
         </div>
 
-        <p className="text-sm text-muted-foreground">
-          {t("platforms")}
-        </p>
+        <HeroSocialLinks />
       </div>
     </section>
   )
