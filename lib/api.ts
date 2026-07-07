@@ -250,7 +250,7 @@ export const api = {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       }),
-    repost: (orgId: string, postId: string, data: { platforms: string[]; scheduled_at?: string }, token: string) =>
+    repost: (orgId: string, postId: string, data: { account_ids: string[]; scheduled_at?: string }, token: string) =>
       apiFetch<Post[]>(`/api/v1/orgs/${orgId}/posts/${postId}/repost`, {
         method: "POST",
         body: JSON.stringify(data),

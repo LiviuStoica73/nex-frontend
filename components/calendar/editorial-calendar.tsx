@@ -234,7 +234,7 @@ function PostDetailModal({
   const [showReschedule, setShowReschedule] = useState(false)
   const [rescheduleDate, setRescheduleDate] = useState("")
   const [socialAccounts, setSocialAccounts] = useState<SocialAccount[]>([])
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([])
+  const [selectedAccountIds, setSelectedAccountIds] = useState<string[]>([])
   const [reposting, setReposting] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [pausing, setPausing] = useState(false)
@@ -272,19 +272,19 @@ function PostDetailModal({
   }
 
   const handleRepost = async () => {
-    if (selectedPlatforms.length === 0) return
+    if (selectedAccountIds.length === 0) return
     setReposting(true)
     try {
-      await api.posts.repost(post.org_id ?? orgId, post.id, { platforms: selectedPlatforms }, token)
+      await api.posts.repost(post.org_id ?? orgId, post.id, { account_ids: selectedAccountIds }, token)
       setShowRepost(false)
-      setSelectedPlatforms([])
+      setSelectedAccountIds([])
     } catch {}
     setReposting(false)
   }
 
-  const togglePlatform = (platform: string) => {
-    setSelectedPlatforms((prev) =>
-      prev.includes(platform) ? prev.filter((p) => p !== platform) : [...prev, platform]
+  const toggleAccount = (accountId: string) => {
+    setSelectedAccountIds((prev) =>
+      prev.includes(accountId) ? prev.filter((id) => id !== accountId) : [...prev, accountId]
     )
   }
 
@@ -469,8 +469,8 @@ function PostDetailModal({
                 <label key={account.id} className="flex items-center gap-2 text-xs cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={selectedPlatforms.includes(account.platform)}
-                    onChange={() => togglePlatform(account.platform)}
+                    checked={selectedAccountIds.includes(account.id)}
+                    onChange={() => toggleAccount(account.id)}
                     className="h-3 w-3"
                   />
                   <span className="capitalize">{account.platform}</span>
@@ -481,7 +481,7 @@ function PostDetailModal({
             {socialAccounts.filter((a) => a.is_active).length > 0 && (
               <button
                 onClick={handleRepost}
-                disabled={reposting || selectedPlatforms.length === 0}
+                disabled={reposting || selectedAccountIds.length === 0}
                 className="mt-1 rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
               >
                 {reposting ? "Se repostează..." : "Repostează"}
