@@ -5,9 +5,10 @@ export const sidebarLinks: SidebarNavItem[] = [
   {
     title: "CONȚINUT",
     items: [
-      { href: "/dashboard",            icon: "dashboard",  title: "Dashboard" },
-      { href: "/dashboard/campaigns",  icon: "post",       title: "Campanii" },
-      { href: "/dashboard/calendar",   icon: "lineChart",  title: "Calendar" },
+      { href: "/dashboard",                icon: "dashboard",  title: "Dashboard" },
+      { href: "/dashboard/campaigns",      icon: "post",       title: "Campanii" },
+      { href: "/dashboard/calendar",       icon: "lineChart",  title: "Calendar" },
+      { href: "/dashboard/intelligence",   icon: "brain",      title: "Intelligence" },
     ],
   },
   {
