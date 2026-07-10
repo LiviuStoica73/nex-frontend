@@ -48,6 +48,7 @@ export function BusinessBrainTab({ onStrategyStarted }: { onStrategyStarted?: ()
   const [showInterview, setShowInterview] = useState(false)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [savingInterview, setSavingInterview] = useState(false)
+  const [refreshCount, setRefreshCount] = useState(0)
   const pollRef = useRef<NodeJS.Timeout | null>(null)
 
   const token = (session?.user as any)?.accessToken || ''
@@ -60,7 +61,7 @@ export function BusinessBrainTab({ onStrategyStarted }: { onStrategyStarted?: ()
 
   useEffect(() => {
     fetchStatus()
-  }, [token, orgId])
+  }, [token, orgId, refreshCount])
 
   // Polling după scan: verifică la fiecare 15s timp de 3 minute dacă scan_date s-a actualizat
   const startScanPolling = (prevDate: string | null) => {
@@ -128,7 +129,7 @@ export function BusinessBrainTab({ onStrategyStarted }: { onStrategyStarted?: ()
       setMessage('✓ Interviul a fost salvat!')
       setMessageType('success')
       setShowInterview(false)
-      fetchStatus()
+      setRefreshCount(c => c + 1)
     } catch (e: any) {
       setMessage(`Eroare: ${e.message}`)
       setMessageType('error')
