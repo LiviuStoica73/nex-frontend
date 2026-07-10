@@ -86,7 +86,7 @@ export function NavMobile() {
               {session.user.role === "ADMIN" ? (
                 <li className="py-3">
                   <Link
-                    href="/admin"
+                    href="/dashboard/admin"
                     onClick={() => setOpen(false)}
                     className="flex w-full font-medium capitalize"
                   >

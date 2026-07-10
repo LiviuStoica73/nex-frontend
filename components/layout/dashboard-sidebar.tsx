@@ -195,7 +195,16 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                 })}
               </nav>
 
-              <div className="mt-auto xl:p-4">
+              <div className="mt-auto xl:p-4 space-y-2">
+                {isSidebarExpanded ? (
+                  <Link
+                    href="/"
+                    className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-muted"
+                  >
+                    <Icons.home className="size-3.5" />
+                    <span>Înapoi la site</span>
+                  </Link>
+                ) : null}
                 {isSidebarExpanded ? <UpgradeCard /> : null}
               </div>
             </div>
