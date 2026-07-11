@@ -75,6 +75,29 @@ export function AutopilotTab({
   const orgId = activeOrgId
   const hasSelected = selectedOpportunities.length > 0
 
+  // La montare: verifică dacă există drafturi pending → trece în review
+  useEffect(() => {
+    if (!token || !orgId) return
+    if (stage === 'idle' || stage === 'done') {
+      getPrototypes(orgId, token).then(result => {
+        if (result.length > 0) {
+          const texts: Record<string, string> = {}
+          const prompts: Record<string, string> = {}
+          for (const d of result) {
+            texts[d.id] = d.master_text
+            prompts[d.id] = d.image_prompt || ''
+          }
+          setDrafts(result)
+          setEditTexts(texts)
+          setEditPrompts(prompts)
+          setApprovedDraftIds(new Set(result.map(d => d.id)))
+          onStageChange('review')
+        }
+      }).catch(() => {})
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orgId, token])
+
   // Polling pentru drafturi după lansare generare
   const pollDrafts = useCallback(async (expectedCount: number) => {
     if (!token || !orgId) return
