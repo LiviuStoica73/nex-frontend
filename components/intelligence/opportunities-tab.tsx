@@ -1,6 +1,6 @@
 // components/intelligence/opportunities-tab.tsx
-// Version: 2.2.0 — 2026-07-11
-// Scope: Oportunități — selectedIds/onToggleSelect vine din pagină-părinte (persist localStorage)
+// Version: 3.0.0 — 2026-07-11
+// Scope: Oportunități — generare prototip inline + bulk, review, publicare în Calendar
 
 'use client'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -9,48 +9,53 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Zap } from 'lucide-react'
 import { useOrg } from '@/contexts/org-context'
 import {
   countOpportunities,
   editOpportunity,
+  generateBulkPrototypes,
+  generatePrototype,
   getConnectedPlatforms,
   listOpportunities,
+  publishOpportunities,
   reorderOpportunities,
   updateOpportunityStatus,
 } from '@/lib/api/intelligence'
+import { OpportunityCard } from './opportunity-card'
+import type { ContentOpportunity } from '@/lib/api/intelligence'
 import type { SelectedOpportunity } from '@/app/(protected)/dashboard/intelligence/page'
 
-interface Opportunity {
-  id: string
-  title: string
-  pillar: string | null
-  objective: string | null
-  hook: string | null
-  insight: string | null
-  format: string | null
-  platforms: string[]
-  score: number | null
-  status: string
+type Opportunity = ContentOpportunity & {
+  pillar?: string | null
+  objective?: string | null
+  insight?: string | null
 }
 
 const STATUS_LABELS: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }> = {
   idea: { label: 'Idee', variant: 'secondary' },
+  generating: { label: 'Se generează', variant: 'outline' },
+  review: { label: 'Verifică', variant: 'default' },
+  rejected: { label: 'Respins', variant: 'destructive' },
+  published: { label: 'Publicat', variant: 'secondary' },
+  // legacy
   approved: { label: 'Aprobat', variant: 'default' },
   paused: { label: 'Pauză', variant: 'outline' },
-  rejected: { label: 'Respins', variant: 'destructive' },
   selected: { label: 'Selectat', variant: 'default' },
   in_production: { label: 'În producție', variant: 'default' },
-  published: { label: 'Publicat', variant: 'default' },
 }
 
 const STATUS_FILTERS = [
   { value: '', label: 'Toate' },
   { value: 'idea', label: 'Idei' },
-  { value: 'approved', label: 'Aprobate' },
-  { value: 'paused', label: 'Pauză' },
-  { value: 'rejected', label: 'Respinse' },
+  { value: 'generating', label: 'Se generează' },
+  { value: 'review', label: 'De verificat' },
   { value: 'published', label: 'Publicate' },
+  { value: 'rejected', label: 'Respinse' },
 ]
+
+// Stări care folosesc OpportunityCard în loc de rândul text clasic
+const CARD_STATUSES = new Set(['generating', 'review', 'published', 'rejected'])
 
 const ALL_PLATFORMS = ['instagram', 'facebook', 'linkedin', 'x', 'youtube', 'tiktok', 'threads', 'bluesky', 'discord', 'pinterest', 'blog']
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100]
@@ -62,6 +67,8 @@ interface OpportunitiesTabProps {
 }
 
 export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot }: OpportunitiesTabProps) {
+  // selectedIds din props = pentru fluxul vechi Autopilot (păstrat pentru compatibilitate)
+  // bulkGenerateIds = selecție locală pentru bulk generate prototip
   const { data: session } = useSession()
   const { activeOrgId } = useOrg()
   const [opportunities, setOpportunities] = useState<Opportunity[]>([])
@@ -75,6 +82,7 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
   const [editFields, setEditFields] = useState<Partial<Opportunity & { platformsEdit: string[] }>>({})
   const [saving, setSaving] = useState(false)
   const [connectedPlatforms, setConnectedPlatforms] = useState<string[]>([])
+  const [bulkGenerateIds, setBulkGenerateIds] = useState<Set<string>>(new Set())
   const reorderTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   const token = (session?.user as any)?.accessToken || ''
@@ -107,6 +115,60 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
       .then(platforms => setConnectedPlatforms(platforms.length > 0 ? platforms : ALL_PLATFORMS))
       .catch(() => setConnectedPlatforms(ALL_PLATFORMS))
   }, [token, orgId])
+
+  // Polling la 5s când există oportunități în starea 'generating'
+  useEffect(() => {
+    const hasGenerating = opportunities.some(o => o.status === 'generating')
+    if (!hasGenerating) return
+    const interval = setInterval(() => {
+      loadPage(page, statusFilter, pageSize)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [opportunities, page, statusFilter, pageSize, loadPage])
+
+  const handleGenerate = async (oppId: string) => {
+    if (!token || !orgId) return
+    setOpportunities(os => os.map(o => o.id === oppId ? { ...o, status: 'generating' } : o))
+    try {
+      await generatePrototype(orgId, oppId, token)
+    } catch (e) {
+      console.error('Generate failed', e)
+      setOpportunities(os => os.map(o => o.id === oppId ? { ...o, status: 'idea' } : o))
+    }
+  }
+
+  const handleBulkGenerate = async () => {
+    if (!token || !orgId || bulkGenerateIds.size === 0) return
+    const ids = Array.from(bulkGenerateIds)
+    setOpportunities(os => os.map(o => ids.includes(o.id) ? { ...o, status: 'generating' } : o))
+    setBulkGenerateIds(new Set())
+    try {
+      await generateBulkPrototypes(orgId, ids, token)
+    } catch (e) {
+      console.error('Bulk generate failed', e)
+    }
+  }
+
+  const handlePublish = async (oppId: string) => {
+    if (!token || !orgId) return
+    setOpportunities(os => os.map(o => o.id === oppId ? { ...o, status: 'published' } : o))
+    try {
+      await publishOpportunities(orgId, [oppId], token)
+    } catch (e) {
+      console.error('Publish failed', e)
+      setOpportunities(os => os.map(o => o.id === oppId ? { ...o, status: 'review' } : o))
+    }
+  }
+
+  const handleRestore = async (oppId: string) => {
+    if (!token || !orgId) return
+    setOpportunities(os => os.map(o => o.id === oppId ? { ...o, status: 'idea' } : o))
+    try {
+      await updateOpportunityStatus(orgId, oppId, 'idea', token)
+    } catch (e) {
+      console.error('Restore failed', e)
+    }
+  }
 
   const handleStatusChange = async (opp: Opportunity, newStatus: string) => {
     if (!token || !orgId) return
@@ -220,12 +282,16 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
         />
       </div>
 
-      {/* Bara de selecție Autopilot */}
-      {selectedIds.size > 0 && (
+      {/* Bara bulk generate */}
+      {bulkGenerateIds.size > 0 && (
         <div className="flex items-center gap-3 p-3 bg-muted rounded-md">
-          <span className="text-sm font-medium">{selectedIds.size} selectate pentru Autopilot</span>
-          <Button size="sm" onClick={onGoToAutopilot}>
-            Vezi în Autopilot →
+          <span className="text-sm font-medium">{bulkGenerateIds.size} selectate</span>
+          <Button size="sm" onClick={handleBulkGenerate}>
+            <Zap className="h-3 w-3 mr-1" />
+            Generează {bulkGenerateIds.size === 1 ? 'prototip' : 'prototipuri'}
+          </Button>
+          <Button size="sm" variant="ghost" onClick={() => setBulkGenerateIds(new Set())}>
+            Deselectează
           </Button>
         </div>
       )}
@@ -254,8 +320,27 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
       {/* Lista */}
       <div className="space-y-2">
         {filtered.map((opp, index) => {
+          // Oportunități cu prototip (generating/review/published/rejected) → OpportunityCard
+          if (CARD_STATUSES.has(opp.status)) {
+            return (
+              <OpportunityCard
+                key={opp.id}
+                opportunity={opp}
+                selected={false}
+                onSelect={() => {}}
+                onGenerate={handleGenerate}
+                onPublish={handlePublish}
+                onReject={(id) => handleStatusChange(opp, 'rejected')}
+                onRestore={handleRestore}
+                orgId={orgId!}
+                token={token}
+              />
+            )
+          }
+
+          // Idei → rândul text clasic cu checkbox bulk generate
           const isEditing = editingId === opp.id
-          const isSelected = selectedIds.has(opp.id)
+          const isBulkSelected = bulkGenerateIds.has(opp.id)
           const statusMeta = STATUS_LABELS[opp.status] || { label: opp.status, variant: 'secondary' as const }
           const rank = (page - 1) * pageSize + index + 1
           const editPlatforms = editFields.platformsEdit ?? opp.platforms
@@ -263,16 +348,23 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
           return (
             <Card
               key={opp.id}
-              className={`transition-all ${isSelected ? 'ring-2 ring-primary' : ''}`}
+              className={`transition-all ${isBulkSelected ? 'ring-2 ring-primary' : ''}`}
             >
               <CardContent className="py-3 space-y-2">
                 <div className="flex items-start gap-2">
-                  {/* Checkbox — toggle în lista globală din pagină */}
+                  {/* Checkbox bulk generate */}
                   <input
                     type="checkbox"
-                    checked={isSelected}
-                    onChange={() => onToggleSelect({ id: opp.id, title: opp.title, hook: opp.hook })}
+                    checked={isBulkSelected}
+                    onChange={e => {
+                      setBulkGenerateIds(prev => {
+                        const next = new Set(prev)
+                        e.target.checked ? next.add(opp.id) : next.delete(opp.id)
+                        return next
+                      })
+                    }}
                     className="mt-1.5 cursor-pointer shrink-0"
+                    title="Selectează pentru generare bulk"
                   />
 
                   {/* Săgeți reordonare */}
@@ -330,12 +422,11 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
                       opp.hook && <p className="text-xs text-muted-foreground">{opp.hook}</p>
                     )}
 
-                    {/* Platforme — toggle în editare, badges în view */}
+                    {/* Platforme */}
                     {isEditing ? (
                       <div className="space-y-1">
-                        <p className="text-xs text-muted-foreground">Platforme (selectează toate relevante):</p>
+                        <p className="text-xs text-muted-foreground">Platforme:</p>
                         <div className="flex flex-wrap gap-1.5">
-                          {/* Uniunea dintre conectorii activi + platformele deja pe oportunitate */}
                           {ALL_PLATFORMS.filter(p =>
                             connectedPlatforms.includes(p) || opp.platforms.includes(p)
                           ).map(p => (
@@ -363,28 +454,14 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
                       </div>
                     )}
 
-                    {/* Acțiuni — întotdeauna vizibile */}
+                    {/* Acțiuni */}
                     <div className="flex gap-1.5 flex-wrap">
                       {!isEditing ? (
                         <>
-                          {opp.status !== 'approved' && (
-                            <Button size="sm" variant="outline" className="h-6 text-xs"
-                              onClick={() => handleStatusChange(opp, 'approved')}>
-                              ✓ Aprobă
-                            </Button>
-                          )}
-                          {opp.status === 'approved' && (
-                            <Button size="sm" variant="outline" className="h-6 text-xs"
-                              onClick={() => handleStatusChange(opp, 'idea')}>
-                              ↩ Resetează
-                            </Button>
-                          )}
-                          {opp.status !== 'paused' && (
-                            <Button size="sm" variant="outline" className="h-6 text-xs"
-                              onClick={() => handleStatusChange(opp, 'paused')}>
-                              ⏸ Pauză
-                            </Button>
-                          )}
+                          <Button size="sm" variant="outline" className="h-6 text-xs"
+                            onClick={() => handleGenerate(opp.id)}>
+                            ⚡ Generează prototip
+                          </Button>
                           {opp.status !== 'rejected' && (
                             <Button size="sm" variant="outline" className="h-6 text-xs text-destructive hover:text-destructive"
                               onClick={() => handleStatusChange(opp, 'rejected')}>
