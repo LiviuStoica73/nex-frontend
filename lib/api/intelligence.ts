@@ -206,11 +206,11 @@ export async function updatePrototype(
   })
 }
 
-export async function regenerateOpportunityImage(orgId: string, oppId: string, token: string): Promise<{ image_url: string }> {
+export async function regenerateOpportunityImage(orgId: string, oppId: string, token: string, scenePrompt?: string): Promise<{ image_url: string }> {
   return apiFetch(
     `/api/v1/orgs/${orgId}/intelligence/opportunities/${oppId}/regenerate-image`,
     token,
-    { method: 'POST' }
+    { method: 'POST', body: JSON.stringify({ scene_concept: scenePrompt || null }) }
   )
 }
 

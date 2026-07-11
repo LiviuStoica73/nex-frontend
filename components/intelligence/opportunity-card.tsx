@@ -49,6 +49,8 @@ export function OpportunityCard({
   token,
 }: OpportunityCardProps) {
   const [editText, setEditText] = useState(opp.master_text || '')
+  const [editPrompt, setEditPrompt] = useState(opp.image_prompt_raw || '')
+  const [showPrompt, setShowPrompt] = useState(false)
   const [saving, setSaving] = useState(false)
   const [regenerating, setRegenerating] = useState(false)
   const [resetting, setResetting] = useState(false)
@@ -62,6 +64,10 @@ export function OpportunityCard({
   useEffect(() => {
     if (opp.image_url) setLocalImageUrl(opp.image_url)
   }, [opp.image_url])
+
+  useEffect(() => {
+    if (opp.image_prompt_raw) setEditPrompt(opp.image_prompt_raw)
+  }, [opp.image_prompt_raw])
 
   const badge = STATUS_BADGE[opp.status] ?? { label: opp.status, variant: 'secondary' as const }
   const isGenerating = opp.status === 'generating'
@@ -92,10 +98,19 @@ export function OpportunityCard({
   async function handleRegenerateImage() {
     setRegenerating(true)
     try {
-      const result = await regenerateOpportunityImage(orgId, opp.id, token)
+      const result = await regenerateOpportunityImage(orgId, opp.id, token, editPrompt || undefined)
       setLocalImageUrl(result.image_url)
     } finally {
       setRegenerating(false)
+    }
+  }
+
+  async function handleSavePrompt() {
+    setSaving(true)
+    try {
+      await updatePrototype(orgId, opp.id, { image_prompt_raw: editPrompt }, token)
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -164,7 +179,7 @@ export function OpportunityCard({
           </div>
         )}
 
-        {/* Review: imagine + text editabil + butoane */}
+        {/* Review: imagine + text editabil + prompt vizual + butoane */}
         {isReview && (
           <div className="space-y-3">
             {localImageUrl && (
@@ -172,7 +187,7 @@ export function OpportunityCard({
                 <img
                   src={localImageUrl}
                   alt="Prototip"
-                  className="w-full rounded-md object-cover max-h-48"
+                  className="w-full rounded-md object-cover max-h-64"
                 />
                 <Button
                   size="sm"
@@ -180,7 +195,7 @@ export function OpportunityCard({
                   className="absolute top-2 right-2 h-7 px-2"
                   onClick={handleRegenerateImage}
                   disabled={regenerating}
-                  title="Regenerează imagine"
+                  title="Regenerează imagine cu promptul curent"
                 >
                   {regenerating
                     ? <Loader2 className="h-3 w-3 animate-spin" />
@@ -189,11 +204,34 @@ export function OpportunityCard({
               </div>
             )}
 
+            {/* Prompt vizual — toggle + editabil */}
+            <div>
+              <button
+                className="text-xs text-muted-foreground underline-offset-2 hover:underline flex items-center gap-1"
+                onClick={() => setShowPrompt(p => !p)}
+              >
+                {showPrompt ? '▲' : '▼'} Prompt vizual
+              </button>
+              {showPrompt && (
+                <div className="mt-1 space-y-1">
+                  <Textarea
+                    value={editPrompt}
+                    onChange={(e) => setEditPrompt(e.target.value)}
+                    rows={3}
+                    className="text-xs resize-y"
+                    placeholder="Descrie scena vizuală..."
+                  />
+                  <p className="text-xs text-muted-foreground">Editează, apoi apasă 🔄 pentru a regenera imaginea cu noul prompt.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Text master editabil */}
             <Textarea
               value={editText}
               onChange={(e) => setEditText(e.target.value)}
-              rows={4}
-              className="text-sm resize-none"
+              rows={5}
+              className="text-sm resize-y"
               placeholder="Text master..."
             />
 
