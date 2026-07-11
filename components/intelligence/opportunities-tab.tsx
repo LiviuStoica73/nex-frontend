@@ -52,7 +52,7 @@ const STATUS_FILTERS = [
   { value: 'published', label: 'Publicate' },
 ]
 
-const ALL_PLATFORMS = ['instagram', 'facebook', 'linkedin', 'x', 'youtube', 'tiktok', 'threads', 'bluesky', 'discord', 'pinterest']
+const ALL_PLATFORMS = ['instagram', 'facebook', 'linkedin', 'x', 'youtube', 'tiktok', 'threads', 'bluesky', 'discord', 'pinterest', 'blog']
 const PAGE_SIZE = 20
 
 interface OpportunitiesTabProps {
@@ -168,7 +168,7 @@ export function OpportunitiesTab({ onSendToAutopilot }: OpportunitiesTabProps) {
   }
 
   const toggleEditPlatform = (platform: string) => {
-    const current = editFields.platformsEdit ?? (editingId ? opportunities.find(o => o.id === editingId)?.platforms ?? [] : [])
+    const current = editFields.platformsEdit ?? []
     const next = current.includes(platform)
       ? current.filter(p => p !== platform)
       : [...current, platform]
@@ -325,7 +325,10 @@ export function OpportunitiesTab({ onSendToAutopilot }: OpportunitiesTabProps) {
                       <div className="space-y-1">
                         <p className="text-xs text-muted-foreground">Platforme (selectează toate relevante):</p>
                         <div className="flex flex-wrap gap-1.5">
-                          {(connectedPlatforms.length > 0 ? connectedPlatforms : ALL_PLATFORMS).map(p => (
+                          {/* Uniunea dintre conectorii activi + platformele deja pe oportunitate */}
+                          {ALL_PLATFORMS.filter(p =>
+                            connectedPlatforms.includes(p) || opp.platforms.includes(p)
+                          ).map(p => (
                             <button
                               key={p}
                               onClick={() => toggleEditPlatform(p)}
@@ -385,7 +388,7 @@ export function OpportunitiesTab({ onSendToAutopilot }: OpportunitiesTabProps) {
                             </Button>
                           )}
                           <Button size="sm" variant="ghost" className="h-6 text-xs"
-                            onClick={() => { setEditingId(opp.id); setEditFields({}) }}>
+                            onClick={() => { setEditingId(opp.id); setEditFields({ platformsEdit: [...opp.platforms] }) }}>
                             ✎ Editează
                           </Button>
                         </>
