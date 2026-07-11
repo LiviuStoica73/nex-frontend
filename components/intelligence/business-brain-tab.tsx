@@ -22,17 +22,17 @@ interface BrainStatus {
   can_run_strategy: boolean
 }
 
-const INTERVIEW_QUESTIONS = [
-  'Care este principalul produs sau serviciu oferit?',
-  'Cine este clientul ideal (vârstă, profesie, interese)?',
-  'Care este propunerea unică de valoare față de concurență?',
-  'Care sunt cele mai frecvente obiecții ale clienților?',
-  'Ce rezultate concrete obțin clienții după ce lucrează cu tine?',
-  'Care sunt canalele de social media folosite actualmente?',
-  'Ce tipuri de conținut au funcționat cel mai bine până acum?',
-  'Care este tonul brandului (formal, prietenos, autoritar, etc.)?',
-  'Există campanii sezoniere sau evenimente importante în calendar?',
-  'Care este bugetul lunar aproximativ pentru marketing digital?',
+const INTERVIEW_QUESTIONS: { key: string; label: string }[] = [
+  { key: 'what_sells', label: 'Ce vinzi? (produse sau servicii principale)' },
+  { key: 'target_audience', label: 'Cine este clientul ideal? (vârstă, profesie, interese)' },
+  { key: 'problems_solved', label: 'Ce probleme concrete rezolvi pentru clienți?' },
+  { key: 'priority_products', label: 'Care sunt produsele/serviciile prioritare de promovat?' },
+  { key: 'differentiator', label: 'Care este diferențiatorul față de concurență?' },
+  { key: 'communication_tone', label: 'Care este tonul brandului? (formal, prietenos, autoritar, etc.)' },
+  { key: 'what_to_avoid', label: 'Ce subiecte sau mesaje trebuie evitate?' },
+  { key: 'objectives', label: 'Care sunt obiectivele de marketing? (awareness, lead-uri, vânzări)' },
+  { key: 'website_url', label: 'URL-ul site-ului principal' },
+  { key: 'known_competitors', label: 'Competitori cunoscuți (nume sau URL-uri)' },
 ]
 
 export function BusinessBrainTab({ onStrategyStarted }: { onStrategyStarted?: () => void }) {
@@ -138,7 +138,7 @@ export function BusinessBrainTab({ onStrategyStarted }: { onStrategyStarted?: ()
     }
   }
 
-  const answeredCount = Object.values(answers).filter(v => v.trim()).length
+  const answeredCount = Object.values(answers).filter(v => v?.trim()).length
 
   return (
     <div className="space-y-4">
@@ -206,13 +206,13 @@ export function BusinessBrainTab({ onStrategyStarted }: { onStrategyStarted?: ()
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {INTERVIEW_QUESTIONS.map((q, i) => (
-              <div key={i} className="space-y-1">
-                <label className="text-sm font-medium">{i + 1}. {q}</label>
+            {INTERVIEW_QUESTIONS.map(({ key, label }, i) => (
+              <div key={key} className="space-y-1">
+                <label className="text-sm font-medium">{i + 1}. {label}</label>
                 <Input
                   placeholder="Răspunsul tău..."
-                  value={answers[`q${i}`] || ''}
-                  onChange={(e) => setAnswers(prev => ({ ...prev, [`q${i}`]: e.target.value }))}
+                  value={answers[key] || ''}
+                  onChange={(e) => setAnswers(prev => ({ ...prev, [key]: e.target.value }))}
                 />
               </div>
             ))}
