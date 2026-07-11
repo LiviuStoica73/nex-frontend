@@ -12,7 +12,7 @@ import { StrategyTab } from '@/components/intelligence/strategy-tab'
 import { OpportunitiesTab } from '@/components/intelligence/opportunities-tab'
 import { AutopilotTab } from '@/components/intelligence/autopilot-tab'
 
-export type AutopilotStage = 'idle' | 'etapa1' | 'etapa2' | 'generating' | 'done'
+export type AutopilotStage = 'idle' | 'etapa1' | 'etapa2' | 'generating' | 'review' | 'publishing' | 'done'
 
 export interface Theme {
   opportunity_id: string
