@@ -4,13 +4,13 @@
 // Stări: idea → generating → review → published → rejected
 
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Loader2, RefreshCw, Send, Zap, X, RotateCcw } from 'lucide-react'
-import { updatePrototype, regenerateOpportunityImage } from '@/lib/api/intelligence'
+import { updatePrototype, regenerateOpportunityImage, updateOpportunityStatus } from '@/lib/api/intelligence'
 import type { ContentOpportunity } from '@/lib/api/intelligence'
 
 interface OpportunityCardProps {
@@ -49,7 +49,17 @@ export function OpportunityCard({
   const [editText, setEditText] = useState(opp.master_text || '')
   const [saving, setSaving] = useState(false)
   const [regenerating, setRegenerating] = useState(false)
+  const [resetting, setResetting] = useState(false)
   const [localImageUrl, setLocalImageUrl] = useState(opp.image_url)
+
+  // Sync when polling updates opp from generating→review
+  useEffect(() => {
+    if (opp.master_text) setEditText(opp.master_text)
+  }, [opp.master_text])
+
+  useEffect(() => {
+    if (opp.image_url) setLocalImageUrl(opp.image_url)
+  }, [opp.image_url])
 
   const badge = STATUS_BADGE[opp.status] ?? { label: opp.status, variant: 'secondary' as const }
   const isGenerating = opp.status === 'generating'
@@ -64,6 +74,16 @@ export function OpportunityCard({
       await updatePrototype(orgId, opp.id, { master_text: editText }, token)
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function handleResetToIdea() {
+    setResetting(true)
+    try {
+      await updateOpportunityStatus(orgId, opp.id, 'idea', token)
+      window.location.reload()
+    } finally {
+      setResetting(false)
     }
   }
 
@@ -124,9 +144,21 @@ export function OpportunityCard({
 
         {/* Spinner generating */}
         {isGenerating && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground py-2">
-            <Loader2 className="h-4 w-4 animate-spin shrink-0" />
-            <span>Se generează text și imagine...</span>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground py-1">
+              <Loader2 className="h-4 w-4 animate-spin shrink-0" />
+              <span>Se generează text și imagine...</span>
+            </div>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={handleResetToIdea}
+              disabled={resetting}
+              className="w-full text-xs h-7 text-muted-foreground"
+            >
+              {resetting ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <RotateCcw className="h-3 w-3 mr-1" />}
+              Resetează (blocat?)
+            </Button>
           </div>
         )}
 
