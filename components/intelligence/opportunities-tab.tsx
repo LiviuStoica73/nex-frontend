@@ -322,15 +322,17 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
         {filtered.map((opp, index) => {
           // Oportunități cu prototip (generating/review/published/rejected) → OpportunityCard
           if (CARD_STATUSES.has(opp.status)) {
+            const rank = (page - 1) * pageSize + index + 1
             return (
               <OpportunityCard
                 key={opp.id}
                 opportunity={opp}
+                rank={rank}
                 selected={false}
                 onSelect={() => {}}
                 onGenerate={handleGenerate}
                 onPublish={handlePublish}
-                onReject={(id) => handleStatusChange(opp, 'rejected')}
+                onReject={(_id) => handleStatusChange(opp, 'rejected')}
                 onRestore={handleRestore}
                 orgId={orgId!}
                 token={token}

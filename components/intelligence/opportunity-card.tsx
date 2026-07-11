@@ -15,6 +15,7 @@ import type { ContentOpportunity } from '@/lib/api/intelligence'
 
 interface OpportunityCardProps {
   opportunity: ContentOpportunity
+  rank?: number
   selected: boolean
   onSelect: (id: string, selected: boolean) => void
   onGenerate: (id: string) => void
@@ -35,6 +36,7 @@ const STATUS_BADGE: Record<string, { label: string; variant: 'default' | 'second
 
 export function OpportunityCard({
   opportunity: opp,
+  rank,
   selected,
   onSelect,
   onGenerate,
@@ -93,7 +95,12 @@ export function OpportunityCard({
         {/* Header: titlu + badge */}
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-sm leading-snug">{opp.title}</p>
+            <p className="font-semibold text-sm leading-snug">
+              {rank !== undefined && (
+                <span className="text-xs text-muted-foreground font-mono mr-1">#{rank}</span>
+              )}
+              {opp.title}
+            </p>
             {opp.hook && (
               <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{opp.hook}</p>
             )}
