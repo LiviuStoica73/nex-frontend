@@ -76,8 +76,12 @@ export function AutopilotTab({
   const hasSelected = selectedOpportunities.length > 0
 
   // La fiecare schimbare de orgId/token sau când stage e idle/done: verifică drafturi existente în DB
+  const stageRef = useRef(stage)
+  useEffect(() => { stageRef.current = stage }, [stage])
+
   const loadExistingDrafts = useCallback(async () => {
     if (!token || !orgId) return
+    if (stageRef.current === 'review' || stageRef.current === 'publishing' || stageRef.current === 'done') return
     try {
       const result = await getPrototypes(orgId, token)
       if (result.length > 0) {
@@ -96,11 +100,17 @@ export function AutopilotTab({
     } catch {}
   }, [token, orgId, onStageChange])
 
+  // Verifică drafturi la mount și la schimbarea org/token
   useEffect(() => {
-    if (stage === 'idle' || stage === 'done' || stage === 'generating') {
-      loadExistingDrafts()
-    }
-  }, [orgId, token, stage, loadExistingDrafts])
+    loadExistingDrafts()
+  }, [orgId, token, loadExistingDrafts])
+
+  // Polling continuu când stage=generating (la 5s)
+  useEffect(() => {
+    if (stage !== 'generating') return
+    const interval = setInterval(loadExistingDrafts, 5000)
+    return () => clearInterval(interval)
+  }, [stage, loadExistingDrafts])
 
   // Polling pentru drafturi după lansare generare
   const pollDrafts = useCallback(async (expectedCount: number) => {
