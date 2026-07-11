@@ -157,7 +157,72 @@ export async function generateThemesContent(
 }
 
 // ---------------------------------------------------------------------------
-// Autopilot v2 — prototipuri + review + publicare
+// Nou flux: prototip direct pe oportunitate
+// ---------------------------------------------------------------------------
+
+export interface ContentOpportunity {
+  id: string
+  title: string
+  hook: string | null
+  insight: string | null
+  pillar: string | null
+  objective: string | null
+  target_audience: string | null
+  format: string | null
+  platforms: string[]
+  difficulty: string | null
+  estimated_impact: string | null
+  score: number | null
+  status: 'idea' | 'generating' | 'review' | 'published' | 'rejected' | string
+  master_text: string | null
+  image_url: string | null
+  image_prompt: string | null
+  image_prompt_raw: string | null
+  created_at: string
+}
+
+export async function generatePrototype(orgId: string, oppId: string, token: string) {
+  return apiFetch(`/api/v1/orgs/${orgId}/intelligence/opportunities/${oppId}/generate`, token, {
+    method: 'POST',
+  })
+}
+
+export async function generateBulkPrototypes(orgId: string, opportunityIds: string[], token: string) {
+  return apiFetch(`/api/v1/orgs/${orgId}/intelligence/opportunities/generate-bulk`, token, {
+    method: 'POST',
+    body: JSON.stringify({ opportunity_ids: opportunityIds }),
+  })
+}
+
+export async function updatePrototype(
+  orgId: string,
+  oppId: string,
+  fields: { master_text?: string; image_prompt_raw?: string },
+  token: string
+) {
+  return apiFetch(`/api/v1/orgs/${orgId}/intelligence/opportunities/${oppId}/prototype`, token, {
+    method: 'PATCH',
+    body: JSON.stringify(fields),
+  })
+}
+
+export async function regenerateOpportunityImage(orgId: string, oppId: string, token: string): Promise<{ image_url: string }> {
+  return apiFetch(
+    `/api/v1/orgs/${orgId}/intelligence/opportunities/${oppId}/regenerate-image`,
+    token,
+    { method: 'POST' }
+  )
+}
+
+export async function publishOpportunities(orgId: string, opportunityIds: string[], token: string): Promise<{ campaign_id: string }> {
+  return apiFetch(`/api/v1/orgs/${orgId}/intelligence/opportunities/publish`, token, {
+    method: 'POST',
+    body: JSON.stringify({ opportunity_ids: opportunityIds }),
+  })
+}
+
+// ---------------------------------------------------------------------------
+// Autopilot v2 — prototipuri + review + publicare (legacy)
 // ---------------------------------------------------------------------------
 
 export interface AutopilotDraft {
