@@ -177,14 +177,14 @@ export async function generatePrototypes(
   themes: Array<{ opportunity_id: string; title: string; hook?: string | null; visual_category: string }>,
   token: string
 ): Promise<{ started: boolean; task_id: string; theme_count: number }> {
-  return apiFetch(`/api/v1/orgs/${orgId}/intelligence/autopilot/generate-prototypes`, token, {
+  return apiFetch(`/api/v1/orgs/${orgId}/autopilot/generate-prototypes`, token, {
     method: 'POST',
     body: JSON.stringify({ themes }),
   })
 }
 
 export async function getPrototypes(orgId: string, token: string): Promise<AutopilotDraft[]> {
-  return apiFetch(`/api/v1/orgs/${orgId}/intelligence/autopilot/prototypes`, token)
+  return apiFetch(`/api/v1/orgs/${orgId}/autopilot/prototypes`, token)
 }
 
 export async function regenerateImage(
@@ -193,7 +193,7 @@ export async function regenerateImage(
   imagePrompt: string,
   token: string
 ): Promise<{ image_url: string; image_prompt: string }> {
-  return apiFetch(`/api/v1/orgs/${orgId}/intelligence/autopilot/regenerate-image`, token, {
+  return apiFetch(`/api/v1/orgs/${orgId}/autopilot/regenerate-image`, token, {
     method: 'POST',
     body: JSON.stringify({ draft_id: draftId, image_prompt: imagePrompt }),
   })
@@ -204,7 +204,7 @@ export async function publishApprovedDrafts(
   approvedDrafts: Array<{ draft_id: string; master_text: string }>,
   token: string
 ): Promise<{ campaign_id: string }> {
-  return apiFetch(`/api/v1/orgs/${orgId}/intelligence/autopilot/publish`, token, {
+  return apiFetch(`/api/v1/orgs/${orgId}/autopilot/publish`, token, {
     method: 'POST',
     body: JSON.stringify({ approved_drafts: approvedDrafts }),
   })
