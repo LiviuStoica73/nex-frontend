@@ -147,10 +147,10 @@ export function OpportunitiesTab({ onSendToAutopilot }: OpportunitiesTabProps) {
     if (reorderTimerRef.current) clearTimeout(reorderTimerRef.current)
     reorderTimerRef.current = setTimeout(async () => {
       if (!token || !orgId) return
-      const totalOpp = (page - 1) * PAGE_SIZE + newList.length
+      const totalOpp = (page - 1) * pageSize + newList.length
       const items = newList.map((o, i) => ({
         id: o.id,
-        score: totalOpp - ((page - 1) * PAGE_SIZE) - i,
+        score: totalOpp - ((page - 1) * pageSize) - i,
       }))
       try {
         await reorderOpportunities(orgId, items, token)
@@ -264,7 +264,7 @@ export function OpportunitiesTab({ onSendToAutopilot }: OpportunitiesTabProps) {
           const isEditing = editingId === opp.id
           const isSelected = selected.has(opp.id)
           const statusMeta = STATUS_LABELS[opp.status] || { label: opp.status, variant: 'secondary' as const }
-          const rank = (page - 1) * PAGE_SIZE + index + 1
+          const rank = (page - 1) * pageSize + index + 1
           const editPlatforms = editFields.platformsEdit ?? opp.platforms
 
           return (
