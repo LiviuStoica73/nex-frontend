@@ -22,6 +22,7 @@ interface OpportunityCardProps {
   onPublish: (id: string) => void
   onReject: (id: string) => void
   onRestore: (id: string) => void
+  onReset: (id: string) => void
   orgId: string
   token: string
 }
@@ -43,6 +44,7 @@ export function OpportunityCard({
   onPublish,
   onReject,
   onRestore,
+  onReset,
   orgId,
   token,
 }: OpportunityCardProps) {
@@ -81,7 +83,7 @@ export function OpportunityCard({
     setResetting(true)
     try {
       await updateOpportunityStatus(orgId, opp.id, 'idea', token)
-      window.location.reload()
+      onReset(opp.id)
     } finally {
       setResetting(false)
     }

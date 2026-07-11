@@ -334,6 +334,7 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
                 onPublish={handlePublish}
                 onReject={(_id) => handleStatusChange(opp, 'rejected')}
                 onRestore={handleRestore}
+                onReset={handleRestore}
                 orgId={orgId!}
                 token={token}
               />
