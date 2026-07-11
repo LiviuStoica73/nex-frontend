@@ -53,7 +53,7 @@ const STATUS_FILTERS = [
 ]
 
 const ALL_PLATFORMS = ['instagram', 'facebook', 'linkedin', 'x', 'youtube', 'tiktok', 'threads', 'bluesky', 'discord', 'pinterest', 'blog']
-const PAGE_SIZE = 20
+const PAGE_SIZE_OPTIONS = [10, 20, 50, 100]
 
 interface OpportunitiesTabProps {
   onSendToAutopilot?: (ids: string[]) => void
@@ -67,6 +67,7 @@ export function OpportunitiesTab({ onSendToAutopilot }: OpportunitiesTabProps) {
   const [page, setPage] = useState(1)
   const [statusFilter, setStatusFilter] = useState('')
   const [textFilter, setTextFilter] = useState('')
+  const [pageSize, setPageSize] = useState(20)
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -78,12 +79,12 @@ export function OpportunitiesTab({ onSendToAutopilot }: OpportunitiesTabProps) {
   const token = (session?.user as any)?.accessToken || ''
   const orgId = activeOrgId
 
-  const loadPage = useCallback(async (p: number, sf: string) => {
+  const loadPage = useCallback(async (p: number, sf: string, ps = pageSize) => {
     if (!token || !orgId) return
     setLoading(true)
     try {
       const [data, countData] = await Promise.all([
-        listOpportunities(orgId, token, p, PAGE_SIZE, sf || undefined),
+        listOpportunities(orgId, token, p, ps, sf || undefined),
         countOpportunities(orgId, token, sf || undefined),
       ])
       setOpportunities(data)
@@ -96,8 +97,8 @@ export function OpportunitiesTab({ onSendToAutopilot }: OpportunitiesTabProps) {
   }, [token, orgId])
 
   useEffect(() => {
-    loadPage(page, statusFilter)
-  }, [loadPage, page, statusFilter])
+    loadPage(page, statusFilter, pageSize)
+  }, [loadPage, page, statusFilter, pageSize])
 
   useEffect(() => {
     if (!token || !orgId) return
@@ -182,13 +183,13 @@ export function OpportunitiesTab({ onSendToAutopilot }: OpportunitiesTabProps) {
       )
     : opportunities
 
-  const totalPages = Math.ceil(total / PAGE_SIZE)
+  const totalPages = Math.ceil(total / pageSize)
 
   if (loading && opportunities.length === 0) {
     return <div className="text-muted-foreground py-8 text-center">Se încarcă oportunitățile...</div>
   }
 
-  if (!loading && total === 0) {
+  if (!loading && total === 0 && !statusFilter) {
     return (
       <div className="text-center py-12 text-muted-foreground">
         Nu există oportunități. Generează o strategie din tab-ul Business Brain.
@@ -236,9 +237,25 @@ export function OpportunitiesTab({ onSendToAutopilot }: OpportunitiesTabProps) {
         </div>
       )}
 
-      <div className="text-sm text-muted-foreground">
-        {total} oportunități · pagina {page}/{totalPages || 1}
-        {loading && ' · se actualizează...'}
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-muted-foreground">
+          {total === 0 && statusFilter
+            ? <span>Nicio oportunitate cu statusul „{STATUS_FILTERS.find(s => s.value === statusFilter)?.label}". <button className="underline" onClick={() => setStatusFilter('')}>Vezi toate</button></span>
+            : <>{total} oportunități · pagina {page}/{totalPages || 1}{loading && ' · se actualizează...'}</>
+          }
+        </div>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span>Afișează:</span>
+          <select
+            value={pageSize}
+            onChange={e => { setPageSize(Number(e.target.value)); setPage(1) }}
+            className="border rounded px-1 py-0.5 text-sm bg-background"
+          >
+            {PAGE_SIZE_OPTIONS.map(n => (
+              <option key={n} value={n}>{n} / pagină</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Lista */}
