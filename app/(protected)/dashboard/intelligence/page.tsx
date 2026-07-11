@@ -1,6 +1,7 @@
 // app/(protected)/dashboard/intelligence/page.tsx
-// Version: 1.1.0 — 2026-07-11
-// Scope: Content Intelligence dashboard — coordonează pollTrigger între BusinessBrain și Strategy tabs
+// Version: 2.0.0 — 2026-07-11
+// Scope: Content Intelligence — coordonează state între tab-uri:
+//        pollTrigger pentru strategy, pendingOpportunityIds pentru autopilot
 
 'use client'
 import { useState } from 'react'
@@ -13,11 +14,16 @@ import { AutopilotTab } from '@/components/intelligence/autopilot-tab'
 export default function IntelligencePage() {
   const [pollTrigger, setPollTrigger] = useState(0)
   const [activeTab, setActiveTab] = useState('brain')
+  const [pendingOpportunityIds, setPendingOpportunityIds] = useState<string[]>([])
 
   const handleStrategyStarted = () => {
     setPollTrigger(t => t + 1)
-    // Trecem automat la tab-ul Strategie după 2 secunde
     setTimeout(() => setActiveTab('strategy'), 2000)
+  }
+
+  const handleSendToAutopilot = (ids: string[]) => {
+    setPendingOpportunityIds(ids)
+    setActiveTab('autopilot')
   }
 
   return (
@@ -33,8 +39,17 @@ export default function IntelligencePage() {
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="brain">Business Brain</TabsTrigger>
           <TabsTrigger value="strategy">Strategie</TabsTrigger>
-          <TabsTrigger value="opportunities">Oportunități</TabsTrigger>
-          <TabsTrigger value="autopilot">Autopilot</TabsTrigger>
+          <TabsTrigger value="opportunities" className="relative">
+            Oportunități
+          </TabsTrigger>
+          <TabsTrigger value="autopilot" className="relative">
+            Autopilot
+            {pendingOpportunityIds.length > 0 && (
+              <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground text-xs w-4 h-4">
+                {pendingOpportunityIds.length}
+              </span>
+            )}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="brain" className="mt-6">
@@ -44,10 +59,13 @@ export default function IntelligencePage() {
           <StrategyTab pollTrigger={pollTrigger} />
         </TabsContent>
         <TabsContent value="opportunities" className="mt-6">
-          <OpportunitiesTab />
+          <OpportunitiesTab onSendToAutopilot={handleSendToAutopilot} />
         </TabsContent>
         <TabsContent value="autopilot" className="mt-6">
-          <AutopilotTab />
+          <AutopilotTab
+            pendingOpportunityIds={pendingOpportunityIds}
+            onClearPending={() => setPendingOpportunityIds([])}
+          />
         </TabsContent>
       </Tabs>
     </div>

@@ -73,6 +73,47 @@ export async function findCompetitors(orgId: string, niche: string, token: strin
   })
 }
 
+export async function listOpportunities(
+  orgId: string,
+  token: string,
+  page = 1,
+  pageSize = 25,
+  statusFilter?: string
+) {
+  const params = new URLSearchParams({ page: String(page), page_size: String(pageSize) })
+  if (statusFilter) params.set('status_filter', statusFilter)
+  return apiFetch(`/api/v1/orgs/${orgId}/intelligence/opportunities?${params}`, token)
+}
+
+export async function countOpportunities(orgId: string, token: string, statusFilter?: string) {
+  const params = statusFilter ? `?status_filter=${statusFilter}` : ''
+  return apiFetch(`/api/v1/orgs/${orgId}/intelligence/opportunities/count${params}`, token)
+}
+
+export async function updateOpportunityStatus(
+  orgId: string,
+  oppId: string,
+  status: string,
+  token: string
+) {
+  return apiFetch(`/api/v1/orgs/${orgId}/intelligence/opportunities/${oppId}/status`, token, {
+    method: 'PATCH',
+    body: JSON.stringify({ status }),
+  })
+}
+
+export async function editOpportunity(
+  orgId: string,
+  oppId: string,
+  fields: { title?: string; hook?: string; insight?: string; pillar?: string; platforms?: string[]; format?: string },
+  token: string
+) {
+  return apiFetch(`/api/v1/orgs/${orgId}/intelligence/opportunities/${oppId}`, token, {
+    method: 'PATCH',
+    body: JSON.stringify(fields),
+  })
+}
+
 export async function proposeThemes(orgId: string, opportunityIds: string[], token: string) {
   return apiFetch(`/api/v1/orgs/${orgId}/autopilot/propose`, token, {
     method: 'POST',
