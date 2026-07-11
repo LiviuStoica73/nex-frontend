@@ -1,10 +1,11 @@
 // app/(protected)/dashboard/intelligence/page.tsx
-// Version: 2.1.0 — 2026-07-11
-// Scope: Intelligence — state autopilot (themes, stage, approvedIds) mutat în pagină
-//        ca să persiste la navigarea între tab-uri
+// Version: 2.2.0 — 2026-07-11
+// Scope: Intelligence — state autopilot (selectedOpportunities, themes, stage, approvedIds)
+//        mutat în pagină-părinte + persistat în localStorage pe orgId
 
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useOrg } from '@/contexts/org-context'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { BusinessBrainTab } from '@/components/intelligence/business-brain-tab'
 import { StrategyTab } from '@/components/intelligence/strategy-tab'
@@ -24,37 +25,64 @@ export interface Theme {
   score: number | null
 }
 
+export interface SelectedOpportunity {
+  id: string
+  title: string
+  hook: string | null
+}
+
+function useLocalStorageSet<T extends { id: string }>(key: string): [T[], (items: T[]) => void] {
+  const [items, setItemsState] = useState<T[]>([])
+
+  useEffect(() => {
+    if (!key) return
+    try {
+      const raw = localStorage.getItem(key)
+      if (raw) setItemsState(JSON.parse(raw))
+    } catch {}
+  }, [key])
+
+  const setItems = (next: T[]) => {
+    setItemsState(next)
+    try { localStorage.setItem(key, JSON.stringify(next)) } catch {}
+  }
+
+  return [items, setItems]
+}
+
 export default function IntelligencePage() {
+  const { activeOrgId } = useOrg()
   const [pollTrigger, setPollTrigger] = useState(0)
   const [activeTab, setActiveTab] = useState('brain')
 
-  // State autopilot persistat la nivel de pagină (supraviețuiește navigării între tab-uri)
-  const [pendingOpportunityIds, setPendingOpportunityIds] = useState<string[]>([])
+  const storageKey = activeOrgId ? `nex-autopilot-selected-${activeOrgId}` : ''
+  const [selectedOpportunities, setSelectedOpportunities] = useLocalStorageSet<SelectedOpportunity>(storageKey)
+
+  // Themes/stage/approvedIds — in-memory (se pierd la refresh, dar e ok — sunt rezultate temporare)
   const [autopilotThemes, setAutopilotThemes] = useState<Theme[]>([])
   const [autopilotStage, setAutopilotStage] = useState<AutopilotStage>('idle')
   const [autopilotApprovedIds, setAutopilotApprovedIds] = useState<Set<string>>(new Set())
+
+  const selectedIds = new Set(selectedOpportunities.map(o => o.id))
+
+  const handleToggleSelect = (opp: SelectedOpportunity) => {
+    if (selectedIds.has(opp.id)) {
+      setSelectedOpportunities(selectedOpportunities.filter(o => o.id !== opp.id))
+    } else {
+      setSelectedOpportunities([...selectedOpportunities, opp])
+    }
+  }
+
+  const handleClearSelected = () => setSelectedOpportunities([])
 
   const handleStrategyStarted = () => {
     setPollTrigger(t => t + 1)
     setTimeout(() => setActiveTab('strategy'), 2000)
   }
 
-  const handleSendToAutopilot = (ids: string[]) => {
-    // Adaugă la pending fără să șteargă ce e deja acolo sau în themes
-    setPendingOpportunityIds(prev => {
-      const existing = new Set(prev)
-      ids.forEach(id => existing.add(id))
-      return Array.from(existing)
-    })
-    setActiveTab('autopilot')
-  }
-
-  const autopilotPendingCount = autopilotStage === 'idle' ? pendingOpportunityIds.length : 0
-  const autopilotBadge = autopilotPendingCount > 0
-    ? autopilotPendingCount
-    : autopilotThemes.length > 0
-    ? autopilotThemes.length
-    : 0
+  const autopilotBadge = autopilotStage === 'idle'
+    ? selectedOpportunities.length
+    : autopilotThemes.length
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -87,12 +115,17 @@ export default function IntelligencePage() {
           <StrategyTab pollTrigger={pollTrigger} />
         </TabsContent>
         <TabsContent value="opportunities" className="mt-6">
-          <OpportunitiesTab onSendToAutopilot={handleSendToAutopilot} />
+          <OpportunitiesTab
+            selectedIds={selectedIds}
+            onToggleSelect={handleToggleSelect}
+            onGoToAutopilot={() => setActiveTab('autopilot')}
+          />
         </TabsContent>
         <TabsContent value="autopilot" className="mt-6">
           <AutopilotTab
-            pendingOpportunityIds={pendingOpportunityIds}
-            onClearPending={() => setPendingOpportunityIds([])}
+            selectedOpportunities={selectedOpportunities}
+            onClearSelected={handleClearSelected}
+            onRemoveSelected={(id) => setSelectedOpportunities(selectedOpportunities.filter(o => o.id !== id))}
             themes={autopilotThemes}
             onThemesChange={setAutopilotThemes}
             stage={autopilotStage}

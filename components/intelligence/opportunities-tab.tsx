@@ -1,7 +1,6 @@
 // components/intelligence/opportunities-tab.tsx
-// Version: 2.1.0 — 2026-07-11
-// Scope: Oportunități — workflow complet cu textarea editare, reordonare ↑↓,
-//        platforme din conectorii activi ca toggle-uri, butoane pe toate statusurile
+// Version: 2.2.0 — 2026-07-11
+// Scope: Oportunități — selectedIds/onToggleSelect vine din pagină-părinte (persist localStorage)
 
 'use client'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -19,6 +18,7 @@ import {
   reorderOpportunities,
   updateOpportunityStatus,
 } from '@/lib/api/intelligence'
+import type { SelectedOpportunity } from '@/app/(protected)/dashboard/intelligence/page'
 
 interface Opportunity {
   id: string
@@ -56,10 +56,12 @@ const ALL_PLATFORMS = ['instagram', 'facebook', 'linkedin', 'x', 'youtube', 'tik
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100]
 
 interface OpportunitiesTabProps {
-  onSendToAutopilot?: (ids: string[]) => void
+  selectedIds: Set<string>
+  onToggleSelect: (opp: SelectedOpportunity) => void
+  onGoToAutopilot: () => void
 }
 
-export function OpportunitiesTab({ onSendToAutopilot }: OpportunitiesTabProps) {
+export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot }: OpportunitiesTabProps) {
   const { data: session } = useSession()
   const { activeOrgId } = useOrg()
   const [opportunities, setOpportunities] = useState<Opportunity[]>([])
@@ -69,7 +71,6 @@ export function OpportunitiesTab({ onSendToAutopilot }: OpportunitiesTabProps) {
   const [textFilter, setTextFilter] = useState('')
   const [pageSize, setPageSize] = useState(20)
   const [loading, setLoading] = useState(true)
-  const [selected, setSelected] = useState<Set<string>>(new Set())
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editFields, setEditFields] = useState<Partial<Opportunity & { platformsEdit: string[] }>>({})
   const [saving, setSaving] = useState(false)
@@ -122,8 +123,14 @@ export function OpportunitiesTab({ onSendToAutopilot }: OpportunitiesTabProps) {
     if (!token || !orgId) return
     setSaving(true)
     try {
-      const { platformsEdit, ...rest } = editFields
-      const payload = { ...rest, ...(platformsEdit !== undefined ? { platforms: platformsEdit } : {}) }
+      const { platformsEdit } = editFields
+      const payload: { title?: string; hook?: string; insight?: string; pillar?: string; platforms?: string[]; format?: string } = {}
+      if (editFields.title !== undefined) payload.title = editFields.title
+      if (editFields.hook !== undefined && editFields.hook !== null) payload.hook = editFields.hook
+      if (editFields.insight !== undefined && editFields.insight !== null) payload.insight = editFields.insight
+      if (editFields.pillar !== undefined && editFields.pillar !== null) payload.pillar = editFields.pillar
+      if (editFields.format !== undefined && editFields.format !== null) payload.format = editFields.format
+      if (platformsEdit !== undefined) payload.platforms = platformsEdit
       const updated = await editOpportunity(orgId, opp.id, payload, token)
       setOpportunities(os => os.map(o => o.id === opp.id ? updated : o))
       setEditingId(null)
@@ -158,14 +165,6 @@ export function OpportunitiesTab({ onSendToAutopilot }: OpportunitiesTabProps) {
         console.error('Reorder failed', e)
       }
     }, 800)
-  }
-
-  const toggleSelect = (id: string) => {
-    setSelected(prev => {
-      const next = new Set(prev)
-      next.has(id) ? next.delete(id) : next.add(id)
-      return next
-    })
   }
 
   const toggleEditPlatform = (platform: string) => {
@@ -221,18 +220,12 @@ export function OpportunitiesTab({ onSendToAutopilot }: OpportunitiesTabProps) {
         />
       </div>
 
-      {/* Selectare pentru Autopilot */}
-      {selected.size > 0 && (
+      {/* Bara de selecție Autopilot */}
+      {selectedIds.size > 0 && (
         <div className="flex items-center gap-3 p-3 bg-muted rounded-md">
-          <span className="text-sm font-medium">{selected.size} selectate</span>
-          <Button
-            size="sm"
-            onClick={() => { onSendToAutopilot?.(Array.from(selected)); setSelected(new Set()) }}
-          >
-            Trimite la Autopilot →
-          </Button>
-          <Button size="sm" variant="ghost" onClick={() => setSelected(new Set())}>
-            Deselectează
+          <span className="text-sm font-medium">{selectedIds.size} selectate pentru Autopilot</span>
+          <Button size="sm" onClick={onGoToAutopilot}>
+            Vezi în Autopilot →
           </Button>
         </div>
       )}
@@ -262,7 +255,7 @@ export function OpportunitiesTab({ onSendToAutopilot }: OpportunitiesTabProps) {
       <div className="space-y-2">
         {filtered.map((opp, index) => {
           const isEditing = editingId === opp.id
-          const isSelected = selected.has(opp.id)
+          const isSelected = selectedIds.has(opp.id)
           const statusMeta = STATUS_LABELS[opp.status] || { label: opp.status, variant: 'secondary' as const }
           const rank = (page - 1) * pageSize + index + 1
           const editPlatforms = editFields.platformsEdit ?? opp.platforms
@@ -274,11 +267,11 @@ export function OpportunitiesTab({ onSendToAutopilot }: OpportunitiesTabProps) {
             >
               <CardContent className="py-3 space-y-2">
                 <div className="flex items-start gap-2">
-                  {/* Checkbox */}
+                  {/* Checkbox — toggle în lista globală din pagină */}
                   <input
                     type="checkbox"
                     checked={isSelected}
-                    onChange={() => toggleSelect(opp.id)}
+                    onChange={() => onToggleSelect({ id: opp.id, title: opp.title, hook: opp.hook })}
                     className="mt-1.5 cursor-pointer shrink-0"
                   />
 

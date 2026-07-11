@@ -1,6 +1,6 @@
 // components/intelligence/autopilot-tab.tsx
-// Version: 2.1.0 — 2026-07-11
-// Scope: Campaign Autopilot — state mutat în pagină-părinte pentru persistență la navigare
+// Version: 2.2.0 — 2026-07-11
+// Scope: Campaign Autopilot — selectedOpportunities vine din pagină cu localStorage
 //        Etapa 1 (propunere teme, 0cr) → Etapa 2 (generare conținut, credite)
 //        Filtre, căutare și paginație pe teme propuse
 
@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { useOrg } from '@/contexts/org-context'
 import { generateThemesContent, proposeThemes } from '@/lib/api/intelligence'
-import type { AutopilotStage, Theme } from '@/app/(protected)/dashboard/intelligence/page'
+import type { AutopilotStage, SelectedOpportunity, Theme } from '@/app/(protected)/dashboard/intelligence/page'
 
 const CREDIT_PER_THEME = 5  // 3 text + 2 imagine
 const THEMES_PER_PAGE = 10
@@ -25,8 +25,9 @@ const APPROVAL_FILTERS = [
 ]
 
 interface AutopilotTabProps {
-  pendingOpportunityIds: string[]
-  onClearPending: () => void
+  selectedOpportunities: SelectedOpportunity[]
+  onClearSelected: () => void
+  onRemoveSelected: (id: string) => void
   themes: Theme[]
   onThemesChange: (themes: Theme[]) => void
   stage: AutopilotStage
@@ -36,8 +37,9 @@ interface AutopilotTabProps {
 }
 
 export function AutopilotTab({
-  pendingOpportunityIds,
-  onClearPending,
+  selectedOpportunities,
+  onClearSelected,
+  onRemoveSelected,
   themes,
   onThemesChange,
   stage,
@@ -56,19 +58,20 @@ export function AutopilotTab({
 
   const token = (session?.user as any)?.accessToken || ''
   const orgId = activeOrgId
-  const hasPending = pendingOpportunityIds.length > 0
+  const hasSelected = selectedOpportunities.length > 0
 
   const handleProposeThemes = async () => {
-    if (!token || !orgId || !hasPending) return
+    if (!token || !orgId || !hasSelected) return
     setLoading(true)
     setMessage('')
     try {
-      const result = await proposeThemes(orgId, pendingOpportunityIds, token)
+      const ids = selectedOpportunities.map(o => o.id)
+      const result = await proposeThemes(orgId, ids, token)
       const newThemes: Theme[] = result.themes || []
       onThemesChange(newThemes)
       onApprovedIdsChange(new Set(newThemes.map((t: Theme) => t.opportunity_id)))
       onStageChange('etapa1')
-      onClearPending()
+      onClearSelected()
       setThemePage(1)
     } catch (e: any) {
       setMessage(`Eroare: ${e.message}`)
@@ -109,6 +112,7 @@ export function AutopilotTab({
     onStageChange('idle')
     onThemesChange([])
     onApprovedIdsChange(new Set())
+    onClearSelected()
     setMessage('')
     setSearchText('')
     setApprovalFilter('all')
@@ -138,23 +142,50 @@ export function AutopilotTab({
         </CardHeader>
         <CardContent>
           {stage === 'idle' && (
-            <div className="space-y-4">
-              {hasPending ? (
-                <div className="space-y-3">
-                  <div className="p-3 bg-muted rounded-md">
-                    <p className="text-sm font-medium">{pendingOpportunityIds.length} oportunități selectate</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Cost estimat Etapa 2: {pendingOpportunityIds.length * CREDIT_PER_THEME} credite
+            <div className="space-y-3">
+              {hasSelected ? (
+                <>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium">
+                      {selectedOpportunities.length} oportunități selectate
+                      <span className="ml-2 text-xs font-normal text-muted-foreground">
+                        · cost estimat Etapa 2: {selectedOpportunities.length * CREDIT_PER_THEME} credite
+                      </span>
                     </p>
+                    <Button size="sm" variant="ghost" className="text-xs text-muted-foreground"
+                      onClick={onClearSelected}>
+                      Șterge toate
+                    </Button>
                   </div>
+
+                  {/* Lista oportunităților selectate */}
+                  <div className="space-y-1.5">
+                    {selectedOpportunities.map(opp => (
+                      <div key={opp.id}
+                        className="flex items-start justify-between gap-2 p-2.5 bg-muted/50 rounded-md border">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{opp.title}</p>
+                          {opp.hook && (
+                            <p className="text-xs text-muted-foreground truncate mt-0.5">{opp.hook}</p>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => onRemoveSelected(opp.id)}
+                          className="text-muted-foreground hover:text-destructive text-xs shrink-0 px-1"
+                          title="Elimină din selecție"
+                        >✕</button>
+                      </div>
+                    ))}
+                  </div>
+
                   <Button onClick={handleProposeThemes} disabled={loading} size="lg" className="w-full">
-                    {loading ? 'Se generează propunerile...' : `Propune ${pendingOpportunityIds.length} teme — Etapa 1 (gratuit)`}
+                    {loading ? 'Se generează propunerile...' : `Propune teme din ${selectedOpportunities.length} oportunități — Etapa 1 (gratuit)`}
                   </Button>
-                </div>
+                </>
               ) : (
                 <div className="text-sm text-muted-foreground space-y-2">
                   <p>Nu ai oportunități selectate.</p>
-                  <p>Du-te în <strong>Oportunități</strong>, bifează oportunitățile și apasă <strong>Trimite la Autopilot</strong>.</p>
+                  <p>Du-te în <strong>Oportunități</strong>, bifează oportunitățile cu checkbox — selecția se păstrează automat.</p>
                 </div>
               )}
             </div>
