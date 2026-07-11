@@ -75,35 +75,38 @@ export function AutopilotTab({
   const orgId = activeOrgId
   const hasSelected = selectedOpportunities.length > 0
 
-  // La montare: verifică dacă există drafturi pending → trece în review
-  useEffect(() => {
+  // La fiecare schimbare de orgId/token sau când stage e idle/done: verifică drafturi existente în DB
+  const loadExistingDrafts = useCallback(async () => {
     if (!token || !orgId) return
-    if (stage === 'idle' || stage === 'done') {
-      getPrototypes(orgId, token).then(result => {
-        if (result.length > 0) {
-          const texts: Record<string, string> = {}
-          const prompts: Record<string, string> = {}
-          for (const d of result) {
-            texts[d.id] = d.master_text
-            prompts[d.id] = d.image_prompt || ''
-          }
-          setDrafts(result)
-          setEditTexts(texts)
-          setEditPrompts(prompts)
-          setApprovedDraftIds(new Set(result.map(d => d.id)))
-          onStageChange('review')
+    try {
+      const result = await getPrototypes(orgId, token)
+      if (result.length > 0) {
+        const texts: Record<string, string> = {}
+        const prompts: Record<string, string> = {}
+        for (const d of result) {
+          texts[d.id] = d.master_text
+          prompts[d.id] = d.image_prompt || ''
         }
-      }).catch(() => {})
+        setDrafts(result)
+        setEditTexts(texts)
+        setEditPrompts(prompts)
+        setApprovedDraftIds(new Set(result.map(d => d.id)))
+        onStageChange('review')
+      }
+    } catch {}
+  }, [token, orgId, onStageChange])
+
+  useEffect(() => {
+    if (stage === 'idle' || stage === 'done' || stage === 'generating') {
+      loadExistingDrafts()
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orgId, token])
+  }, [orgId, token, stage, loadExistingDrafts])
 
   // Polling pentru drafturi după lansare generare
   const pollDrafts = useCallback(async (expectedCount: number) => {
     if (!token || !orgId) return
     try {
       const result = await getPrototypes(orgId, token)
-      setDrafts(result)
       if (result.length >= expectedCount) {
         // Inițializează editTexts și editPrompts cu valorile generate
         const texts: Record<string, string> = {}
