@@ -73,6 +73,11 @@ export async function findCompetitors(orgId: string, niche: string, token: strin
   })
 }
 
+export async function getConnectedPlatforms(orgId: string, token: string): Promise<string[]> {
+  const accounts = await apiFetch(`/api/v1/orgs/${orgId}/social-accounts`, token)
+  return [...new Set((accounts as any[]).map((a: any) => a.platform))]
+}
+
 export async function listOpportunities(
   orgId: string,
   token: string,
@@ -99,6 +104,17 @@ export async function updateOpportunityStatus(
   return apiFetch(`/api/v1/orgs/${orgId}/intelligence/opportunities/${oppId}/status`, token, {
     method: 'PATCH',
     body: JSON.stringify({ status }),
+  })
+}
+
+export async function reorderOpportunities(
+  orgId: string,
+  items: { id: string; score: number }[],
+  token: string
+) {
+  return apiFetch(`/api/v1/orgs/${orgId}/intelligence/opportunities/reorder`, token, {
+    method: 'POST',
+    body: JSON.stringify(items),
   })
 }
 
