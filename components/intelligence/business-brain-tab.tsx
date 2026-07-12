@@ -15,6 +15,7 @@ import { getBusinessBrainStatus, scanWebsite, runStrategy, saveInterview } from 
 
 interface BrainStatus {
   interview_questions_answered: number
+  interview_answers: Record<string, string>
   website_scan_date: string | null
   website_scan_depth: string | null
   competitors_count: number
@@ -125,7 +126,9 @@ export function BusinessBrainTab({ onStrategyStarted }: { onStrategyStarted?: ()
     if (!token || !orgId) return
     setSavingInterview(true)
     try {
-      await saveInterview(orgId, answers, token)
+      // Merge: răspunsurile existente + cele din form (form are prioritate)
+      const merged = { ...(status?.interview_answers || {}), ...answers }
+      await saveInterview(orgId, merged, token)
       setMessage('✓ Interviul a fost salvat!')
       setMessageType('success')
       setShowInterview(false)
@@ -146,7 +149,12 @@ export function BusinessBrainTab({ onStrategyStarted }: { onStrategyStarted?: ()
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card
           className="cursor-pointer hover:ring-2 hover:ring-primary/30 transition-all"
-          onClick={() => setShowInterview(!showInterview)}
+          onClick={() => {
+            if (!showInterview && status?.interview_answers) {
+              setAnswers(status.interview_answers)
+            }
+            setShowInterview(!showInterview)
+          }}
         >
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Interviu</CardTitle>

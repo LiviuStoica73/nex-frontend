@@ -49,8 +49,9 @@ export function OpportunityCard({
   token,
 }: OpportunityCardProps) {
   const [editText, setEditText] = useState(opp.master_text || '')
-  const [editPrompt, setEditPrompt] = useState(opp.image_prompt_raw || '')
+  const [editPrompt, setEditPrompt] = useState(opp.image_prompt_raw || opp.image_prompt || '')
   const [showPrompt, setShowPrompt] = useState(false)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
   const [saving, setSaving] = useState(false)
   const [regenerating, setRegenerating] = useState(false)
   const [resetting, setResetting] = useState(false)
@@ -66,8 +67,9 @@ export function OpportunityCard({
   }, [opp.image_url])
 
   useEffect(() => {
-    if (opp.image_prompt_raw) setEditPrompt(opp.image_prompt_raw)
-  }, [opp.image_prompt_raw])
+    const p = opp.image_prompt_raw || opp.image_prompt
+    if (p) setEditPrompt(p)
+  }, [opp.image_prompt_raw, opp.image_prompt])
 
   const badge = STATUS_BADGE[opp.status] ?? { label: opp.status, variant: 'secondary' as const }
   const isGenerating = opp.status === 'generating'
@@ -187,20 +189,38 @@ export function OpportunityCard({
                 <img
                   src={localImageUrl}
                   alt="Prototip"
-                  className="w-full rounded-md object-cover max-h-64"
+                  className="w-full rounded-md object-contain bg-muted cursor-zoom-in"
+                  onClick={() => setLightboxOpen(true)}
                 />
                 <Button
                   size="sm"
                   variant="secondary"
                   className="absolute top-2 right-2 h-7 px-2"
-                  onClick={handleRegenerateImage}
+                  onClick={() => {
+                    if (!confirm('Regenerarea imaginii consumă 1 credit. Continui?')) return
+                    handleRegenerateImage()
+                  }}
                   disabled={regenerating}
-                  title="Regenerează imagine cu promptul curent"
+                  title="Regenerează imagine (1 credit)"
                 >
                   {regenerating
                     ? <Loader2 className="h-3 w-3 animate-spin" />
                     : <RefreshCw className="h-3 w-3" />}
                 </Button>
+              </div>
+            )}
+
+            {/* Lightbox simplu */}
+            {lightboxOpen && localImageUrl && (
+              <div
+                className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+                onClick={() => setLightboxOpen(false)}
+              >
+                <img
+                  src={localImageUrl}
+                  alt="Prototip full"
+                  className="max-w-full max-h-full rounded-lg object-contain"
+                />
               </div>
             )}
 
