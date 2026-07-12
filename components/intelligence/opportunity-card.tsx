@@ -115,14 +115,17 @@ export function OpportunityCard({
 
   async function handleToggleSelect(v: ImageVersion) {
     const newSelected = !v.selected
+    // Optimistic update imediat
+    setVersions(prev => prev.map(img => img.url === v.url ? { ...img, selected: newSelected } : img))
     try {
       const result = await selectOpportunityImage(orgId, opp.id, v.url, newSelected, token)
-      setVersions(result.image_versions)
+      setVersions([...result.image_versions])
       setLocalImageUrl(result.image_url)
-      // Setăm promptul vizual cu promptul imaginii selectate
       if (newSelected && v.prompt) setEditPrompt(v.prompt)
     } catch (e) {
       console.error('Select image failed', e)
+      // Revert optimistic update
+      setVersions(prev => prev.map(img => img.url === v.url ? { ...img, selected: v.selected } : img))
     }
   }
 
