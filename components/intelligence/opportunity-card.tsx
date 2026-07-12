@@ -385,7 +385,23 @@ export function OpportunityCard({
 
         {/* Published */}
         {isPublished && (
-          <p className="text-xs text-muted-foreground">Publicat în Calendar</p>
+          <div className="flex gap-3 items-start">
+            {localImageUrl && (
+              <img
+                src={localImageUrl}
+                alt="Imagine publicată"
+                className="h-16 w-16 rounded-md object-cover shrink-0 border border-border"
+              />
+            )}
+            <div className="flex-1 min-w-0 space-y-1">
+              {editText && (
+                <p className="text-xs text-foreground line-clamp-3 leading-relaxed">{editText}</p>
+              )}
+              <p className="text-xs text-muted-foreground">
+                Publicat în Calendar · {new Date(opp.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' })}
+              </p>
+            </div>
+          </div>
         )}
 
         {/* Rejected */}
