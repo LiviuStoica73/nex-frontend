@@ -10,8 +10,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Loader2, RefreshCw, Send, Zap, X, RotateCcw } from 'lucide-react'
-import { updatePrototype, regenerateOpportunityImage, updateOpportunityStatus, selectOpportunityImage } from '@/lib/api/intelligence'
-import type { ContentOpportunity, ImageVersion } from '@/lib/api/intelligence'
+import { updatePrototype, regenerateOpportunityImage, updateOpportunityStatus, selectOpportunityImage, getPublishedLinks } from '@/lib/api/intelligence'
+import type { ContentOpportunity, ImageVersion, PublishedLink } from '@/lib/api/intelligence'
 
 interface OpportunityCardProps {
   opportunity: ContentOpportunity
@@ -57,7 +57,14 @@ export function OpportunityCard({
   const [regenerating, setRegenerating] = useState(false)
   const [resetting, setResetting] = useState(false)
   const [localImageUrl, setLocalImageUrl] = useState(opp.image_url)
+  const [publishedLinks, setPublishedLinks] = useState<PublishedLink[]>([])
   const lastInteractionRef = useRef<number>(0)
+
+  useEffect(() => {
+    if (isPublished) {
+      getPublishedLinks(orgId, opp.id, token).then(setPublishedLinks).catch(() => {})
+    }
+  }, [isPublished, opp.id, orgId, token])
 
   // Sync when polling updates opp from generating→review (skip if user just interacted)
   useEffect(() => {
@@ -385,22 +392,51 @@ export function OpportunityCard({
 
         {/* Published */}
         {isPublished && (
-          <div className="flex gap-3 items-start">
-            {localImageUrl && (
-              <img
-                src={localImageUrl}
-                alt="Imagine publicată"
-                className="h-16 w-16 rounded-md object-cover shrink-0 border border-border"
-              />
-            )}
-            <div className="flex-1 min-w-0 space-y-1">
-              {editText && (
-                <p className="text-xs text-foreground line-clamp-3 leading-relaxed">{editText}</p>
+          <div className="space-y-3">
+            <div className="flex gap-3 items-start">
+              {localImageUrl && (
+                <img
+                  src={localImageUrl}
+                  alt="Imagine publicată"
+                  className="h-16 w-16 rounded-md object-cover shrink-0 border border-border"
+                />
               )}
-              <p className="text-xs text-muted-foreground">
-                Publicat în Calendar · {new Date(opp.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' })}
-              </p>
+              <div className="flex-1 min-w-0 space-y-1">
+                {editText && (
+                  <p className="text-xs text-foreground line-clamp-3 leading-relaxed">{editText}</p>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  Publicat în Calendar · {new Date(opp.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </p>
+              </div>
             </div>
+
+            {/* Link-uri per platformă */}
+            {publishedLinks.length > 0 && (
+              <div className="space-y-1">
+                {publishedLinks.map((link) => (
+                  <div key={link.platform} className="flex items-center justify-between gap-2 text-xs">
+                    <span className="text-muted-foreground capitalize w-20 shrink-0">{link.platform}</span>
+                    {link.url ? (
+                      <a
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary underline-offset-2 hover:underline truncate"
+                      >
+                        {link.url}
+                      </a>
+                    ) : (
+                      <span className="text-muted-foreground italic">
+                        {link.status === 'scheduled'
+                          ? `Programat ${link.scheduled_at ? new Date(link.scheduled_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : ''}`
+                          : link.status === 'published' ? 'Publicat (fără link)' : link.status}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

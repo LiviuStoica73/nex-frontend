@@ -283,6 +283,18 @@ export async function publishApprovedDrafts(
   })
 }
 
+export interface PublishedLink {
+  platform: string
+  url: string | null
+  published_at: string | null
+  scheduled_at: string | null
+  status: string
+}
+
+export async function getPublishedLinks(orgId: string, oppId: string, token: string): Promise<PublishedLink[]> {
+  return apiFetch(`/api/v1/orgs/${orgId}/intelligence/opportunities/${oppId}/published-links`, token)
+}
+
 export async function selectOpportunityImage(orgId: string, oppId: string, url: string, selected: boolean, token: string): Promise<{ image_versions: any[], image_url: string }> {
   return apiFetch(`/api/v1/orgs/${orgId}/intelligence/opportunities/${oppId}/image-select`, token, {
     method: 'PATCH',
