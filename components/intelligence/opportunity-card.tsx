@@ -424,9 +424,7 @@ export function OpportunityCard({
                   </p>
                 )}
                 <p className="text-xs text-muted-foreground">
-                  Generat: {new Date(opp.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' })}
-                  {' · '}
-                  <span className="underline-offset-2">{publishedExpanded ? '▲ Restrânge' : '▼ Detalii'}</span>
+                  <span className="underline-offset-2 cursor-pointer">{publishedExpanded ? '▲ Restrânge' : '▼ Detalii & link-uri'}</span>
                 </p>
               </div>
             </div>
