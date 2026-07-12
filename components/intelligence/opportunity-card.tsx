@@ -78,9 +78,22 @@ export function OpportunityCard({
   const isIdea = opp.status === 'idea'
 
   useEffect(() => {
-    if (isPublished) {
-      getPublishedLinks(orgId, opp.id, token).then(setPublishedLinks).catch(() => {})
+    if (!isPublished) return
+    let attempts = 0
+    const maxAttempts = 8
+
+    const fetchLinks = () => {
+      getPublishedLinks(orgId, opp.id, token)
+        .then(links => {
+          setPublishedLinks(links)
+          if (links.length === 0 && attempts < maxAttempts) {
+            attempts++
+            setTimeout(fetchLinks, 4000)
+          }
+        })
+        .catch(() => {})
     }
+    fetchLinks()
   }, [isPublished, opp.id, orgId, token])
 
   // Sync when polling updates opp from generating→review (skip if user just interacted)
@@ -478,7 +491,7 @@ export function OpportunityCard({
                   </div>
                 )}
                 {publishedLinks.length === 0 && (
-                  <p className="text-xs text-muted-foreground italic">Postările nu au fost asociate (publicate înainte de această funcționalitate)</p>
+                  <p className="text-xs text-muted-foreground italic animate-pulse">Se programează postările…</p>
                 )}
               </div>
             )}

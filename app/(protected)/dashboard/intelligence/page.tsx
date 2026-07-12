@@ -4,7 +4,8 @@
 
 'use client'
 import { useSession } from 'next-auth/react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useOrg } from '@/contexts/org-context'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { BusinessBrainTab } from '@/components/intelligence/business-brain-tab'
@@ -13,11 +14,26 @@ import { OpportunitiesTab } from '@/components/intelligence/opportunities-tab'
 import type { SelectedOpportunity } from '@/components/intelligence/opportunities-tab'
 import { AutopilotTab } from '@/components/intelligence/autopilot-tab'
 
+const VALID_TABS = ['brain', 'strategy', 'opportunities', 'autopilot']
+
 export default function IntelligencePage() {
   const { activeOrgId } = useOrg()
   const { data: session } = useSession()
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const [pollTrigger, setPollTrigger] = useState(0)
-  const [activeTab, setActiveTab] = useState('brain')
+
+  const tabFromUrl = searchParams.get('tab')
+  const [activeTab, setActiveTab] = useState(
+    tabFromUrl && VALID_TABS.includes(tabFromUrl) ? tabFromUrl : 'brain'
+  )
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab)
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('tab', tab)
+    router.replace(`?${params.toString()}`, { scroll: false })
+  }
 
   const token = (session?.user as any)?.accessToken || ''
   const orgId = activeOrgId || ''
@@ -28,7 +44,7 @@ export default function IntelligencePage() {
 
   const handleStrategyStarted = () => {
     setPollTrigger(t => t + 1)
-    setTimeout(() => setActiveTab('strategy'), 2000)
+    setTimeout(() => handleTabChange('strategy'), 2000)
   }
 
   return (
@@ -40,7 +56,7 @@ export default function IntelligencePage() {
         </p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="brain">Business Brain</TabsTrigger>
           <TabsTrigger value="strategy">Strategie</TabsTrigger>
@@ -58,7 +74,7 @@ export default function IntelligencePage() {
           <OpportunitiesTab
             selectedIds={selectedIds}
             onToggleSelect={handleToggleSelect}
-            onGoToAutopilot={() => setActiveTab('autopilot')}
+            onGoToAutopilot={() => handleTabChange('autopilot')}
           />
         </TabsContent>
         <TabsContent value="autopilot" className="mt-6">
