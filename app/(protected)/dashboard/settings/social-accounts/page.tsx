@@ -853,17 +853,15 @@ export default function SocialAccountsPage() {
                       />
                       Stories
                     </label>
-                    {account.platform === 'instagram' && (
-                      <label className="flex items-center gap-1.5 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={account.post_as_reels}
-                          onChange={(e) => handleStoriesReelsChange(account.id, 'post_as_reels', e.target.checked)}
-                          className="accent-primary"
-                        />
-                        Reels
-                      </label>
-                    )}
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={account.post_as_reels}
+                        onChange={(e) => handleStoriesReelsChange(account.id, 'post_as_reels', e.target.checked)}
+                        className="accent-primary"
+                      />
+                      Reels
+                    </label>
                     {(account.post_as_stories || account.post_as_reels) && (
                       <div className="flex items-center gap-1 mt-0.5">
                         <span className="text-muted-foreground">Durată:</span>
