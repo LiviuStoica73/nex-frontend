@@ -290,6 +290,7 @@ export interface PublishedLink {
   published_at: string | null
   scheduled_at: string | null
   status: string
+  post_type?: string
 }
 
 export async function getPublishedLinks(orgId: string, oppId: string, token: string): Promise<PublishedLink[]> {

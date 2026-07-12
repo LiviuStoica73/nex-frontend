@@ -55,9 +55,10 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
     .map((p) => {
       const dot = STATUS_DOTS[p.status] ?? "⚪"
       const preview = p.blog_title ?? p.text_content?.slice(0, 30) ?? ""
+      const typeLabel = p.post_type === "story" ? " 📱Story" : p.post_type === "reel" ? " 🎬Reel" : ""
       const title = p.org_name
-        ? `${dot} [${p.org_name}] ${p.platform.toUpperCase()} — ${preview}`
-        : `${dot} ${p.platform.toUpperCase()} — ${preview}`
+        ? `${dot} [${p.org_name}] ${p.platform.toUpperCase()}${typeLabel} — ${preview}`
+        : `${dot} ${p.platform.toUpperCase()}${typeLabel} — ${preview}`
       return {
         id: p.id,
         title,
@@ -336,7 +337,7 @@ function PostDetailModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
       <div
-        className="w-full max-w-md rounded-lg bg-background p-6 shadow-xl"
+        className="w-full max-w-md rounded-lg bg-background p-6 shadow-xl max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
@@ -354,6 +355,11 @@ function PostDetailModal({
           </span>
         </div>
 
+        {(post.post_type === "story" || post.post_type === "reel") && (
+          <span className="mb-3 inline-block rounded-full bg-purple-100 px-3 py-0.5 text-xs font-semibold text-purple-800 dark:bg-purple-900/40 dark:text-purple-200">
+            {post.post_type === "story" ? "📱 Story" : "🎬 Reel"}
+          </span>
+        )}
         {post.blog_title && (
           <p className="mb-1 text-sm font-semibold text-foreground">{post.blog_title}</p>
         )}

@@ -19,6 +19,7 @@ interface PublishedLink {
   published_at: string | null
   scheduled_at: string | null
   status: string
+  post_type?: string
 }
 
 interface OpportunityCardProps {
@@ -461,10 +462,14 @@ export function OpportunityCard({
                   <div>
                     <p className="text-xs font-medium text-muted-foreground mb-1">Programare & link-uri</p>
                     <div className="space-y-1.5">
-                      {publishedLinks.map((link) => (
-                        <div key={link.platform} className="text-xs space-y-0.5">
+                      {publishedLinks.map((link, i) => (
+                        <div key={`${link.platform}-${link.post_type ?? 'post'}-${i}`} className="text-xs space-y-0.5">
                           <div className="flex items-center gap-2">
-                            <span className="capitalize font-medium w-20 shrink-0">{link.platform}</span>
+                            <span className="capitalize font-medium w-24 shrink-0">
+                              {link.platform}
+                              {link.post_type === 'story' && ' 📱'}
+                              {link.post_type === 'reel' && ' 🎬'}
+                            </span>
                             <span className="text-muted-foreground">
                               {link.scheduled_at
                                 ? new Date(link.scheduled_at).toLocaleString('ro-RO', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
