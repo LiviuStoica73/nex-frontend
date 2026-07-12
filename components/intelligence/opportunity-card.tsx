@@ -11,7 +11,15 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Loader2, RefreshCw, Send, Zap, X, RotateCcw } from 'lucide-react'
 import { updatePrototype, regenerateOpportunityImage, updateOpportunityStatus, selectOpportunityImage, getPublishedLinks } from '@/lib/api/intelligence'
-import type { ContentOpportunity, ImageVersion, PublishedLink } from '@/lib/api/intelligence'
+import type { ContentOpportunity, ImageVersion } from '@/lib/api/intelligence'
+
+interface PublishedLink {
+  platform: string
+  url: string | null
+  published_at: string | null
+  scheduled_at: string | null
+  status: string
+}
 
 interface OpportunityCardProps {
   opportunity: ContentOpportunity
