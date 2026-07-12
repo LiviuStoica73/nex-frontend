@@ -10,8 +10,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Loader2, RefreshCw, Send, Zap, X, RotateCcw } from 'lucide-react'
-import { updatePrototype, regenerateOpportunityImage, updateOpportunityStatus } from '@/lib/api/intelligence'
-import type { ContentOpportunity } from '@/lib/api/intelligence'
+import { updatePrototype, regenerateOpportunityImage, updateOpportunityStatus, selectOpportunityImage } from '@/lib/api/intelligence'
+import type { ContentOpportunity, ImageVersion } from '@/lib/api/intelligence'
 
 interface OpportunityCardProps {
   opportunity: ContentOpportunity
@@ -52,6 +52,7 @@ export function OpportunityCard({
   const [editPrompt, setEditPrompt] = useState(opp.image_prompt_raw || opp.image_prompt || '')
   const [showPrompt, setShowPrompt] = useState(false)
   const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [versions, setVersions] = useState<ImageVersion[]>(opp.image_versions || [])
   const [saving, setSaving] = useState(false)
   const [regenerating, setRegenerating] = useState(false)
   const [resetting, setResetting] = useState(false)
@@ -65,6 +66,10 @@ export function OpportunityCard({
   useEffect(() => {
     if (opp.image_url) setLocalImageUrl(opp.image_url)
   }, [opp.image_url])
+
+  useEffect(() => {
+    if (opp.image_versions?.length) setVersions(opp.image_versions)
+  }, [opp.image_versions])
 
   useEffect(() => {
     const p = opp.image_prompt_raw || opp.image_prompt
@@ -102,8 +107,22 @@ export function OpportunityCard({
     try {
       const result = await regenerateOpportunityImage(orgId, opp.id, token, editPrompt || undefined)
       setLocalImageUrl(result.image_url)
+      if (result.image_versions) setVersions(result.image_versions)
     } finally {
       setRegenerating(false)
+    }
+  }
+
+  async function handleToggleSelect(v: ImageVersion) {
+    const newSelected = !v.selected
+    try {
+      const result = await selectOpportunityImage(orgId, opp.id, v.url, newSelected, token)
+      setVersions(result.image_versions)
+      setLocalImageUrl(result.image_url)
+      // Setăm promptul vizual cu promptul imaginii selectate
+      if (newSelected && v.prompt) setEditPrompt(v.prompt)
+    } catch (e) {
+      console.error('Select image failed', e)
     }
   }
 
@@ -184,20 +203,16 @@ export function OpportunityCard({
         {/* Review: imagine + text editabil + prompt vizual + butoane */}
         {isReview && (
           <div className="space-y-3">
-            {localImageUrl && (
-              <div className="flex items-center gap-2">
-                {/* Thumbnail — click deschide lightbox */}
-                <img
-                  src={localImageUrl}
-                  alt="Prototip"
-                  className="h-16 w-16 rounded-md object-cover cursor-zoom-in shrink-0 border border-border"
-                  onClick={() => setLightboxOpen(true)}
-                  title="Click pentru a vedea imaginea completă"
-                />
+            {/* Galerie imagini */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground font-medium">
+                  Imagini ({versions.length}) — click pentru a selecta / deselecta
+                </span>
                 <Button
                   size="sm"
                   variant="outline"
-                  className="h-8 px-3 text-xs"
+                  className="h-7 px-2 text-xs"
                   onClick={() => {
                     if (!confirm('Regenerarea imaginii consumă credite conform selecțiilor din Quick Post. Continui?')) return
                     handleRegenerateImage()
@@ -207,12 +222,61 @@ export function OpportunityCard({
                   {regenerating
                     ? <Loader2 className="h-3 w-3 animate-spin mr-1" />
                     : <RefreshCw className="h-3 w-3 mr-1" />}
-                  Regenerează imagine
+                  + Imagine nouă
                 </Button>
               </div>
-            )}
 
-            {/* Lightbox simplu */}
+              {/* Thumbnails */}
+              <div className="flex flex-wrap gap-2">
+                {versions.length === 0 && localImageUrl && (
+                  /* Fallback pentru imagini vechi fără versions */
+                  <div className="relative">
+                    <img
+                      src={localImageUrl}
+                      alt="Imagine"
+                      className="h-16 w-16 rounded-md object-cover cursor-zoom-in border-2 border-primary"
+                      onClick={() => { setLightboxOpen(true) }}
+                    />
+                  </div>
+                )}
+                {versions.map((v, i) => (
+                  <div key={v.url} className="relative group">
+                    <img
+                      src={v.url}
+                      alt={`Imagine ${i + 1}`}
+                      className={`h-16 w-16 rounded-md object-cover cursor-pointer border-2 transition-all ${
+                        v.selected
+                          ? 'border-primary ring-2 ring-primary/40'
+                          : 'border-border opacity-60 hover:opacity-100'
+                      }`}
+                      onClick={() => handleToggleSelect(v)}
+                      title={v.selected ? 'Selectată — click pentru a deselecta' : 'Click pentru a selecta'}
+                    />
+                    {/* Badge ✓ pe cele selectate */}
+                    {v.selected && (
+                      <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold">✓</span>
+                    )}
+                    {/* Click pe imaginea selectată deschide lightbox */}
+                    {v.selected && (
+                      <button
+                        className="absolute inset-0 flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={(e) => { e.stopPropagation(); setLightboxOpen(true) }}
+                        title="Mărește"
+                      >
+                        <span className="bg-black/60 text-white text-[10px] rounded-b-md w-full text-center py-0.5">🔍</span>
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {versions.length > 0 && (
+                <p className="text-xs text-muted-foreground">
+                  {versions.filter(v => v.selected).length} selectate pentru publicare · Click pe o imagine pentru a-i vedea promptul
+                </p>
+              )}
+            </div>
+
+            {/* Lightbox */}
             {lightboxOpen && localImageUrl && (
               <div
                 className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"

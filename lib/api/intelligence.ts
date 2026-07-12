@@ -178,6 +178,14 @@ export interface ContentOpportunity {
   image_url: string | null
   image_prompt: string | null
   image_prompt_raw: string | null
+  image_versions: ImageVersion[]
+  created_at: string
+}
+
+export interface ImageVersion {
+  url: string
+  prompt: string
+  selected: boolean
   created_at: string
 }
 
@@ -206,7 +214,7 @@ export async function updatePrototype(
   })
 }
 
-export async function regenerateOpportunityImage(orgId: string, oppId: string, token: string, scenePrompt?: string): Promise<{ image_url: string }> {
+export async function regenerateOpportunityImage(orgId: string, oppId: string, token: string, scenePrompt?: string): Promise<{ image_url: string; image_versions: ImageVersion[] }> {
   return apiFetch(
     `/api/v1/orgs/${orgId}/intelligence/opportunities/${oppId}/regenerate-image`,
     token,
@@ -272,5 +280,12 @@ export async function publishApprovedDrafts(
   return apiFetch(`/api/v1/orgs/${orgId}/autopilot/publish`, token, {
     method: 'POST',
     body: JSON.stringify({ approved_drafts: approvedDrafts }),
+  })
+}
+
+export async function selectOpportunityImage(orgId: string, oppId: string, url: string, selected: boolean, token: string): Promise<{ image_versions: any[], image_url: string }> {
+  return apiFetch(`/api/v1/orgs/${orgId}/intelligence/opportunities/${oppId}/image-select`, token, {
+    method: 'PATCH',
+    body: JSON.stringify({ url, selected }),
   })
 }
