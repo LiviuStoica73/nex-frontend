@@ -58,6 +58,7 @@ export function OpportunityCard({
   const [resetting, setResetting] = useState(false)
   const [localImageUrl, setLocalImageUrl] = useState(opp.image_url)
   const [publishedLinks, setPublishedLinks] = useState<PublishedLink[]>([])
+  const [publishedExpanded, setPublishedExpanded] = useState(false)
   const lastInteractionRef = useRef<number>(0)
 
   useEffect(() => {
@@ -393,48 +394,96 @@ export function OpportunityCard({
         {/* Published */}
         {isPublished && (
           <div className="space-y-3">
-            <div className="flex gap-3 items-start">
+            {/* Rând compact: thumbnail + text trunchiat + toggle */}
+            <div
+              className="flex gap-3 items-start cursor-pointer"
+              onClick={() => setPublishedExpanded(e => !e)}
+            >
               {localImageUrl && (
                 <img
                   src={localImageUrl}
                   alt="Imagine publicată"
                   className="h-16 w-16 rounded-md object-cover shrink-0 border border-border"
+                  onClick={(e) => { e.stopPropagation(); setLightboxOpen(true) }}
+                  title="Click pentru a mări"
                 />
               )}
               <div className="flex-1 min-w-0 space-y-1">
                 {editText && (
-                  <p className="text-xs text-foreground line-clamp-3 leading-relaxed">{editText}</p>
+                  <p className={`text-xs text-foreground leading-relaxed ${publishedExpanded ? '' : 'line-clamp-3'}`}>
+                    {editText}
+                  </p>
                 )}
                 <p className="text-xs text-muted-foreground">
-                  Publicat în Calendar · {new Date(opp.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  Generat: {new Date(opp.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  {' · '}
+                  <span className="underline-offset-2">{publishedExpanded ? '▲ Restrânge' : '▼ Detalii'}</span>
                 </p>
               </div>
             </div>
 
-            {/* Link-uri per platformă */}
-            {publishedLinks.length > 0 && (
-              <div className="space-y-1">
-                {publishedLinks.map((link) => (
-                  <div key={link.platform} className="flex items-center justify-between gap-2 text-xs">
-                    <span className="text-muted-foreground capitalize w-20 shrink-0">{link.platform}</span>
-                    {link.url ? (
-                      <a
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary underline-offset-2 hover:underline truncate"
-                      >
-                        {link.url}
-                      </a>
-                    ) : (
-                      <span className="text-muted-foreground italic">
-                        {link.status === 'scheduled'
-                          ? `Programat ${link.scheduled_at ? new Date(link.scheduled_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : ''}`
-                          : link.status === 'published' ? 'Publicat (fără link)' : link.status}
-                      </span>
-                    )}
+            {/* Secțiune expandată */}
+            {publishedExpanded && (
+              <div className="space-y-3 border-t pt-3">
+                {/* Prompt vizual */}
+                {editPrompt && (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">Prompt vizual</p>
+                    <p className="text-xs text-foreground leading-relaxed">{editPrompt}</p>
                   </div>
-                ))}
+                )}
+
+                {/* Platforme + data programată + link */}
+                {publishedLinks.length > 0 && (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">Programare & link-uri</p>
+                    <div className="space-y-1.5">
+                      {publishedLinks.map((link) => (
+                        <div key={link.platform} className="text-xs space-y-0.5">
+                          <div className="flex items-center gap-2">
+                            <span className="capitalize font-medium w-20 shrink-0">{link.platform}</span>
+                            <span className="text-muted-foreground">
+                              {link.scheduled_at
+                                ? new Date(link.scheduled_at).toLocaleString('ro-RO', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+                                : '—'}
+                            </span>
+                          </div>
+                          {link.url ? (
+                            <a
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary underline-offset-2 hover:underline block truncate pl-22"
+                            >
+                              {link.url}
+                            </a>
+                          ) : (
+                            <span className="text-muted-foreground italic pl-22">
+                              {link.status === 'scheduled' ? 'Programat — link disponibil după publicare' : link.status}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {publishedLinks.length === 0 && (
+                  <p className="text-xs text-muted-foreground italic">Postările nu au fost asociate (publicate înainte de această funcționalitate)</p>
+                )}
+              </div>
+            )}
+
+            {/* Lightbox imagine */}
+            {lightboxOpen && localImageUrl && (
+              <div
+                className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+                onClick={() => setLightboxOpen(false)}
+              >
+                <img
+                  src={localImageUrl}
+                  alt="Imagine full"
+                  className="max-w-full max-h-full rounded-lg object-contain"
+                />
               </div>
             )}
           </div>
