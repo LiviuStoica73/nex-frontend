@@ -24,7 +24,12 @@ import {
 } from '@/lib/api/intelligence'
 import { OpportunityCard } from './opportunity-card'
 import type { ContentOpportunity } from '@/lib/api/intelligence'
-import type { SelectedOpportunity } from '@/app/(protected)/dashboard/intelligence/page'
+
+export interface SelectedOpportunity {
+  id: string
+  title: string
+  hook: string | null
+}
 
 type Opportunity = ContentOpportunity & {
   pillar?: string | null

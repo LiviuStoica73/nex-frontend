@@ -10,13 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { BusinessBrainTab } from '@/components/intelligence/business-brain-tab'
 import { StrategyTab } from '@/components/intelligence/strategy-tab'
 import { OpportunitiesTab } from '@/components/intelligence/opportunities-tab'
+import type { SelectedOpportunity } from '@/components/intelligence/opportunities-tab'
 import { AutopilotTab } from '@/components/intelligence/autopilot-tab'
-
-export interface SelectedOpportunity {
-  id: string
-  title: string
-  hook: string | null
-}
 
 export default function IntelligencePage() {
   const { activeOrgId } = useOrg()
