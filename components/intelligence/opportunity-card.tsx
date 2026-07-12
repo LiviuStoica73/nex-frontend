@@ -249,32 +249,33 @@ export function OpportunityCard({
                   </div>
                 )}
                 {versions.map((v, i) => (
-                  <div key={v.url} className="relative group">
+                  <div
+                    key={v.url}
+                    className="relative group cursor-pointer"
+                    onClick={() => handleToggleSelect(v)}
+                    title={v.selected ? 'Click pentru a deselecta' : 'Click pentru a selecta'}
+                  >
                     <img
                       src={v.url}
                       alt={`Imagine ${i + 1}`}
-                      className={`h-16 w-16 rounded-md object-cover cursor-pointer border-2 transition-all ${
+                      className={`h-16 w-16 rounded-md object-cover border-2 transition-all ${
                         v.selected
                           ? 'border-primary ring-2 ring-primary/40'
                           : 'border-border opacity-60 hover:opacity-100'
                       }`}
-                      onClick={() => handleToggleSelect(v)}
-                      title={v.selected ? 'Selectată — click pentru a deselecta' : 'Click pentru a selecta'}
                     />
                     {/* Badge ✓ pe cele selectate */}
                     {v.selected && (
-                      <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold">✓</span>
+                      <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold pointer-events-none">✓</span>
                     )}
-                    {/* Click pe imaginea selectată deschide lightbox */}
-                    {v.selected && (
-                      <button
-                        className="absolute inset-0 flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={(e) => { e.stopPropagation(); setLightboxOpen(true) }}
-                        title="Mărește"
-                      >
-                        <span className="bg-black/60 text-white text-[10px] rounded-b-md w-full text-center py-0.5">🔍</span>
-                      </button>
-                    )}
+                    {/* Buton lightbox — doar pe hover, nu interceptează toggle */}
+                    <button
+                      className="absolute bottom-0 right-0 bg-black/60 text-white text-[10px] rounded-bl-md rounded-tr-md px-1 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => { e.stopPropagation(); setLocalImageUrl(v.url); setLightboxOpen(true) }}
+                      title="Mărește"
+                    >
+                      🔍
+                    </button>
                   </div>
                 ))}
               </div>
