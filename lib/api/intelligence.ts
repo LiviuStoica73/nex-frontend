@@ -297,6 +297,17 @@ export async function getPublishedLinks(orgId: string, oppId: string, token: str
   return apiFetch(`/api/v1/orgs/${orgId}/intelligence/opportunities/${oppId}/published-links`, token)
 }
 
+export async function createOpportunity(
+  orgId: string,
+  data: { title: string; hook?: string; image_prompt_raw?: string; pillar?: string; platforms?: string[] },
+  token: string
+): Promise<ContentOpportunity> {
+  return apiFetch(`/api/v1/orgs/${orgId}/intelligence/opportunities`, token, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+}
+
 export async function selectOpportunityImage(orgId: string, oppId: string, url: string, selected: boolean, token: string): Promise<{ image_versions: any[], image_url: string }> {
   return apiFetch(`/api/v1/orgs/${orgId}/intelligence/opportunities/${oppId}/image-select`, token, {
     method: 'PATCH',

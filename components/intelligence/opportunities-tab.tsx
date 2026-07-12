@@ -13,6 +13,7 @@ import { Zap } from 'lucide-react'
 import { useOrg } from '@/contexts/org-context'
 import {
   countOpportunities,
+  createOpportunity,
   editOpportunity,
   generateBulkPrototypes,
   generatePrototype,
@@ -89,6 +90,9 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
   const [connectedPlatforms, setConnectedPlatforms] = useState<string[]>([])
   const [bulkGenerateIds, setBulkGenerateIds] = useState<Set<string>>(new Set())
   const reorderTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const [showCreateForm, setShowCreateForm] = useState(false)
+  const [createFields, setCreateFields] = useState({ title: '', hook: '', image_prompt: '', pillar: '', platforms: [] as string[] })
+  const [creating, setCreating] = useState(false)
 
   const token = (session?.user as any)?.accessToken || ''
   const orgId = activeOrgId
@@ -116,9 +120,17 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
 
   useEffect(() => {
     if (!token || !orgId) return
-    getConnectedPlatforms(orgId, token)
-      .then(platforms => setConnectedPlatforms(platforms.length > 0 ? platforms : ALL_PLATFORMS))
-      .catch(() => setConnectedPlatforms(ALL_PLATFORMS))
+    // Include și blog connectors ca platformă normală
+    Promise.all([
+      getConnectedPlatforms(orgId, token).catch(() => [] as string[]),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/v1/orgs/${orgId}/blog-connectors`, {
+        headers: { Authorization: `Bearer ${token}` }
+      }).then(r => r.json()).catch(() => []) as Promise<Array<{ is_active: boolean }>>
+    ]).then(([platforms, blogConnectors]) => {
+      const hasBlog = (Array.isArray(blogConnectors) ? blogConnectors : []).some(c => c.is_active)
+      const all = hasBlog ? [...platforms, 'blog'] : platforms
+      setConnectedPlatforms(all.length > 0 ? [...new Set(all)] : ALL_PLATFORMS)
+    }).catch(() => setConnectedPlatforms(ALL_PLATFORMS))
   }, [token, orgId])
 
   // Polling global la 5s dacă există oportunități generating în lista curentă
@@ -254,6 +266,30 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
     setEditFields(f => ({ ...f, platformsEdit: next }))
   }
 
+  const PILLAR_OPTIONS = ['educational', 'promotional', 'storytelling', 'behind-the-scenes', 'seasonal', 'community', 'authority']
+
+  const handleCreate = async () => {
+    if (!token || !orgId || !createFields.title.trim()) return
+    setCreating(true)
+    try {
+      const newOpp = await createOpportunity(orgId, {
+        title: createFields.title.trim(),
+        hook: createFields.hook.trim() || undefined,
+        image_prompt_raw: createFields.image_prompt.trim() || undefined,
+        pillar: createFields.pillar || undefined,
+        platforms: createFields.platforms.length > 0 ? createFields.platforms : connectedPlatforms,
+      }, token)
+      setOpportunities(os => [newOpp, ...os])
+      setTotal(t => t + 1)
+      setCreateFields({ title: '', hook: '', image_prompt: '', pillar: '', platforms: [] })
+      setShowCreateForm(false)
+    } catch (e) {
+      console.error('Create failed', e)
+    } finally {
+      setCreating(false)
+    }
+  }
+
   const filtered = textFilter
     ? opportunities.filter(o =>
         o.title.toLowerCase().includes(textFilter.toLowerCase()) ||
@@ -290,6 +326,14 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
               {sf.label}
             </Button>
           ))}
+          <Button
+            size="sm"
+            variant="outline"
+            className="border-dashed"
+            onClick={() => { setShowCreateForm(v => !v); setCreateFields({ title: '', hook: '', image_prompt: '', pillar: '', platforms: [...connectedPlatforms] }) }}
+          >
+            + Crează postare
+          </Button>
         </div>
         <Input
           placeholder="Caută după titlu sau pilon..."
@@ -298,6 +342,84 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
           className="w-64"
         />
       </div>
+
+      {/* Formular creare postare manuală */}
+      {showCreateForm && (
+        <Card className="border-primary/40">
+          <CardContent className="pt-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-semibold">Postare nouă</p>
+              <button onClick={() => setShowCreateForm(false)} className="text-muted-foreground hover:text-foreground text-lg leading-none">×</button>
+            </div>
+            <textarea
+              placeholder="Titlu / idee de postare *"
+              value={createFields.title}
+              onChange={e => setCreateFields(f => ({ ...f, title: e.target.value }))}
+              className="w-full text-sm border rounded-md px-3 py-2 resize-none min-h-[56px] bg-background"
+              rows={2}
+            />
+            <textarea
+              placeholder="Hook — fraza de deschidere (opțional)"
+              value={createFields.hook}
+              onChange={e => setCreateFields(f => ({ ...f, hook: e.target.value }))}
+              className="w-full text-xs border rounded-md px-3 py-2 resize-none bg-background text-muted-foreground"
+              rows={2}
+            />
+            <textarea
+              placeholder="Prompt vizual — descrie imaginea dorită (opțional)"
+              value={createFields.image_prompt}
+              onChange={e => setCreateFields(f => ({ ...f, image_prompt: e.target.value }))}
+              className="w-full text-xs border rounded-md px-3 py-2 resize-none bg-background text-muted-foreground"
+              rows={2}
+            />
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground">Categorie (opțional)</p>
+              <div className="flex flex-wrap gap-1.5">
+                {PILLAR_OPTIONS.map(p => (
+                  <button
+                    key={p}
+                    onClick={() => setCreateFields(f => ({ ...f, pillar: f.pillar === p ? '' : p }))}
+                    className={`px-2 py-0.5 rounded-full text-xs border transition-colors ${
+                      createFields.pillar === p
+                        ? 'bg-primary text-primary-foreground border-primary'
+                        : 'bg-background text-muted-foreground border-muted-foreground/30 hover:border-primary/50'
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground">Platforme</p>
+              <div className="flex flex-wrap gap-1.5">
+                {connectedPlatforms.map(p => (
+                  <button
+                    key={p}
+                    onClick={() => setCreateFields(f => ({
+                      ...f,
+                      platforms: f.platforms.includes(p) ? f.platforms.filter(x => x !== p) : [...f.platforms, p]
+                    }))}
+                    className={`px-2 py-0.5 rounded-full text-xs border transition-colors ${
+                      createFields.platforms.includes(p)
+                        ? 'bg-primary text-primary-foreground border-primary'
+                        : 'bg-background text-muted-foreground border-muted-foreground/30 hover:border-primary/50'
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="flex gap-2 pt-1">
+              <Button size="sm" disabled={creating || !createFields.title.trim()} onClick={handleCreate}>
+                {creating ? 'Se creează...' : 'Salvează'}
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => setShowCreateForm(false)}>Anulează</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Bara bulk generate */}
       {bulkGenerateIds.size > 0 && (
@@ -495,7 +617,7 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
                             </Button>
                           )}
                           <Button size="sm" variant="ghost" className="h-6 text-xs"
-                            onClick={() => { setEditingId(opp.id); setEditFields({ platformsEdit: [...opp.platforms] }) }}>
+                            onClick={() => { setEditingId(opp.id); setEditFields({ platformsEdit: connectedPlatforms.length > 0 ? [...connectedPlatforms] : [...opp.platforms] }) }}>
                             ✎ Editează
                           </Button>
                         </>
