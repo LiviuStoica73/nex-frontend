@@ -10,7 +10,6 @@ import { toast } from "sonner"
 
 const API = process.env.NEXT_PUBLIC_API_URL || ""
 
-// L M M J V S D — index 0 = Luni ... 6 = Duminică (aliniat cu datetime.weekday() din backend)
 const WEEKDAY_LABELS = ["L", "M", "M", "J", "V", "S", "D"]
 const WEEKDAY_NAMES = ["Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă", "Duminică"]
 const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6]
@@ -19,22 +18,44 @@ type TimeSlot = [number, number]
 type PlatformSchedule = { days: number[]; slots: TimeSlot[] }
 type BestTimes = Record<string, PlatformSchedule>
 
-const DEFAULT_SLOTS: Record<string, TimeSlot[]> = {
-  instagram: [[9, 0], [18, 0]],
-  linkedin:  [[8, 0], [12, 0]],
-  facebook:  [[13, 0], [20, 0]],
-  x:         [[9, 0], [17, 0]],
-  bluesky:   [[9, 0], [18, 0]],
-  discord:   [[18, 0], [21, 0]],
-  threads:   [[9, 0], [18, 0]],
-  tiktok:    [[18, 0], [21, 0]],
-  youtube:   [[18, 0], [21, 0]],
-  pinterest: [[9, 0], [18, 0]],
-  blog:      [[9, 0], [18, 0]],
+// Default-urile sunt în UTC — valori recomandate pentru audiență europeană
+const DEFAULT_SLOTS_UTC: Record<string, TimeSlot[]> = {
+  instagram: [[6, 0], [9, 0]],
+  linkedin:  [[5, 0], [9, 0]],
+  facebook:  [[6, 0], [10, 0]],
+  x:         [[6, 0], [14, 0]],
+  bluesky:   [[6, 0], [15, 0]],
+  discord:   [[9, 0], [16, 0]],
+  threads:   [[6, 0], [15, 0]],
+  tiktok:    [[9, 0], [16, 0]],
+  youtube:   [[11, 0], [14, 0]],
+  pinterest: [[6, 0], [15, 0]],
+  blog:      [[5, 0], [11, 0]],
 }
 
-function defaultSlotsFor(platform: string): TimeSlot[] {
-  return DEFAULT_SLOTS[platform] || [[9, 0], [18, 0]]
+function defaultSlotsUtcFor(platform: string): TimeSlot[] {
+  return DEFAULT_SLOTS_UTC[platform] || [[6, 0], [15, 0]]
+}
+
+// Offset-ul browserului în minute față de UTC (ex: UTC+3 → -180)
+function getBrowserOffsetMinutes(): number {
+  return new Date().getTimezoneOffset() // negativ pentru est
+}
+
+// Convertește [h, m] UTC → [h, m] local
+function utcToLocal([h, m]: TimeSlot): TimeSlot {
+  const offsetMin = -getBrowserOffsetMinutes() // UTC+3 → +180
+  const totalMin = h * 60 + m + offsetMin
+  const wrapped = ((totalMin % 1440) + 1440) % 1440
+  return [Math.floor(wrapped / 60), wrapped % 60]
+}
+
+// Convertește [h, m] local → [h, m] UTC
+function localToUtc([h, m]: TimeSlot): TimeSlot {
+  const offsetMin = -getBrowserOffsetMinutes()
+  const totalMin = h * 60 + m - offsetMin
+  const wrapped = ((totalMin % 1440) + 1440) % 1440
+  return [Math.floor(wrapped / 60), wrapped % 60]
 }
 
 function fmtTime([h, m]: TimeSlot) {
@@ -47,20 +68,41 @@ function parseTime(str: string): TimeSlot | null {
   return [h, m]
 }
 
-// Normalizează orice formă venită din backend (nouă cu days+slots, sau veche
-// listă simplă de sloturi) într-un draft consistent pentru UI.
-function normalizeSchedule(raw: unknown, platform: string): { days: number[]; slots: string[] } {
+// Primește date UTC din backend, normalizează și convertește la ora locală pentru UI
+function normalizeScheduleToLocal(raw: unknown, platform: string): { days: number[]; slots: string[] } {
+  let utcSlots: TimeSlot[]
+  let days: number[]
+
   if (Array.isArray(raw)) {
-    return { days: [...ALL_DAYS], slots: raw.map(fmtTime) }
-  }
-  if (raw && typeof raw === "object") {
+    days = [...ALL_DAYS]
+    utcSlots = raw as TimeSlot[]
+  } else if (raw && typeof raw === "object") {
     const obj = raw as { days?: number[]; slots?: TimeSlot[] }
-    return {
-      days: obj.days && obj.days.length > 0 ? obj.days : [...ALL_DAYS],
-      slots: (obj.slots && obj.slots.length > 0 ? obj.slots : defaultSlotsFor(platform)).map(fmtTime),
-    }
+    days = obj.days && obj.days.length > 0 ? obj.days : [...ALL_DAYS]
+    utcSlots = obj.slots && obj.slots.length > 0 ? obj.slots : defaultSlotsUtcFor(platform)
+  } else {
+    days = [...ALL_DAYS]
+    utcSlots = defaultSlotsUtcFor(platform)
   }
-  return { days: [...ALL_DAYS], slots: defaultSlotsFor(platform).map(fmtTime) }
+
+  return {
+    days,
+    slots: utcSlots.map((s) => fmtTime(utcToLocal(s))),
+  }
+}
+
+function getTimezoneLabel(): string {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const offset = -getBrowserOffsetMinutes()
+    const sign = offset >= 0 ? "+" : "-"
+    const h = Math.floor(Math.abs(offset) / 60)
+    const m = Math.abs(offset) % 60
+    const offsetStr = m > 0 ? `${sign}${h}:${String(m).padStart(2, "0")}` : `${sign}${h}`
+    return `${tz} (UTC${offsetStr})`
+  } catch {
+    return "ora locală"
+  }
 }
 
 export default function BestTimesPage() {
@@ -72,8 +114,13 @@ export default function BestTimesPage() {
   const [draft, setDraft] = useState<Record<string, { days: number[]; slots: string[] }>>({})
   const [busy, setBusy] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [tzLabel, setTzLabel] = useState("ora locală")
 
   const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` }
+
+  useEffect(() => {
+    setTzLabel(getTimezoneLabel())
+  }, [])
 
   useEffect(() => {
     if (!orgId || !token) return
@@ -93,14 +140,12 @@ export default function BestTimesPage() {
       const activePlatforms = Array.from(
         new Set((Array.isArray(accounts) ? accounts : []).filter((a) => a.is_active).map((a) => a.platform))
       )
-      // Blog e o rețea ca oricare alta pentru Best Time — tratată identic,
-      // deși conectorii de blog trăiesc într-un model separat de SocialAccount.
       if ((Array.isArray(blogConnectors) ? blogConnectors : []).some((c) => c.is_active)) {
         activePlatforms.push("blog")
       }
       setPlatforms(activePlatforms)
       const d: Record<string, { days: number[]; slots: string[] }> = {}
-      for (const p of activePlatforms) d[p] = normalizeSchedule(bestTimes?.[p], p)
+      for (const p of activePlatforms) d[p] = normalizeScheduleToLocal(bestTimes?.[p], p)
       setDraft(d)
       setLoading(false)
     })
@@ -109,10 +154,12 @@ export default function BestTimesPage() {
   const save = async () => {
     const payload: BestTimes = {}
     for (const p of platforms) {
-      const parsed = (draft[p]?.slots || []).map(parseTime).filter(Boolean) as TimeSlot[]
-      if (parsed.length === 0) { toast.error(`${p}: cel puțin un slot obligatoriu`); return }
+      const localSlots = (draft[p]?.slots || []).map(parseTime).filter(Boolean) as TimeSlot[]
+      if (localSlots.length === 0) { toast.error(`${p}: cel puțin un slot obligatoriu`); return }
       if (!draft[p]?.days?.length) { toast.error(`${p}: alege cel puțin o zi`); return }
-      payload[p] = { days: draft[p].days, slots: parsed }
+      // Convertim ora locală → UTC înainte de salvare
+      const utcSlots = localSlots.map(localToUtc)
+      payload[p] = { days: draft[p].days, slots: utcSlots }
     }
     setBusy(true)
     const res = await fetch(`${API}/api/v1/orgs/${orgId}/best-times`, {
@@ -140,7 +187,9 @@ export default function BestTimesPage() {
     })
   }
   const reset = (platform: string) => {
-    setDraft((d) => ({ ...d, [platform]: { days: [...ALL_DAYS], slots: defaultSlotsFor(platform).map(fmtTime) } }))
+    const utcDefaults = defaultSlotsUtcFor(platform)
+    const localSlots = utcDefaults.map((s) => fmtTime(utcToLocal(s)))
+    setDraft((d) => ({ ...d, [platform]: { days: [0, 1, 2, 3, 4], slots: localSlots } }))
   }
 
   if (loading) {
@@ -154,16 +203,16 @@ export default function BestTimesPage() {
         <Button size="sm" disabled={busy} onClick={save}>{busy ? "Salvare..." : "Salvează"}</Button>
       </div>
       <p className="text-sm text-muted-foreground">
-        Orele sunt UTC. Rețelele afișate sunt cele conectate și active în{" "}
+        Orele sunt afișate în <strong>{tzLabel}</strong> — se salvează automat în UTC.
+        Rețelele afișate sunt cele conectate și active în{" "}
         <a href="/dashboard/settings/social-accounts" className="underline">Conturi sociale</a>.
-        Bifează zilele din săptămână eligibile pentru fiecare rețea — sistemul programează
-        postările în prima zi/oră liberă dintre cele bifate, aceeași zi pe toate rețelele
-        selectate la postare, fiecare la propriul best time.
+        Bifează zilele din săptămână eligibile — sistemul programează postările în prima zi/oră
+        liberă, aceeași zi pe toate rețelele, fiecare la propriul best time.
       </p>
 
       {platforms.length === 0 && (
         <p className="text-sm text-muted-foreground">
-          Niciun conector activ încă — conectează o rețea din{" "}
+          Niciun conector activ — conectează o rețea din{" "}
           <a href="/dashboard/settings/social-accounts" className="underline">Conturi sociale</a>.
         </p>
       )}
@@ -177,7 +226,6 @@ export default function BestTimesPage() {
             </button>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Zile eligibile */}
             <div className="flex items-center gap-1">
               {ALL_DAYS.map((day) => {
                 const checked = draft[platform]?.days?.includes(day)
@@ -196,7 +244,6 @@ export default function BestTimesPage() {
               })}
             </div>
 
-            {/* Sloturi orare */}
             <div className="flex flex-wrap gap-2 items-center">
               {(draft[platform]?.slots || []).map((slot, idx) => (
                 <div key={idx} className="flex items-center gap-1">
