@@ -46,6 +46,9 @@ interface SocialAccount {
   account_id: string;
   post_language: string | null;
   is_active: boolean;
+  post_as_stories: boolean;
+  post_as_reels: boolean;
+  stories_video_duration: string;
   created_at: string;
   has_oauth1: boolean;
 }
@@ -374,6 +377,18 @@ export default function SocialAccountsPage() {
       });
     } catch {}
     setSavingLang(null);
+  };
+
+  const handleStoriesReelsChange = async (accountId: string, field: 'post_as_stories' | 'post_as_reels' | 'stories_video_duration', value: boolean | string) => {
+    if (!orgId || !token) return;
+    setAccounts((prev) => prev.map((a) => (a.id === accountId ? { ...a, [field]: value } : a)));
+    try {
+      await fetch(`${API_URL}/api/v1/orgs/${orgId}/social-accounts/${accountId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ [field]: value }),
+      });
+    } catch {}
   };
 
   const handleToggleActive = async (accountId: string, nextActive: boolean) => {
@@ -825,6 +840,47 @@ export default function SocialAccountsPage() {
                   </SelectContent>
                 </Select>
                 {savingLang === account.id && <Check className="h-3 w-3 text-green-500 animate-pulse" />}
+
+                {/* Stories / Reels — doar Instagram și Facebook */}
+                {(account.platform === 'instagram' || account.platform === 'facebook') && (
+                  <div className="flex flex-col gap-1 text-xs border-l pl-3 ml-1">
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={account.post_as_stories}
+                        onChange={(e) => handleStoriesReelsChange(account.id, 'post_as_stories', e.target.checked)}
+                        className="accent-primary"
+                      />
+                      Stories
+                    </label>
+                    {account.platform === 'instagram' && (
+                      <label className="flex items-center gap-1.5 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={account.post_as_reels}
+                          onChange={(e) => handleStoriesReelsChange(account.id, 'post_as_reels', e.target.checked)}
+                          className="accent-primary"
+                        />
+                        Reels
+                      </label>
+                    )}
+                    {(account.post_as_stories || account.post_as_reels) && (
+                      <div className="flex items-center gap-1 mt-0.5">
+                        <span className="text-muted-foreground">Durată:</span>
+                        <input
+                          type="number"
+                          min="3"
+                          max="60"
+                          value={account.stories_video_duration || "5"}
+                          onChange={(e) => handleStoriesReelsChange(account.id, 'stories_video_duration', e.target.value)}
+                          className="w-12 border rounded px-1 py-0.5 text-xs text-center bg-background"
+                        />
+                        <span className="text-muted-foreground">s</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Badge
