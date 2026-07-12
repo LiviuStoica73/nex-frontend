@@ -121,24 +121,35 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
       .catch(() => setConnectedPlatforms(ALL_PLATFORMS))
   }, [token, orgId])
 
-  // Polling la 5s când există oportunități în starea 'generating'
+  // Polling global la 5s dacă există oportunități generating în lista curentă
+  // sau dacă a fost declanșat manual (generatingAnywhere)
+  const [generatingAnywhere, setGeneratingAnywhere] = useState(false)
+
   useEffect(() => {
-    const hasGenerating = opportunities.some(o => o.status === 'generating')
+    const hasGenerating = opportunities.some(o => o.status === 'generating') || generatingAnywhere
     if (!hasGenerating) return
-    const interval = setInterval(() => {
-      loadPage(page, statusFilter, pageSize)
+    const interval = setInterval(async () => {
+      await loadPage(page, statusFilter, pageSize)
+      // Detectează tranziții generating→review pentru a opri polling-ul
+      setOpportunities(current => {
+        const stillGenerating = current.some(o => o.status === 'generating')
+        if (!stillGenerating) setGeneratingAnywhere(false)
+        return current
+      })
     }, 5000)
     return () => clearInterval(interval)
-  }, [opportunities, page, statusFilter, pageSize, loadPage])
+  }, [opportunities, generatingAnywhere, page, statusFilter, pageSize, loadPage])
 
   const handleGenerate = async (oppId: string) => {
     if (!token || !orgId) return
     setOpportunities(os => os.map(o => o.id === oppId ? { ...o, status: 'generating' } : o))
+    setGeneratingAnywhere(true)
     try {
       await generatePrototype(orgId, oppId, token)
     } catch (e) {
       console.error('Generate failed', e)
       setOpportunities(os => os.map(o => o.id === oppId ? { ...o, status: 'idea' } : o))
+      setGeneratingAnywhere(false)
     }
   }
 
@@ -147,6 +158,7 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
     const ids = Array.from(bulkGenerateIds)
     setOpportunities(os => os.map(o => ids.includes(o.id) ? { ...o, status: 'generating' } : o))
     setBulkGenerateIds(new Set())
+    setGeneratingAnywhere(true)
     try {
       await generateBulkPrototypes(orgId, ids, token)
     } catch (e) {
