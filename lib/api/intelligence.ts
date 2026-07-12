@@ -160,6 +160,13 @@ export async function generateThemesContent(
 // Nou flux: prototip direct pe oportunitate
 // ---------------------------------------------------------------------------
 
+export interface ImageVersion {
+  url: string
+  prompt: string
+  selected: boolean
+  created_at: string
+}
+
 export interface ContentOpportunity {
   id: string
   title: string
@@ -179,13 +186,6 @@ export interface ContentOpportunity {
   image_prompt: string | null
   image_prompt_raw: string | null
   image_versions: ImageVersion[]
-  created_at: string
-}
-
-export interface ImageVersion {
-  url: string
-  prompt: string
-  selected: boolean
   created_at: string
 }
 

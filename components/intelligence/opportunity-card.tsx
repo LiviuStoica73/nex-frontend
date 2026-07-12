@@ -69,6 +69,14 @@ export function OpportunityCard({
   const [publishedExpanded, setPublishedExpanded] = useState(false)
   const lastInteractionRef = useRef<number>(0)
 
+  // Derivate din status — definite ÎNAINTE de useEffect pentru a evita TDZ în producție
+  const badge = STATUS_BADGE[opp.status] ?? { label: opp.status, variant: 'secondary' as const }
+  const isGenerating = opp.status === 'generating'
+  const isReview = opp.status === 'review'
+  const isPublished = opp.status === 'published'
+  const isRejected = opp.status === 'rejected'
+  const isIdea = opp.status === 'idea'
+
   useEffect(() => {
     if (isPublished) {
       getPublishedLinks(orgId, opp.id, token).then(setPublishedLinks).catch(() => {})
@@ -96,13 +104,6 @@ export function OpportunityCard({
     const p = opp.image_prompt_raw || opp.image_prompt
     if (p) setEditPrompt(p)
   }, [opp.image_prompt_raw, opp.image_prompt])
-
-  const badge = STATUS_BADGE[opp.status] ?? { label: opp.status, variant: 'secondary' as const }
-  const isGenerating = opp.status === 'generating'
-  const isReview = opp.status === 'review'
-  const isPublished = opp.status === 'published'
-  const isRejected = opp.status === 'rejected'
-  const isIdea = opp.status === 'idea'
 
   async function handleSaveText() {
     setSaving(true)
