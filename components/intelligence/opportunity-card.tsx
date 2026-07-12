@@ -4,7 +4,7 @@
 // Stări: idea → generating → review → published → rejected
 
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -57,18 +57,23 @@ export function OpportunityCard({
   const [regenerating, setRegenerating] = useState(false)
   const [resetting, setResetting] = useState(false)
   const [localImageUrl, setLocalImageUrl] = useState(opp.image_url)
+  const lastInteractionRef = useRef<number>(0)
 
-  // Sync when polling updates opp from generating→review
+  // Sync when polling updates opp from generating→review (skip if user just interacted)
   useEffect(() => {
     if (opp.master_text) setEditText(opp.master_text)
   }, [opp.master_text])
 
   useEffect(() => {
-    if (opp.image_url) setLocalImageUrl(opp.image_url)
+    if (Date.now() - lastInteractionRef.current > 3000) {
+      if (opp.image_url) setLocalImageUrl(opp.image_url)
+    }
   }, [opp.image_url])
 
   useEffect(() => {
-    if (opp.image_versions?.length) setVersions(opp.image_versions)
+    if (opp.image_versions?.length && Date.now() - lastInteractionRef.current > 3000) {
+      setVersions(opp.image_versions)
+    }
   }, [opp.image_versions])
 
   useEffect(() => {
@@ -115,11 +120,12 @@ export function OpportunityCard({
 
   async function handleToggleSelect(v: ImageVersion) {
     const newSelected = !v.selected
+    lastInteractionRef.current = Date.now()
     // Optimistic update imediat
     setVersions(prev => prev.map(img => img.url === v.url ? { ...img, selected: newSelected } : img))
     try {
       const result = await selectOpportunityImage(orgId, opp.id, v.url, newSelected, token)
-      setVersions([...result.image_versions])
+      setVersions(result.image_versions.map((img: ImageVersion) => ({ ...img })))
       setLocalImageUrl(result.image_url)
       if (newSelected && v.prompt) setEditPrompt(v.prompt)
     } catch (e) {
