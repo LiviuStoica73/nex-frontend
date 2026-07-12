@@ -424,7 +424,10 @@ export function OpportunityCard({
                   </p>
                 )}
                 <p className="text-xs text-muted-foreground">
-                  <span className="underline-offset-2 cursor-pointer">{publishedExpanded ? '▲ Restrânge' : '▼ Detalii & link-uri'}</span>
+                  {opp.prototype_generated_at && (
+                    <>Prototip generat: {new Date(opp.prototype_generated_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' })} · </>
+                  )}
+                  <span className="cursor-pointer">{publishedExpanded ? '▲ Restrânge' : '▼ Detalii & link-uri'}</span>
                 </p>
               </div>
             </div>

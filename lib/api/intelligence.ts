@@ -186,6 +186,7 @@ export interface ContentOpportunity {
   image_prompt: string | null
   image_prompt_raw: string | null
   image_versions: ImageVersion[]
+  prototype_generated_at: string | null
   created_at: string
 }
 
