@@ -185,27 +185,29 @@ export function OpportunityCard({
         {isReview && (
           <div className="space-y-3">
             {localImageUrl && (
-              <div className="relative">
+              <div className="flex items-center gap-2">
+                {/* Thumbnail — click deschide lightbox */}
                 <img
                   src={localImageUrl}
                   alt="Prototip"
-                  className="w-full rounded-md object-contain bg-muted cursor-zoom-in"
+                  className="h-16 w-16 rounded-md object-cover cursor-zoom-in shrink-0 border border-border"
                   onClick={() => setLightboxOpen(true)}
+                  title="Click pentru a vedea imaginea completă"
                 />
                 <Button
                   size="sm"
-                  variant="secondary"
-                  className="absolute top-2 right-2 h-7 px-2"
+                  variant="outline"
+                  className="h-8 px-3 text-xs"
                   onClick={() => {
-                    if (!confirm('Regenerarea imaginii consumă 1 credit. Continui?')) return
+                    if (!confirm('Regenerarea imaginii consumă credite conform selecțiilor din Quick Post. Continui?')) return
                     handleRegenerateImage()
                   }}
                   disabled={regenerating}
-                  title="Regenerează imagine (1 credit)"
                 >
                   {regenerating
-                    ? <Loader2 className="h-3 w-3 animate-spin" />
-                    : <RefreshCw className="h-3 w-3" />}
+                    ? <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                    : <RefreshCw className="h-3 w-3 mr-1" />}
+                  Regenerează imagine
                 </Button>
               </div>
             )}
@@ -241,7 +243,7 @@ export function OpportunityCard({
                     className="text-xs resize-y"
                     placeholder="Descrie scena vizuală..."
                   />
-                  <p className="text-xs text-muted-foreground">Editează, apoi apasă 🔄 pentru a regenera imaginea cu noul prompt.</p>
+                  <p className="text-xs text-muted-foreground">Editează promptul vizual, apoi apasă <strong>Regenerează imagine</strong> pentru a regenera cu noul prompt. Atenție! Sunt utilizate credite conform selecțiilor din Quick Post.</p>
                 </div>
               )}
             </div>
