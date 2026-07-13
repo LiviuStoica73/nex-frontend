@@ -209,6 +209,15 @@ interface SocialAccount {
   id: string; platform: string; account_name: string; is_active: boolean
 }
 
+// O intrare virtuală în lista de repost (cont + variantă post_type)
+interface RepostTarget {
+  key: string         // unic în UI
+  account_id: string
+  post_type: string | null  // null = post normal
+  label: string       // ex: "Facebook XignAll.io — Story"
+  platform: string
+}
+
 function PostDetailModal({
   post,
   orgId,
@@ -235,7 +244,7 @@ function PostDetailModal({
   const [showReschedule, setShowReschedule] = useState(false)
   const [rescheduleDate, setRescheduleDate] = useState("")
   const [socialAccounts, setSocialAccounts] = useState<SocialAccount[]>([])
-  const [selectedAccountIds, setSelectedAccountIds] = useState<string[]>([])
+  const [selectedTargetKeys, setSelectedTargetKeys] = useState<string[]>([])
   const [reposting, setReposting] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [pausing, setPausing] = useState(false)
@@ -272,20 +281,42 @@ function PostDetailModal({
     } catch {}
   }
 
+  // Construiește lista expandată de targets (post + story + reel per cont FB/IG)
+  const repostTargets: RepostTarget[] = socialAccounts.filter((a) => a.is_active).flatMap((a) => {
+    const base: RepostTarget = {
+      key: `${a.id}:post`,
+      account_id: a.id,
+      post_type: null,
+      label: `${a.account_name}`,
+      platform: a.platform,
+    }
+    if (a.platform === "instagram" || a.platform === "facebook") {
+      return [
+        base,
+        { key: `${a.id}:story`, account_id: a.id, post_type: "story", label: `${a.account_name} — 📱 Story`, platform: a.platform },
+        { key: `${a.id}:reel`,  account_id: a.id, post_type: "reel",  label: `${a.account_name} — 🎬 Reel`,  platform: a.platform },
+      ]
+    }
+    return [base]
+  })
+
   const handleRepost = async () => {
-    if (selectedAccountIds.length === 0) return
+    if (selectedTargetKeys.length === 0) return
     setReposting(true)
     try {
-      await api.posts.repost(post.org_id ?? orgId, post.id, { account_ids: selectedAccountIds }, token)
+      const targets = repostTargets
+        .filter((t) => selectedTargetKeys.includes(t.key))
+        .map((t) => ({ account_id: t.account_id, post_type: t.post_type }))
+      await api.posts.repost(post.org_id ?? orgId, post.id, { targets }, token)
       setShowRepost(false)
-      setSelectedAccountIds([])
+      setSelectedTargetKeys([])
     } catch {}
     setReposting(false)
   }
 
-  const toggleAccount = (accountId: string) => {
-    setSelectedAccountIds((prev) =>
-      prev.includes(accountId) ? prev.filter((id) => id !== accountId) : [...prev, accountId]
+  const toggleTarget = (key: string) => {
+    setSelectedTargetKeys((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
     )
   }
 
@@ -468,26 +499,26 @@ function PostDetailModal({
         {showRepost && (
           <div className="mb-4 rounded-md border bg-muted/30 p-3 space-y-2">
             <p className="text-xs font-medium">Alege conturile pentru repostare:</p>
-            {socialAccounts.length === 0 ? (
+            {repostTargets.length === 0 ? (
               <p className="text-xs text-muted-foreground">Niciun cont conectat.</p>
             ) : (
-              socialAccounts.filter((a) => a.is_active).map((account) => (
-                <label key={account.id} className="flex items-center gap-2 text-xs cursor-pointer">
+              repostTargets.map((target) => (
+                <label key={target.key} className="flex items-center gap-2 text-xs cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={selectedAccountIds.includes(account.id)}
-                    onChange={() => toggleAccount(account.id)}
+                    checked={selectedTargetKeys.includes(target.key)}
+                    onChange={() => toggleTarget(target.key)}
                     className="h-3 w-3"
                   />
-                  <span className="capitalize">{account.platform}</span>
-                  <span className="text-muted-foreground truncate">{account.account_name}</span>
+                  <span className="capitalize">{target.platform}</span>
+                  <span className="text-muted-foreground truncate">{target.label}</span>
                 </label>
               ))
             )}
-            {socialAccounts.filter((a) => a.is_active).length > 0 && (
+            {repostTargets.length > 0 && (
               <button
                 onClick={handleRepost}
-                disabled={reposting || selectedAccountIds.length === 0}
+                disabled={reposting || selectedTargetKeys.length === 0}
                 className="mt-1 rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
               >
                 {reposting ? "Se repostează..." : "Repostează"}

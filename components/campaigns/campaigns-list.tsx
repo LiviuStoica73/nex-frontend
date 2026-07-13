@@ -262,7 +262,7 @@ export function CampaignsList({ orgId, token }: Props) {
     setSaving(true)
     try {
       await api.posts.repost(orgId, activePost.id, {
-        platforms: repostPlatforms,
+        account_ids: repostPlatforms,
         scheduled_at: repostSchedule ? new Date(repostSchedule).toISOString() : undefined,
       }, token)
       await refreshPosts(activeCampaignId)
