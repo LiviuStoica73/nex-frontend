@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Zap } from 'lucide-react'
+import { Send, Zap } from 'lucide-react'
 import { useOrg } from '@/contexts/org-context'
 import {
   countOpportunities,
@@ -175,6 +175,21 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
       await generateBulkPrototypes(orgId, ids, token)
     } catch (e) {
       console.error('Bulk generate failed', e)
+    }
+  }
+
+  const handleBulkPublish = async (ids: string[]) => {
+    if (!token || !orgId || ids.length === 0) return
+    if (!confirm(`Publici ${ids.length} oportunități în Calendar? Se vor crea postări programate.`)) return
+    setOpportunities(os => os.map(o => ids.includes(o.id) ? { ...o, status: 'published' } : o))
+    try {
+      const result = await publishOpportunities(orgId, ids, token)
+      if (result?.campaign_id) {
+        window.location.href = `/dashboard/calendar`
+      }
+    } catch (e) {
+      console.error('Bulk publish failed', e)
+      setOpportunities(os => os.map(o => ids.includes(o.id) ? { ...o, status: 'review' } : o))
     }
   }
 
@@ -423,7 +438,7 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
 
       {/* Bara bulk generate */}
       {bulkGenerateIds.size > 0 && (
-        <div className="flex items-center gap-3 p-3 bg-muted rounded-md">
+        <div className="flex items-center gap-3 p-3 bg-muted rounded-md flex-wrap">
           <span className="text-sm font-medium">{bulkGenerateIds.size} selectate</span>
           <Button size="sm" onClick={handleBulkGenerate}>
             <Zap className="h-3 w-3 mr-1" />
@@ -431,6 +446,23 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
           </Button>
           <Button size="sm" variant="ghost" onClick={() => setBulkGenerateIds(new Set())}>
             Deselectează
+          </Button>
+        </div>
+      )}
+
+      {/* Publică toate de verificat */}
+      {opportunities.filter(o => o.status === 'review').length > 0 && (
+        <div className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-950 rounded-md">
+          <span className="text-sm font-medium text-green-700 dark:text-green-300">
+            {opportunities.filter(o => o.status === 'review').length} prototipuri gata de publicat
+          </span>
+          <Button
+            size="sm"
+            className="bg-green-600 hover:bg-green-700 text-white"
+            onClick={() => handleBulkPublish(opportunities.filter(o => o.status === 'review').map(o => o.id))}
+          >
+            <Send className="h-3 w-3 mr-1" />
+            Publică toate în Calendar
           </Button>
         </div>
       )}
@@ -476,6 +508,7 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
                 onReset={handleRestore}
                 orgId={orgId!}
                 token={token}
+                connectedPlatforms={connectedPlatforms}
               />
             )
           }
@@ -590,9 +623,11 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
                       <div className="flex gap-1 flex-wrap">
                         {opp.pillar && <Badge variant="secondary" className="text-xs">{opp.pillar}</Badge>}
                         {opp.format && <Badge variant="outline" className="text-xs">{opp.format}</Badge>}
-                        {opp.platforms.map(p => (
-                          <Badge key={p} variant="outline" className="text-xs">{p}</Badge>
-                        ))}
+                        {opp.platforms
+                          .filter(p => connectedPlatforms.length === 0 || connectedPlatforms.includes(p))
+                          .map(p => (
+                            <Badge key={p} variant="outline" className="text-xs">{p}</Badge>
+                          ))}
                       </div>
                     )}
 

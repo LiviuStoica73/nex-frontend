@@ -34,6 +34,7 @@ interface OpportunityCardProps {
   onReset: (id: string) => void
   orgId: string
   token: string
+  connectedPlatforms?: string[]
 }
 
 const STATUS_BADGE: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }> = {
@@ -56,6 +57,7 @@ export function OpportunityCard({
   onReset,
   orgId,
   token,
+  connectedPlatforms = [],
 }: OpportunityCardProps) {
   const [editText, setEditText] = useState(opp.master_text || '')
   const [editPrompt, setEditPrompt] = useState(opp.image_prompt_raw || opp.image_prompt || '')
@@ -211,12 +213,14 @@ export function OpportunityCard({
           </div>
         </div>
 
-        {/* Platforme */}
+        {/* Platforme — doar cele conectate */}
         {opp.platforms?.length > 0 && (
           <div className="flex gap-1 flex-wrap">
-            {opp.platforms.map(p => (
-              <Badge key={p} variant="outline" className="text-xs">{p}</Badge>
-            ))}
+            {opp.platforms
+              .filter(p => connectedPlatforms.length === 0 || connectedPlatforms.includes(p))
+              .map(p => (
+                <Badge key={p} variant="outline" className="text-xs">{p}</Badge>
+              ))}
           </div>
         )}
 
