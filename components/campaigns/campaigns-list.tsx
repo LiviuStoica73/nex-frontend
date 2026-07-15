@@ -767,6 +767,15 @@ export function CampaignsList({ orgId, token }: Props) {
                               <Button variant="ghost" size="icon" className="h-7 w-7 flex-shrink-0"><MoreHorizontal className="h-4 w-4" /></Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-48">
+                              {post.status !== "published" && (
+                                <DropdownMenuItem onClick={async () => {
+                                  await api.posts.publishNow(post.id, token)
+                                  await refreshPosts(campaign.id)
+                                }}>
+                                  <Play className="mr-2 h-4 w-4 text-green-600" /> Postează Acum
+                                </DropdownMenuItem>
+                              )}
+                              <DropdownMenuSeparator />
                               <DropdownMenuItem onClick={() => openDialog("edit", post, campaign.id)}><Pencil className="mr-2 h-4 w-4" /> {t("edit_text")}</DropdownMenuItem>
                               <DropdownMenuItem onClick={() => { setActivePost(post); setActiveCampaignId(campaign.id); setActiveDialog("edit_image_prompt"); setEditImagePrompt(post.image_prompt ?? "") }}><Pencil className="mr-2 h-4 w-4" /> Prompt imagine</DropdownMenuItem>
                               <DropdownMenuItem onClick={() => openDialog("reschedule", post, campaign.id)}><Clock className="mr-2 h-4 w-4" /> {t("reschedule")}</DropdownMenuItem>
