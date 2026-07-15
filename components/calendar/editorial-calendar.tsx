@@ -71,7 +71,7 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
   }
 
   const STATUS_DOTS: Record<string, string> = {
-    draft: "⚪", approved: "🔵", scheduled: "🟡", published: "🟢", failed: "🔴", skipped: "⚫",
+    draft: "⚪", approved: "🔵", scheduled: "🟡", rescheduling: "🟣", published: "🟢", failed: "🔴", skipped: "⚫",
   }
 
   const events = posts
@@ -273,7 +273,7 @@ const PLATFORM_LABELS: Record<string, string> = {
 }
 
 const STATUS_LABELS: Record<string, string> = {
-  draft: "Ciornă", approved: "Aprobat", scheduled: "Programat",
+  draft: "Ciornă", approved: "Aprobat", scheduled: "Programat", rescheduling: "Reprogramare",
   published: "Publicat", failed: "Eșuat", skipped: "Omis",
 }
 

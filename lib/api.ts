@@ -32,7 +32,7 @@ export type Platform =
   | "facebook" | "instagram" | "linkedin" | "x"
   | "discord" | "blog" | "youtube" | "threads" | "bluesky"
 
-export type PostStatus = "draft" | "approved" | "scheduled" | "published" | "failed" | "skipped"
+export type PostStatus = "draft" | "approved" | "scheduled" | "rescheduling" | "published" | "failed" | "skipped"
 export type CampaignStatus = "draft" | "approved" | "scheduled" | "published" | "paused" | "cancelled" | "archived"
 
 export interface Campaign {
@@ -101,12 +101,13 @@ export const PLATFORM_COLORS: Record<Platform, string> = {
 }
 
 export const STATUS_COLORS: Record<PostStatus, string> = {
-  draft:     "#9CA3AF",
-  approved:  "#3B82F6",
-  scheduled: "#F59E0B",
-  published: "#10B981",
-  failed:    "#EF4444",
-  skipped:   "#6B7280",
+  draft:        "#9CA3AF",
+  approved:     "#3B82F6",
+  scheduled:    "#F59E0B",
+  rescheduling: "#8B5CF6",
+  published:    "#10B981",
+  failed:       "#EF4444",
+  skipped:      "#6B7280",
 }
 
 // ── API calls ──────────────────────────────────────────────────────────────
