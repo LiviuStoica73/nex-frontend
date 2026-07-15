@@ -9,6 +9,12 @@ import interactionPlugin from "@fullcalendar/interaction"
 import type { EventClickArg, EventDropArg } from "@fullcalendar/core"
 import { api, PLATFORM_COLORS, STATUS_COLORS, type Post } from "@/lib/api"
 import { toast } from "@/components/ui/use-toast"
+import { MoreHorizontal, Clock, Trash2, Pause, Play, Share2, Languages, Pencil } from "lucide-react"
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuSeparator, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
 
 type CalendarPost = Post & { org_name?: string }
 type AgencyClient = { id: string; client_org_id: string; client_org_name?: string }
@@ -31,6 +37,8 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
   const [postStatusFilter, setPostStatusFilter] = useState("")
   const [clientFilter, setClientFilter] = useState("")
   const [clients, setClients] = useState<AgencyClient[]>([])
+  const [listView, setListView] = useState(false)
+  const [currentRange, setCurrentRange] = useState<{ start: Date; end: Date } | null>(null)
 
   useEffect(() => {
     if (!isAgency || !orgId || !token) return
@@ -109,6 +117,14 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
 
   return (
     <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Button
+          variant={listView ? "default" : "outline"}
+          size="sm"
+          onClick={() => setListView((v) => !v)}
+        >
+          {listView ? "📅 Calendar" : "☰ Listă"}
+        </Button>
       <div className="flex flex-wrap justify-end gap-3">
         {isAgency && clients.length > 0 && (
           <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -174,30 +190,44 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
           </select>
         </label>
       </div>
-      <FullCalendar
-        ref={calendarRef}
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        headerToolbar={{
-          left: "prev,next today",
-          center: "title",
-          right: "dayGridMonth,timeGridWeek,timeGridDay",
-        }}
-        events={events}
-        editable={true}
-        droppable={true}
-        eventClick={handleEventClick}
-        eventDrop={handleEventDrop}
-        datesSet={(info) => fetchPosts(info.start, info.end)}
-        height="auto"
-        locale={locale}
-        buttonText={{
-          today: t("today"),
-          month: t("month"),
-          week: t("week"),
-          day: t("day"),
-        }}
-      />
+      </div>
+      <div className={listView ? "hidden" : ""}>
+        <FullCalendar
+          ref={calendarRef}
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+          initialView="dayGridMonth"
+          headerToolbar={{
+            left: "prev,next today",
+            center: "title",
+            right: "dayGridMonth,timeGridWeek,timeGridDay",
+          }}
+          events={events}
+          editable={true}
+          droppable={true}
+          eventClick={handleEventClick}
+          eventDrop={handleEventDrop}
+          datesSet={(info) => { setCurrentRange({ start: info.start, end: info.end }); fetchPosts(info.start, info.end) }}
+          height="auto"
+          locale={locale}
+          buttonText={{
+            today: t("today"),
+            month: t("month"),
+            week: t("week"),
+            day: t("day"),
+          }}
+        />
+      </div>
+
+      {listView && (
+        <CalendarListView
+          posts={posts}
+          orgId={orgId}
+          token={token}
+          locale={locale}
+          onSelect={setSelected}
+          onRefresh={() => refetchCurrentRange()}
+        />
+      )}
 
       {/* Legend */}
       <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
@@ -232,6 +262,179 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
           }}
         />
       )}
+    </div>
+  )
+}
+
+const PLATFORM_LABELS: Record<string, string> = {
+  facebook: "Facebook", instagram: "Instagram", linkedin: "LinkedIn",
+  x: "X / Twitter", discord: "Discord", blog: "Blog",
+  youtube: "YouTube", threads: "Threads", bluesky: "Bluesky",
+}
+
+const STATUS_LABELS: Record<string, string> = {
+  draft: "Ciornă", approved: "Aprobat", scheduled: "Programat",
+  published: "Publicat", failed: "Eșuat", skipped: "Omis",
+}
+
+function CalendarListView({
+  posts, orgId, token, locale, onSelect, onRefresh,
+}: {
+  posts: CalendarPost[]
+  orgId: string
+  token: string
+  locale: string
+  onSelect: (p: CalendarPost) => void
+  onRefresh: () => void
+}) {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.nex-nex.com"
+  const [busyId, setBusyId] = useState<string | null>(null)
+
+  // Grupează postările pe zile
+  const sorted = [...posts]
+    .filter((p) => p.scheduled_at)
+    .sort((a, b) => a.scheduled_at!.localeCompare(b.scheduled_at!))
+
+  const byDay: Record<string, CalendarPost[]> = {}
+  for (const p of sorted) {
+    const day = p.scheduled_at!.slice(0, 10)
+    if (!byDay[day]) byDay[day] = []
+    byDay[day].push(p)
+  }
+
+  const days = Object.keys(byDay).sort()
+
+  if (days.length === 0) {
+    return <p className="text-sm text-muted-foreground py-8 text-center italic">Nicio postare programată în această perioadă.</p>
+  }
+
+  const handleAction = async (action: string, post: CalendarPost) => {
+    setBusyId(post.id)
+    try {
+      if (action === "delete") {
+        if (!confirm("Ștergi definitiv această postare?")) return
+        await fetch(`${API_URL}/api/v1/posts/${post.id}`, {
+          method: "DELETE", headers: { Authorization: `Bearer ${token}` },
+        })
+        onRefresh()
+      } else if (action === "pause") {
+        await fetch(`${API_URL}/api/v1/posts/${post.id}/pause`, {
+          method: "POST", headers: { Authorization: `Bearer ${token}` },
+        })
+        onRefresh()
+      } else if (action === "publish_now") {
+        await api.posts.publishNow(post.id, token)
+        onRefresh()
+      }
+    } catch (err) {
+      alert(`Eroare: ${err instanceof Error ? err.message : String(err)}`)
+    } finally {
+      setBusyId(null)
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      {days.map((day) => {
+        const dayPosts = byDay[day]
+        const dayDate = new Date(day + "T00:00:00")
+        const dayLabel = dayDate.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long", year: "numeric" })
+        return (
+          <div key={day}>
+            <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm py-1.5 mb-2 border-b">
+              <h3 className="text-sm font-semibold text-foreground capitalize">{dayLabel}</h3>
+            </div>
+            <div className="space-y-2">
+              {dayPosts.map((post) => (
+                <div key={post.id} className="flex items-start gap-3 rounded-lg border bg-card p-3 hover:bg-muted/30 transition-colors">
+                  {/* Thumbnail */}
+                  {post.image_urls && post.image_urls.length > 0 ? (
+                    <img
+                      src={post.image_urls[0]}
+                      alt=""
+                      className="h-14 w-14 rounded-md object-cover flex-shrink-0 cursor-pointer"
+                      onClick={() => onSelect(post)}
+                    />
+                  ) : (
+                    <div
+                      className="h-14 w-14 rounded-md flex-shrink-0 flex items-center justify-center text-white text-xs font-bold cursor-pointer"
+                      style={{ backgroundColor: PLATFORM_COLORS[post.platform] ?? "#6B7280" }}
+                      onClick={() => onSelect(post)}
+                    >
+                      {post.platform.slice(0, 2).toUpperCase()}
+                    </div>
+                  )}
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0 cursor-pointer" onClick={() => onSelect(post)}>
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <span
+                        className="text-xs font-semibold rounded-full px-2 py-0.5 text-white"
+                        style={{ backgroundColor: PLATFORM_COLORS[post.platform] ?? "#6B7280" }}
+                      >
+                        {PLATFORM_LABELS[post.platform] ?? post.platform}
+                        {post.org_name ? ` · ${post.org_name}` : ""}
+                      </span>
+                      <span
+                        className="text-xs font-semibold rounded-full px-2 py-0.5 text-white"
+                        style={{ backgroundColor: STATUS_COLORS[post.status] }}
+                      >
+                        {STATUS_LABELS[post.status] ?? post.status}
+                      </span>
+                      {post.language && (
+                        <span className="text-xs text-muted-foreground uppercase">{post.language}</span>
+                      )}
+                      {post.scheduled_at && (
+                        <span className="text-xs text-muted-foreground">
+                          📅 {new Date(post.scheduled_at).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" })}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-foreground line-clamp-2 leading-snug">
+                      {post.blog_title ?? post.text_content ?? "—"}
+                    </p>
+                  </div>
+
+                  {/* Meniu acțiuni */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuItem onClick={() => onSelect(post)}>
+                        <Pencil className="mr-2 h-4 w-4" /> Modifică text
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => onSelect(post)}>
+                        <Clock className="mr-2 h-4 w-4" /> Reprogramează
+                      </DropdownMenuItem>
+                      {post.status !== "published" && (
+                        <DropdownMenuItem onClick={() => handleAction("pause", post)} disabled={busyId === post.id}>
+                          <Pause className="mr-2 h-4 w-4" /> Pauză
+                        </DropdownMenuItem>
+                      )}
+                      {post.status === "draft" && (
+                        <DropdownMenuItem onClick={() => handleAction("publish_now", post)} disabled={busyId === post.id}>
+                          <Play className="mr-2 h-4 w-4" /> Publică acum
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => handleAction("delete", post)}
+                        disabled={busyId === post.id}
+                        className="text-destructive focus:text-destructive"
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" /> Șterge
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              ))}
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }
