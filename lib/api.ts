@@ -206,6 +206,18 @@ export const api = {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       }),
+    reschedule: (orgId: string, campaignId: string, mode: "next_best_time" | "specific_date", specificDate: string | undefined, token: string) =>
+      apiFetch<{ ok: boolean; rescheduled: number }>(`/api/v1/orgs/${orgId}/campaigns/${campaignId}/reschedule`, {
+        method: "POST",
+        body: JSON.stringify({ mode, specific_date: specificDate }),
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    rescheduleAll: (orgId: string, token: string) =>
+      apiFetch<{ ok: boolean; rescheduled: number }>(`/api/v1/orgs/${orgId}/reschedule-all`, {
+        method: "POST",
+        body: JSON.stringify({}),
+        headers: { Authorization: `Bearer ${token}` },
+      }),
   },
 
   calendar: {

@@ -94,8 +94,10 @@ export function CampaignsList({ orgId, token }: Props) {
   const [bulkTopicMoveTargetId, setBulkTopicMoveTargetId] = useState("")
   // Reprogramator campanie
   const [rescheduleCampaignId, setRescheduleCampaignId] = useState<string | null>(null)
-  const [rescheduleMode, setRescheduleMode] = useState<"next_best" | "1_per_day" | "2_per_day">("next_best")
+  const [rescheduleMode, setRescheduleMode] = useState<"next_best_time" | "specific_date">("next_best_time")
+  const [rescheduleDate, setRescheduleDate] = useState("")
   const [rescheduleBusy, setRescheduleBusy] = useState(false)
+  const [rescheduleAllBusy, setRescheduleAllBusy] = useState(false)
 
   const fetchCampaigns = async () => {
     setLoading(true)
@@ -160,26 +162,43 @@ export function CampaignsList({ orgId, token }: Props) {
 
   const openRescheduleDialog = (campaignId: string) => {
     setRescheduleCampaignId(campaignId)
-    setRescheduleMode("next_best")
+    setRescheduleMode("next_best_time")
+    setRescheduleDate("")
   }
 
   const handleCampaignReschedule = async () => {
     if (!rescheduleCampaignId) return
     setRescheduleBusy(true)
     try {
-      await fetch(`/api/v1/orgs/${orgId}/campaigns/${rescheduleCampaignId}/reschedule`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ mode: rescheduleMode }),
-      })
+      const specificDate = rescheduleMode === "specific_date" && rescheduleDate
+        ? new Date(rescheduleDate).toISOString()
+        : undefined
+      const result = await api.campaigns.reschedule(orgId, rescheduleCampaignId, rescheduleMode, specificDate, token)
+      toast({ title: `✅ ${result.rescheduled} postări reprogramate` })
       await fetchCampaigns()
       if (postsMap[rescheduleCampaignId]) {
         const posts = await api.campaigns.listPosts(orgId, rescheduleCampaignId, token)
         setPostsMap((prev) => ({ ...prev, [rescheduleCampaignId]: posts }))
       }
+    } catch {
+      toast({ title: "Eroare la reprogramare", variant: "destructive" })
     } finally {
       setRescheduleBusy(false)
       setRescheduleCampaignId(null)
+    }
+  }
+
+  const handleRescheduleAll = async () => {
+    if (!confirm("Rearanjezi TOATE temele nepublicate pe noile best times? Operația nu poate fi anulată.")) return
+    setRescheduleAllBusy(true)
+    try {
+      const result = await api.campaigns.rescheduleAll(orgId, token)
+      toast({ title: `✅ ${result.rescheduled} postări rearanjate pe noile best times` })
+      await fetchCampaigns()
+    } catch {
+      toast({ title: "Eroare la rearanjare", variant: "destructive" })
+    } finally {
+      setRescheduleAllBusy(false)
     }
   }
 
@@ -485,9 +504,14 @@ export function CampaignsList({ orgId, token }: Props) {
             </select>
           </label>
         </div>
-        <Button onClick={() => setActiveDialog("create_campaign")} size="sm">
-          + Campanie nouă
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={handleRescheduleAll} disabled={rescheduleAllBusy}>
+            {rescheduleAllBusy ? "Se procesează..." : "↻ Rearanjează toate"}
+          </Button>
+          <Button onClick={() => setActiveDialog("create_campaign")} size="sm">
+            + Campanie nouă
+          </Button>
+        </div>
       </div>
 
       {selected.size > 0 && (
@@ -1143,10 +1167,9 @@ export function CampaignsList({ orgId, token }: Props) {
           </DialogHeader>
           <div className="space-y-3 py-2">
             {([
-              { value: "next_best", label: "Next best time", desc: "Primul slot liber disponibil" },
-              { value: "1_per_day", label: "1 post pe zi", desc: "Distribuie postările câte una pe zi" },
-              { value: "2_per_day", label: "2 posturi pe zi", desc: "Distribuie postările câte două pe zi" },
-            ] as const).map(({ value, label, desc }) => (
+              { value: "next_best_time" as const, label: "Next best time", desc: "Primul slot comun liber pe toate platformele" },
+              { value: "specific_date" as const, label: "Dată specifică", desc: "Mută tema la o dată aleasă de tine" },
+            ]).map(({ value, label, desc }) => (
               <button
                 key={value}
                 onClick={() => setRescheduleMode(value)}
@@ -1156,6 +1179,17 @@ export function CampaignsList({ orgId, token }: Props) {
                 <div className="text-xs text-muted-foreground">{desc}</div>
               </button>
             ))}
+            {rescheduleMode === "specific_date" && (
+              <div className="pt-1">
+                <label className="text-sm font-medium mb-1 block">Data și ora</label>
+                <input
+                  type="datetime-local"
+                  value={rescheduleDate}
+                  onChange={(e) => setRescheduleDate(e.target.value)}
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                />
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setRescheduleCampaignId(null)}>Anulează</Button>
