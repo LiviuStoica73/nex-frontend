@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Trash2, Upload, Link, RefreshCw, RotateCcw } from "lucide-react"
+import { Trash2, Upload, Link, RefreshCw, RotateCcw, Download } from "lucide-react"
 
 interface RagDoc {
   id: string
@@ -74,6 +74,16 @@ export function RagManager({ orgId, token }: Props) {
   const deleteDoc = async (id: string) => {
     await fetch(`${API}/api/v1/orgs/${orgId}/rag/${id}`, { method: "DELETE", headers })
     setDocs((d) => d.filter((doc) => doc.id !== id))
+  }
+
+  const downloadDoc = async (id: string, filename: string) => {
+    const res = await fetch(`${API}/api/v1/orgs/${orgId}/rag/${id}/download`, { headers })
+    if (!res.ok) return
+    const { url } = await res.json()
+    const a = document.createElement("a")
+    a.href = url
+    a.download = filename
+    a.click()
   }
 
   const deleteAllDocs = async () => {
@@ -173,9 +183,14 @@ export function RagManager({ orgId, token }: Props) {
                     {STATUS_ICON[doc.status]} {doc.status} · {doc.chunk_count} chunks · {doc.file_type.toUpperCase()}
                   </p>
                 </div>
-                <button onClick={() => deleteDoc(doc.id)} className="text-muted-foreground hover:text-destructive">
-                  <Trash2 className="h-4 w-4" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => downloadDoc(doc.id, doc.filename)} title="Descarcă" className="text-muted-foreground hover:text-foreground">
+                    <Download className="h-4 w-4" />
+                  </button>
+                  <button onClick={() => deleteDoc(doc.id)} title="Șterge" className="text-muted-foreground hover:text-destructive">
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
