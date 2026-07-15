@@ -11,12 +11,15 @@ import { api, PLATFORM_COLORS, STATUS_COLORS, type Post } from "@/lib/api"
 import { toast } from "@/components/ui/use-toast"
 
 type CalendarPost = Post & { org_name?: string }
+type AgencyClient = { id: string; client_org_id: string; client_org_name?: string }
 
 interface Props {
   orgId: string
   token: string
   isAgency?: boolean
 }
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || ""
 
 export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
   const t = useTranslations("calendar")
@@ -26,13 +29,26 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
   const [selected, setSelected] = useState<CalendarPost | null>(null)
   const [statusFilter, setStatusFilter] = useState("")
   const [postStatusFilter, setPostStatusFilter] = useState("")
+  const [clientFilter, setClientFilter] = useState("")
+  const [clients, setClients] = useState<AgencyClient[]>([])
 
-  const fetchPosts = async (start: Date, end: Date, statusFilterOverride?: string, postStatusFilterOverride?: string) => {
+  useEffect(() => {
+    if (!isAgency || !orgId || !token) return
+    fetch(`${API_URL}/api/v1/orgs/${orgId}/clients`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((r) => r.json())
+      .then((data) => setClients(Array.isArray(data) ? data : []))
+      .catch(() => {})
+  }, [isAgency, orgId, token])
+
+  const fetchPosts = async (start: Date, end: Date, statusFilterOverride?: string, postStatusFilterOverride?: string, clientFilterOverride?: string) => {
     const filter = statusFilterOverride !== undefined ? statusFilterOverride : statusFilter
     const postFilter = postStatusFilterOverride !== undefined ? postStatusFilterOverride : postStatusFilter
+    const clientOrg = clientFilterOverride !== undefined ? clientFilterOverride : clientFilter
     try {
       const data = isAgency
-        ? await api.calendar.getAgencyPosts(orgId, start.toISOString(), end.toISOString(), token, filter || undefined, postFilter || undefined)
+        ? await api.calendar.getAgencyPosts(orgId, start.toISOString(), end.toISOString(), token, filter || undefined, postFilter || undefined, clientOrg || undefined)
         : await api.calendar.getPosts(orgId, start.toISOString(), end.toISOString(), token, filter || undefined, postFilter || undefined)
       setPosts(data)
     } catch (err) {
@@ -40,10 +56,10 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
     }
   }
 
-  const refetchCurrentRange = (statusFilterOverride?: string, postStatusFilterOverride?: string) => {
+  const refetchCurrentRange = (statusFilterOverride?: string, postStatusFilterOverride?: string, clientFilterOverride?: string) => {
     const calApi = calendarRef.current?.getApi()
     if (!calApi) return
-    fetchPosts(calApi.view.currentStart, calApi.view.currentEnd, statusFilterOverride, postStatusFilterOverride)
+    fetchPosts(calApi.view.currentStart, calApi.view.currentEnd, statusFilterOverride, postStatusFilterOverride, clientFilterOverride)
   }
 
   const STATUS_DOTS: Record<string, string> = {
@@ -94,6 +110,27 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap justify-end gap-3">
+        {isAgency && clients.length > 0 && (
+          <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <span>Brand</span>
+            <select
+              value={clientFilter}
+              onChange={(e) => {
+                const value = e.target.value
+                setClientFilter(value)
+                refetchCurrentRange(undefined, undefined, value)
+              }}
+              className="rounded-md border bg-background px-2 py-1 text-sm"
+            >
+              <option value="">Toate brandurile</option>
+              {clients.map((c) => (
+                <option key={c.id} value={c.client_org_id}>
+                  {c.client_org_name || c.client_org_id}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
           <span>Stare campanie</span>
           <select

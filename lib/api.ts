@@ -214,9 +214,9 @@ export const api = {
         `/api/v1/orgs/${orgId}/calendar?start=${start}&end=${end}${campaignStatusFilter ? `&campaign_status_filter=${campaignStatusFilter}` : ""}${postStatusFilter ? `&post_status_filter=${postStatusFilter}` : ""}`,
         { headers: { Authorization: `Bearer ${token}` } },
       ),
-    getAgencyPosts: (orgId: string, start: string, end: string, token: string, campaignStatusFilter?: string, postStatusFilter?: string) =>
+    getAgencyPosts: (orgId: string, start: string, end: string, token: string, campaignStatusFilter?: string, postStatusFilter?: string, clientOrgId?: string) =>
       apiFetch<(Post & { org_name?: string })[]>(
-        `/api/v1/orgs/${orgId}/calendar/agency?start=${start}&end=${end}${campaignStatusFilter ? `&campaign_status_filter=${campaignStatusFilter}` : ""}${postStatusFilter ? `&post_status_filter=${postStatusFilter}` : ""}`,
+        `/api/v1/orgs/${orgId}/calendar/agency?start=${start}&end=${end}${campaignStatusFilter ? `&campaign_status_filter=${campaignStatusFilter}` : ""}${postStatusFilter ? `&post_status_filter=${postStatusFilter}` : ""}${clientOrgId ? `&client_org_id=${clientOrgId}` : ""}`,
         { headers: { Authorization: `Bearer ${token}` } },
       ),
   },
