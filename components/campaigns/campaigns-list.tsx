@@ -932,6 +932,14 @@ export function CampaignsList({ orgId, token }: Props) {
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end" className="w-52">
                                     <DropdownMenuItem onClick={async () => {
+                                      if (!confirm(`Publici acum toate postările din tema "${topic.name}"?`)) return
+                                      await api.campaigns.bulkTopics(orgId, { action: "publish_now", topic_ids: [topic.id] }, token)
+                                      await refreshPosts(campaign.id)
+                                    }}>
+                                      <Play className="mr-2 h-4 w-4 text-green-600" /> Postează Acum
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem onClick={async () => {
                                       await api.campaigns.bulkTopics(orgId, { action: "pause", topic_ids: [topic.id] }, token)
                                       await refreshPosts(campaign.id)
                                     }}>
