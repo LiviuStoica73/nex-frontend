@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Trash2, Upload, Link, RefreshCw } from "lucide-react"
+import { Trash2, Upload, Link, RefreshCw, RotateCcw } from "lucide-react"
 
 interface RagDoc {
   id: string
@@ -30,6 +30,7 @@ export function RagManager({ orgId, token }: Props) {
   const [question, setQuestion] = useState("")
   const [answer, setAnswer] = useState("")
   const [querying, setQuerying] = useState(false)
+  const [deletingAll, setDeletingAll] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
   const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002"
 
@@ -73,6 +74,14 @@ export function RagManager({ orgId, token }: Props) {
   const deleteDoc = async (id: string) => {
     await fetch(`${API}/api/v1/orgs/${orgId}/rag/${id}`, { method: "DELETE", headers })
     setDocs((d) => d.filter((doc) => doc.id !== id))
+  }
+
+  const deleteAllDocs = async () => {
+    if (!confirm("Ștergi TOATE documentele din Business Brain? AI-ul va uita tot ce știe despre brand până reîncarci documente noi.")) return
+    setDeletingAll(true)
+    await fetch(`${API}/api/v1/orgs/${orgId}/rag`, { method: "DELETE", headers })
+    setDocs([])
+    setDeletingAll(false)
   }
 
   const queryRag = async () => {
@@ -131,9 +140,22 @@ export function RagManager({ orgId, token }: Props) {
       <div className="rounded-lg border bg-card">
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="font-semibold">Documente indexate ({docs.length})</h2>
-          <button onClick={fetchDocs} className="text-muted-foreground hover:text-foreground">
-            <RefreshCw className="h-4 w-4" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button onClick={fetchDocs} className="text-muted-foreground hover:text-foreground" title="Reîncarcă lista">
+              <RefreshCw className="h-4 w-4" />
+            </button>
+            {docs.length > 0 && (
+              <button
+                onClick={deleteAllDocs}
+                disabled={deletingAll}
+                title="Șterge tot și reîncepe RAG de la zero"
+                className="flex items-center gap-1 rounded-md border border-destructive/40 px-2 py-1 text-xs text-destructive hover:bg-destructive/10 disabled:opacity-50"
+              >
+                <RotateCcw className="h-3 w-3" />
+                {deletingAll ? "Se șterge..." : "RAG nou"}
+              </button>
+            )}
+          </div>
         </div>
         {loading ? (
           <p className="p-4 text-sm text-muted-foreground">Se încarcă...</p>
