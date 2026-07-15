@@ -882,7 +882,7 @@ export function CampaignsList({ orgId, token }: Props) {
                           const isTopicSelected = selectedTopicIds.has(topic.id)
                           return (
                             <div key={topic.id} className={`border-l-2 ml-6 ${isTopicSelected ? "border-primary/60 bg-primary/5" : "border-primary/20"}`}>
-                              <div className="flex items-center bg-muted/10 hover:bg-muted/25 transition-colors">
+                              <div className="flex items-center bg-muted/10 hover:bg-muted/25 transition-colors overflow-hidden">
                                 <input
                                   type="checkbox"
                                   className="ml-3 flex-shrink-0"
@@ -892,13 +892,13 @@ export function CampaignsList({ orgId, token }: Props) {
                                 />
                                 <button
                                   onClick={() => setExpandedTopicId(isTopicExpanded ? null : topic.id)}
-                                  className="flex-1 flex items-center gap-2 px-3 py-2.5 text-left"
+                                  className="min-w-0 flex-1 flex items-center gap-2 px-3 py-2.5 text-left overflow-hidden"
                                 >
                                   {isTopicExpanded
                                     ? <ChevronDown className="h-3.5 w-3.5 flex-shrink-0 text-primary/70" />
                                     : <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-primary/70" />}
                                   <BookOpen className="h-3.5 w-3.5 flex-shrink-0 text-primary/60" />
-                                  <span className="text-sm font-medium text-foreground/80 truncate min-w-0">{topic.name}</span>
+                                  <span className="text-sm font-medium text-foreground/80 truncate">{topic.name}</span>
                                 </button>
                                 <div className="flex items-center gap-3 flex-shrink-0 mr-2">
                                   {(() => {
