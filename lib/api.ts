@@ -220,6 +220,15 @@ export const api = {
       }),
   },
 
+  topics: {
+    reschedule: (orgId: string, topicId: string, mode: "next_best_time" | "specific_date", specificDate: string | undefined, token: string) =>
+      apiFetch<{ ok: boolean; rescheduled: number }>(`/api/v1/orgs/${orgId}/topics/${topicId}/reschedule`, {
+        method: "POST",
+        body: JSON.stringify({ mode, specific_date: specificDate }),
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+  },
+
   calendar: {
     getPosts: (orgId: string, start: string, end: string, token: string, campaignStatusFilter?: string, postStatusFilter?: string) =>
       apiFetch<Post[]>(

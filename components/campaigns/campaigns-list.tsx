@@ -98,6 +98,16 @@ export function CampaignsList({ orgId, token }: Props) {
   const [rescheduleDate, setRescheduleDate] = useState("")
   const [rescheduleBusy, setRescheduleBusy] = useState(false)
   const [rescheduleAllBusy, setRescheduleAllBusy] = useState(false)
+  // Mută temă — dialog popup
+  const [moveTopicId, setMoveTopicId] = useState<string | null>(null)
+  const [moveTopicName, setMoveTopicName] = useState("")
+  const [moveTopicCampaignId, setMoveTopicCampaignId] = useState<string | null>(null)
+  const [moveTopicPostCount, setMoveTopicPostCount] = useState(0)
+  // Reprogramator temă
+  const [rescheduleTopicId, setRescheduleTopicId] = useState<string | null>(null)
+  const [rescheduleTopicMode, setRescheduleTopicMode] = useState<"next_best_time" | "specific_date">("next_best_time")
+  const [rescheduleTopicDate, setRescheduleTopicDate] = useState("")
+  const [rescheduleTopicBusy, setRescheduleTopicBusy] = useState(false)
 
   const fetchCampaigns = async () => {
     setLoading(true)
@@ -199,6 +209,24 @@ export function CampaignsList({ orgId, token }: Props) {
       toast({ title: "Eroare la rearanjare", variant: "destructive" })
     } finally {
       setRescheduleAllBusy(false)
+    }
+  }
+
+  const handleRescheduleTopic = async () => {
+    if (!rescheduleTopicId || !moveTopicCampaignId) return
+    setRescheduleTopicBusy(true)
+    try {
+      const specificDate = rescheduleTopicMode === "specific_date" && rescheduleTopicDate
+        ? new Date(rescheduleTopicDate).toISOString()
+        : undefined
+      const result = await api.topics.reschedule(orgId, rescheduleTopicId, rescheduleTopicMode, specificDate, token)
+      toast({ title: `✅ ${result.rescheduled} postări reprogramate` })
+      await refreshPosts(moveTopicCampaignId)
+    } catch {
+      toast({ title: "Eroare la reprogramare", variant: "destructive" })
+    } finally {
+      setRescheduleTopicBusy(false)
+      setRescheduleTopicId(null)
     }
   }
 
@@ -871,6 +899,15 @@ export function CampaignsList({ orgId, token }: Props) {
                                     : <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-primary/70" />}
                                   <BookOpen className="h-3.5 w-3.5 flex-shrink-0 text-primary/60" />
                                   <span className="text-sm font-medium text-foreground/80 flex-1 truncate">{topic.name}</span>
+                                  {(() => {
+                                    const dates = tPosts.map(p => p.scheduled_at).filter(Boolean) as string[]
+                                    const earliest = dates.length > 0 ? dates.reduce((a, b) => a < b ? a : b) : null
+                                    return earliest ? (
+                                      <span className="text-xs text-muted-foreground mr-2 whitespace-nowrap">
+                                        📅 {new Date(earliest).toLocaleString("ro-RO", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
+                                      </span>
+                                    ) : null
+                                  })()}
                                   <span className="text-xs text-muted-foreground mr-2">{tPosts.length} postări</span>
                                 </button>
                                 <DropdownMenu>
@@ -893,16 +930,22 @@ export function CampaignsList({ orgId, token }: Props) {
                                       <Play className="mr-2 h-4 w-4" /> Reia toate postările
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
-                                    {campaigns.filter((c) => c.id !== campaign.id).map((c) => (
-                                      <DropdownMenuItem key={c.id} onClick={async () => {
-                                        if (!confirm(`Muți tema "${topic.name}" (${tPosts.length} postări) în "${c.name}"?`)) return
-                                        await api.campaigns.bulkTopics(orgId, { action: "move", topic_ids: [topic.id], target_campaign_id: c.id }, token)
-                                        await refreshPosts(campaign.id)
-                                        if (postsMap[c.id]) await refreshPosts(c.id)
-                                      }}>
-                                        <FolderInput className="mr-2 h-4 w-4" /> Mută în: {c.name}
-                                      </DropdownMenuItem>
-                                    ))}
+                                    <DropdownMenuItem onClick={() => {
+                                      setRescheduleTopicId(topic.id)
+                                      setMoveTopicCampaignId(campaign.id)
+                                      setRescheduleTopicMode("next_best_time")
+                                      setRescheduleTopicDate("")
+                                    }}>
+                                      <Clock className="mr-2 h-4 w-4" /> Reprogramează tema
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => {
+                                      setMoveTopicId(topic.id)
+                                      setMoveTopicName(topic.name)
+                                      setMoveTopicCampaignId(campaign.id)
+                                      setMoveTopicPostCount(tPosts.length)
+                                    }}>
+                                      <FolderInput className="mr-2 h-4 w-4" /> Mută în campanie...
+                                    </DropdownMenuItem>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem
                                       onClick={() => handleDeleteTopic(topic.id, campaign.id)}
@@ -1195,6 +1238,86 @@ export function CampaignsList({ orgId, token }: Props) {
             <Button variant="outline" onClick={() => setRescheduleCampaignId(null)}>Anulează</Button>
             <Button onClick={handleCampaignReschedule} disabled={rescheduleBusy}>
               {rescheduleBusy ? "Se procesează..." : "Reprogramează"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog: Mută temă în altă campanie */}
+      <Dialog open={!!moveTopicId} onOpenChange={(open) => { if (!open) setMoveTopicId(null) }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Mută tema în campanie</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground pb-1">
+            <span className="font-medium text-foreground">{moveTopicName}</span>
+            {" "}({moveTopicPostCount} postări) → alege campania destinație:
+          </p>
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+            {campaigns.filter((c) => c.id !== moveTopicCampaignId).map((c) => (
+              <button
+                key={c.id}
+                onClick={async () => {
+                  if (!moveTopicId || !moveTopicCampaignId) return
+                  if (!confirm(`Muți tema "${moveTopicName}" (${moveTopicPostCount} postări) în "${c.name}"?`)) return
+                  await api.campaigns.bulkTopics(orgId, { action: "move", topic_ids: [moveTopicId], target_campaign_id: c.id }, token)
+                  await refreshPosts(moveTopicCampaignId)
+                  if (postsMap[c.id]) await refreshPosts(c.id)
+                  setMoveTopicId(null)
+                  toast({ title: `✅ Tema mutată în "${c.name}"` })
+                }}
+                className="w-full text-left rounded-lg border border-border hover:border-primary/60 hover:bg-primary/5 px-4 py-3 transition-colors"
+              >
+                <div className="font-medium text-sm">{c.name}</div>
+                {c.start_date && <div className="text-xs text-muted-foreground">{new Date(c.start_date).toLocaleDateString("ro-RO")}</div>}
+              </button>
+            ))}
+            {campaigns.filter((c) => c.id !== moveTopicCampaignId).length === 0 && (
+              <p className="text-sm text-muted-foreground italic py-4 text-center">Nu există alte campanii.</p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setMoveTopicId(null)}>Anulează</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog: Reprogramează temă */}
+      <Dialog open={!!rescheduleTopicId} onOpenChange={(open) => { if (!open) setRescheduleTopicId(null) }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reprogramează tema</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            {([
+              { value: "next_best_time" as const, label: "Next best time", desc: "Primul slot comun liber pe toate platformele" },
+              { value: "specific_date" as const, label: "Dată specifică", desc: "Mută postările la o dată aleasă de tine" },
+            ]).map(({ value, label, desc }) => (
+              <button
+                key={value}
+                onClick={() => setRescheduleTopicMode(value)}
+                className={`w-full text-left rounded-lg border p-3 transition-colors ${rescheduleTopicMode === value ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"}`}
+              >
+                <div className="font-medium text-sm">{label}</div>
+                <div className="text-xs text-muted-foreground">{desc}</div>
+              </button>
+            ))}
+            {rescheduleTopicMode === "specific_date" && (
+              <div className="pt-1">
+                <label className="text-sm font-medium mb-1 block">Data și ora</label>
+                <input
+                  type="datetime-local"
+                  value={rescheduleTopicDate}
+                  onChange={(e) => setRescheduleTopicDate(e.target.value)}
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                />
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRescheduleTopicId(null)}>Anulează</Button>
+            <Button onClick={handleRescheduleTopic} disabled={rescheduleTopicBusy}>
+              {rescheduleTopicBusy ? "Se procesează..." : "Reprogramează"}
             </Button>
           </DialogFooter>
         </DialogContent>
