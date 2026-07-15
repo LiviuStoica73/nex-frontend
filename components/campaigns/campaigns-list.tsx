@@ -899,17 +899,29 @@ export function CampaignsList({ orgId, token }: Props) {
                                     : <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-primary/70" />}
                                   <BookOpen className="h-3.5 w-3.5 flex-shrink-0 text-primary/60" />
                                   <span className="text-sm font-medium text-foreground/80 flex-1 truncate">{topic.name}</span>
-                                  {(() => {
-                                    const dates = tPosts.map(p => p.scheduled_at).filter(Boolean) as string[]
-                                    const earliest = dates.length > 0 ? dates.reduce((a, b) => a < b ? a : b) : null
-                                    return earliest ? (
-                                      <span className="text-xs text-muted-foreground mr-2 whitespace-nowrap">
-                                        📅 {new Date(earliest).toLocaleString("ro-RO", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
-                                      </span>
-                                    ) : null
-                                  })()}
-                                  <span className="text-xs text-muted-foreground mr-2">{tPosts.length} postări</span>
                                 </button>
+                                {(() => {
+                                  const dates = tPosts.map(p => p.scheduled_at).filter(Boolean) as string[]
+                                  const earliest = dates.length > 0 ? dates.reduce((a, b) => a < b ? a : b) : null
+                                  return earliest ? (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        setRescheduleTopicId(topic.id)
+                                        setMoveTopicCampaignId(campaign.id)
+                                        setRescheduleTopicMode("specific_date")
+                                        const d = new Date(earliest)
+                                        const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000)
+                                        setRescheduleTopicDate(local.toISOString().slice(0, 16))
+                                      }}
+                                      className="text-xs text-muted-foreground mr-2 whitespace-nowrap hover:text-primary hover:underline transition-colors"
+                                      title="Click pentru a reprograma"
+                                    >
+                                      📅 {new Date(earliest).toLocaleString("ro-RO", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
+                                    </button>
+                                  ) : null
+                                })()}
+                                <span className="text-xs text-muted-foreground mr-2">{tPosts.length} postări</span>
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" size="icon" className="h-7 w-7 mr-2 flex-shrink-0">
