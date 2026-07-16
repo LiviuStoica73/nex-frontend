@@ -6,6 +6,18 @@ import { useOrg } from "@/contexts/org-context"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Sparkles } from "lucide-react"
 import { toast } from "sonner"
 
 const API = process.env.NEXT_PUBLIC_API_URL || ""
@@ -113,6 +125,7 @@ export default function BestTimesPage() {
   const [platforms, setPlatforms] = useState<string[]>([])
   const [draft, setDraft] = useState<Record<string, { days: number[]; slots: string[] }>>({})
   const [busy, setBusy] = useState(false)
+  const [aiLoading, setAiLoading] = useState(false)
   const [loading, setLoading] = useState(true)
   const [tzLabel, setTzLabel] = useState("ora locală")
 
@@ -186,6 +199,35 @@ export default function BestTimesPage() {
       return { ...d, [platform]: { ...d[platform], days: next } }
     })
   }
+  const aiSuggest = async () => {
+    setAiLoading(true)
+    try {
+      const res = await fetch(`${API}/api/v1/orgs/${orgId}/best-times/ai-suggest`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ platforms }),
+      })
+      if (!res.ok) throw new Error()
+      const suggestion: Record<string, { days: number[]; slots: [number, number][] }> = await res.json()
+      setDraft((d) => {
+        const next = { ...d }
+        for (const [p, val] of Object.entries(suggestion)) {
+          if (!platforms.includes(p)) continue
+          next[p] = {
+            days: val.days,
+            slots: (val.slots || []).map((s) => fmtTime(utcToLocal(s as [number, number]))),
+          }
+        }
+        return next
+      })
+      toast.success("Sloturi completate de AI — verifică și salvează!")
+    } catch {
+      toast.error("Eroare la generarea sugestiilor AI")
+    } finally {
+      setAiLoading(false)
+    }
+  }
+
   const reset = (platform: string) => {
     const utcDefaults = defaultSlotsUtcFor(platform)
     const localSlots = utcDefaults.map((s) => fmtTime(utcToLocal(s)))
@@ -200,7 +242,31 @@ export default function BestTimesPage() {
     <div className="p-6 space-y-6 max-w-3xl">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Best time to post</h1>
-        <Button size="sm" disabled={busy} onClick={save}>{busy ? "Salvare..." : "Salvează"}</Button>
+        <div className="flex items-center gap-2">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" size="sm" disabled={aiLoading || platforms.length === 0}>
+                <Sparkles className="h-4 w-4 mr-1.5" />
+                {aiLoading ? "Se generează..." : "Completare AI"}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Completare automată cu AI</AlertDialogTitle>
+                <AlertDialogDescription>
+                  AI-ul va rescrie toate sloturile și zilele existente cu recomandări optime per platformă,
+                  bazate pe date generale de engagement. Modificările nu sunt salvate automat — vei putea
+                  verifica și ajusta înainte să apeși Salvează.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Anulează</AlertDialogCancel>
+                <AlertDialogAction onClick={aiSuggest}>Continuă</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          <Button size="sm" disabled={busy} onClick={save}>{busy ? "Salvare..." : "Salvează"}</Button>
+        </div>
       </div>
       <p className="text-sm text-muted-foreground">
         Orele sunt afișate în <strong>{tzLabel}</strong> — se salvează automat în UTC.
