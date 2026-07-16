@@ -7,8 +7,8 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { listOpportunities, countOpportunities } from '@/lib/api/intelligence'
+import { Paginator } from './paginator'
 import type { ContentOpportunity } from '@/lib/api/intelligence'
 
 const PAGE_SIZE = 12
@@ -62,6 +62,9 @@ export function AutopilotTab({ orgId, token }: AutopilotTabProps) {
         {total} {total === 1 ? 'idee publicată' : 'idei publicate'} în Calendar din Intelligence
       </p>
 
+      {/* Paginație sus */}
+      <Paginator page={page} totalPages={totalPages} onPageChange={setPage} />
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {items.map(opp => (
           <Card key={opp.id}>
@@ -88,27 +91,8 @@ export function AutopilotTab({ orgId, token }: AutopilotTabProps) {
         ))}
       </div>
 
-      <div className="flex items-center justify-center gap-3 pt-2">
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={page === 1}
-          onClick={() => setPage(p => p - 1)}
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        <span className="text-sm text-muted-foreground">
-          {page} / {totalPages} ({total} total)
-        </span>
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={page === totalPages}
-          onClick={() => setPage(p => p + 1)}
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </div>
+      {/* Paginație jos */}
+      <Paginator page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>
   )
 }

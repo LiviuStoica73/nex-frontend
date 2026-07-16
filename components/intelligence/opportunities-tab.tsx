@@ -9,7 +9,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Send, Zap } from 'lucide-react'
+import { Send, Sparkles, Zap } from 'lucide-react'
+import { Paginator } from './paginator'
 import { useOrg } from '@/contexts/org-context'
 import {
   countOpportunities,
@@ -22,7 +23,9 @@ import {
   publishOpportunities,
   reorderOpportunities,
   updateOpportunityStatus,
+  generateIdeas,
 } from '@/lib/api/intelligence'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { OpportunityCard } from './opportunity-card'
 import type { ContentOpportunity } from '@/lib/api/intelligence'
 
@@ -89,6 +92,9 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
   const [saving, setSaving] = useState(false)
   const [connectedPlatforms, setConnectedPlatforms] = useState<string[]>([])
   const [bulkGenerateIds, setBulkGenerateIds] = useState<Set<string>>(new Set())
+  const [ideaCount, setIdeaCount] = useState<string>('50')
+  const [generatingIdeas, setGeneratingIdeas] = useState(false)
+  const [ideasMessage, setIdeasMessage] = useState('')
   const reorderTimerRef = useRef<NodeJS.Timeout | null>(null)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [createFields, setCreateFields] = useState({ title: '', hook: '', image_prompt: '', pillar: '', platforms: [] as string[] })
@@ -175,6 +181,24 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
       await generateBulkPrototypes(orgId, ids, token)
     } catch (e) {
       console.error('Bulk generate failed', e)
+    }
+  }
+
+  const handleGenerateIdeas = async () => {
+    if (!token || !orgId) return
+    setGeneratingIdeas(true)
+    setIdeasMessage('')
+    try {
+      await generateIdeas(orgId, parseInt(ideaCount), token)
+      setIdeasMessage(`⏳ Se generează ${ideaCount} idei noi... apar în ~1-2 minute.`)
+      setTimeout(() => {
+        loadPage(1, statusFilter)
+        setIdeasMessage('')
+      }, 90000)
+    } catch (e: any) {
+      setIdeasMessage(`Eroare: ${e.message}`)
+    } finally {
+      setGeneratingIdeas(false)
     }
   }
 
@@ -320,8 +344,27 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
 
   if (!loading && total === 0 && !statusFilter) {
     return (
-      <div className="text-center py-12 text-muted-foreground">
-        Nu există oportunități. Generează o strategie din tab-ul Business Brain.
+      <div className="space-y-4">
+        <div className="flex items-center gap-3 flex-wrap">
+          <Select value={ideaCount} onValueChange={setIdeaCount}>
+            <SelectTrigger className="w-32">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="25">25 idei</SelectItem>
+              <SelectItem value="50">50 idei</SelectItem>
+              <SelectItem value="100">100 idei</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button size="sm" variant="outline" onClick={handleGenerateIdeas} disabled={generatingIdeas}>
+            <Sparkles className="h-3 w-3 mr-1" />
+            {generatingIdeas ? 'Se lansează...' : 'Generează idei'}
+          </Button>
+          {ideasMessage && <span className="text-xs text-muted-foreground">{ideasMessage}</span>}
+        </div>
+        <div className="text-center py-8 text-muted-foreground text-sm">
+          Nu există oportunități încă. Generează idei cu butonul de mai sus sau creează mai întâi o strategie din tab-ul Strategie.
+        </div>
       </div>
     )
   }
@@ -450,6 +493,25 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
         </div>
       )}
 
+      {/* Generează idei noi */}
+      <div className="flex items-center gap-3 flex-wrap">
+        <Select value={ideaCount} onValueChange={setIdeaCount}>
+          <SelectTrigger className="w-32">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="25">25 idei</SelectItem>
+            <SelectItem value="50">50 idei</SelectItem>
+            <SelectItem value="100">100 idei</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button size="sm" variant="outline" onClick={handleGenerateIdeas} disabled={generatingIdeas}>
+          <Sparkles className="h-3 w-3 mr-1" />
+          {generatingIdeas ? 'Se lansează...' : 'Generează idei'}
+        </Button>
+        {ideasMessage && <span className="text-xs text-muted-foreground">{ideasMessage}</span>}
+      </div>
+
       {/* Publică toate de verificat */}
       {opportunities.filter(o => o.status === 'review').length > 0 && (
         <div className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-950 rounded-md">
@@ -467,26 +529,22 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
         </div>
       )}
 
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
-          {total === 0 && statusFilter
-            ? <span>Nicio oportunitate cu statusul „{STATUS_FILTERS.find(s => s.value === statusFilter)?.label}". <button className="underline" onClick={() => setStatusFilter('')}>Vezi toate</button></span>
-            : <>{total} oportunități · pagina {page}/{totalPages || 1}{loading && ' · se actualizează...'}</>
-          }
-        </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span>Afișează:</span>
-          <select
-            value={pageSize}
-            onChange={e => { setPageSize(Number(e.target.value)); setPage(1) }}
-            className="border rounded px-1 py-0.5 text-sm bg-background"
-          >
-            {PAGE_SIZE_OPTIONS.map(n => (
-              <option key={n} value={n}>{n} / pagină</option>
-            ))}
-          </select>
-        </div>
+      <div className="text-sm text-muted-foreground">
+        {total === 0 && statusFilter
+          ? <span>Nicio oportunitate cu statusul „{STATUS_FILTERS.find(s => s.value === statusFilter)?.label}". <button className="underline" onClick={() => setStatusFilter('')}>Vezi toate</button></span>
+          : <>{total} oportunități{loading && ' · se actualizează...'}</>
+        }
       </div>
+
+      {/* Paginație sus */}
+      <Paginator
+        page={page}
+        totalPages={totalPages || 1}
+        onPageChange={p => setPage(p)}
+        pageSize={pageSize}
+        pageSizeOptions={PAGE_SIZE_OPTIONS}
+        onPageSizeChange={n => { setPageSize(n); setPage(1) }}
+      />
 
       {/* Lista */}
       <div className="space-y-2">
@@ -677,20 +735,15 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
         })}
       </div>
 
-      {/* Paginație */}
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-2 pt-2">
-          <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setPage(p => p - 1)}>
-            ← Anterior
-          </Button>
-          <span className="flex items-center px-3 text-sm text-muted-foreground">
-            {page} / {totalPages}
-          </span>
-          <Button size="sm" variant="outline" disabled={page === totalPages} onClick={() => setPage(p => p + 1)}>
-            Următor →
-          </Button>
-        </div>
-      )}
+      {/* Paginație jos */}
+      <Paginator
+        page={page}
+        totalPages={totalPages || 1}
+        onPageChange={p => setPage(p)}
+        pageSize={pageSize}
+        pageSizeOptions={PAGE_SIZE_OPTIONS}
+        onPageSizeChange={n => { setPageSize(n); setPage(1) }}
+      />
     </div>
   )
 }
