@@ -132,6 +132,7 @@ export default function SocialAccountsPage() {
   const [openBlog, setOpenBlog] = useState(false);
   const [openXOAuth1, setOpenXOAuth1] = useState(false);
   const [showXAdvanced, setShowXAdvanced] = useState(false);
+  const [xOauth1AccountId, setXOauth1AccountId] = useState<string | null>(null);
   const [xOauth1Form, setXOauth1Form] = useState({ consumer_key: "", consumer_secret: "", access_token: "", access_token_secret: "" });
   const [xOauth1Saving, setXOauth1Saving] = useState(false);
   const [xOauth1Error, setXOauth1Error] = useState("");
@@ -524,52 +525,6 @@ export default function SocialAccountsPage() {
           </div>
         </div>
 
-        {/* ── X OAuth 1.0a form (opțiune avansată, doar dacă X nu e conectat) ── */}
-        {!connectedPlatforms.has("x") && (
-          <div className="text-center">
-            <button
-              onClick={() => { setShowXAdvanced(v => !v); setOpenXOAuth1(v => !v); }}
-              className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
-            >
-              {showXAdvanced ? "Ascunde opțiuni avansate" : "Configurare avansată X (OAuth 1.0a — conturi proprii cu Developer App)"}
-            </button>
-          </div>
-        )}
-        {openXOAuth1 && (
-          <div className="rounded-lg border p-4 space-y-3">
-            <div>
-              <p className="text-sm font-medium">Conectare X cu OAuth 1.0a</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Pentru conturi proprii cu acces la <strong>X Developer Console → Apps → Keys &amp; Tokens → OAuth 1.0 Keys</strong>.
-                Tokens permanenți, fără expirare.
-              </p>
-            </div>
-            {[
-              { key: "consumer_key", label: "API Key (Consumer Key)" },
-              { key: "consumer_secret", label: "API Secret (Consumer Secret)" },
-              { key: "access_token", label: "Access Token" },
-              { key: "access_token_secret", label: "Access Token Secret" },
-            ].map(({ key, label }) => (
-              <div key={key} className="space-y-1">
-                <label className="text-xs text-muted-foreground">{label}</label>
-                <Input
-                  type="password"
-                  placeholder={label}
-                  value={(xOauth1Form as any)[key]}
-                  onChange={e => setXOauth1Form(f => ({ ...f, [key]: e.target.value }))}
-                />
-              </div>
-            ))}
-            {xOauth1Error && <p className="text-xs text-destructive">{xOauth1Error}</p>}
-            <div className="flex gap-2">
-              <Button size="sm" onClick={handleSaveXOAuth1} disabled={xOauth1Saving}>
-                {xOauth1Saving ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : null}
-                Conectează
-              </Button>
-              <Button size="sm" variant="outline" onClick={() => { setOpenXOAuth1(false); setShowXAdvanced(false); }}>Anulează</Button>
-            </div>
-          </div>
-        )}
 
         {/* ── Acordeon helper ──────────────────────────────────────── */}
         {/* Discord */}
@@ -827,97 +782,149 @@ export default function SocialAccountsPage() {
           <div className="space-y-2">
             <p className="text-sm font-medium text-muted-foreground">Conturi conectate</p>
             {accounts.map((account) => (
-              <div key={account.id} className="flex items-center gap-3 rounded-md border bg-background p-3">
-                <PlatformIcon platform={account.platform} />
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate">{account.account_name}</p>
-                  <p className="text-xs text-muted-foreground capitalize">{account.platform}</p>
-                </div>
-                <Select value={account.post_language || "ro"} onValueChange={(v) => handleLanguageChange(account.id, v)}>
-                  <SelectTrigger className="w-20"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {LANGUAGES.map((l) => <SelectItem key={l.value} value={l.value}>{l.label}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-                {savingLang === account.id && <Check className="h-3 w-3 text-green-500 animate-pulse" />}
-
-                {/* Stories / Reels — doar Instagram și Facebook */}
-                {(account.platform === 'instagram' || account.platform === 'facebook') && (
-                  <div className="flex flex-col gap-1 text-xs border-l pl-3 ml-1">
-                    <label className="flex items-center gap-1.5 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={account.post_as_stories}
-                        onChange={(e) => handleStoriesReelsChange(account.id, 'post_as_stories', e.target.checked)}
-                        className="accent-primary"
-                      />
-                      Stories
-                    </label>
-                    <label className="flex items-center gap-1.5 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={account.post_as_reels}
-                        onChange={(e) => handleStoriesReelsChange(account.id, 'post_as_reels', e.target.checked)}
-                        className="accent-primary"
-                      />
-                      Reels
-                    </label>
-                    {(account.post_as_stories || account.post_as_reels) && (
-                      <div className="flex items-center gap-1 mt-0.5">
-                        <span className="text-muted-foreground">Durată:</span>
-                        <input
-                          type="number"
-                          min="3"
-                          max="60"
-                          value={account.stories_video_duration || "5"}
-                          onChange={(e) => handleStoriesReelsChange(account.id, 'stories_video_duration', e.target.value)}
-                          className="w-12 border rounded px-1 py-0.5 text-xs text-center bg-background"
-                        />
-                        <span className="text-muted-foreground">s</span>
-                      </div>
-                    )}
+              <div key={account.id} className="rounded-md border bg-background overflow-hidden">
+                <div className="flex items-center gap-3 p-3">
+                  <PlatformIcon platform={account.platform} />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{account.account_name}</p>
+                    <p className="text-xs text-muted-foreground capitalize">{account.platform}</p>
                   </div>
-                )}
+                  <Select value={account.post_language || "ro"} onValueChange={(v) => handleLanguageChange(account.id, v)}>
+                    <SelectTrigger className="w-20"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {LANGUAGES.map((l) => <SelectItem key={l.value} value={l.value}>{l.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  {savingLang === account.id && <Check className="h-3 w-3 text-green-500 animate-pulse" />}
 
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Badge
-                      variant={account.is_active ? "default" : "secondary"}
-                      className="cursor-pointer select-none"
-                      onClick={() => handleToggleActive(account.id, !account.is_active)}
-                    >
-                      {account.is_active ? "Activ" : "Inactiv"}
-                    </Badge>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    {account.is_active ? "Dezactivează postarea pe acest cont" : "Activează postarea pe acest cont"}
-                  </TooltipContent>
-                </Tooltip>
-                {OAUTH_RECONNECT[account.platform] && (
-                  account.has_oauth1 ? (
+                  {/* Stories / Reels — doar Instagram și Facebook */}
+                  {(account.platform === 'instagram' || account.platform === 'facebook') && (
+                    <div className="flex flex-col gap-1 text-xs border-l pl-3 ml-1">
+                      <label className="flex items-center gap-1.5 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={account.post_as_stories}
+                          onChange={(e) => handleStoriesReelsChange(account.id, 'post_as_stories', e.target.checked)}
+                          className="accent-primary"
+                        />
+                        Stories
+                      </label>
+                      <label className="flex items-center gap-1.5 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={account.post_as_reels}
+                          onChange={(e) => handleStoriesReelsChange(account.id, 'post_as_reels', e.target.checked)}
+                          className="accent-primary"
+                        />
+                        Reels
+                      </label>
+                      {(account.post_as_stories || account.post_as_reels) && (
+                        <div className="flex items-center gap-1 mt-0.5">
+                          <span className="text-muted-foreground">Durată:</span>
+                          <input
+                            type="number"
+                            min="3"
+                            max="60"
+                            value={account.stories_video_duration || "5"}
+                            onChange={(e) => handleStoriesReelsChange(account.id, 'stories_video_duration', e.target.value)}
+                            className="w-12 border rounded px-1 py-0.5 text-xs text-center bg-background"
+                          />
+                          <span className="text-muted-foreground">s</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge
+                        variant={account.is_active ? "default" : "secondary"}
+                        className="cursor-pointer select-none"
+                        onClick={() => handleToggleActive(account.id, !account.is_active)}
+                      >
+                        {account.is_active ? "Activ" : "Inactiv"}
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {account.is_active ? "Dezactivează postarea pe acest cont" : "Activează postarea pe acest cont"}
+                    </TooltipContent>
+                  </Tooltip>
+
+                  {/* Buton OAuth 1.0a pentru X — activează imagini */}
+                  {account.platform === 'x' && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={`text-xs px-2 h-7 ${account.has_oauth1 ? 'text-green-600' : 'text-muted-foreground'}`}
+                          onClick={() => {
+                            if (xOauth1AccountId === account.id) {
+                              setXOauth1AccountId(null);
+                            } else {
+                              setXOauth1AccountId(account.id);
+                              setXOauth1Form({ consumer_key: "", consumer_secret: "", access_token: "", access_token_secret: "" });
+                              setXOauth1Error("");
+                            }
+                          }}
+                        >
+                          {account.has_oauth1 ? "✓ 1.0a" : "+ 1.0a"}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {account.has_oauth1 ? "OAuth 1.0a activ — imagini activate. Click pentru a actualiza." : "Adaugă OAuth 1.0a pentru a activa imagini pe X"}
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+
+                  {OAUTH_RECONNECT[account.platform] && (
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button variant="ghost" size="icon" onClick={OAUTH_RECONNECT[account.platform]}>
                           <RefreshCw className="h-4 w-4 text-muted-foreground" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent>OAuth 1.0a activ — tokens permanenți. Click pentru a actualiza credențialele.</TooltipContent>
+                      <TooltipContent>Reconectează OAuth 2.0 (token expirat sau invalid)</TooltipContent>
                     </Tooltip>
-                  ) : (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button variant="ghost" size="icon" onClick={OAUTH_RECONNECT[account.platform]}>
-                          <RefreshCw className="h-4 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Reconectează (token expirat sau invalid)</TooltipContent>
-                    </Tooltip>
-                  )
+                  )}
+                  <Button variant="ghost" size="icon" onClick={() => handleDisconnect(account.id)}
+                    className="text-destructive hover:text-destructive">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                {/* Formular OAuth 1.0a inline — apare sub rândul contului X */}
+                {account.platform === 'x' && xOauth1AccountId === account.id && (
+                  <div className="border-t bg-muted/30 p-4 space-y-3">
+                    <p className="text-xs text-muted-foreground">
+                      <strong>OAuth 1.0a</strong> — activează imagini pe X. Din <strong>X Developer Console → Keys &amp; Tokens → OAuth 1.0 Keys</strong>.
+                    </p>
+                    {[
+                      { key: "consumer_key", label: "API Key (Consumer Key)" },
+                      { key: "consumer_secret", label: "API Secret (Consumer Secret)" },
+                      { key: "access_token", label: "Access Token" },
+                      { key: "access_token_secret", label: "Access Token Secret" },
+                    ].map(({ key, label }) => (
+                      <div key={key} className="space-y-1">
+                        <label className="text-xs text-muted-foreground">{label}</label>
+                        <Input
+                          type="password"
+                          placeholder={label}
+                          value={(xOauth1Form as any)[key]}
+                          onChange={e => setXOauth1Form(f => ({ ...f, [key]: e.target.value }))}
+                        />
+                      </div>
+                    ))}
+                    {xOauth1Error && <p className="text-xs text-destructive">{xOauth1Error}</p>}
+                    <div className="flex gap-2">
+                      <Button size="sm" onClick={handleSaveXOAuth1} disabled={xOauth1Saving}>
+                        {xOauth1Saving ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : null}
+                        Salvează
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => setXOauth1AccountId(null)}>Anulează</Button>
+                    </div>
+                  </div>
                 )}
-                <Button variant="ghost" size="icon" onClick={() => handleDisconnect(account.id)}
-                  className="text-destructive hover:text-destructive">
-                  <Trash2 className="h-4 w-4" />
-                </Button>
               </div>
             ))}
             {blogConnectors.map((bc) => (
