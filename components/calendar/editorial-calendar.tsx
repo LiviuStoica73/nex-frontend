@@ -467,7 +467,7 @@ function PostDetailModal({
   onRefresh,
   onPublishNow,
 }: {
-  post: Post
+  post: CalendarPost
   orgId: string
   token: string
   locale: string
@@ -611,6 +611,11 @@ function PostDetailModal({
         className="w-full max-w-md rounded-lg bg-background p-6 shadow-xl max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
+        {post.org_name && (
+          <div className="mb-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide border-b pb-2">
+            🏢 {post.org_name}
+          </div>
+        )}
         <div className="mb-4 flex items-center justify-between">
           <span
             className="rounded-full px-3 py-1 text-xs font-semibold text-white"
