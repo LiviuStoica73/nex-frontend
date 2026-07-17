@@ -196,10 +196,10 @@ export async function generatePrototype(orgId: string, oppId: string, token: str
   })
 }
 
-export async function generateIdeas(orgId: string, count: number, token: string) {
+export async function generateIdeas(orgId: string, count: number, token: string, focus?: string) {
   return apiFetch(`/api/v1/orgs/${orgId}/intelligence/opportunities/generate-ideas`, token, {
     method: 'POST',
-    body: JSON.stringify({ count }),
+    body: JSON.stringify({ count, focus: focus || null }),
   })
 }
 

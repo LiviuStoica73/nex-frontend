@@ -93,6 +93,7 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
   const [connectedPlatforms, setConnectedPlatforms] = useState<string[]>([])
   const [bulkGenerateIds, setBulkGenerateIds] = useState<Set<string>>(new Set())
   const [ideaCount, setIdeaCount] = useState<string>('50')
+  const [ideaFocus, setIdeaFocus] = useState<string>('')
   const [generatingIdeas, setGeneratingIdeas] = useState(false)
   const [ideasMessage, setIdeasMessage] = useState('')
   const reorderTimerRef = useRef<NodeJS.Timeout | null>(null)
@@ -189,7 +190,7 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
     setGeneratingIdeas(true)
     setIdeasMessage('')
     try {
-      await generateIdeas(orgId, parseInt(ideaCount), token)
+      await generateIdeas(orgId, parseInt(ideaCount), token, ideaFocus || undefined)
       setIdeasMessage(`⏳ Se generează ${ideaCount} idei noi... apar în ~1-2 minute.`)
       setTimeout(() => {
         loadPage(1, statusFilter)
@@ -342,9 +343,36 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
     return <div className="text-muted-foreground py-8 text-center">Se încarcă oportunitățile...</div>
   }
 
+  const FOCUS_CHIPS = [
+    { label: 'Funcționalități app', value: 'Idei despre funcționalitățile specifice ale aplicației — ce poate face utilizatorul, cum funcționează, ce probleme rezolvă concret' },
+    { label: 'Cazuri de utilizare', value: 'Cazuri concrete de utilizare pe tipuri de business — restaurant, agenție, retail, coach, freelancer — cum folosesc ei aplicația în viața reală' },
+    { label: 'Înainte / După', value: 'Postări de tip contrast: cum era înainte fără aplicație și cum este acum cu ea — economie de timp, calitate mai bună, mai puțin stres' },
+    { label: 'Tutoriale pas cu pas', value: 'Tutoriale simple și educative despre cum se folosesc funcționalitățile — pas cu pas, fără jargon tehnic' },
+  ]
+
   if (!loading && total === 0 && !statusFilter) {
     return (
       <div className="space-y-4">
+        <div className="space-y-2">
+          <div className="flex flex-wrap gap-1.5">
+            {FOCUS_CHIPS.map(chip => (
+              <button
+                key={chip.label}
+                onClick={() => setIdeaFocus(f => f === chip.value ? '' : chip.value)}
+                className={`rounded-full px-3 py-1 text-xs font-medium border transition-colors ${ideaFocus === chip.value ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted text-muted-foreground border-transparent hover:border-primary/40'}`}
+              >
+                {chip.label}
+              </button>
+            ))}
+          </div>
+          <textarea
+            placeholder="Direcție idei (opțional) — ex: funcționalități app, cazuri de utilizare, tutoriale... Gol = idei generice."
+            value={ideaFocus}
+            onChange={e => setIdeaFocus(e.target.value)}
+            className="w-full text-xs border rounded-md px-3 py-2 resize-none bg-background text-foreground min-h-[56px]"
+            rows={2}
+          />
+        </div>
         <div className="flex items-center gap-3 flex-wrap">
           <Select value={ideaCount} onValueChange={setIdeaCount}>
             <SelectTrigger className="w-32">
@@ -494,22 +522,42 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
       )}
 
       {/* Generează idei noi */}
-      <div className="flex items-center gap-3 flex-wrap">
-        <Select value={ideaCount} onValueChange={setIdeaCount}>
-          <SelectTrigger className="w-32">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="25">25 idei</SelectItem>
-            <SelectItem value="50">50 idei</SelectItem>
-            <SelectItem value="100">100 idei</SelectItem>
-          </SelectContent>
-        </Select>
-        <Button size="sm" variant="outline" onClick={handleGenerateIdeas} disabled={generatingIdeas}>
-          <Sparkles className="h-3 w-3 mr-1" />
-          {generatingIdeas ? 'Se lansează...' : 'Generează idei'}
-        </Button>
-        {ideasMessage && <span className="text-xs text-muted-foreground">{ideasMessage}</span>}
+      <div className="space-y-2">
+        <div className="flex flex-wrap gap-1.5">
+          {FOCUS_CHIPS.map(chip => (
+            <button
+              key={chip.label}
+              onClick={() => setIdeaFocus(f => f === chip.value ? '' : chip.value)}
+              className={`rounded-full px-3 py-1 text-xs font-medium border transition-colors ${ideaFocus === chip.value ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted text-muted-foreground border-transparent hover:border-primary/40'}`}
+            >
+              {chip.label}
+            </button>
+          ))}
+        </div>
+        <textarea
+          placeholder="Direcție idei (opțional) — ex: funcționalități app, cazuri de utilizare, tutoriale... Gol = idei generice."
+          value={ideaFocus}
+          onChange={e => setIdeaFocus(e.target.value)}
+          className="w-full text-xs border rounded-md px-3 py-2 resize-none bg-background text-foreground min-h-[48px]"
+          rows={2}
+        />
+        <div className="flex items-center gap-3 flex-wrap">
+          <Select value={ideaCount} onValueChange={setIdeaCount}>
+            <SelectTrigger className="w-32">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="25">25 idei</SelectItem>
+              <SelectItem value="50">50 idei</SelectItem>
+              <SelectItem value="100">100 idei</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button size="sm" variant="outline" onClick={handleGenerateIdeas} disabled={generatingIdeas}>
+            <Sparkles className="h-3 w-3 mr-1" />
+            {generatingIdeas ? 'Se lansează...' : 'Generează idei'}
+          </Button>
+          {ideasMessage && <span className="text-xs text-muted-foreground">{ideasMessage}</span>}
+        </div>
       </div>
 
       {/* Publică toate de verificat */}
