@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useOrg } from '@/contexts/org-context'
-import { getBusinessBrainStatus, scanWebsite, runStrategy, saveInterview } from '@/lib/api/intelligence'
+import { getBusinessBrainStatus, scanWebsite, saveInterview } from '@/lib/api/intelligence'
 
 interface BrainStatus {
   interview_questions_answered: number
@@ -36,14 +36,13 @@ const INTERVIEW_QUESTIONS: { key: string; label: string }[] = [
   { key: 'known_competitors', label: 'Competitori cunoscuți (nume sau URL-uri)' },
 ]
 
-export function BusinessBrainTab({ onStrategyStarted }: { onStrategyStarted?: () => void }) {
+export function BusinessBrainTab() {
   const { data: session } = useSession()
   const { activeOrgId } = useOrg()
   const [status, setStatus] = useState<BrainStatus | null>(null)
   const [scanUrl, setScanUrl] = useState('')
   const [scanDepth, setScanDepth] = useState<'standard' | 'deep'>('standard')
   const [scanning, setScanning] = useState(false)
-  const [runningStrategy, setRunningStrategy] = useState(false)
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState<'info' | 'success' | 'error'>('info')
   const [showInterview, setShowInterview] = useState(false)
@@ -102,23 +101,6 @@ export function BusinessBrainTab({ onStrategyStarted }: { onStrategyStarted?: ()
       setMessageType('error')
     } finally {
       setScanning(false)
-    }
-  }
-
-  const handleRunStrategy = async () => {
-    if (!token || !orgId) return
-    setRunningStrategy(true)
-    setMessage('')
-    try {
-      const result = await runStrategy(orgId, scanDepth, token)
-      setMessage(`⏳ Strategia a pornit! Cost: ${result.credits_consumed} credite. Verifică tab-ul Strategie în ~1-2 minute.`)
-      setMessageType('info')
-      onStrategyStarted?.()
-    } catch (e: any) {
-      setMessage(`Eroare: ${e.message}`)
-      setMessageType('error')
-    } finally {
-      setRunningStrategy(false)
     }
   }
 
@@ -263,33 +245,6 @@ export function BusinessBrainTab({ onStrategyStarted }: { onStrategyStarted?: ()
               {scanning ? 'Se pornește...' : 'Scanează'}
             </Button>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Generează strategie */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Generează Strategie</CardTitle>
-          <CardDescription>
-            Business Analysis + Content Strategy + 100 oportunități prioritizate
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button
-            onClick={handleRunStrategy}
-            disabled={runningStrategy || !status?.can_run_strategy}
-            size="lg"
-            className="w-full"
-          >
-            {runningStrategy
-              ? 'Se lansează...'
-              : `Generează Strategie — ${scanDepth === 'deep' ? '30' : '20'} credite`}
-          </Button>
-          {!status?.can_run_strategy && (
-            <p className="text-sm text-muted-foreground mt-2 text-center">
-              Completează interviul (click pe cardul Interviu) sau scanează site-ul pentru a activa.
-            </p>
-          )}
         </CardContent>
       </Card>
 

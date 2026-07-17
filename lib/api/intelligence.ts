@@ -196,6 +196,13 @@ export async function generatePrototype(orgId: string, oppId: string, token: str
   })
 }
 
+export async function generateIdeas(orgId: string, count: number, token: string) {
+  return apiFetch(`/api/v1/orgs/${orgId}/intelligence/opportunities/generate-ideas`, token, {
+    method: 'POST',
+    body: JSON.stringify({ count }),
+  })
+}
+
 export async function generateBulkPrototypes(orgId: string, opportunityIds: string[], token: string) {
   return apiFetch(`/api/v1/orgs/${orgId}/intelligence/opportunities/generate-bulk`, token, {
     method: 'POST',

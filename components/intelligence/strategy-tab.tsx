@@ -8,8 +8,10 @@ import { useEffect, useRef, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useOrg } from '@/contexts/org-context'
-import { getStrategies } from '@/lib/api/intelligence'
+import { getStrategies, runStrategy } from '@/lib/api/intelligence'
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -38,6 +40,9 @@ export function StrategyTab({ pollTrigger }: { pollTrigger?: number }) {
   const [selected, setSelected] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [polling, setPolling] = useState(false)
+  const [scanDepth, setScanDepth] = useState<'standard' | 'deep'>('standard')
+  const [runningStrategy, setRunningStrategy] = useState(false)
+  const [strategyMessage, setStrategyMessage] = useState('')
   const pollRef = useRef<NodeJS.Timeout | null>(null)
 
   const token = (session?.user as any)?.accessToken || ''
@@ -81,21 +86,71 @@ export function StrategyTab({ pollTrigger }: { pollTrigger?: number }) {
     if (pollTrigger && pollTrigger > 0) setTimeout(() => fetchStrategies(true), 3000)
   }, [pollTrigger])
 
+  const handleRunStrategy = async () => {
+    if (!token || !orgId) return
+    setRunningStrategy(true)
+    setStrategyMessage('')
+    try {
+      const result = await runStrategy(orgId, scanDepth, token)
+      setStrategyMessage(`⏳ Strategia a pornit! Cost: ${result.credits_consumed} credite. Se actualizează automat în ~2 minute.`)
+      setTimeout(() => fetchStrategies(true), 5000)
+    } catch (e: any) {
+      setStrategyMessage(`Eroare: ${e.message}`)
+    } finally {
+      setRunningStrategy(false)
+    }
+  }
+
   if (loading) return <div className="text-muted-foreground py-8 text-center">Se încarcă...</div>
+
+  const generateBlock = (
+    <Card className="mb-4">
+      <CardContent className="pt-4">
+        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+          <div className="flex-1">
+            <p className="text-sm font-medium">Generează Strategie</p>
+            <p className="text-xs text-muted-foreground">Business Analysis + Content Strategy profesională</p>
+          </div>
+          <Select value={scanDepth} onValueChange={(v) => setScanDepth(v as 'standard' | 'deep')}>
+            <SelectTrigger className="w-40">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="standard">Standard — 20cr</SelectItem>
+              <SelectItem value="deep">Deep — 30cr</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button onClick={handleRunStrategy} disabled={runningStrategy} size="sm">
+            {runningStrategy ? 'Se lansează...' : 'Generează'}
+          </Button>
+        </div>
+        {strategyMessage && (
+          <p className="text-xs text-muted-foreground mt-2">{strategyMessage}</p>
+        )}
+      </CardContent>
+    </Card>
+  )
+
+  // Banner persistent când există o strategie în curs (chiar dacă există și altele completate)
+  const inProgressStrategy = strategies.find((s: any) => s.status === 'running')
+  const runningBanner = inProgressStrategy ? (
+    <div className="flex items-center gap-3 p-3 bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-md text-sm">
+      <span className="animate-pulse">⏳</span>
+      <span className="font-medium text-yellow-800 dark:text-yellow-200">
+        Analiza lansată la {new Date(inProgressStrategy.created_at).toLocaleString('ro', { hour: '2-digit', minute: '2-digit' })} se generează...
+      </span>
+      <span className="text-yellow-700 dark:text-yellow-300 text-xs">~2 minute. Pagina se actualizează automat.</span>
+    </div>
+  ) : null
 
   if (strategies.length === 0) {
     return (
-      <div className="text-center py-12 text-muted-foreground">
-        Nu există strategii generate. Folosește tab-ul Business Brain pentru a genera prima strategie.
-      </div>
-    )
-  }
-
-  if (polling && strategies.every((s: any) => s.status === 'running')) {
-    return (
-      <div className="text-center py-12 space-y-3">
-        <div className="text-muted-foreground">⏳ Strategia se generează... (verificăm automat la 10 secunde)</div>
-        <div className="text-xs text-muted-foreground">Durează 1-3 minute. Nu închide pagina.</div>
+      <div className="space-y-3">
+        {generateBlock}
+        {runningBanner}
+        <div className="text-center py-8 text-muted-foreground text-sm">
+          Nu există strategii generate încă.
+        </div>
       </div>
     )
   }
@@ -134,6 +189,8 @@ export function StrategyTab({ pollTrigger }: { pollTrigger?: number }) {
 
   return (
     <div className="space-y-4">
+      {generateBlock}
+      {runningBanner}
       {/* Selector run */}
       <select
         className="border rounded px-3 py-2 text-sm bg-background"
@@ -142,7 +199,7 @@ export function StrategyTab({ pollTrigger }: { pollTrigger?: number }) {
       >
         {strategies.map((s: any) => (
           <option key={s.id} value={s.id}>
-            {new Date(s.created_at).toLocaleDateString('ro')} — {s.scan_depth} — {s.status}
+            {new Date(s.created_at).toLocaleString('ro', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })} — {s.scan_depth} — {s.status}
           </option>
         ))}
       </select>
