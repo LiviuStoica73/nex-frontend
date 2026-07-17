@@ -70,6 +70,7 @@ export function OpportunityCard({
   const [localImageUrl, setLocalImageUrl] = useState(opp.image_url)
   const [publishedLinks, setPublishedLinks] = useState<PublishedLink[]>([])
   const [publishedExpanded, setPublishedExpanded] = useState(false)
+  const [publishing, setPublishing] = useState(false)
   const lastInteractionRef = useRef<number>(0)
 
   // Derivate din status — definite ÎNAINTE de useEffect pentru a evita TDZ în producție
@@ -379,11 +380,15 @@ export function OpportunityCard({
               </Button>
               <Button
                 size="sm"
-                onClick={() => onPublish(opp.id)}
+                onClick={async () => { setPublishing(true); await onPublish(opp.id) }}
+                disabled={publishing || opp.status === 'published'}
                 className="flex-1"
               >
-                <Send className="h-3 w-3 mr-1" />
-                Publică
+                {publishing
+                  ? <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                  : <Send className="h-3 w-3 mr-1" />
+                }
+                {publishing ? 'Se publică...' : 'Publică'}
               </Button>
             </div>
 
