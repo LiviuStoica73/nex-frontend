@@ -92,7 +92,7 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
   const [saving, setSaving] = useState(false)
   const [connectedPlatforms, setConnectedPlatforms] = useState<string[]>([])
   const [bulkGenerateIds, setBulkGenerateIds] = useState<Set<string>>(new Set())
-  const [ideaCount, setIdeaCount] = useState<string>('50')
+  const [ideaCount, setIdeaCount] = useState<string>('10')
   const [ideaFocus, setIdeaFocus] = useState<string>('')
   const [generatingIdeas, setGeneratingIdeas] = useState(false)
   const [ideasMessage, setIdeasMessage] = useState('')
@@ -379,9 +379,9 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="5">5 idei</SelectItem>
+              <SelectItem value="10">10 idei</SelectItem>
               <SelectItem value="25">25 idei</SelectItem>
-              <SelectItem value="50">50 idei</SelectItem>
-              <SelectItem value="100">100 idei</SelectItem>
             </SelectContent>
           </Select>
           <Button size="sm" variant="outline" onClick={handleGenerateIdeas} disabled={generatingIdeas}>
@@ -547,9 +547,9 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="5">5 idei</SelectItem>
+              <SelectItem value="10">10 idei</SelectItem>
               <SelectItem value="25">25 idei</SelectItem>
-              <SelectItem value="50">50 idei</SelectItem>
-              <SelectItem value="100">100 idei</SelectItem>
             </SelectContent>
           </Select>
           <Button size="sm" variant="outline" onClick={handleGenerateIdeas} disabled={generatingIdeas}>
