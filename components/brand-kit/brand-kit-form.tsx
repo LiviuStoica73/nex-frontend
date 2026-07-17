@@ -523,7 +523,7 @@ export function BrandKitForm({ orgId, token }: Props) {
               <label className="text-sm text-muted-foreground">Slogan</label>
               <input
                 className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                placeholder="Ex: AI Content Copilot pentru creatori"
+                placeholder="Ex: AI Marketing Manager pentru creatori"
                 value={kit.slogan || ""}
                 onChange={(e) => setKit((k) => ({ ...k, slogan: e.target.value }))}
               />

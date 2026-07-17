@@ -27,7 +27,7 @@ export function constructMetadata({
     title,
     description,
     keywords: [
-      "AI content copilot",
+      "AI Marketing Manager",
       "social media automation",
       "content scheduling",
       "AI post generator",

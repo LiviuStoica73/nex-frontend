@@ -6,7 +6,7 @@ const site_url = env.NEXT_PUBLIC_APP_URL;
 export const siteConfig: SiteConfig = {
   name: "Nex-Nex",
   description:
-    "Your AI content copilot — from idea to published, in minutes. Generate, schedule and publish on all social networks with AI that knows your brand.",
+    "Your AI Marketing Manager — builds your content strategy, creates professional posts, and publishes automatically on all social networks.",
   url: site_url,
   ogImage: `${site_url}/_static/og.jpg`,
   links: {
@@ -24,6 +24,7 @@ export const footerLinks: SidebarNavItem[] = [
     items: [
       { title: "Funcționalități", href: "/#features" },
       { title: "Cum funcționează", href: "/#workflow" },
+      { title: "Intelligence AI", href: "/intelligence" },
       { title: "Prețuri", href: "/pricing" },
       { title: "Blog", href: "/blog" },
     ],

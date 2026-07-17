@@ -214,8 +214,8 @@
   },
   "hero_landing": {
     "trial_badge": "Trial gratuit 14 zile pe Starter · fără taxare până la final",
-    "title_prefix": "Conținut social media",
-    "title_highlight": "creat de AI, aprobat de tine",
+    "title_prefix": "AI Marketing Manager",
+    "title_highlight": "pentru brandul tău",
     "description": "Trimite o idee din Telegram. AI-ul generează textul, imaginea și alege momentul optim de publicare. Tu aprobi cu un tap.",
     "primary_cta": "Începe gratuit",
     "secondary_cta": "Vezi prețurile",
@@ -254,15 +254,15 @@
       },
       "07": {
         "title": "Programezi publicarea",
-        "description": "Alegi data și ora sau lași AI-ul să găsească momentul optim pentru audiența ta."
+        "description": "Publici imediat sau alegi data și ora. Configurezi intervalele preferate per platformă — Nex-Nex le completează automat."
       },
       "08": {
-        "title": "AI alege momentul optim",
-        "description": "Pe baza datelor istorice, AI-ul recomandă intervalul cu cel mai mare engagement."
+        "title": "Programare inteligentă per rețea",
+        "description": "Fiecare platformă are ore optime. Configurezi sloturile o singură dată — Nex-Nex alege următoarea fereastră disponibilă. Completare AI automată bazată pe audiență: în curând."
       },
       "09": {
-        "title": "Postarea se publică automat",
-        "description": "Nex-Nex publică simultan pe toate platformele selectate, fără intervenție suplimentară."
+        "title": "Postarea se publică simultan",
+        "description": "Nex-Nex publică simultan pe toate platformele conectate: Instagram, LinkedIn, Facebook, X, Discord, Bluesky."
       },
       "10": {
         "title": "Publici în orice limbă",
@@ -287,8 +287,8 @@
         "description": "Generezi conținut în română, engleză, italiană sau orice altă limbă. Adaptat cultural, nu doar tradus."
       },
       "best_time": {
-        "title": "Momentul optim de publicare",
-        "description": "AI-ul analizează istoricul și recomandă ora cu cel mai mare reach pentru audiența ta specifică."
+        "title": "Programare inteligentă",
+        "description": "Configurezi sloturile preferate per platformă. Nex-Nex le completează automat. Analiza AI a audienței vine în curând."
       }
     }
   },
@@ -319,15 +319,15 @@
         "description": "Gestionează toți clienții dintr-un singur cont. Switch rapid între workspace-uri, billing unificat."
       },
       "analytics": {
-        "title": "Analytics",
-        "description": "Reach, impressions, likes și shares sincronizate automat de pe toate platformele. Top 5 posturi per perioadă."
+        "title": "Analytics (în curând)",
+        "description": "Reach, impressions, likes și shares sincronizate de pe toate platformele. Top posturi per perioadă. Dashboard complet analytics în dezvoltare."
       }
     }
   },
   "testimonials_section": {
     "label": "Testimoniale",
-    "title": "Ce spun utilizatorii Nex-Nex",
-    "subtitle": "Peste 500 de creatori și agenții publică mai repede și mai eficient cu Nex-Nex.",
+    "title": "Ce ar spune clienții noștri — dacă i-am fi avut deja 😄",
+    "subtitle": "Testimoniale ipotetice generate de AI. Am preferat mereu adevărul! Cele reale apar în curând.",
     "badge_ai": "Verificat AI",
     "items": [
       {
@@ -519,7 +519,7 @@
     "choose_plan": "Alege un plan"
   },
   "footer": {
-    "tagline": "AI învață brandul tău, creează conținut profesionist și-l publică automat pe rețele sociale.",
+    "tagline": "AI Marketing Manager — construiește strategia de conținut, creează postări profesioniste și le publică automat pe toate rețelele sociale.",
     "sections": {
       "product": {
         "title": "Produs",

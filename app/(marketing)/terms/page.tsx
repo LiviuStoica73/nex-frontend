@@ -3,7 +3,7 @@ import { constructMetadata } from "@/lib/utils";
 export const metadata = constructMetadata({
   title: "Terms of Service — Nex-Nex",
   description:
-    "Terms of Service for Nex-Nex, the AI Content Copilot. Read our terms before using the platform.",
+    "Terms of Service for Nex-Nex, the AI Marketing Manager. Read our terms before using the platform.",
 });
 
 const LAST_UPDATED = "July 1, 2026";
@@ -39,8 +39,8 @@ export default function TermsPage() {
         <section>
           <h2 className="text-xl font-semibold mb-3">1. Description of Service</h2>
           <p>
-            {COMPANY_NAME} is an AI-powered content creation and scheduling platform (&ldquo;AI Content
-            Copilot&rdquo;). It allows users to generate, edit, schedule, and publish content to
+            {COMPANY_NAME} is an AI-powered content creation and publishing platform (&ldquo;AI Marketing
+            Manager&rdquo;). It allows users to generate, edit, schedule, and publish content to
             connected social media accounts using artificial intelligence. The Service includes a web
             dashboard, a Telegram Bot interface, and integrations with third-party social networks.
           </p>

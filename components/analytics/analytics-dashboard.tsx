@@ -49,15 +49,23 @@ export function AnalyticsDashboard({ orgId, token }: Props) {
   const [data, setData] = useState<AnalyticsData | null>(null)
   const [days, setDays] = useState(30)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [syncing, setSyncing] = useState(false)
   const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002"
   const headers = { Authorization: `Bearer ${token}` }
 
   const fetchAnalytics = async (d = days) => {
     setLoading(true)
-    const res = await fetch(`${API}/api/v1/orgs/${orgId}/analytics?days=${d}`, { headers })
-    if (res.ok) setData(await res.json())
-    setLoading(false)
+    setError(false)
+    try {
+      const res = await fetch(`${API}/api/v1/orgs/${orgId}/analytics?days=${d}`, { headers })
+      if (res.ok) setData(await res.json())
+      else setError(true)
+    } catch {
+      setError(true)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const syncNow = async () => {
@@ -69,7 +77,13 @@ export function AnalyticsDashboard({ orgId, token }: Props) {
   useEffect(() => { fetchAnalytics() }, [orgId, days])
 
   if (loading) return <p className="text-muted-foreground">{t("loading")}</p>
-  if (!data) return null
+  if (error || !data) return (
+    <div className="rounded-lg border border-dashed p-12 text-center text-muted-foreground">
+      <TrendingUp className="mx-auto h-8 w-8 mb-3 opacity-40" />
+      <p className="font-medium">Analytics în curând</p>
+      <p className="text-sm">Publică primele postări și datele vor apărea automat aici.</p>
+    </div>
+  )
 
   const engagementData = data.platforms.map((p) => ({
     name: p.platform.toUpperCase(),
