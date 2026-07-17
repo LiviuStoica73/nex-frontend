@@ -339,16 +339,16 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
 
   const totalPages = Math.ceil(total / pageSize)
 
-  if (loading && opportunities.length === 0) {
-    return <div className="text-muted-foreground py-8 text-center">Se încarcă oportunitățile...</div>
-  }
-
   const FOCUS_CHIPS = [
     { label: 'Funcționalități app', value: 'Idei despre funcționalitățile specifice ale aplicației — ce poate face utilizatorul, cum funcționează, ce probleme rezolvă concret' },
     { label: 'Cazuri de utilizare', value: 'Cazuri concrete de utilizare pe tipuri de business — restaurant, agenție, retail, coach, freelancer — cum folosesc ei aplicația în viața reală' },
     { label: 'Înainte / După', value: 'Postări de tip contrast: cum era înainte fără aplicație și cum este acum cu ea — economie de timp, calitate mai bună, mai puțin stres' },
     { label: 'Tutoriale pas cu pas', value: 'Tutoriale simple și educative despre cum se folosesc funcționalitățile — pas cu pas, fără jargon tehnic' },
   ]
+
+  if (loading && opportunities.length === 0) {
+    return <div className="text-muted-foreground py-8 text-center">Se încarcă oportunitățile...</div>
+  }
 
   if (!loading && total === 0 && !statusFilter) {
     return (
