@@ -37,11 +37,23 @@ export function OrgProvider({ children }: { children: React.ReactNode }) {
     api.orgs.listMine(token).then((data) => {
       setOrgs(data)
       const stored = localStorage.getItem(ORG_KEY)
-      if (stored && data.find((o) => o.id === stored)) {
-        setActiveOrgId(stored)
-      } else if (data.length > 0) {
-        setActiveOrgId(data[0].id)
-        localStorage.setItem(ORG_KEY, data[0].id)
+      const cookieExists = document.cookie.includes(ORG_KEY)
+      const resolved = stored && data.find((o) => o.id === stored)
+        ? stored
+        : data.length > 0
+          ? data[0].id
+          : null
+      if (!resolved) return
+      setActiveOrgId(resolved)
+      localStorage.setItem(ORG_KEY, resolved)
+      // Sincronizăm cookie-ul pentru server components (calendar, etc.)
+      // dacă lipsește sau nu coincide cu ce e în localStorage
+      if (!cookieExists || !document.cookie.includes(resolved)) {
+        fetch("/api/org/switch", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orgId: resolved }),
+        }).catch(() => {})
       }
     })
   }, [token])
