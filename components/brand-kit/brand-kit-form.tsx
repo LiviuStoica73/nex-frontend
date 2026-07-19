@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { Save, Upload, FileText, Trash2, Link, RefreshCw, X, Building2 } from "lucide-react"
 
 const POSITION_OPTIONS = [
@@ -128,7 +129,17 @@ export function BrandKitForm({ orgId, token }: Props) {
     )
   }
 
-  const [tab, setTab] = useState<Tab>("identitate")
+  const searchParams = useSearchParams()
+  const VALID_BRAND_TABS: Tab[] = ["identitate", "voce", "tipografie", "documente", "quick_post"]
+  const tabFromUrl = searchParams.get("tab") as Tab | null
+  const [tab, setTab] = useState<Tab>(
+    tabFromUrl && VALID_BRAND_TABS.includes(tabFromUrl) ? tabFromUrl : "identitate"
+  )
+
+  useEffect(() => {
+    const t = searchParams.get("tab") as Tab | null
+    if (t && VALID_BRAND_TABS.includes(t)) setTab(t)
+  }, [searchParams])
 
   const [kit, setKit] = useState<BrandKit>({
     brand_name: null, description: null, slogan: null,

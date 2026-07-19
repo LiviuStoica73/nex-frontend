@@ -13,8 +13,9 @@ export const sidebarLinks: SidebarNavItem[] = [
   {
     title: "AI MARKETING",
     items: [
-      { href: "/dashboard/intelligence?tab=brain",    icon: "brain",     title: "Business Brain" },
-      { href: "/dashboard/intelligence?tab=strategy", icon: "lineChart", title: "Strategie" },
+      { href: "/dashboard/settings/brand-kit?tab=documente",  icon: "page",      title: "Documente AI" },
+      { href: "/dashboard/intelligence?tab=brain",          icon: "brain",     title: "Business Brain" },
+      { href: "/dashboard/intelligence?tab=strategy",       icon: "lineChart", title: "Strategie" },
     ],
   },
   {
