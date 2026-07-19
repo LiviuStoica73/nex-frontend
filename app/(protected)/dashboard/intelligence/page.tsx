@@ -1,6 +1,6 @@
 // app/(protected)/dashboard/intelligence/page.tsx
-// Version: 3.1.0 — 2026-07-14
-// Scope: Intelligence — Business Brain, Strategie (cu buton generare), Oportunități (cu generare idei), Vizualizare
+// Version: 3.2.0 — 2026-07-19
+// Scope: Intelligence — Business Brain, Strategie, Oportunități, Vizualizare (fost Autopilot)
 
 'use client'
 import { useSession } from 'next-auth/react'
@@ -14,7 +14,9 @@ import { OpportunitiesTab } from '@/components/intelligence/opportunities-tab'
 import type { SelectedOpportunity } from '@/components/intelligence/opportunities-tab'
 import { AutopilotTab } from '@/components/intelligence/autopilot-tab'
 
-const VALID_TABS = ['brain', 'strategy', 'opportunities', 'autopilot']
+// Acceptăm și vechiul slug 'autopilot' pentru compatibilitate cu URL-uri salvate
+const VALID_TABS = ['brain', 'strategy', 'opportunities', 'vizualizare', 'autopilot']
+const normalizeTab = (t: string) => t === 'autopilot' ? 'vizualizare' : t
 
 export default function IntelligencePage() {
   const { activeOrgId } = useOrg()
@@ -25,7 +27,7 @@ export default function IntelligencePage() {
 
   const tabFromUrl = searchParams.get('tab')
   const [activeTab, setActiveTab] = useState(
-    tabFromUrl && VALID_TABS.includes(tabFromUrl) ? tabFromUrl : 'brain'
+    tabFromUrl && VALID_TABS.includes(tabFromUrl) ? normalizeTab(tabFromUrl) : 'brain'
   )
 
   const handleTabChange = (tab: string) => {
@@ -55,7 +57,7 @@ export default function IntelligencePage() {
           <TabsTrigger value="brain">Business Brain</TabsTrigger>
           <TabsTrigger value="strategy">Strategie</TabsTrigger>
           <TabsTrigger value="opportunities">Oportunități</TabsTrigger>
-          <TabsTrigger value="autopilot">Vizualizare</TabsTrigger>
+          <TabsTrigger value="vizualizare">Vizualizare</TabsTrigger>
         </TabsList>
 
         <TabsContent value="brain" className="mt-6">
@@ -68,10 +70,10 @@ export default function IntelligencePage() {
           <OpportunitiesTab
             selectedIds={selectedIds}
             onToggleSelect={handleToggleSelect}
-            onGoToAutopilot={() => handleTabChange('autopilot')}
+            onGoToAutopilot={() => handleTabChange('vizualizare')}
           />
         </TabsContent>
-        <TabsContent value="autopilot" className="mt-6">
+        <TabsContent value="vizualizare" className="mt-6">
           <AutopilotTab orgId={orgId} token={token} />
         </TabsContent>
       </Tabs>
