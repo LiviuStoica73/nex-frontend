@@ -108,6 +108,14 @@ export function BillingDashboard({ orgId, token, appUrl, mockMode = false }: Pro
             {usage.stripe_subscription_id && " · Abonament activ"}
           </p>
         </div>
+        {!mockMode && (
+          <a
+            href="/pricing"
+            className="text-sm font-medium underline text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Schimbă planul →
+          </a>
+        )}
 
         {/* Selector plan mock */}
         {mockMode && mockPlans.length > 0 && (
