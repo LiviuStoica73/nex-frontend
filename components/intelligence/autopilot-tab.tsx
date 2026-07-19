@@ -77,7 +77,11 @@ function OppCard({ opp }: { opp: OppWithPosts }) {
   return (
     <Card className="flex flex-col overflow-hidden hover:shadow-md transition-shadow cursor-pointer" onClick={() => setOpen(o => !o)}>
       {opp.image_url && (
-        <img src={opp.image_url} alt={opp.title} className="w-full h-40 object-cover" />
+        <img
+          src={opp.image_url}
+          alt={opp.title}
+          className={`w-full object-cover transition-all duration-300 ${open ? 'h-auto max-h-[600px]' : 'h-40'}`}
+        />
       )}
       <CardContent className="pt-3 pb-3 flex flex-col gap-2 flex-1">
         <p className="text-sm font-semibold leading-snug">{opp.title}</p>
@@ -148,22 +152,22 @@ function OppCard({ opp }: { opp: OppWithPosts }) {
                       {formatDate((post.published_at ?? post.scheduled_at)!)}
                     </span>
                   )}
-                  {post.published_url && (
-                    <a
-                      href={post.published_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[10px] text-blue-500 hover:underline flex items-center gap-0.5"
-                      onClick={e => e.stopPropagation()}
-                    >
-                      <ExternalLink className="h-2.5 w-2.5" /> Link
-                    </a>
-                  )}
                 </div>
                 {post.text_content && (
-                  <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed pl-1">
+                  <p className="text-xs text-muted-foreground leading-relaxed pl-1 whitespace-pre-wrap">
                     {post.text_content}
                   </p>
+                )}
+                {post.published_url && (
+                  <a
+                    href={post.published_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs text-blue-500 hover:text-blue-600 hover:underline pl-1 mt-0.5"
+                    onClick={e => e.stopPropagation()}
+                  >
+                    <ExternalLink className="h-3 w-3" /> Vezi postarea
+                  </a>
                 )}
               </div>
             ))}
