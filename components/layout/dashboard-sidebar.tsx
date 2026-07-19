@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { NavItem, SidebarNavItem } from "@/types";
 import { Menu, PanelLeftClose, PanelRightClose } from "lucide-react";
@@ -27,7 +27,8 @@ import { useOrg } from "@/contexts/org-context";
 import {
   translateSidebarItemTitle,
   translateSidebarSectionTitle,
-} from "@/lib/i18n-navigation";
+} from "@/lib/i18n-navigation"
+import { Plus } from "lucide-react";
 
 interface DashboardSidebarProps {
   links: SidebarNavItem[];
@@ -36,7 +37,16 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({ links }: DashboardSidebarProps) {
   const t = useTranslations();
   const path = usePathname();
+  const searchParams = useSearchParams();
   const { activeOrg } = useOrg();
+
+  const isActive = (href: string) => {
+    const [hrefPath, hrefQuery] = href.split("?")
+    if (path !== hrefPath) return false
+    if (!hrefQuery) return !searchParams.get("tab") || hrefPath !== "/dashboard/intelligence"
+    const tab = new URLSearchParams(hrefQuery).get("tab")
+    return searchParams.get("tab") === tab
+  }
   const isAgency = activeOrg?.is_agency ?? false;
 
   // NOTE: Use this if you want save in local storage -- Credits: Hosna Qasmei
@@ -117,6 +127,32 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                 <OrgSwitcher />
               </div>
 
+              {isSidebarExpanded ? (
+                <div className="px-3 pb-2">
+                  <Link
+                    href="/dashboard/settings/brand-kit"
+                    className="flex items-center justify-center gap-2 w-full rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Crează postare
+                  </Link>
+                </div>
+              ) : (
+                <div className="px-2 pb-2">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Link
+                        href="/dashboard/settings/brand-kit"
+                        className="flex items-center justify-center w-full rounded-md bg-primary p-2 text-primary-foreground hover:bg-primary/90 transition-colors"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">Crează postare</TooltipContent>
+                  </Tooltip>
+                </div>
+              )}
+
               <nav className="flex flex-1 flex-col gap-8 px-4 pt-4">
                 {links.map((section) => {
                   const visibleItems = section.items.filter(
@@ -146,7 +182,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                 href={item.disabled ? "#" : item.href}
                                 className={cn(
                                   "flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-muted",
-                                  path === item.href
+                                  isActive(item.href)
                                     ? "bg-muted"
                                     : "text-muted-foreground hover:text-accent-foreground",
                                   item.disabled &&
@@ -169,7 +205,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                     href={item.disabled ? "#" : item.href}
                                     className={cn(
                                       "flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-muted",
-                                      path === item.href
+                                      isActive(item.href)
                                         ? "bg-muted"
                                         : "text-muted-foreground hover:text-accent-foreground",
                                       item.disabled &&
@@ -265,7 +301,7 @@ export function MobileSheetSidebar({ links }: DashboardSidebarProps) {
                               href={item.disabled ? "#" : item.href}
                               className={cn(
                                 "flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-muted",
-                                path === item.href
+                                isActive(item.href)
                                   ? "bg-muted"
                                   : "text-muted-foreground hover:text-accent-foreground",
                                 item.disabled &&
