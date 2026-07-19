@@ -277,13 +277,27 @@ export function MobileSheetSidebar({ links }: DashboardSidebarProps) {
         <SheetContent side="left" className="flex flex-col p-0">
           <ScrollArea className="h-full overflow-y-auto">
             <div className="flex h-screen flex-col">
-              <nav className="flex flex-1 flex-col gap-y-8 p-6 text-lg font-medium">
-                <Link href="/dashboard" className="flex items-center gap-2">
+              <nav className="flex flex-1 flex-col gap-y-6 p-6 text-lg font-medium">
+                <Link href="/dashboard" className="flex items-center gap-2" onClick={() => setOpen(false)}>
                   <img src="/nex-nex-logo.svg" alt="Nex-Nex logo" className="size-8 flex-shrink-0" />
                   <img src="/nex-nex-sign.svg" alt="Nex-Nex" className="h-5 w-auto" />
                 </Link>
 
-                {links.map((section) => (
+                {/* Buton Crează postare */}
+                <Link
+                  href="/dashboard/intelligence?tab=opportunities&new=true"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center justify-center gap-2 w-full rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                >
+                  <Plus className="h-4 w-4" />
+                  Crează postare
+                </Link>
+
+                {links.map((section) => {
+                  // Pe mobil ascundem Super Admin — se accesează din Dashboard
+                  const visibleItems = section.items.filter(item => !item.superadminOnly)
+                  if (visibleItems.length === 0) return null
+                  return (
                   <section
                     key={section.title}
                     className="flex flex-col gap-0.5"
@@ -292,7 +306,7 @@ export function MobileSheetSidebar({ links }: DashboardSidebarProps) {
                       {translateSidebarSectionTitle(section.title, t)}
                     </p>
 
-                    {section.items.map((item) => {
+                    {visibleItems.map((item) => {
                       const Icon = Icons[item.icon || "arrowRight"];
                       return (
                         item.href && (
@@ -325,9 +339,18 @@ export function MobileSheetSidebar({ links }: DashboardSidebarProps) {
                       );
                     })}
                   </section>
-                ))}
+                  )
+                })}
 
-                <div className="mt-auto">
+                <div className="mt-auto space-y-2 pb-4">
+                  <Link
+                    href="/"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-2 px-2 py-2 text-xs text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-muted"
+                  >
+                    <Icons.home className="size-3.5" />
+                    <span>Înapoi la site</span>
+                  </Link>
                   <UpgradeCard />
                 </div>
               </nav>
