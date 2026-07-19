@@ -83,25 +83,13 @@ export function NavMobile() {
 
           {session ? (
             <>
-              {session.user.role === "ADMIN" ? (
-                <li className="py-3">
-                  <Link
-                    href="/dashboard/admin"
-                    onClick={() => setOpen(false)}
-                    className="flex w-full font-medium capitalize"
-                  >
-                    {t("dashboard_sidebar.items.admin_panel")}
-                  </Link>
-                </li>
-              ) : null}
-
               <li className="py-3">
                 <Link
                   href="/dashboard"
                   onClick={() => setOpen(false)}
                   className="flex w-full font-medium capitalize"
                 >
-                  {t("nav.dashboard")}
+                  Dashboard
                 </Link>
               </li>
             </>
