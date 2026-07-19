@@ -2,7 +2,8 @@
 
 import { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation"
+// usePathname + useSearchParams sunt folosite în hook-ul useIsActive de mai jos
 import { useTranslations } from "next-intl";
 import { NavItem, SidebarNavItem } from "@/types";
 import { Menu, PanelLeftClose, PanelRightClose } from "lucide-react";
@@ -34,19 +35,22 @@ interface DashboardSidebarProps {
   links: SidebarNavItem[];
 }
 
-export function DashboardSidebar({ links }: DashboardSidebarProps) {
-  const t = useTranslations();
+function useIsActive() {
   const path = usePathname();
   const searchParams = useSearchParams();
-  const { activeOrg } = useOrg();
-
-  const isActive = (href: string) => {
+  return (href: string) => {
     const [hrefPath, hrefQuery] = href.split("?")
     if (path !== hrefPath) return false
     if (!hrefQuery) return !searchParams.get("tab") || hrefPath !== "/dashboard/intelligence"
     const tab = new URLSearchParams(hrefQuery).get("tab")
     return searchParams.get("tab") === tab
   }
+}
+
+export function DashboardSidebar({ links }: DashboardSidebarProps) {
+  const t = useTranslations();
+  const { activeOrg } = useOrg();
+  const isActive = useIsActive();
   const isAgency = activeOrg?.is_agency ?? false;
 
   // NOTE: Use this if you want save in local storage -- Credits: Hosna Qasmei
@@ -253,9 +257,9 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
 
 export function MobileSheetSidebar({ links }: DashboardSidebarProps) {
   const t = useTranslations();
-  const path = usePathname();
   const [open, setOpen] = useState(false);
   const { isSm, isMobile } = useMediaQuery();
+  const isActive = useIsActive();
 
   if (isSm || isMobile) {
     return (
