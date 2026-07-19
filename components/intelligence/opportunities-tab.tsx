@@ -4,6 +4,7 @@
 
 'use client'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -97,9 +98,15 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
   const [generatingIdeas, setGeneratingIdeas] = useState(false)
   const [ideasMessage, setIdeasMessage] = useState('')
   const reorderTimerRef = useRef<NodeJS.Timeout | null>(null)
-  const [showCreateForm, setShowCreateForm] = useState(false)
+  const searchParams = useSearchParams()
+  const [showCreateForm, setShowCreateForm] = useState(searchParams.get('new') === 'true')
   const [createFields, setCreateFields] = useState({ title: '', hook: '', image_prompt: '', pillar: '', platforms: [] as string[] })
   const [creating, setCreating] = useState(false)
+
+  // Deschide formularul automat când vine cu ?new=true din butonul de sidebar
+  useEffect(() => {
+    if (searchParams.get('new') === 'true') setShowCreateForm(true)
+  }, [searchParams])
 
   const token = (session?.user as any)?.accessToken || ''
   const orgId = activeOrgId

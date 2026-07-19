@@ -130,7 +130,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
               {isSidebarExpanded ? (
                 <div className="px-3 pb-2">
                   <Link
-                    href="/dashboard/settings/brand-kit"
+                    href="/dashboard/intelligence?tab=opportunities&new=true"
                     className="flex items-center justify-center gap-2 w-full rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
                   >
                     <Plus className="h-4 w-4" />
@@ -142,7 +142,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Link
-                        href="/dashboard/settings/brand-kit"
+                        href="/dashboard/intelligence?tab=opportunities&new=true"
                         className="flex items-center justify-center w-full rounded-md bg-primary p-2 text-primary-foreground hover:bg-primary/90 transition-colors"
                       >
                         <Plus className="h-4 w-4" />
