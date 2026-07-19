@@ -1,17 +1,15 @@
 // components/intelligence/autopilot-tab.tsx
-// Version: 6.0.0 — 2026-07-19
-// Scope: Vizualizare oportunități publicate — cu căutare, click pe card, postări reale per rețea
+// Version: 7.0.0 — 2026-07-19
+// Scope: Vizualizare — status real din postări, ordonare, filtre platforme multi-select
 
 'use client'
 import { useEffect, useState, useRef } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { listOpportunities, countOpportunities } from '@/lib/api/intelligence'
 import { Paginator } from './paginator'
 import type { ContentOpportunity } from '@/lib/api/intelligence'
-import { Search, X, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react'
+import { Search, X, ExternalLink, ChevronDown, ChevronUp, ArrowUpDown } from 'lucide-react'
 
 const PAGE_SIZE = 12
 
@@ -30,6 +28,15 @@ const STATUS_COLORS: Record<string, string> = {
   draft: '#6B7280', approved: '#3B82F6', scheduled: '#F59E0B',
   published: '#10B981', failed: '#EF4444', skipped: '#6B7280', paused: '#8B5CF6',
 }
+
+const SORT_OPTIONS = [
+  { value: 'post_date', label: 'Data postării' },
+  { value: 'score', label: 'Scor AI' },
+  { value: 'created_at', label: 'Data creării' },
+  { value: 'title', label: 'Alfabetic' },
+] as const
+
+type SortKey = typeof SORT_OPTIONS[number]['value']
 
 interface LinkedPost {
   id: string
@@ -53,7 +60,10 @@ interface AutopilotTabProps {
 }
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+  return new Date(iso).toLocaleDateString('ro-RO', {
+    day: 'numeric', month: 'short', year: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  })
 }
 
 function platformLabel(post: LinkedPost) {
@@ -63,19 +73,53 @@ function platformLabel(post: LinkedPost) {
   return `${base}${type}${lang}`
 }
 
+// Derivă statusul real din postările asociate
+function deriveStatus(posts: LinkedPost[]): { label: string; color: string; detail: string } {
+  if (posts.length === 0) return { label: 'Publicat', color: STATUS_COLORS.published, detail: '' }
+  const published = posts.filter(p => p.status === 'published').length
+  const scheduled = posts.filter(p => p.status === 'scheduled').length
+  const failed = posts.filter(p => p.status === 'failed').length
+  const total = posts.length
+
+  if (published === total) return { label: 'Publicat', color: STATUS_COLORS.published, detail: `${total} publicate` }
+  if (scheduled === total) return { label: 'Programat', color: STATUS_COLORS.scheduled, detail: `${total} programate` }
+  if (published > 0 && scheduled > 0) return {
+    label: 'Publicat parțial', color: '#F97316',
+    detail: `${published} publicate · ${scheduled} programate${failed > 0 ? ` · ${failed} eșuate` : ''}`,
+  }
+  if (published > 0) return {
+    label: 'Publicat parțial', color: '#F97316',
+    detail: `${published} publicate · ${total - published} altele`,
+  }
+  if (failed === total) return { label: 'Eșuat', color: STATUS_COLORS.failed, detail: `${failed} eșuate` }
+  return { label: 'Mixt', color: '#6B7280', detail: `${published} pub · ${scheduled} prog · ${failed} eșuate` }
+}
+
+// Prima dată relevantă dintr-o oportunitate (pentru sortare și afișare)
+function firstPostDate(opp: OppWithPosts): string | null {
+  const posts = opp.linked_posts ?? []
+  if (posts.length === 0) return null
+  const dates = posts
+    .map(p => p.published_at ?? p.scheduled_at)
+    .filter(Boolean) as string[]
+  if (dates.length === 0) return null
+  return dates.sort().at(-1) ?? null // cea mai recentă
+}
+
 function OppCard({ opp }: { opp: OppWithPosts }) {
   const [open, setOpen] = useState(false)
   const posts = opp.linked_posts ?? []
-  const publishedPosts = posts.filter(p => p.status === 'published')
-  const allPosts = posts
-
-  // Platformele reale din postări; fallback la opp.platforms dacă nu există postări
-  const platformsToShow = allPosts.length > 0
-    ? [...new Set(allPosts.map(p => p.platform))]
+  const platformsToShow = posts.length > 0
+    ? [...new Set(posts.map(p => p.platform))]
     : opp.platforms ?? []
+  const { label: statusLabel, color: statusColor, detail: statusDetail } = deriveStatus(posts)
+  const latestDate = firstPostDate(opp)
 
   return (
-    <Card className="flex flex-col overflow-hidden hover:shadow-md transition-shadow cursor-pointer" onClick={() => setOpen(o => !o)}>
+    <Card
+      className="flex flex-col overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+      onClick={() => setOpen(o => !o)}
+    >
       {opp.image_url && (
         <img
           src={opp.image_url}
@@ -89,18 +133,18 @@ function OppCard({ opp }: { opp: OppWithPosts }) {
           <p className="text-xs text-muted-foreground line-clamp-2">{opp.hook}</p>
         )}
 
-        {/* Status oportunitate + nr postări */}
+        {/* Status derivat + data + nr postări */}
         <div className="flex items-center gap-2 flex-wrap">
-          <Badge
-            className="text-xs text-white"
-            style={{ backgroundColor: STATUS_COLORS[opp.status] ?? '#6B7280' }}
-          >
-            {STATUS_LABELS[opp.status] ?? opp.status}
+          <Badge className="text-xs text-white" style={{ backgroundColor: statusColor }}>
+            {statusLabel}
           </Badge>
-          {allPosts.length > 0 && (
-            <span className="text-xs text-muted-foreground">{allPosts.length} postări</span>
+          {statusDetail && (
+            <span className="text-xs text-muted-foreground">{statusDetail}</span>
           )}
         </div>
+        {latestDate && (
+          <p className="text-xs text-muted-foreground">📅 {formatDate(latestDate)}</p>
+        )}
 
         {/* Platformele reale */}
         <div className="flex gap-1 flex-wrap">
@@ -116,7 +160,7 @@ function OppCard({ opp }: { opp: OppWithPosts }) {
         </div>
 
         {/* Toggle postări */}
-        {allPosts.length > 0 && (
+        {posts.length > 0 && (
           <button
             className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mt-1 transition-colors"
             onClick={e => { e.stopPropagation(); setOpen(o => !o) }}
@@ -127,9 +171,9 @@ function OppCard({ opp }: { opp: OppWithPosts }) {
         )}
 
         {/* Lista postărilor expandată */}
-        {open && allPosts.length > 0 && (
+        {open && posts.length > 0 && (
           <div className="mt-2 space-y-3 border-t pt-2" onClick={e => e.stopPropagation()}>
-            {allPosts.map(post => (
+            {posts.map(post => (
               <div key={post.id} className="space-y-1">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span
@@ -178,78 +222,159 @@ function OppCard({ opp }: { opp: OppWithPosts }) {
   )
 }
 
+// Sortare client-side (datele sunt deja încărcate)
+function sortItems(items: OppWithPosts[], sort: SortKey): OppWithPosts[] {
+  return [...items].sort((a, b) => {
+    if (sort === 'post_date') {
+      const da = firstPostDate(a) ?? ''
+      const db = firstPostDate(b) ?? ''
+      return db.localeCompare(da) // cele mai recente primele
+    }
+    if (sort === 'score') return (b.score ?? 0) - (a.score ?? 0)
+    if (sort === 'created_at') return b.created_at > a.created_at ? 1 : -1
+    if (sort === 'title') return a.title.localeCompare(b.title, 'ro')
+    return 0
+  })
+}
+
+// Filtrare client-side după platforme selectate
+function filterByPlatforms(items: OppWithPosts[], platforms: Set<string>): OppWithPosts[] {
+  if (platforms.size === 0) return items
+  return items.filter(opp => {
+    const oppPlatforms = opp.linked_posts?.length
+      ? opp.linked_posts.map(p => p.platform)
+      : opp.platforms ?? []
+    return [...platforms].some(p => oppPlatforms.includes(p))
+  })
+}
+
+const ALL_PLATFORMS = ['facebook', 'instagram', 'linkedin', 'x', 'discord', 'bluesky', 'blog']
+
 export function AutopilotTab({ orgId, token }: AutopilotTabProps) {
-  const [items, setItems] = useState<OppWithPosts[]>([])
+  const [allItems, setAllItems] = useState<OppWithPosts[]>([])
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [searchInput, setSearchInput] = useState('')
+  const [sort, setSort] = useState<SortKey>('post_date')
+  const [platformFilter, setPlatformFilter] = useState<Set<string>>(new Set())
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
-
-  const load = (p: number, s: string) => {
+  const load = (s: string) => {
     if (!orgId || !token) return
     setLoading(true)
-    const params = new URLSearchParams({ page: String(p), page_size: String(PAGE_SIZE), status_filter: 'published' })
+    const params = new URLSearchParams({ page: '1', page_size: '200', status_filter: 'published' })
     if (s) params.set('search', s)
-    const countParams = new URLSearchParams({ status_filter: 'published' })
-    if (s) countParams.set('search', s)
     const API = process.env.NEXT_PUBLIC_API_URL || 'https://api.nex-nex.com'
     Promise.all([
       fetch(`${API}/api/v1/orgs/${orgId}/intelligence/opportunities?${params}`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()),
-      fetch(`${API}/api/v1/orgs/${orgId}/intelligence/opportunities/count?${countParams}`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()),
+      fetch(`${API}/api/v1/orgs/${orgId}/intelligence/opportunities/count?status_filter=published${s ? `&search=${encodeURIComponent(s)}` : ''}`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()),
     ])
       .then(([res, countRes]) => {
-        setItems(Array.isArray(res) ? res : (res.items ?? []))
+        setAllItems(Array.isArray(res) ? res : (res.items ?? []))
         setTotal(countRes?.total ?? 0)
+        setPage(1)
       })
       .catch(() => {})
       .finally(() => setLoading(false))
   }
 
-  useEffect(() => { load(page, search) }, [orgId, token, page, search])
+  useEffect(() => { load(search) }, [orgId, token, search])
 
   const handleSearchChange = (val: string) => {
     setSearchInput(val)
     if (searchTimer.current) clearTimeout(searchTimer.current)
-    searchTimer.current = setTimeout(() => {
-      setPage(1)
-      setSearch(val.trim())
-    }, 400)
+    searchTimer.current = setTimeout(() => setSearch(val.trim()), 400)
   }
 
-  const clearSearch = () => {
-    setSearchInput('')
-    setSearch('')
-    setPage(1)
+  const clearSearch = () => { setSearchInput(''); setSearch('') }
+
+  const togglePlatform = (p: string) => {
+    setPlatformFilter(prev => {
+      const next = new Set(prev)
+      next.has(p) ? next.delete(p) : next.add(p)
+      setPage(1)
+      return next
+    })
   }
+
+  // Sortare + filtrare client-side
+  const processed = filterByPlatforms(sortItems(allItems, sort), platformFilter)
+  const totalPages = Math.max(1, Math.ceil(processed.length / PAGE_SIZE))
+  const pageItems = processed.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   return (
     <div className="space-y-4">
-      {/* Căutare */}
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Caută după titlu sau hook..."
-          value={searchInput}
-          onChange={e => handleSearchChange(e.target.value)}
-          className="pl-9 pr-8"
-        />
-        {searchInput && (
-          <button onClick={clearSearch} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-            <X className="h-4 w-4" />
+
+      {/* Bara de control: căutare + sortare */}
+      <div className="flex flex-wrap gap-3 items-center">
+        <div className="relative flex-1 min-w-[200px] max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Caută după titlu sau hook..."
+            value={searchInput}
+            onChange={e => handleSearchChange(e.target.value)}
+            className="pl-9 pr-8"
+          />
+          {searchInput && (
+            <button onClick={clearSearch} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+
+        {/* Sortare */}
+        <div className="flex items-center gap-1.5">
+          <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
+          <select
+            value={sort}
+            onChange={e => { setSort(e.target.value as SortKey); setPage(1) }}
+            className="text-xs border rounded-md px-2 py-1.5 bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+          >
+            {SORT_OPTIONS.map(o => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* Filtre platforme */}
+      <div className="flex gap-2 flex-wrap items-center">
+        <span className="text-xs text-muted-foreground">Rețele:</span>
+        {ALL_PLATFORMS.map(p => {
+          const active = platformFilter.has(p)
+          return (
+            <button
+              key={p}
+              onClick={() => togglePlatform(p)}
+              className="text-[11px] font-medium rounded-full px-2.5 py-1 transition-all border"
+              style={{
+                backgroundColor: active ? (PLATFORM_COLORS[p] ?? '#6B7280') : 'transparent',
+                borderColor: PLATFORM_COLORS[p] ?? '#6B7280',
+                color: active ? '#fff' : (PLATFORM_COLORS[p] ?? '#6B7280'),
+              }}
+            >
+              {p.charAt(0).toUpperCase() + p.slice(1)}
+            </button>
+          )
+        })}
+        {platformFilter.size > 0 && (
+          <button
+            onClick={() => { setPlatformFilter(new Set()); setPage(1) }}
+            className="text-xs text-muted-foreground hover:text-foreground underline"
+          >
+            Resetează
           </button>
         )}
       </div>
 
       {loading ? (
         <div className="text-sm text-muted-foreground p-4 text-center">Se încarcă...</div>
-      ) : total === 0 ? (
+      ) : processed.length === 0 ? (
         <div className="text-center py-16 text-muted-foreground space-y-2">
-          {search ? (
-            <p className="text-sm">Niciun rezultat pentru „{search}".</p>
+          {search || platformFilter.size > 0 ? (
+            <p className="text-sm">Niciun rezultat pentru filtrele selectate.</p>
           ) : (
             <>
               <p className="text-sm font-medium">Nicio idee publicată din Intelligence încă.</p>
@@ -260,14 +385,16 @@ export function AutopilotTab({ orgId, token }: AutopilotTabProps) {
       ) : (
         <>
           <p className="text-sm text-muted-foreground">
-            {total} {total === 1 ? 'idee publicată' : 'idei publicate'} în Calendar din Intelligence
-            {search && <span> — rezultate pentru „{search}"</span>}
+            {processed.length === total
+              ? `${total} ${total === 1 ? 'idee' : 'idei'} în Calendar din Intelligence`
+              : `${processed.length} din ${total} ${total === 1 ? 'idee' : 'idei'}`}
+            {search && <span> — „{search}"</span>}
           </p>
 
           <Paginator page={page} totalPages={totalPages} onPageChange={setPage} />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {items.map(opp => <OppCard key={opp.id} opp={opp} />)}
+            {pageItems.map(opp => <OppCard key={opp.id} opp={opp} />)}
           </div>
 
           <Paginator page={page} totalPages={totalPages} onPageChange={setPage} />
