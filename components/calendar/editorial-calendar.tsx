@@ -79,10 +79,12 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
     .map((p) => {
       const dot = STATUS_DOTS[p.status] ?? "⚪"
       const preview = p.blog_title ?? p.text_content?.slice(0, 30) ?? ""
-      const typeLabel = p.post_type === "story" ? " 📱Story" : p.post_type === "reel" ? " 🎬Reel" : ""
+      const typeLabel = p.post_type === "story" ? " 📱" : p.post_type === "reel" ? " 🎬" : ""
+      const discordLang = p.platform === "discord" && p.language ? ` ${p.language.toUpperCase()}` : ""
+      const platformLabel = `${p.platform.toUpperCase()}${typeLabel}${discordLang}`
       const title = p.org_name
-        ? `${dot} [${p.org_name}] ${p.platform.toUpperCase()}${typeLabel} — ${preview}`
-        : `${dot} ${p.platform.toUpperCase()}${typeLabel} — ${preview}`
+        ? `${dot} [${p.org_name}] ${platformLabel} — ${preview}`
+        : `${dot} ${platformLabel} — ${preview}`
       return {
         id: p.id,
         title,
@@ -373,6 +375,8 @@ function CalendarListView({
                         style={{ backgroundColor: PLATFORM_COLORS[post.platform] ?? "#6B7280" }}
                       >
                         {PLATFORM_LABELS[post.platform] ?? post.platform}
+                        {post.post_type === "story" ? " 📱" : post.post_type === "reel" ? " 🎬" : ""}
+                        {post.platform === "discord" && post.language ? ` ${post.language.toUpperCase()}` : ""}
                         {post.org_name ? ` · ${post.org_name}` : ""}
                       </span>
                       <span
