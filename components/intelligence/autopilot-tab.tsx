@@ -11,7 +11,8 @@ import { Paginator } from './paginator'
 import type { ContentOpportunity } from '@/lib/api/intelligence'
 import { Search, X, ExternalLink, ChevronDown, ChevronUp, ArrowUpDown } from 'lucide-react'
 
-const PAGE_SIZE = 12
+const PAGE_SIZE_OPTIONS = [6, 12, 24, 48]
+const DEFAULT_PAGE_SIZE = 12
 
 const PLATFORM_COLORS: Record<string, string> = {
   facebook: '#1877F2', instagram: '#E1306C', linkedin: '#0A66C2',
@@ -258,6 +259,7 @@ export function AutopilotTab({ orgId, token }: AutopilotTabProps) {
   const [search, setSearch] = useState('')
   const [searchInput, setSearchInput] = useState('')
   const [sort, setSort] = useState<SortKey>('post_date')
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE)
   const [platformFilter, setPlatformFilter] = useState<Set<string>>(new Set())
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -301,8 +303,8 @@ export function AutopilotTab({ orgId, token }: AutopilotTabProps) {
 
   // Sortare + filtrare client-side
   const processed = filterByPlatforms(sortItems(allItems, sort), platformFilter)
-  const totalPages = Math.max(1, Math.ceil(processed.length / PAGE_SIZE))
-  const pageItems = processed.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const totalPages = Math.max(1, Math.ceil(processed.length / pageSize))
+  const pageItems = processed.slice((page - 1) * pageSize, page * pageSize)
 
   return (
     <div className="space-y-4">
@@ -334,6 +336,20 @@ export function AutopilotTab({ orgId, token }: AutopilotTabProps) {
           >
             {SORT_OPTIONS.map(o => (
               <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Cartoane per pagină */}
+        <div className="flex items-center gap-1.5">
+          <span className="text-xs text-muted-foreground">Per pagină:</span>
+          <select
+            value={pageSize}
+            onChange={e => { setPageSize(Number(e.target.value)); setPage(1) }}
+            className="text-xs border rounded-md px-2 py-1.5 bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+          >
+            {PAGE_SIZE_OPTIONS.map(n => (
+              <option key={n} value={n}>{n}</option>
             ))}
           </select>
         </div>
