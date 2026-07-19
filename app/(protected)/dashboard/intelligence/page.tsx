@@ -4,7 +4,7 @@
 
 'use client'
 import { useSession } from 'next-auth/react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useOrg } from '@/contexts/org-context'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -26,9 +26,13 @@ export default function IntelligencePage() {
   const [pollTrigger, setPollTrigger] = useState(0)
 
   const tabFromUrl = searchParams.get('tab')
-  const [activeTab, setActiveTab] = useState(
-    tabFromUrl && VALID_TABS.includes(tabFromUrl) ? normalizeTab(tabFromUrl) : 'brain'
-  )
+  const resolvedTab = tabFromUrl && VALID_TABS.includes(tabFromUrl) ? normalizeTab(tabFromUrl) : 'brain'
+  const [activeTab, setActiveTab] = useState(resolvedTab)
+
+  // Sincronizează tab-ul activ când URL-ul se schimbă din exterior (ex: click meniu sidebar)
+  useEffect(() => {
+    setActiveTab(resolvedTab)
+  }, [resolvedTab])
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab)
