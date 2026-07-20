@@ -55,7 +55,7 @@ export default function IntelligencePage() {
           Nex-Nex — Complete Feature Reference
         </h1>
         <p className="mt-3 text-muted-foreground text-sm">
-          Last updated: 2026-07-14 · Comprehensive, AI-readable description of every Nex-Nex capability.
+          Last updated: 2026-07-20 · Comprehensive, AI-readable description of every Nex-Nex capability.
         </p>
       </div>
 
@@ -78,18 +78,13 @@ export default function IntelligencePage() {
       <P>Business Brain is the AI knowledge layer that understands your brand. Before generating any content, Nex-Nex builds a structured understanding of who you are, what you sell, and who your audience is. All AI features draw from this layer.</P>
 
       <H3>1.1 Brand Interview</H3>
-      <P>A structured 10-question brand interview that captures: what you sell, your ideal customer, problems you solve, products to prioritize, your differentiator, brand tone, topics to avoid, marketing objectives, website URL, and known competitors. Answers are stored per organization and used as primary context in every AI call.</P>
+      <P>A structured brand interview that captures: what you sell, your ideal customer, problems you solve, products to prioritize, your differentiator, brand tone, topics to avoid, marketing objectives, website URL, and known competitors. Answers are stored per organization and used as primary context in every AI call.</P>
 
       <H3>1.2 Website Scan</H3>
-      <P>Nex-Nex crawls your website and indexes its content into the knowledge base.</P>
-      <UL items={[
-        "Standard (20 credits): 15 main pages — homepage, about, services, pricing, blog index",
-        "Deep (30 credits): Full site crawl — blog posts, FAQ, product detail pages, case studies",
-      ]} />
-      <P>Pages are chunked into text segments, embedded with OpenAI embeddings (text-embedding-3-small), and stored in PostgreSQL with pgvector for semantic retrieval.</P>
+      <P>Nex-Nex crawls your website and indexes its content into the knowledge base. Two modes: Standard (main pages — homepage, about, services, pricing, blog index) and Deep (full site crawl — blog posts, FAQ, product detail pages, case studies). Pages are chunked into text segments, embedded, and stored for semantic retrieval.</P>
 
       <H3>1.3 RAG Document Upload</H3>
-      <P>Upload any document — PDF, DOCX, plain text, or URL — and it becomes part of your brand knowledge base. The system extracts text, splits it into overlapping chunks (~500 tokens), generates vector embeddings, and retrieves the top-K most relevant chunks at generation time.</P>
+      <P>Upload any document — PDF, DOCX, XLSX, plain text, or URL — and it becomes part of your brand knowledge base. The system extracts text, splits it into chunks, generates vector embeddings, and retrieves the most relevant chunks at generation time.</P>
       <P>Use cases: product manuals, company presentations, past articles, tone-of-voice guidelines, regulatory documents, price lists, case studies.</P>
 
       <H3>1.4 Competitor Intelligence</H3>
@@ -103,34 +98,25 @@ export default function IntelligencePage() {
       <P>Content Intelligence is the strategic layer. It produces a professional marketing strategy and a prioritized list of content opportunities — similar to what a marketing agency would deliver, but fully automated.</P>
 
       <H3>2.1 Strategy Generation</H3>
-      <P><strong>Model used:</strong> GPT-4o (the full model, for strategic depth — not GPT-4o-mini).</P>
-      <P><strong>Two modes:</strong> Standard (20 credits) from Business Brain data · Deep (30 credits) adds real-time web research via Firecrawl.</P>
-      <P>The strategy produces a full <strong>Business Analysis</strong>: executive summary, current vs. recommended positioning, SWOT analysis, target personas (2–4, each with job title, age range, pain points, desires, buying triggers, preferred platforms, content that resonates, objections), differentiators, competitor gaps with content angles, and a messaging matrix (awareness / consideration / decision / retention messages).</P>
+      <P><strong>Two modes:</strong> Standard (from Business Brain data only) · Deep (adds real-time web research — industry trends, best-performing content in your niche, 2026 trends).</P>
+      <P>The strategy produces a full <strong>Business Analysis</strong>: executive summary, current vs. recommended positioning, SWOT analysis, target personas (2–4, each with job title, age range, pain points, desires, buying triggers, preferred platforms, content that resonates, objections), differentiators, competitor gaps with content angles, and a messaging matrix (awareness / consideration / decision / retention).</P>
       <P>The strategy also produces a complete <strong>Content Strategy</strong>: content pillars with monthly percentage allocation, priority platforms with frequency/formats/tone, 4-week monthly editorial plan, content mix percentages by type, distribution recommendations, topics to avoid, and quick wins (actions that can produce results in 30 days).</P>
 
-      <H3>2.2 Research Engine</H3>
-      <P>When Firecrawl is configured, the Deep strategy mode performs 3 live web searches before generating the strategy: industry tips, 2026 trends, and best-performing content in your niche. Results are summarized (max 2,000 chars) and injected into the strategy prompt. Graceful fallback if not configured — strategy generates normally from Business Brain data alone.</P>
+      <H3>2.2 Content Opportunities — 100 Ideas</H3>
+      <P><strong>Quantity:</strong> configurable — 25, 50, or 100 ideas per run. Generated from your Business Brain — not generic suggestions, but ideas specific to your brand, audience, and industry.</P>
+      <P>Quality rules enforced: no generic advice, written for expert audiences, titles specific enough they could not apply to a different industry, hooks must be provocative or data-driven, full coverage of awareness stages.</P>
+      <P>Each opportunity includes: title, content pillar, objective, target persona, awareness stage, non-obvious insight, hook, format, platforms, difficulty, estimated impact, and score (1–100). Sorted by score descending.</P>
+      <P><strong>Auto-scheduling:</strong> the generated ideas can be scheduled automatically across all connected platforms, distributed evenly — max 2 topics per day.</P>
 
-      <H3>2.3 Content Opportunities</H3>
-      <P><strong>Model:</strong> GPT-4o-mini · <strong>Quantity:</strong> configurable — 25, 50, or 100 ideas per run.</P>
-      <P>Quality rules enforced: no generic advice, written for expert audiences, titles specific enough that they could not apply to a different industry, hooks must be provocative or data-driven, industry-specific terminology required, full coverage of awareness stages.</P>
-      <P>Each opportunity includes: title, content pillar, objective, target persona, awareness stage, non-obvious insight, hook, format, platforms, difficulty, estimated impact, score (1–100), and score rationale. Sorted by score descending.</P>
+      <H3>2.3 Learn Loop</H3>
+      <P>A behavioral adaptation system. Every action on an opportunity trains future generation runs: publishing promotes similar ideas, rejecting suppresses them. The system tracks preferences per content pillar and per format. After a minimum of 3 user actions, future runs automatically promote what you like and avoid what you don't — without any manual configuration.</P>
 
-      <H3>2.4 Learn Loop</H3>
-      <P>A behavioral adaptation system. Every action on an opportunity adjusts its score and trains future generation runs.</P>
-      <UL items={[
-        "Publishing an opportunity: +5 points",
-        "Rejecting an opportunity: −10 points",
-        "Resetting a prototype: −3 points",
-      ]} />
-      <P>The system tracks published/rejected counts per pillar and per format. After a minimum of 3 user actions, the next generation run promotes preferred pillars/formats and avoids consistently rejected ones — without any manual configuration.</P>
-
-      <H3>2.5 Opportunity Workflow</H3>
-      <P>Status pipeline: idea → [prototype generation] → review → published / rejected. Platform tags on opportunity cards only show platforms the user has connected. Bulk publish: one click sends all reviewed opportunities to Calendar as scheduled posts.</P>
+      <H3>2.4 Opportunity Workflow</H3>
+      <P>Status pipeline: idea → prototype generation → review → published / rejected. Platform tags on opportunity cards only show platforms the user has connected. Bulk publish: one click sends all reviewed opportunities to Calendar as scheduled posts.</P>
 
       {/* Module 3 */}
       <H2>Module 3 — Brand Kit</H2>
-      <P>Brand Kit stores everything the AI needs to generate on-brand content: brand name, description, slogan, brand voice narrative, keywords to include, words to avoid, primary/secondary/accent/background colors, fonts, logo URL, sign URL, and visual templates.</P>
+      <P>Brand Kit stores everything the AI needs to generate on-brand content: brand name, description, slogan, brand voice narrative, keywords to include, words to avoid, primary/secondary/accent colors, fonts, logo, and visual templates.</P>
       <P><strong>Quick Post Defaults:</strong> per-organization defaults for every generated post — AI image provider, target platforms, tone, logo/sign/template inclusion, text overlay, scheduling mode, image format, emoji, and hashtag preferences.</P>
       <P><strong>Visual Rotation Plan:</strong> defines percentage split across visual categories (lifestyle / product / abstract / informational / branded) to ensure variety across a campaign.</P>
 
@@ -138,135 +124,201 @@ export default function IntelligencePage() {
       <H2>Module 4 — AI Content Generation</H2>
 
       <H3>4.1 Post Text Generation</H3>
-      <P>Model: GPT-4o-mini. Generates platform-optimized post text using topic, target platform, language (50+ supported), brand voice, RAG context, tone (informative / promotional / storytelling / educational / conversational / motivational / humorous), and emoji/hashtag preferences.</P>
+      <P>Generates platform-optimized post text using topic, target platform, language (50+ supported), brand voice from RAG, tone (informative / promotional / storytelling / educational / conversational / motivational / humorous), and emoji/hashtag preferences.</P>
 
       <H3>4.2 Text Refinement</H3>
       <P>Any generated text can be refined with a natural language instruction: "Make it shorter", "More formal", "Add a question at the end", "Rewrite for LinkedIn audience". The system rewrites while preserving brand voice and platform constraints.</P>
 
       <H3>4.3 Multi-Platform Adaptation</H3>
-      <P>When a post is published to multiple platforms, text is adapted per platform — length, tone, hashtag placement, emoji use, and formatting differ per network. Also handles language translation per connector if accounts are configured in different languages.</P>
+      <P>When a post is published to multiple platforms, text is automatically adapted per platform — length, tone, hashtag placement, emoji use, and formatting differ per network (X: 280 chars, Bluesky: 300, Instagram: 2,200, LinkedIn: 3,000, Facebook: 63,000). Also handles language translation per connector if accounts are configured in different languages.</P>
 
       <H3>4.4 Caption from Image</H3>
-      <P>Upload an image URL → GPT-4o vision interprets the image and generates platform-appropriate caption in your brand voice.</P>
+      <P>Upload an image URL → AI vision interprets the image and generates a platform-appropriate caption in your brand voice.</P>
 
       <H3>4.5 Intent Parsing</H3>
-      <P>Natural language input ("something about morning productivity with a coffee aesthetic") is parsed into structured parameters: topic, visual concept, logo preference, sign preference, visual style. Feeds both text generator and image prompt builder.</P>
+      <P>Natural language input ("something about morning productivity with a coffee aesthetic") is parsed into structured parameters: topic, visual concept, logo preference, visual style. Feeds both text generator and image prompt builder.</P>
+
+      <H3>4.6 Repurpose & Translate</H3>
+      <P>Any published post can be repurposed to other platforms (LinkedIn post → X thread → Instagram caption) or translated to another language while preserving brand voice and platform formatting.</P>
 
       {/* Module 5 */}
       <H2>Module 5 — AI Image Generation</H2>
 
       <H3>5.1 Image Prompt Builder</H3>
-      <P>A GPT-4o-mini director builds a precise English prompt before calling any image provider: analyzes post text, selects visual category, incorporates brand colors and aesthetic, determines optimal dimensions for the target format, and selects reference images as style anchors.</P>
+      <P>An AI director builds a precise prompt before calling any image provider: analyzes post text, selects visual category, incorporates brand colors and aesthetic, determines optimal dimensions for the target format, and selects reference images as style anchors.</P>
 
       <H3>5.2 Image Providers</H3>
       <UL items={[
-        "Fal.ai FLUX Kontext (default) — supports reference images for style consistency, 4 credits per image",
-        "Google Gemini Flash — logo and sign passed as image Parts for brand consistency, 4 credits, auto-fallback to Fal.ai on rate limit",
-        "ComfyUI (local GPU) — FLUX.1-schnell on local RTX, zero marginal cost, accessible via Cloudflare Tunnel",
+        "Fal.ai FLUX Kontext (default) — supports reference images for style consistency",
+        "Google Gemini Flash — logo and sign passed as image parts for brand consistency, auto-fallback to Fal.ai on rate limit",
+        "ComfyUI (local GPU) — FLUX.1-schnell on local GPU, accessible via cloud tunnel",
       ]} />
 
-      <H3>5.3 Image Composition (Pillow)</H3>
-      <P>After AI generation, Nex-Nex can composite the raw image with brand elements: place logo in a configurable corner, overlay sign/watermark, apply visual template, add text overlay. Non-destructive — original AI image preserved.</P>
+      <H3>5.3 Image Composition</H3>
+      <P>After AI generation, Nex-Nex can composite the raw image with brand elements: place logo in a configurable corner, overlay watermark/sign, apply visual template, add text overlay. Non-destructive — original AI image preserved.</P>
 
       <H3>5.4 Image Versions Gallery</H3>
-      <P>Each content opportunity maintains a full image version history. Multiple images can be selected simultaneously (for carousel posts). Users can regenerate with a different prompt — all versions remain accessible. The primary image_url is the first selected version.</P>
+      <P>Each content opportunity maintains a full image version history. Multiple images can be selected simultaneously (for carousel posts). Users can regenerate with a different prompt — all versions remain accessible.</P>
 
       <H3>5.5 Visual Concepts</H3>
       <P>Before generating, Nex-Nex proposes 3 distinct visual concepts for the same post: Lifestyle, Product, and Abstract. User selects one and generation proceeds accordingly.</P>
 
+      <H3>5.6 Format Adaptation</H3>
+      <P>Images are generated at the optimal aspect ratio per platform and format: 1:1 for Instagram feed, 16:9 for LinkedIn/Facebook, 9:16 for Stories and Reels.</P>
+
       {/* Module 6 */}
-      <H2>Module 6 — Publishing Pipeline</H2>
+      <H2>Module 6 — Video Generation</H2>
+      <P>UGC-style video generation for Reels, Shorts, and TikTok. Flow: upload product image + instructions → AI analyzes image → generates 3-scene script (Hook / Product Benefit / CTA) → video generated per scene → assembled for publishing.</P>
+      <P><strong>Video providers:</strong> Fal.ai Kling (high quality, recommended) · Fal.ai Luma Dream Machine (cinematic motion) · Fal.ai MiniMax (fast and cost-efficient).</P>
 
-      <H3>6.1 Supported Platforms</H3>
-      <P><strong>Social networks:</strong> Instagram (posts, Stories, Reels), Facebook (posts, Stories), LinkedIn (posts, articles), X/Twitter (OAuth 1.0a + 2.0), Discord (per guild channel), Bluesky.</P>
-      <P><strong>Blog/CMS:</strong> WordPress (with featured image auto-upload), Ghost (Admin API), Custom REST API.</P>
-      <P><strong>Not yet supported (planned):</strong> TikTok, YouTube.</P>
+      {/* Module 7 */}
+      <H2>Module 7 — Publishing Pipeline</H2>
 
-      <H3>6.2 Scheduling Engine</H3>
-      <P>Each organization configures posting schedules per platform — up to 2 time slots per platform per day. The engine finds the next available optimal slot, avoids already-occupied slots, and for multi-platform posts finds a common slot that works for all platforms simultaneously. Bulk scheduling modes: next_best / 1_per_day / 2_per_day.</P>
+      <H3>7.1 Supported Platforms</H3>
+      <Table
+        headers={["Platform", "Posts", "Reels/Video", "Stories"]}
+        rows={[
+          ["Facebook Page", "✅", "✅", "✅"],
+          ["Instagram Business", "✅", "✅", "✅"],
+          ["LinkedIn Page", "✅", "✅", "—"],
+          ["X / Twitter", "✅ (threads)", "✅", "—"],
+          ["Discord", "✅", "✅", "—"],
+          ["Bluesky", "✅", "—", "—"],
+          ["WordPress Blog", "✅ (with image auto-upload)", "—", "—"],
+          ["Ghost CMS", "✅", "—", "—"],
+          ["Custom REST API", "✅", "—", "—"],
+          ["YouTube (planned)", "—", "✅ Shorts", "—"],
+          ["Threads (planned)", "✅", "✅", "—"],
+          ["TikTok (planned)", "—", "✅", "—"],
+        ]}
+      />
 
-      <H3>6.3 Publishing Execution</H3>
-      <P>Publishing runs as Celery background tasks. A Beat scheduler checks for due posts every minute. On failure: retries up to 3 times with 5-minute delay. On permanent failure: status=failed, error visible in dashboard.</P>
+      <H3>7.2 Scheduling Engine</H3>
+      <P>Each organization configures posting schedules per platform — up to 2 time slots per platform per day. The engine finds the next available optimal slot, avoids already-occupied slots, and for multi-platform posts finds a common day that works for all platforms simultaneously. Maximum 2 topics per day distributed evenly across the calendar.</P>
+      <P><strong>Default optimal slots:</strong> Facebook 09:00–11:00 / 13:00–15:00 · Instagram 11:00–13:00 / 19:00–21:00 · LinkedIn 07:00–09:00 / 12:00–13:00 · X/Twitter 12:00–15:00 / 20:00–22:00.</P>
 
-      <H3>6.4 Additional Publishing Features</H3>
+      <H3>7.3 Publishing Execution</H3>
+      <P>Publishing runs as background tasks checked every minute. On failure: automatic retries (5 min, 30 min, 2h). On permanent failure: status=failed with error reason visible in dashboard and Telegram notification. Published post URL saved in database.</P>
+
+      <H3>7.4 Additional Publishing Features</H3>
       <UL items={[
         "Facebook link injection — auto-injects the Facebook post URL into copies on other platforms to drive cross-platform engagement",
+        "Publishing order guarantee — Facebook publishes first (link source), then Blog (+30 min), then other networks",
         "Repost — any published post can be reposted to additional accounts or platforms with format adaptation",
         "Translate post — any post can be translated to another language while preserving brand voice and platform formatting",
+        "Publish Now — immediate publish in under 1 minute",
         "Stories — vertical format (9:16), Facebook and Instagram",
         "Reels — short video, Facebook and Instagram",
       ]} />
 
-      {/* Module 7 */}
-      <H2>Module 7 — Campaign & Calendar Management</H2>
+      {/* Module 8 */}
+      <H2>Module 8 — Campaign & Calendar Management</H2>
       <P>Content is organized in a 3-level hierarchy: <strong>Campaign → Topic → Post</strong>.</P>
       <UL items={[
         "Campaign: named project with start/end dates, budget tracking, full status lifecycle (draft → approved → scheduled → published → archived)",
-        "Topic: thematic grouping of posts within a campaign",
+        "Topic: thematic grouping of posts within a campaign — one topic generates one post per connected platform",
         "Post: individual content piece for one platform and one account",
       ]} />
-      <P>Bulk operations: archive, pause, resume, clone campaigns and posts. Visual calendar across all platforms. Agency view: aggregated calendar across all managed brands. Uncampaigned posts inbox. Evergreen post recycling.</P>
-
-      {/* Module 8 */}
-      <H2>Module 8 — Telegram Bot</H2>
-      <P>The Telegram Bot is the primary mobile interface. Quick Post: send photo/text/voice → AI generates post using brand context → approve/edit/regenerate with inline keyboard → scheduled to all platforms at optimal time. Full multi-turn conversation with dialog state. Organization switching without leaving Telegram.</P>
+      <P><strong>Calendar:</strong> monthly / weekly / daily view. Drag & drop for rescheduling. Color-coded per platform and status (draft=grey, scheduled=yellow, published=green, failed=red). Timezone configurable per organization.</P>
+      <P><strong>Bulk operations:</strong> archive, pause, resume, reschedule all. Agency view: aggregated calendar across all managed brands. Evergreen post recycling.</P>
 
       {/* Module 9 */}
-      <H2>Module 9 — Multi-Tenancy & Agency</H2>
-      <P>Every organization has fully isolated data: content, social accounts, Brand Kit, RAG documents, credits, members. Agency mode: aggregated calendar view, per-client workspace with independent login, unified billing, additional brands at €10/brand/month.</P>
+      <H2>Module 9 — Telegram Bot</H2>
+      <P>The Telegram Bot is the primary mobile interface for quick content creation. No app to install — works on any phone with Telegram.</P>
+      <UL items={[
+        "Quick Post: send photo/text/voice → AI generates post using brand context → approve/edit/regenerate with inline keyboard → scheduled to all platforms at optimal time",
+        "Full multi-turn conversation with dialog state — 'Make it shorter', 'More formal', 'Add hashtags' → AI iterates",
+        "Caption from photo: send an image → AI generates platform-appropriate caption instantly",
+        "Commands: /idei (5 instant ideas), /azi (today's scheduled posts), /stats, /help",
+        "Organization switching without leaving Telegram",
+        "Notifications: published post ✅ with link / failed post ❌ with reason",
+      ]} />
 
       {/* Module 10 */}
-      <H2>Module 10 — Credits System</H2>
+      <H2>Module 10 — Multi-Tenancy & Agency Mode</H2>
+      <P>Every organization has fully isolated data: content, social accounts, Brand Kit, RAG documents, credits, and members. Zero cross-contamination between clients.</P>
+      <UL items={[
+        "Agency mode: aggregated calendar view across all clients, per-client workspace with independent login",
+        "Granular permissions: control which agency members have access to which client",
+        "Unified billing: one subscription for all brands/clients",
+        "Additional brands: €10/brand/month on Agency plan",
+        "Multi-user per organization: roles Owner / Admin / Editor / Viewer",
+      ]} />
+
+      {/* Module 11 */}
+      <H2>Module 11 — Analytics</H2>
+      <P>Automatic sync 24h after publishing. Metrics tracked: Reach, Impressions, Likes, Comments, Shares, Clicks, Video Views. Sources: Facebook Graph API, LinkedIn API, X API v2.</P>
+      <UL items={[
+        "Dashboard: charts per platform, per campaign, per time period",
+        "Top posts per period",
+        "Best time to post — calculated from your own audience data (coming soon)",
+        "Export PDF/CSV (coming soon)",
+      ]} />
+
+      {/* Module 12 */}
+      <H2>Module 12 — Credits System</H2>
       <Table
         headers={["Action", "Credits"]}
         rows={[
           ["Generate post text", "1"],
-          ["Generate image (Fal.ai standard)", "2"],
-          ["Generate image (Fal.ai FLUX Kontext)", "4"],
-          ["Generate image (Gemini)", "4"],
+          ["Generate image (standard)", "2"],
+          ["Generate image (FLUX Kontext / Gemini)", "4"],
           ["Generate video", "10"],
-          ["Generate idea set", "1"],
+          ["Generate idea set (100 ideas)", "1"],
           ["Run strategy (Standard)", "20"],
-          ["Run strategy (Deep)", "30"],
+          ["Run strategy (Deep — with web research)", "30"],
         ]}
       />
       <Table
-        headers={["Plan", "Price", "Credits/month"]}
+        headers={["Plan", "Price", "Credits/month", "Brands"]}
         rows={[
-          ["Free", "€0", "30"],
-          ["Starter", "€19", "250"],
-          ["Pro", "€49", "700"],
-          ["Business", "€99", "2,500"],
-          ["Agency", "€199", "7,000"],
+          ["Free", "€0", "30", "1"],
+          ["Starter", "€19/mo", "250", "1"],
+          ["Pro", "€49/mo", "700", "3"],
+          ["Business", "€99/mo", "2,500", "10"],
+          ["Agency", "€199/mo", "7,000", "Unlimited"],
         ]}
       />
+      <P>Annual billing: 2 months free. 14-day free trial on Starter, no credit card required.</P>
 
-      {/* Module 11 */}
-      <H2>Module 11 — AI Models Used</H2>
+      {/* Module 13 */}
+      <H2>Module 13 — AI Models Used</H2>
       <Table
         headers={["Task", "Model", "Reason"]}
         rows={[
           ["Marketing strategy", "GPT-4o", "Maximum reasoning depth for strategic analysis"],
-          ["Content opportunities", "GPT-4o-mini", "High volume (25–100 items), cost-efficient"],
+          ["Content opportunities (100 ideas)", "GPT-4o-mini", "High volume, cost-efficient"],
           ["Post text generation", "GPT-4o-mini", "Fast, sufficient quality for social copy"],
           ["Image prompt building", "GPT-4o-mini", "Structured output, deterministic"],
           ["Caption from image", "GPT-4o (vision)", "Image understanding requires full model"],
           ["RAG embeddings", "text-embedding-3-small", "Cost-efficient, high quality for semantic search"],
-          ["Image generation", "FLUX Kontext / Gemini / ComfyUI", "Provider selected per Brand Kit config"],
+          ["Image generation", "FLUX Kontext / Gemini Flash / ComfyUI", "Provider selected per Brand Kit config"],
+          ["Video generation", "Kling / Luma / MiniMax", "Provider selected per quality/speed preference"],
         ]}
       />
 
-      {/* Module 12 */}
-      <H2>Module 12 — Infrastructure</H2>
+      {/* Module 14 */}
+      <H2>Module 14 — Infrastructure</H2>
       <UL items={[
-        "Backend: FastAPI (Python 3.11), fully async",
-        "Database: PostgreSQL 16 + pgvector (vector embeddings alongside relational data)",
-        "Cache / Queue: Redis 7 + Celery + Celery Beat",
+        "Backend: FastAPI (Python), fully async",
+        "Database: PostgreSQL + pgvector (vector embeddings alongside relational data)",
+        "Cache / Queue: Redis + Celery background workers + Beat scheduler",
         "Storage: Cloudflare R2 (generated images, uploaded documents)",
         "Frontend: Next.js 14 + Tailwind CSS + Shadcn/ui",
         "Hosting: Hetzner (all production: API, frontend, database, workers)",
-        "Local GPU: RTX workstation via Cloudflare Tunnel for ComfyUI",
-        "Languages supported: 50+",
+        "Languages supported for content generation: 50+",
+        "Interface languages: EN, RO, FR, DE, IT, HU, PL, UK, BG, SL, ES (in progress)",
+      ]} />
+
+      {/* Module 15 */}
+      <H2>Module 15 — Security & Account Management</H2>
+      <UL items={[
+        "Authentication: email + password, Google OAuth",
+        "Social tokens: AES-256 encrypted in PostgreSQL",
+        "Token auto-refresh: daily cron refreshes tokens expiring within 7 days",
+        "Notification on expired token: email + in-app alert with reconnect prompt",
+        "Data isolation: every query scoped to org_id — no cross-tenant data access possible",
+        "2FA: TOTP (planned)",
       ]} />
 
       {/* Differentiators */}
@@ -276,17 +328,35 @@ export default function IntelligencePage() {
       <UL items={[
         "Business Brain — the AI knows your brand at a deep level before creating anything",
         "Strategy generation — professional marketing strategy from GPT-4o, not a template",
-        "Content opportunities — 50–100 scored and prioritized ideas, not generic suggestions",
+        "100 content opportunities — scored and prioritized ideas, not generic suggestions",
         "Learn Loop — the system adapts to your preferences over time without configuration",
         "Image generation — AI images created from brand context, not stock photo selection",
         "Multi-provider image routing — FLUX / Gemini / local GPU with automatic fallback",
         "Per-platform text adaptation — one idea becomes different text for each platform automatically",
         "RAG-powered brand voice — brand identity learned from your actual documents, not manual settings",
-        "Telegram Bot as primary mobile interface — full content workflow on mobile without an app",
+        "Telegram Bot as primary mobile interface — full content workflow on mobile without installing an app",
+        "Auto-scheduling 100 ideas — generated ideas distributed automatically across calendar, 2 per day",
+        "Facebook link injection — cross-platform engagement without manual copy-paste",
+        "Agency mode — full multi-client management with isolated workspaces and unified billing",
+      ]} />
+
+      {/* Coming Soon */}
+      <H2>Coming Soon (Post-Launch)</H2>
+      <UL items={[
+        "Team approval workflow — editor → admin → publish pipeline",
+        "A/B testing — 2 text variants with comparative analytics",
+        "RSS import — blog articles → social posts automatically",
+        "Best time to post — calculated dynamically from your own audience analytics",
+        "Zapier/Make webhook — trigger on publish",
+        "White-label — custom subdomain for large agencies",
+        "Public API — custom integrations for enterprise",
+        "Chrome Extension — save URL → generate post automatically",
+        "Flutter mobile app — after product-market fit validation",
+        "TikTok, YouTube, Threads, Pinterest publishing",
       ]} />
 
       <div className="mt-12 pt-6 border-t text-xs text-muted-foreground">
-        This document describes capabilities as implemented and deployed as of 2026-07-14. ·{" "}
+        This document describes capabilities as implemented and deployed as of 2026-07-20. ·{" "}
         <a href="/pricing" className="underline underline-offset-2">Pricing</a> ·{" "}
         <a href="/login" className="underline underline-offset-2">Get started</a>
       </div>
