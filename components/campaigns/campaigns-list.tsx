@@ -97,7 +97,6 @@ export function CampaignsList({ orgId, token }: Props) {
   const [rescheduleMode, setRescheduleMode] = useState<"next_best_time" | "specific_date">("next_best_time")
   const [rescheduleDate, setRescheduleDate] = useState("")
   const [rescheduleBusy, setRescheduleBusy] = useState(false)
-  const [rescheduleAllBusy, setRescheduleAllBusy] = useState(false)
   // Mută temă — dialog popup
   const [moveTopicId, setMoveTopicId] = useState<string | null>(null)
   const [moveTopicName, setMoveTopicName] = useState("")
@@ -195,20 +194,6 @@ export function CampaignsList({ orgId, token }: Props) {
     } finally {
       setRescheduleBusy(false)
       setRescheduleCampaignId(null)
-    }
-  }
-
-  const handleRescheduleAll = async () => {
-    if (!confirm("Rearanjezi TOATE temele nepublicate pe noile best times? Operația nu poate fi anulată.")) return
-    setRescheduleAllBusy(true)
-    try {
-      const result = await api.campaigns.rescheduleAll(orgId, token)
-      toast({ title: `✅ ${result.rescheduled} postări rearanjate pe noile best times` })
-      await fetchCampaigns()
-    } catch {
-      toast({ title: "Eroare la rearanjare", variant: "destructive" })
-    } finally {
-      setRescheduleAllBusy(false)
     }
   }
 
@@ -533,9 +518,6 @@ export function CampaignsList({ orgId, token }: Props) {
           </label>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={handleRescheduleAll} disabled={rescheduleAllBusy}>
-            {rescheduleAllBusy ? "Se procesează..." : "↻ Rearanjează toate"}
-          </Button>
           <Button onClick={() => setActiveDialog("create_campaign")} size="sm">
             + Campanie nouă
           </Button>

@@ -39,6 +39,21 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
   const [clients, setClients] = useState<AgencyClient[]>([])
   const [listView, setListView] = useState(false)
   const [currentRange, setCurrentRange] = useState<{ start: Date; end: Date } | null>(null)
+  const [rescheduleAllBusy, setRescheduleAllBusy] = useState(false)
+
+  const handleRescheduleAll = async () => {
+    if (!confirm("Rearanjezi TOATE temele nepublicate pe noile best times? Operația nu poate fi anulată.")) return
+    setRescheduleAllBusy(true)
+    try {
+      const result = await api.campaigns.rescheduleAll(orgId, token)
+      toast({ title: `✅ ${result.rescheduled} postări rearanjate pe noile best times` })
+      refetchCurrentRange()
+    } catch {
+      toast({ title: "Eroare la rearanjare", variant: "destructive" })
+    } finally {
+      setRescheduleAllBusy(false)
+    }
+  }
 
   useEffect(() => {
     if (!isAgency || !orgId || !token) return
@@ -120,13 +135,23 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Button
-          variant={listView ? "default" : "outline"}
-          size="sm"
-          onClick={() => setListView((v) => !v)}
-        >
-          {listView ? "📅 Calendar" : "☰ Listă"}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant={listView ? "default" : "outline"}
+            size="sm"
+            onClick={() => setListView((v) => !v)}
+          >
+            {listView ? "📅 Calendar" : "☰ Listă"}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRescheduleAll}
+            disabled={rescheduleAllBusy}
+          >
+            {rescheduleAllBusy ? "Se procesează..." : "↻ Rearanjează toate"}
+          </Button>
+        </div>
       <div className="flex flex-wrap justify-end gap-3">
         {isAgency && clients.length > 0 && (
           <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
