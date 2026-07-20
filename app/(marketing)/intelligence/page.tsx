@@ -301,10 +301,9 @@ export default function IntelligencePage() {
       <H2>Module 15 — Security & Account Management</H2>
       <UL items={[
         "Authentication: email + password, Google OAuth",
-        "Social tokens: AES-256 encrypted in PostgreSQL",
-        "Token auto-refresh: daily cron refreshes tokens expiring within 7 days",
-        "Notification on expired token: email + in-app alert with reconnect prompt",
-        "Data isolation: every query scoped to org_id — no cross-tenant data access possible",
+        "Social tokens: AES-256 encrypted in DB",
+        "X / Twitter token auto-refresh: hourly cron with Redis lock (X tokens expire every 2 hours)",
+        "Token auto-refresh: daily cron for Facebook, Instagram, LinkedIn tokens expiring within 7 days",
         "2FA: TOTP (planned)",
       ]} />
 
