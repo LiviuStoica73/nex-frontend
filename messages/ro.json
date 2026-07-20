@@ -276,11 +276,11 @@
     "cards": {
       "brand_intelligence": {
         "title": "Brand Intelligence",
-        "description": "AI-ul învață vocea, valorile și produsele brandului tău din documente PDF, URL-uri și descrieri. Fiecare postare sună ca tine."
+        "description": "AI-ul învață vocea, valorile și produsele brandului tău din documente PDF, URL-uri și descrieri. Generează automat 100 de idei de postare organizate pe categorii — tu le aprobi sau le ajustezi."
       },
       "from_idea_to_published": {
         "title": "De la idee la publicat",
-        "description": "Trimiți un subiect din Telegram. În 2 minute ai text, imagine și postarea programată pe toate platformele."
+        "description": "Trimiți un subiect din aplicație sau din Telegram. În 2 minute ai text, imagine și postarea programată pe toate platformele."
       },
       "languages": {
         "title": "Orice limbă, orice piață",
@@ -288,7 +288,7 @@
       },
       "best_time": {
         "title": "Programare inteligentă",
-        "description": "Configurezi sloturile preferate per platformă. Nex-Nex le completează automat. Analiza AI a audienței vine în curând."
+        "description": "Configurezi sloturile preferate per platformă. Nex-Nex programează automat cele 100 de idei generate — uniform, câte 2 pe zi. Analiza AI a audienței vine în curând."
       }
     }
   },
@@ -299,8 +299,8 @@
     "cta": "Află mai mult",
     "items": {
       "telegram_bot": {
-        "title": "Telegram Bot",
-        "description": "Trimite o idee din telefon. AI-ul generează postarea, tu o aprobi cu un tap. Publicare imediată sau programată."
+        "title": "Aplicație web și Telegram Bot",
+        "description": "Creează și aprobă postări din dashboardul web sau direct din Telegram. AI-ul generează postarea, tu o aprobi cu un tap. Publicare imediată sau programată."
       },
       "brand_intelligence": {
         "title": "Brand Intelligence (RAG)",
@@ -312,7 +312,7 @@
       },
       "idea_generator": {
         "title": "Generator de Idei",
-        "description": "100 de idei de postări generate din contextul brandului tău. Educational, promotional, storytelling — distribuite pe categorii."
+        "description": "100 de idei de postări generate din contextul brandului tău. Educational, promotional, storytelling — programate automat câte 2 pe zi, pe toate platformele."
       },
       "agency_mode": {
         "title": "Agency Mode",

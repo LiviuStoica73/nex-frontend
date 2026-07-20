@@ -276,11 +276,11 @@
     "cards": {
       "brand_intelligence": {
         "title": "Brand Intelligence",
-        "description": "You upload your brand documents once. AI remembers your tone, products, and values — and writes like you every time."
+        "description": "AI learns your brand voice, values and products from PDFs, URLs and descriptions. Automatically generates 100 post ideas organized by category — you approve or adjust."
       },
       "from_idea_to_published": {
         "title": "From idea to published in 3 minutes",
-        "description": "Idea → text → image → publishing on 6 platforms. The entire flow in a single app, without copy-paste between tools."
+        "description": "Send a topic from the web app or Telegram. In 2 minutes you have text, image and the post scheduled across all platforms."
       },
       "languages": {
         "title": "50+ languages",
@@ -288,7 +288,7 @@
       },
       "best_time": {
         "title": "Smart scheduling",
-        "description": "Set your preferred time slots per platform. Nex-Nex fills them automatically. AI-based audience analysis is on the roadmap."
+        "description": "Set your preferred slots per platform. Nex-Nex automatically schedules the 100 generated ideas — evenly spread, 2 per day. AI audience analysis coming soon."
       }
     }
   },
@@ -299,8 +299,8 @@
     "cta": "View plans",
     "items": {
       "telegram_bot": {
-        "title": "Telegram Bot",
-        "description": "Send an idea from your phone. AI generates the post, you approve with a tap. Immediate or scheduled publishing."
+        "title": "Web App & Telegram Bot",
+        "description": "Create and approve posts from the web dashboard or directly from Telegram. AI generates the post, you approve with one tap. Publish immediately or schedule."
       },
       "brand_intelligence": {
         "title": "Brand Intelligence (RAG)",
@@ -312,7 +312,7 @@
       },
       "idea_generator": {
         "title": "Idea Generator",
-        "description": "100 post ideas generated from your brand context. Educational, promotional, storytelling — organized by category."
+        "description": "100 post ideas generated from your brand context. Educational, promotional, storytelling — automatically scheduled 2 per day across all platforms."
       },
       "agency_mode": {
         "title": "Agency Mode",
