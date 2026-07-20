@@ -10,8 +10,8 @@ export default function IndexPage() {
   return (
     <>
       <HeroLanding />
-      <WhatIsSection />
       <PreviewLanding />
+      <WhatIsSection />
       <WorkflowSection />
       <BentoGrid />
       <Features />
