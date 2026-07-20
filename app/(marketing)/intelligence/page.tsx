@@ -297,19 +297,6 @@ export default function IntelligencePage() {
         ]}
       />
 
-      {/* Module 14 */}
-      <H2>Module 14 — Infrastructure</H2>
-      <UL items={[
-        "Backend: FastAPI (Python), fully async",
-        "Database: PostgreSQL + pgvector (vector embeddings alongside relational data)",
-        "Cache / Queue: Redis + Celery background workers + Beat scheduler",
-        "Storage: Cloudflare R2 (generated images, uploaded documents)",
-        "Frontend: Next.js 14 + Tailwind CSS + Shadcn/ui",
-        "Hosting: Hetzner (all production: API, frontend, database, workers)",
-        "Languages supported for content generation: 50+",
-        "Interface languages: EN, RO, FR, DE, IT, HU, PL, UK, BG, SL, ES (in progress)",
-      ]} />
-
       {/* Module 15 */}
       <H2>Module 15 — Security & Account Management</H2>
       <UL items={[
@@ -347,11 +334,9 @@ export default function IntelligencePage() {
         "A/B testing — 2 text variants with comparative analytics",
         "RSS import — blog articles → social posts automatically",
         "Best time to post — calculated dynamically from your own audience analytics",
-        "Zapier/Make webhook — trigger on publish",
         "White-label — custom subdomain for large agencies",
         "Public API — custom integrations for enterprise",
         "Chrome Extension — save URL → generate post automatically",
-        "Flutter mobile app — after product-market fit validation",
         "TikTok, YouTube, Threads, Pinterest publishing",
       ]} />
 
