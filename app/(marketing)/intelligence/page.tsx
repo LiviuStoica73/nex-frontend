@@ -167,9 +167,9 @@ export default function IntelligencePage() {
       <P>Images are generated at the optimal aspect ratio per platform and format: 1:1 for Instagram feed, 16:9 for LinkedIn/Facebook, 9:16 for Stories and Reels.</P>
 
       {/* Module 6 */}
-      <H2>Module 6 — Video Generation</H2>
+      <H2>Module 6 — Video Generation (planned)</H2>
       <P>UGC-style video generation for Reels, Shorts, and TikTok. Flow: upload product image + instructions → AI analyzes image → generates 3-scene script (Hook / Product Benefit / CTA) → video generated per scene → assembled for publishing.</P>
-      <P><strong>Video providers:</strong> Fal.ai Kling (high quality, recommended) · Fal.ai Luma Dream Machine (cinematic motion) · Fal.ai MiniMax (fast and cost-efficient).</P>
+      <P><strong>Planned video providers:</strong> Kling (high quality) · Luma Dream Machine (cinematic motion) · MiniMax (fast and cost-efficient). Not yet implemented — coming in a future release.</P>
 
       {/* Module 7 */}
       <H2>Module 7 — Publishing Pipeline</H2>
