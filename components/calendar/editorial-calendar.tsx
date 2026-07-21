@@ -39,7 +39,9 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
   const [clients, setClients] = useState<AgencyClient[]>([])
   const [listView, setListView] = useState(false)
   const [currentRange, setCurrentRange] = useState<{ start: Date; end: Date } | null>(null)
-  const [listDay, setListDay] = useState<string>(() => new Date().toISOString().slice(0, 10))
+  const [listDay, setListDay] = useState<string>(() => {
+    const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`
+  })
   const [rescheduleAllBusy, setRescheduleAllBusy] = useState(false)
 
   const handleRescheduleAll = async () => {
@@ -322,13 +324,20 @@ function CalendarListView({
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.nex-nex.com"
   const [busyId, setBusyId] = useState<string | null>(null)
 
+  const localDateStr = (d: Date) => {
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, "0")
+    const day = String(d.getDate()).padStart(2, "0")
+    return `${y}-${m}-${day}`
+  }
+
   const shiftDay = (delta: number) => {
     const d = new Date(listDay + "T00:00:00")
     d.setDate(d.getDate() + delta)
-    onListDayChange(d.toISOString().slice(0, 10))
+    onListDayChange(localDateStr(d))
   }
 
-  const todayStr = new Date().toISOString().slice(0, 10)
+  const todayStr = localDateStr(new Date())
   const displayDate = new Date(listDay + "T00:00:00")
   const dayLabel = displayDate.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long", year: "numeric" })
 
