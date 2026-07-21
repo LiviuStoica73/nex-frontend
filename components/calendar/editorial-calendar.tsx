@@ -39,6 +39,7 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
   const [clients, setClients] = useState<AgencyClient[]>([])
   const [listView, setListView] = useState(false)
   const [currentRange, setCurrentRange] = useState<{ start: Date; end: Date } | null>(null)
+  const [listDay, setListDay] = useState<string>(() => new Date().toISOString().slice(0, 10))
   const [rescheduleAllBusy, setRescheduleAllBusy] = useState(false)
 
   const handleRescheduleAll = async () => {
@@ -251,6 +252,8 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
           orgId={orgId}
           token={token}
           locale={locale}
+          listDay={listDay}
+          onListDayChange={setListDay}
           onSelect={setSelected}
           onRefresh={() => refetchCurrentRange()}
         />
@@ -305,35 +308,34 @@ const STATUS_LABELS: Record<string, string> = {
 }
 
 function CalendarListView({
-  posts, orgId, token, locale, onSelect, onRefresh,
+  posts, orgId, token, locale, listDay, onListDayChange, onSelect, onRefresh,
 }: {
   posts: CalendarPost[]
   orgId: string
   token: string
   locale: string
+  listDay: string
+  onListDayChange: (day: string) => void
   onSelect: (p: CalendarPost) => void
   onRefresh: () => void
 }) {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.nex-nex.com"
   const [busyId, setBusyId] = useState<string | null>(null)
 
-  // Grupează postările pe zile
-  const sorted = [...posts]
-    .filter((p) => p.scheduled_at)
+  const shiftDay = (delta: number) => {
+    const d = new Date(listDay + "T00:00:00")
+    d.setDate(d.getDate() + delta)
+    onListDayChange(d.toISOString().slice(0, 10))
+  }
+
+  const todayStr = new Date().toISOString().slice(0, 10)
+  const displayDate = new Date(listDay + "T00:00:00")
+  const dayLabel = displayDate.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long", year: "numeric" })
+
+  // Postările zilei selectate
+  const dayPosts = [...posts]
+    .filter((p) => p.scheduled_at && p.scheduled_at.slice(0, 10) === listDay)
     .sort((a, b) => a.scheduled_at!.localeCompare(b.scheduled_at!))
-
-  const byDay: Record<string, CalendarPost[]> = {}
-  for (const p of sorted) {
-    const day = p.scheduled_at!.slice(0, 10)
-    if (!byDay[day]) byDay[day] = []
-    byDay[day].push(p)
-  }
-
-  const days = Object.keys(byDay).sort()
-
-  if (days.length === 0) {
-    return <p className="text-sm text-muted-foreground py-8 text-center italic">Nicio postare programată în această perioadă.</p>
-  }
 
   const handleAction = async (action: string, post: CalendarPost) => {
     setBusyId(post.id)
@@ -361,18 +363,39 @@ function CalendarListView({
   }
 
   return (
-    <div className="space-y-6">
-      {days.map((day) => {
-        const dayPosts = byDay[day]
-        const dayDate = new Date(day + "T00:00:00")
-        const dayLabel = dayDate.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long", year: "numeric" })
-        return (
-          <div key={day}>
-            <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm py-1.5 mb-2 border-b">
-              <h3 className="text-sm font-semibold text-foreground capitalize">{dayLabel}</h3>
-            </div>
-            <div className="space-y-2">
-              {dayPosts.map((post) => (
+    <div className="space-y-4">
+      {/* Navigare zi */}
+      <div className="flex items-center justify-between gap-2">
+        <button
+          onClick={() => shiftDay(-1)}
+          className="rounded-md border px-3 py-1.5 text-sm hover:bg-muted transition-colors"
+        >
+          ← Ieri
+        </button>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold capitalize">{dayLabel}</span>
+          {listDay !== todayStr && (
+            <button
+              onClick={() => onListDayChange(todayStr)}
+              className="rounded-md border px-2 py-0.5 text-xs hover:bg-muted transition-colors text-muted-foreground"
+            >
+              Azi
+            </button>
+          )}
+        </div>
+        <button
+          onClick={() => shiftDay(1)}
+          className="rounded-md border px-3 py-1.5 text-sm hover:bg-muted transition-colors"
+        >
+          Mâine →
+        </button>
+      </div>
+
+      {dayPosts.length === 0 ? (
+        <p className="text-sm text-muted-foreground py-8 text-center italic">Nicio postare în această zi.</p>
+      ) : (
+        <div className="space-y-2">
+          {dayPosts.map((post) => (
                 <div key={post.id} className="flex items-start gap-3 rounded-lg border bg-card p-3 hover:bg-muted/30 transition-colors">
                   {/* Thumbnail */}
                   {post.image_urls && post.image_urls.length > 0 ? (
@@ -459,11 +482,9 @@ function CalendarListView({
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-              ))}
-            </div>
-          </div>
-        )
-      })}
+          ))}
+        </div>
+      )}
     </div>
   )
 }
