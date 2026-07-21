@@ -150,7 +150,7 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
             onClick={handleRescheduleAll}
             disabled={rescheduleAllBusy}
           >
-            {rescheduleAllBusy ? "Se procesează..." : "↻ Rearanjează toate"}
+            {rescheduleAllBusy ? "Se procesează..." : "⚡ Rearanjează toate"}
           </Button>
         </div>
       <div className="flex flex-wrap justify-end gap-3">
