@@ -294,8 +294,7 @@ export function MobileSheetSidebar({ links }: DashboardSidebarProps) {
                 </Link>
 
                 {links.map((section) => {
-                  // Pe mobil ascundem Super Admin — se accesează din Dashboard
-                  const visibleItems = section.items.filter(item => !item.superadminOnly)
+                  const visibleItems = section.items
                   if (visibleItems.length === 0) return null
                   return (
                   <section
