@@ -573,7 +573,8 @@ function PostDetailModal({
     setShowRepost(true)
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002"
-      const res = await fetch(`${API_URL}/api/v1/orgs/${orgId}/social-accounts`, {
+      const postOrgId = post.org_id ?? orgId
+      const res = await fetch(`${API_URL}/api/v1/orgs/${postOrgId}/social-accounts`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (res.ok) setSocialAccounts(await res.json())
