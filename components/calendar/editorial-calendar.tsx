@@ -581,23 +581,17 @@ function PostDetailModal({
     } catch {}
   }
 
-  // Construiește lista expandată de targets (post + story + reel per cont FB/IG)
+  // Construiește lista de targets pentru repost
+  // FB/IG: doar Story și Reel (postarea normală e flux separat, nu repost)
+  // Alte platforme: doar post normal
   const repostTargets: RepostTarget[] = socialAccounts.filter((a) => a.is_active).flatMap((a) => {
-    const base: RepostTarget = {
-      key: `${a.id}:post`,
-      account_id: a.id,
-      post_type: null,
-      label: `${a.account_name}`,
-      platform: a.platform,
-    }
     if (a.platform === "instagram" || a.platform === "facebook") {
       return [
-        base,
         { key: `${a.id}:story`, account_id: a.id, post_type: "story", label: `${a.account_name} — 📱 Story`, platform: a.platform },
         { key: `${a.id}:reel`,  account_id: a.id, post_type: "reel",  label: `${a.account_name} — 🎬 Reel`,  platform: a.platform },
       ]
     }
-    return [base]
+    return [{ key: `${a.id}:post`, account_id: a.id, post_type: null, label: `${a.account_name}`, platform: a.platform }]
   })
 
   const handleRepost = async () => {
