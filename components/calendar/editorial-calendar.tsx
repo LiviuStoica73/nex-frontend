@@ -670,6 +670,33 @@ function PostDetailModal({
             🏢 {post.org_name}
           </div>
         )}
+
+        {/* Banner eroare pentru postări eșuate */}
+        {post.status === "failed" && post.last_error && (
+          <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm dark:border-red-800 dark:bg-red-950">
+            {post.last_error.includes("TOKEN_EXPIRED") ? (
+              <div>
+                <p className="font-semibold text-red-700 dark:text-red-400">Token expirat — reconectare necesară</p>
+                <p className="mt-1 text-red-600 dark:text-red-300">
+                  Accesul la contul <strong>{post.platform}</strong> a expirat.
+                  Mergi la{" "}
+                  <a href="/dashboard/settings/social-accounts" className="underline font-medium">
+                    Settings → Social Accounts
+                  </a>{" "}
+                  și reconectează contul. Postarea va fi reîncercată automat.
+                </p>
+              </div>
+            ) : (
+              <div>
+                <p className="font-semibold text-red-700 dark:text-red-400">Publicare eșuată</p>
+                <p className="mt-1 text-red-600 dark:text-red-300 text-xs font-mono break-all">
+                  {post.last_error.slice(0, 200)}{post.last_error.length > 200 ? "…" : ""}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="mb-4 flex items-center justify-between">
           <span
             className="rounded-full px-3 py-1 text-xs font-semibold text-white"
