@@ -14,11 +14,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useOrg } from '@/contexts/org-context'
 import { getBusinessBrainStatus, scanWebsite, saveInterview } from '@/lib/api/intelligence'
 
+interface WebsiteScanRecord {
+  url: string
+  depth: string
+  scanned_at: string
+  pages_count: number | null
+  failed: boolean
+}
+
 interface BrainStatus {
   interview_questions_answered: number
   interview_answers: Record<string, string>
   website_scan_date: string | null
   website_scan_depth: string | null
+  website_scans: WebsiteScanRecord[]
   competitors_count: number
   rag_documents_count: number
   can_run_strategy: boolean
@@ -317,6 +326,51 @@ export function BusinessBrainTab() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Scan history */}
+      {(status?.website_scans?.length ?? 0) > 0 && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Scan history</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b text-muted-foreground text-xs">
+                    <th className="text-left px-4 py-2 font-medium">URL</th>
+                    <th className="text-left px-4 py-2 font-medium">Type</th>
+                    <th className="text-left px-4 py-2 font-medium">Pages</th>
+                    <th className="text-left px-4 py-2 font-medium">Date</th>
+                    <th className="text-left px-4 py-2 font-medium">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {status!.website_scans.map((s, i) => (
+                    <tr key={i} className="border-b last:border-0 hover:bg-muted/30">
+                      <td className="px-4 py-2 max-w-[260px] truncate">
+                        <a href={s.url} target="_blank" rel="noopener noreferrer" className="hover:underline text-primary">{s.url}</a>
+                      </td>
+                      <td className="px-4 py-2">
+                        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${s.depth === 'deep' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'}`}>
+                          {s.depth === 'deep' ? 'Advanced' : 'Standard'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2 text-muted-foreground">{s.pages_count ?? '—'}</td>
+                      <td className="px-4 py-2 text-muted-foreground whitespace-nowrap">{new Date(s.scanned_at).toLocaleString('ro')}</td>
+                      <td className="px-4 py-2">
+                        {s.failed
+                          ? <span className="text-xs text-red-600">Failed</span>
+                          : <span className="text-xs text-green-600">OK</span>}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {message && (
         <div className={`p-3 rounded-md text-sm ${
