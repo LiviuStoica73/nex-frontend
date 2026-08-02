@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useLocale, useTranslations } from "next-intl"
 import FullCalendar from "@fullcalendar/react"
 import dayGridPlugin from "@fullcalendar/daygrid"
@@ -9,7 +9,7 @@ import interactionPlugin from "@fullcalendar/interaction"
 import type { EventClickArg, EventDropArg } from "@fullcalendar/core"
 import { api, PLATFORM_COLORS, STATUS_COLORS, type Post } from "@/lib/api"
 import { toast } from "@/components/ui/use-toast"
-import { MoreHorizontal, Clock, Trash2, Pause, Play, Share2, Languages, Pencil } from "lucide-react"
+import { MoreHorizontal, Clock, Trash2, Pause, Play, Share2, Languages, Pencil, RefreshCw } from "lucide-react"
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator, DropdownMenuTrigger,
@@ -43,16 +43,19 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
     const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`
   })
   const [rescheduleAllBusy, setRescheduleAllBusy] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
+  const [autoRefresh, setAutoRefresh] = useState(false)
+  const AUTO_REFRESH_INTERVAL = 60_000 // 60 secunde
 
   const handleRescheduleAll = async () => {
-    if (!confirm("Rearanjezi TOATE temele nepublicate pe noile best times? Operația nu poate fi anulată.")) return
+    if (!confirm(t("reschedule_all_confirm"))) return
     setRescheduleAllBusy(true)
     try {
       const result = await api.campaigns.rescheduleAll(orgId, token)
-      toast({ title: `✅ ${result.rescheduled} postări rearanjate pe noile best times` })
+      toast({ title: t("reschedule_all_success", { count: result.rescheduled }) })
       refetchCurrentRange()
     } catch {
-      toast({ title: "Eroare la rearanjare", variant: "destructive" })
+      toast({ title: t("reschedule_all_error"), variant: "destructive" })
     } finally {
       setRescheduleAllBusy(false)
     }
@@ -82,11 +85,25 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
     }
   }
 
-  const refetchCurrentRange = (statusFilterOverride?: string, postStatusFilterOverride?: string, clientFilterOverride?: string) => {
+  const refetchCurrentRange = useCallback((statusFilterOverride?: string, postStatusFilterOverride?: string, clientFilterOverride?: string) => {
     const calApi = calendarRef.current?.getApi()
     if (!calApi) return
     fetchPosts(calApi.view.currentStart, calApi.view.currentEnd, statusFilterOverride, postStatusFilterOverride, clientFilterOverride)
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orgId, token, statusFilter, postStatusFilter, clientFilter, isAgency])
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true)
+    refetchCurrentRange()
+    await new Promise((r) => setTimeout(r, 600))
+    setRefreshing(false)
+  }, [refetchCurrentRange])
+
+  useEffect(() => {
+    if (!autoRefresh) return
+    const id = setInterval(() => refetchCurrentRange(), AUTO_REFRESH_INTERVAL)
+    return () => clearInterval(id)
+  }, [autoRefresh, refetchCurrentRange])
 
   const STATUS_DOTS: Record<string, string> = {
     draft: "⚪", approved: "🔵", scheduled: "🟡", rescheduling: "🟣", published: "🟢", failed: "🔴", skipped: "⚫",
@@ -144,7 +161,7 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
             size="sm"
             onClick={() => setListView((v) => !v)}
           >
-            {listView ? "📅 Calendar" : "☰ Listă"}
+            {listView ? t("calendar_view") : t("list_view")}
           </Button>
           <Button
             variant="outline"
@@ -152,13 +169,31 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
             onClick={handleRescheduleAll}
             disabled={rescheduleAllBusy}
           >
-            {rescheduleAllBusy ? "Se procesează..." : "⚡ Rearanjează toate"}
+            {rescheduleAllBusy ? t("processing") : t("reschedule_all")}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={refreshing}
+            title="Refresh postări"
+          >
+            <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+          </Button>
+          <Button
+            variant={autoRefresh ? "default" : "outline"}
+            size="sm"
+            onClick={() => setAutoRefresh((v) => !v)}
+            title={autoRefresh ? "Oprește auto-refresh (60s)" : "Activează auto-refresh (60s)"}
+          >
+            <RefreshCw className={`h-3.5 w-3.5 mr-1 ${autoRefresh ? "animate-spin" : ""}`} />
+            <span className="text-xs">Auto</span>
           </Button>
         </div>
       <div className="flex flex-wrap justify-end gap-3">
         {isAgency && clients.length > 0 && (
           <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            <span>Brand</span>
+            <span>{t("brand")}</span>
             <select
               value={clientFilter}
               onChange={(e) => {
@@ -168,7 +203,7 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
               }}
               className="rounded-md border bg-background px-2 py-1 text-sm"
             >
-              <option value="">Toate brandurile</option>
+              <option value="">{t("all_brands")}</option>
               {clients.map((c) => (
                 <option key={c.id} value={c.client_org_id}>
                   {c.client_org_name || c.client_org_id}
@@ -178,7 +213,7 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
           </label>
         )}
         <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
-          <span>Stare campanie</span>
+          <span>{t("campaign_status")}</span>
           <select
             value={statusFilter}
             onChange={(e) => {
@@ -188,19 +223,19 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
             }}
             className="rounded-md border bg-background px-2 py-1 text-sm"
           >
-            <option value="">Active</option>
-            <option value="all">Toate</option>
-            <option value="draft">Ciornă</option>
-            <option value="approved">Aprobat</option>
-            <option value="scheduled">Programat</option>
-            <option value="published">Publicat</option>
-            <option value="paused">Pauză</option>
-            <option value="cancelled">Anulat</option>
-            <option value="archived">Arhivat</option>
+            <option value="">{t("active_campaigns")}</option>
+            <option value="all">{t("all")}</option>
+            <option value="draft">{t("statuses.draft")}</option>
+            <option value="approved">{t("statuses.approved")}</option>
+            <option value="scheduled">{t("statuses.scheduled")}</option>
+            <option value="published">{t("statuses.published")}</option>
+            <option value="paused">{t("statuses.paused")}</option>
+            <option value="cancelled">{t("statuses.cancelled")}</option>
+            <option value="archived">{t("statuses.archived")}</option>
           </select>
         </label>
         <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
-          <span>Stare postare</span>
+          <span>{t("post_status")}</span>
           <select
             value={postStatusFilter}
             onChange={(e) => {
@@ -210,13 +245,13 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
             }}
             className="rounded-md border bg-background px-2 py-1 text-sm"
           >
-            <option value="">Toate</option>
-            <option value="draft">Ciornă</option>
-            <option value="approved">Aprobat</option>
-            <option value="scheduled">Programat</option>
-            <option value="published">Publicat</option>
-            <option value="failed">Eșuat</option>
-            <option value="skipped">Omis</option>
+            <option value="">{t("all")}</option>
+            <option value="draft">{t("statuses.draft")}</option>
+            <option value="approved">{t("statuses.approved")}</option>
+            <option value="scheduled">{t("statuses.scheduled")}</option>
+            <option value="published">{t("statuses.published")}</option>
+            <option value="failed">{t("statuses.failed")}</option>
+            <option value="skipped">{t("statuses.skipped")}</option>
           </select>
         </label>
       </div>
@@ -285,11 +320,11 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
             try {
               await api.posts.publishNow(selected.id, token)
               setSelected(null)
-              toast({ title: "Publicare inițiată", description: "Postarea va apărea ca publicată în câteva secunde." })
+              toast({ title: t("publish_started"), description: t("publish_started_description") })
               setTimeout(() => refetchCurrentRange(), 5000)
             } catch (err: unknown) {
               const msg = err instanceof Error ? err.message : String(err)
-              toast({ title: "Eroare la publicare", description: msg, variant: "destructive" })
+              toast({ title: t("publish_error"), description: msg, variant: "destructive" })
             }
           }}
         />
@@ -304,11 +339,6 @@ const PLATFORM_LABELS: Record<string, string> = {
   youtube: "YouTube", threads: "Threads", bluesky: "Bluesky",
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  draft: "Ciornă", approved: "Aprobat", scheduled: "Programat", rescheduling: "Reprogramare",
-  published: "Publicat", failed: "Eșuat", skipped: "Omis",
-}
-
 function CalendarListView({
   posts, orgId, token, locale, listDay, onListDayChange, onSelect, onRefresh,
 }: {
@@ -321,6 +351,7 @@ function CalendarListView({
   onSelect: (p: CalendarPost) => void
   onRefresh: () => void
 }) {
+  const t = useTranslations("calendar")
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.nex-nex.com"
   const [busyId, setBusyId] = useState<string | null>(null)
 
@@ -350,7 +381,7 @@ function CalendarListView({
     setBusyId(post.id)
     try {
       if (action === "delete") {
-        if (!confirm("Ștergi definitiv această postare?")) return
+        if (!confirm(t("delete_post_confirm"))) return
         await fetch(`${API_URL}/api/v1/posts/${post.id}`, {
           method: "DELETE", headers: { Authorization: `Bearer ${token}` },
         })
@@ -365,7 +396,7 @@ function CalendarListView({
         onRefresh()
       }
     } catch (err) {
-      alert(`Eroare: ${err instanceof Error ? err.message : String(err)}`)
+      alert(t("error_with_message", { message: err instanceof Error ? err.message : String(err) }))
     } finally {
       setBusyId(null)
     }
@@ -379,7 +410,7 @@ function CalendarListView({
           onClick={() => shiftDay(-1)}
           className="rounded-md border px-3 py-1.5 text-sm hover:bg-muted transition-colors"
         >
-          ← Ieri
+          {t("yesterday")}
         </button>
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold capitalize">{dayLabel}</span>
@@ -388,7 +419,7 @@ function CalendarListView({
               onClick={() => onListDayChange(todayStr)}
               className="rounded-md border px-2 py-0.5 text-xs hover:bg-muted transition-colors text-muted-foreground"
             >
-              Azi
+              {t("today")}
             </button>
           )}
         </div>
@@ -396,12 +427,12 @@ function CalendarListView({
           onClick={() => shiftDay(1)}
           className="rounded-md border px-3 py-1.5 text-sm hover:bg-muted transition-colors"
         >
-          Mâine →
+          {t("tomorrow")}
         </button>
       </div>
 
       {dayPosts.length === 0 ? (
-        <p className="text-sm text-muted-foreground py-8 text-center italic">Nicio postare în această zi.</p>
+        <p className="text-sm text-muted-foreground py-8 text-center italic">{t("no_posts_day")}</p>
       ) : (
         <div className="space-y-2">
           {dayPosts.map((post) => (
@@ -440,7 +471,7 @@ function CalendarListView({
                         className="text-xs font-semibold rounded-full px-2 py-0.5 text-white"
                         style={{ backgroundColor: STATUS_COLORS[post.status] }}
                       >
-                        {STATUS_LABELS[post.status] ?? post.status}
+                        {post.status in STATUS_COLORS ? t(`statuses.${post.status}`) : post.status}
                       </span>
                       {post.language && (
                         <span className="text-xs text-muted-foreground uppercase">{post.language}</span>
@@ -465,19 +496,19 @@ function CalendarListView({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-48">
                       <DropdownMenuItem onClick={() => onSelect(post)}>
-                        <Pencil className="mr-2 h-4 w-4" /> Modifică text
+                        <Pencil className="mr-2 h-4 w-4" /> {t("edit_text")}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => onSelect(post)}>
-                        <Clock className="mr-2 h-4 w-4" /> Reprogramează
+                        <Clock className="mr-2 h-4 w-4" /> {t("reschedule")}
                       </DropdownMenuItem>
                       {post.status !== "published" && (
                         <DropdownMenuItem onClick={() => handleAction("pause", post)} disabled={busyId === post.id}>
-                          <Pause className="mr-2 h-4 w-4" /> Pauză
+                          <Pause className="mr-2 h-4 w-4" /> {t("pause")}
                         </DropdownMenuItem>
                       )}
                       {post.status === "draft" && (
                         <DropdownMenuItem onClick={() => handleAction("publish_now", post)} disabled={busyId === post.id}>
-                          <Play className="mr-2 h-4 w-4" /> Publică acum
+                          <Play className="mr-2 h-4 w-4" /> {t("publish_now")}
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuSeparator />
@@ -486,7 +517,7 @@ function CalendarListView({
                         disabled={busyId === post.id}
                         className="text-destructive focus:text-destructive"
                       >
-                        <Trash2 className="mr-2 h-4 w-4" /> Șterge
+                        <Trash2 className="mr-2 h-4 w-4" /> {t("delete")}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -584,7 +615,7 @@ function PostDetailModal({
   // Construiește lista de targets pentru repost
   // FB/IG: doar Story și Reel (postarea normală e flux separat, nu repost)
   // Alte platforme: doar post normal
-  const repostTargets: RepostTarget[] = socialAccounts.filter((a) => a.is_active).flatMap((a) => {
+  const repostTargets: RepostTarget[] = socialAccounts.filter((a) => a.is_active).flatMap((a): RepostTarget[] => {
     if (a.platform === "instagram" || a.platform === "facebook") {
       return [
         { key: `${a.id}:story`, account_id: a.id, post_type: "story", label: `${a.account_name} — 📱 Story`, platform: a.platform },
@@ -615,7 +646,7 @@ function PostDetailModal({
   }
 
   const handleDelete = async () => {
-    if (!confirm("Ștergi definitiv această postare?")) return
+    if (!confirm(t("delete_post_confirm"))) return
     setDeleting(true)
     try {
       const res = await fetch(`${API_URL}/api/v1/posts/${post.id}`, {
@@ -626,7 +657,7 @@ function PostDetailModal({
       onClose()
       onRefresh()
     } catch (err) {
-      alert(`Eroare: ${err instanceof Error ? err.message : String(err)}`)
+      alert(t("error_with_message", { message: err instanceof Error ? err.message : String(err) }))
     }
     setDeleting(false)
   }
@@ -642,7 +673,7 @@ function PostDetailModal({
       onClose()
       onRefresh()
     } catch (err) {
-      alert(`Eroare: ${err instanceof Error ? err.message : String(err)}`)
+      alert(t("error_with_message", { message: err instanceof Error ? err.message : String(err) }))
     }
     setPausing(false)
   }
@@ -655,7 +686,7 @@ function PostDetailModal({
       onClose()
       onRefresh()
     } catch (err) {
-      alert(`Eroare: ${err instanceof Error ? err.message : String(err)}`)
+      alert(t("error_with_message", { message: err instanceof Error ? err.message : String(err) }))
     }
   }
 
@@ -676,19 +707,17 @@ function PostDetailModal({
           <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm dark:border-red-800 dark:bg-red-950">
             {post.last_error.includes("TOKEN_EXPIRED") ? (
               <div>
-                <p className="font-semibold text-red-700 dark:text-red-400">Token expirat — reconectare necesară</p>
+                <p className="font-semibold text-red-700 dark:text-red-400">{t("token_expired_title")}</p>
                 <p className="mt-1 text-red-600 dark:text-red-300">
-                  Accesul la contul <strong>{post.platform}</strong> a expirat.
-                  Mergi la{" "}
-                  <a href="/dashboard/settings/social-accounts" className="underline font-medium">
-                    Settings → Social Accounts
-                  </a>{" "}
-                  și reconectează contul. Postarea va fi reîncercată automat.
+                  {t.rich("token_expired_description", {
+                    platform: () => <strong>{post.platform}</strong>,
+                    settings: (chunks) => <a href="/dashboard/settings/social-accounts" className="underline font-medium">{chunks}</a>,
+                  })}
                 </p>
               </div>
             ) : (
               <div>
-                <p className="font-semibold text-red-700 dark:text-red-400">Publicare eșuată</p>
+                <p className="font-semibold text-red-700 dark:text-red-400">{t("publish_failed")}</p>
                 <p className="mt-1 text-red-600 dark:text-red-300 text-xs font-mono break-all">
                   {post.last_error.slice(0, 200)}{post.last_error.length > 200 ? "…" : ""}
                 </p>
@@ -733,7 +762,7 @@ function PostDetailModal({
               className="max-h-48 w-full object-cover"
             />
             {post.image_urls.length > 1 && (
-              <p className="mt-1 text-xs text-muted-foreground">+{post.image_urls.length - 1} imagini</p>
+              <p className="mt-1 text-xs text-muted-foreground">{t("more_images", { count: post.image_urls.length - 1 })}</p>
             )}
           </div>
         )}
@@ -761,7 +790,7 @@ function PostDetailModal({
             href={`/dashboard/campaigns?topic=${post.topic_id}`}
             className="mb-4 block text-xs text-blue-500 underline"
           >
-            🗂️ Vezi toate postările din această temă →
+            {t("view_topic_posts")}
           </a>
         )}
 
@@ -780,23 +809,23 @@ function PostDetailModal({
         {showAnalytics && (
           <div className="mb-4 rounded-md border bg-muted/30 p-3">
             {analyticsLoading ? (
-              <p className="text-xs text-muted-foreground">Se sincronizează...</p>
+              <p className="text-xs text-muted-foreground">{t("syncing")}</p>
             ) : analytics ? (
               <div className="grid grid-cols-3 gap-2 text-center text-xs">
                 <div><div className="font-semibold text-base">{analytics.reach}</div><div className="text-muted-foreground">Reach</div></div>
-                <div><div className="font-semibold text-base">{analytics.impressions}</div><div className="text-muted-foreground">Impresii</div></div>
-                <div><div className="font-semibold text-base">{analytics.likes}</div><div className="text-muted-foreground">Like-uri</div></div>
-                <div><div className="font-semibold text-base">{analytics.comments}</div><div className="text-muted-foreground">Comentarii</div></div>
-                <div><div className="font-semibold text-base">{analytics.shares}</div><div className="text-muted-foreground">Share-uri</div></div>
-                <div><div className="font-semibold text-base">{analytics.clicks}</div><div className="text-muted-foreground">Click-uri</div></div>
+                <div><div className="font-semibold text-base">{analytics.impressions}</div><div className="text-muted-foreground">{t("analytics.impressions")}</div></div>
+                <div><div className="font-semibold text-base">{analytics.likes}</div><div className="text-muted-foreground">{t("analytics.likes")}</div></div>
+                <div><div className="font-semibold text-base">{analytics.comments}</div><div className="text-muted-foreground">{t("analytics.comments")}</div></div>
+                <div><div className="font-semibold text-base">{analytics.shares}</div><div className="text-muted-foreground">{t("analytics.shares")}</div></div>
+                <div><div className="font-semibold text-base">{analytics.clicks}</div><div className="text-muted-foreground">{t("analytics.clicks")}</div></div>
                 {analytics.synced_at && (
                   <div className="col-span-3 text-muted-foreground text-[10px]">
-                    Sincronizat: {new Date(analytics.synced_at).toLocaleString(locale)}
+                    {t("analytics.synced_at", { date: new Date(analytics.synced_at).toLocaleString(locale) })}
                   </div>
                 )}
               </div>
             ) : (
-              <p className="text-xs text-muted-foreground">Analytics indisponibile.</p>
+              <p className="text-xs text-muted-foreground">{t("analytics_unavailable")}</p>
             )}
           </div>
         )}
@@ -804,7 +833,7 @@ function PostDetailModal({
         {/* Reschedule panel */}
         {showReschedule && (
           <div className="mb-4 rounded-md border bg-muted/30 p-3 space-y-2">
-            <p className="text-xs font-medium">Alege noua dată și oră:</p>
+            <p className="text-xs font-medium">{t("choose_new_date")}</p>
             <input
               type="datetime-local"
               value={rescheduleDate}
@@ -816,7 +845,7 @@ function PostDetailModal({
               disabled={!rescheduleDate}
               className="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
             >
-              Confirmă reprogramarea
+              {t("confirm_reschedule")}
             </button>
           </div>
         )}
@@ -824,9 +853,9 @@ function PostDetailModal({
         {/* Repost panel */}
         {showRepost && (
           <div className="mb-4 rounded-md border bg-muted/30 p-3 space-y-2">
-            <p className="text-xs font-medium">Alege conturile pentru repostare:</p>
+            <p className="text-xs font-medium">{t("choose_repost_accounts")}</p>
             {repostTargets.length === 0 ? (
-              <p className="text-xs text-muted-foreground">Niciun cont conectat.</p>
+              <p className="text-xs text-muted-foreground">{t("no_connected_accounts")}</p>
             ) : (
               repostTargets.map((target) => (
                 <label key={target.key} className="flex items-center gap-2 text-xs cursor-pointer">
@@ -847,7 +876,7 @@ function PostDetailModal({
                 disabled={reposting || selectedTargetKeys.length === 0}
                 className="mt-1 rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
               >
-                {reposting ? "Se repostează..." : "Repostează"}
+                {reposting ? t("reposting") : t("repost")}
               </button>
             )}
           </div>
@@ -867,7 +896,7 @@ function PostDetailModal({
               onClick={() => setShowReschedule((v) => !v)}
               className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
             >
-              📅 Reprogramează
+              {t("reschedule_button")}
             </button>
           )}
           {post.status !== "published" && post.status !== "draft" && (
@@ -876,7 +905,7 @@ function PostDetailModal({
               disabled={pausing}
               className="rounded bg-yellow-600 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-700 disabled:opacity-50"
             >
-              {pausing ? "..." : "⏸ Pauză"}
+              {pausing ? "..." : t("pause_button")}
             </button>
           )}
           {post.status !== "published" && (
@@ -885,7 +914,7 @@ function PostDetailModal({
               disabled={deleting}
               className="rounded bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
             >
-              {deleting ? "..." : "🗑 Șterge"}
+              {deleting ? "..." : t("delete_button")}
             </button>
           )}
           {post.status === "published" && !showAnalytics && (
@@ -901,7 +930,7 @@ function PostDetailModal({
               onClick={handleShowRepost}
               className="rounded bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700"
             >
-              Repostează
+              {t("repost")}
             </button>
           )}
           <button
