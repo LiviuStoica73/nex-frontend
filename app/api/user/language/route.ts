@@ -31,7 +31,7 @@ export const PATCH = auth(async (req) => {
       headers: {
         "Content-Type": "application/json",
         // Forward the session token if the backend uses it for auth
-        Authorization: `Bearer ${(req.auth as any).accessToken ?? ""}`,
+        Authorization: `Bearer ${(req.auth as any).user?.accessToken ?? ""}`,
       },
       body: JSON.stringify({ language }),
     });
