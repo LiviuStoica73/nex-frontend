@@ -41,6 +41,12 @@ export async function scanWebsite(orgId: string, url: string, depth: 'standard' 
   })
 }
 
+export async function deleteWebsiteScan(orgId: string, scanId: string, token: string) {
+  return apiFetch(`/api/v1/orgs/${orgId}/intelligence/scans/${scanId}`, token, {
+    method: 'DELETE',
+  })
+}
+
 export async function getStrategies(orgId: string, token: string) {
   return apiFetch(`/api/v1/orgs/${orgId}/intelligence/strategies`, token)
 }

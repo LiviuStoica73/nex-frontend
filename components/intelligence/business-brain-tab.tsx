@@ -12,9 +12,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useOrg } from '@/contexts/org-context'
-import { getBusinessBrainStatus, scanWebsite, saveInterview } from '@/lib/api/intelligence'
+import { getBusinessBrainStatus, scanWebsite, saveInterview, deleteWebsiteScan } from '@/lib/api/intelligence'
 
 interface WebsiteScanRecord {
+  id: string
   url: string
   depth: string
   scanned_at: string
@@ -120,6 +121,7 @@ export function BusinessBrainTab() {
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [savingInterview, setSavingInterview] = useState(false)
   const [refreshCount, setRefreshCount] = useState(0)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
   const pollRef = useRef<NodeJS.Timeout | null>(null)
 
   const token = (session?.user as any)?.accessToken || ''
@@ -157,16 +159,27 @@ export function BusinessBrainTab() {
 
   useEffect(() => () => { if (pollRef.current) clearInterval(pollRef.current) }, [])
 
-  const handleScan = async () => {
-    const normalizedScanUrl = normalizeUrl(scanUrl)
-    if (normalizedScanUrl !== scanUrl) setScanUrl(normalizedScanUrl)
-    if (!normalizedScanUrl || !token || !orgId) return
+  const handleDeleteScan = async (scanId: string, url: string) => {
+    if (!window.confirm(`Delete scan for "${url}"?`)) return
+    setDeletingId(scanId)
+    try {
+      await deleteWebsiteScan(orgId!, scanId, token)
+      setRefreshCount(c => c + 1)
+    } catch (e: any) {
+      setMessage(t('error_with_message', { message: e.message }))
+      setMessageType('error')
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
+  const doScan = async (url: string) => {
     setScanning(true)
     setMessage('')
     const prevDate = status?.website_scan_date || null
     try {
-      await scanWebsite(orgId, normalizedScanUrl, scanDepth, token)
-      setMessage(t('scan_started', { url: normalizedScanUrl }))
+      await scanWebsite(orgId!, url, scanDepth, token)
+      setMessage(t('scan_started', { url }))
       setMessageType('info')
       startScanPolling(prevDate)
     } catch (e: any) {
@@ -175,6 +188,20 @@ export function BusinessBrainTab() {
     } finally {
       setScanning(false)
     }
+  }
+
+  const handleScan = async () => {
+    const normalizedScanUrl = normalizeUrl(scanUrl)
+    if (normalizedScanUrl !== scanUrl) setScanUrl(normalizedScanUrl)
+    if (!normalizedScanUrl || !token || !orgId) return
+
+    const alreadyScanned = status?.website_scans?.some(
+      s => s.url.replace(/\/$/, '').toLowerCase() === normalizedScanUrl.replace(/\/$/, '').toLowerCase()
+    )
+    if (alreadyScanned) {
+      if (!window.confirm(`"${normalizedScanUrl}" has already been scanned. Re-scan and replace the existing data?`)) return
+    }
+    await doScan(normalizedScanUrl)
   }
 
   const handleSaveInterview = async () => {
@@ -343,11 +370,12 @@ export function BusinessBrainTab() {
                     <th className="text-left px-4 py-2 font-medium">Pages</th>
                     <th className="text-left px-4 py-2 font-medium">Date</th>
                     <th className="text-left px-4 py-2 font-medium">Status</th>
+                    <th className="px-4 py-2"></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {status!.website_scans.map((s, i) => (
-                    <tr key={i} className="border-b last:border-0 hover:bg-muted/30">
+                  {status!.website_scans.map((s) => (
+                    <tr key={s.id} className="border-b last:border-0 hover:bg-muted/30">
                       <td className="px-4 py-2 max-w-[260px] truncate">
                         <a href={s.url} target="_blank" rel="noopener noreferrer" className="hover:underline text-primary">{s.url}</a>
                       </td>
@@ -362,6 +390,16 @@ export function BusinessBrainTab() {
                         {s.failed
                           ? <span className="text-xs text-red-600">Failed</span>
                           : <span className="text-xs text-green-600">OK</span>}
+                      </td>
+                      <td className="px-4 py-2 text-right">
+                        <button
+                          onClick={() => handleDeleteScan(s.id, s.url)}
+                          disabled={deletingId === s.id}
+                          className="text-muted-foreground hover:text-red-500 transition-colors text-xs px-1"
+                          title="Delete scan"
+                        >
+                          {deletingId === s.id ? '…' : '×'}
+                        </button>
                       </td>
                     </tr>
                   ))}
