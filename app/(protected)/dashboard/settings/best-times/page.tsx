@@ -23,7 +23,6 @@ import { toast } from "sonner"
 
 const API = process.env.NEXT_PUBLIC_API_URL || ""
 
-const WEEKDAY_LABELS = ["L", "M", "M", "J", "V", "S", "D"]
 const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6]
 
 type TimeSlot = [number, number]
@@ -137,6 +136,15 @@ export default function BestTimesPage() {
     t("weekdays.friday"),
     t("weekdays.saturday"),
     t("weekdays.sunday"),
+  ]
+  const weekdayLabels = [
+    t("weekdays_short.monday"),
+    t("weekdays_short.tuesday"),
+    t("weekdays_short.wednesday"),
+    t("weekdays_short.thursday"),
+    t("weekdays_short.friday"),
+    t("weekdays_short.saturday"),
+    t("weekdays_short.sunday"),
   ]
 
   const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` }
@@ -312,7 +320,7 @@ export default function BestTimesPage() {
                       checked ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground"
                     }`}
                   >
-                    {WEEKDAY_LABELS[day]}
+                    {weekdayLabels[day]}
                   </button>
                 )
               })}

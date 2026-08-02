@@ -220,6 +220,15 @@
       "thursday": "Joi",
       "tuesday": "Marți",
       "wednesday": "Miercuri"
+    },
+    "weekdays_short": {
+      "friday": "V",
+      "monday": "L",
+      "saturday": "S",
+      "sunday": "D",
+      "thursday": "J",
+      "tuesday": "M",
+      "wednesday": "M"
     }
   },
   "billing_dashboard": {

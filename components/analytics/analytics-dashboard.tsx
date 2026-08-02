@@ -80,8 +80,8 @@ export function AnalyticsDashboard({ orgId, token }: Props) {
   if (error || !data) return (
     <div className="rounded-lg border border-dashed p-12 text-center text-muted-foreground">
       <TrendingUp className="mx-auto h-8 w-8 mb-3 opacity-40" />
-      <p className="font-medium">Analytics în curând</p>
-      <p className="text-sm">Publică primele postări și datele vor apărea automat aici.</p>
+      <p className="font-medium">{t("empty_title", { days })}</p>
+      <p className="text-sm">{t("empty_subtitle")}</p>
     </div>
   )
 
