@@ -20,6 +20,7 @@ async function apiFetch(path: string, token: string, options?: RequestInit) {
     const error = await response.json().catch(() => ({ detail: response.statusText }))
     throw new Error(error.detail || `API error ${response.status}`)
   }
+  if (response.status === 204 || response.headers.get('content-length') === '0') return null
   return response.json()
 }
 
