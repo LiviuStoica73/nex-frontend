@@ -10,22 +10,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { toast } from "@/components/ui/use-toast"
 
 const PLATFORM_LABELS: Record<string, string> = {
   instagram: "Instagram", facebook: "Facebook", linkedin: "LinkedIn",
   x: "X / Twitter", discord: "Discord", blog: "Blog",
 }
-const STATUS_LABELS: Record<string, string> = {
-  draft: "Ciornă", approved: "Aprobat", scheduled: "Programat",
-  published: "Publicat", failed: "Eșuat", skipped: "Omis",
-  paused: "Pauză", cancelled: "Anulată", archived: "Arhivată",
-}
+const STATUS_KEYS = ["draft", "approved", "scheduled", "published", "failed", "skipped", "paused", "cancelled", "archived"] as const
 const PAGE_SIZES = [10, 25, 50, 100]
 const ALL_PLATFORMS = ["instagram", "facebook", "linkedin", "x"]
 const LANGUAGES = [
-  { code: "ro", label: "Română" }, { code: "en", label: "English" },
-  { code: "de", label: "Deutsch" }, { code: "fr", label: "Français" },
-  { code: "es", label: "Español" }, { code: "it", label: "Italiano" },
+  { code: "ro", labelKey: "languages.ro" }, { code: "en", labelKey: "languages.en" },
+  { code: "de", labelKey: "languages.de" }, { code: "fr", labelKey: "languages.fr" },
+  { code: "es", labelKey: "languages.es" }, { code: "it", labelKey: "languages.it" },
 ]
 
 interface Props { orgId: string; token: string }
@@ -107,6 +104,8 @@ export function CampaignsList({ orgId, token }: Props) {
   const [rescheduleTopicMode, setRescheduleTopicMode] = useState<"next_best_time" | "specific_date">("next_best_time")
   const [rescheduleTopicDate, setRescheduleTopicDate] = useState("")
   const [rescheduleTopicBusy, setRescheduleTopicBusy] = useState(false)
+  const statusLabel = (status: string) =>
+    STATUS_KEYS.includes(status as (typeof STATUS_KEYS)[number]) ? t(`statuses.${status}`) : status
 
   const fetchCampaigns = async () => {
     setLoading(true)
@@ -140,8 +139,7 @@ export function CampaignsList({ orgId, token }: Props) {
 
   const handleBulk = async (action: "archive" | "pause" | "clone") => {
     if (selected.size === 0) return
-    const label = action === "archive" ? "arhivezi" : action === "pause" ? "pui pe pauză" : "clonezi"
-    if (!confirm(`Sigur ${label} ${selected.size} campanii?`)) return
+    if (!confirm(t("bulk.confirm_campaigns", { action: t(`bulk.actions.${action}`), count: selected.size }))) return
     setBulkBusy(true)
     try {
       await api.campaigns.bulk(orgId, action, Array.from(selected), token)
@@ -183,14 +181,14 @@ export function CampaignsList({ orgId, token }: Props) {
         ? new Date(rescheduleDate).toISOString()
         : undefined
       const result = await api.campaigns.reschedule(orgId, rescheduleCampaignId, rescheduleMode, specificDate, token)
-      toast({ title: `✅ ${result.rescheduled} postări reprogramate` })
+      toast({ title: t("reschedule_success", { count: result.rescheduled }) })
       await fetchCampaigns()
       if (postsMap[rescheduleCampaignId]) {
         const posts = await api.campaigns.listPosts(orgId, rescheduleCampaignId, token)
         setPostsMap((prev) => ({ ...prev, [rescheduleCampaignId]: posts }))
       }
     } catch {
-      toast({ title: "Eroare la reprogramare", variant: "destructive" })
+      toast({ title: t("reschedule_error"), variant: "destructive" })
     } finally {
       setRescheduleBusy(false)
       setRescheduleCampaignId(null)
@@ -205,10 +203,10 @@ export function CampaignsList({ orgId, token }: Props) {
         ? new Date(rescheduleTopicDate).toISOString()
         : undefined
       const result = await api.topics.reschedule(orgId, rescheduleTopicId, rescheduleTopicMode, specificDate, token)
-      toast({ title: `✅ ${result.rescheduled} postări reprogramate` })
+      toast({ title: t("reschedule_success", { count: result.rescheduled }) })
       await refreshPosts(moveTopicCampaignId)
     } catch {
-      toast({ title: "Eroare la reprogramare", variant: "destructive" })
+      toast({ title: t("reschedule_error"), variant: "destructive" })
     } finally {
       setRescheduleTopicBusy(false)
       setRescheduleTopicId(null)
@@ -340,12 +338,12 @@ export function CampaignsList({ orgId, token }: Props) {
   }
 
   const handleDeleteCampaign = async (campaign: Campaign) => {
-    if (!confirm(`Ștergi campania "${campaign.name}"? Toate postările se vor șterge.`)) return
+    if (!confirm(t("delete_campaign_confirm", { name: campaign.name }))) return
     try {
       await api.campaigns.deleteCampaign(orgId, campaign.id, token)
       setCampaigns((prev) => prev.filter((c) => c.id !== campaign.id))
     } catch (e) {
-      alert("Nu se poate șterge: doar campaniile draft fără consum de credite pot fi șterse. Folosește Arhivare.")
+      alert(t("delete_campaign_error"))
     }
   }
 
@@ -381,8 +379,7 @@ export function CampaignsList({ orgId, token }: Props) {
 
   const handleBulkPosts = async (action: "pause" | "resume" | "delete" | "move", targetCampaignId?: string) => {
     if (selectedPostIds.size === 0 || !bulkPostCampaignId) return
-    const labels: Record<string, string> = { pause: "pui pe pauză", resume: "reiei", delete: "ștergi", move: "muți" }
-    if (!confirm(`Sigur ${labels[action]} ${selectedPostIds.size} postări?`)) return
+    if (!confirm(t("bulk.confirm_posts", { action: t(`bulk.actions.${action}`), count: selectedPostIds.size }))) return
     setBulkPostBusy(true)
     try {
       await api.posts.bulk(orgId, {
@@ -416,8 +413,7 @@ export function CampaignsList({ orgId, token }: Props) {
 
   const handleBulkTopics = async (action: "pause" | "resume" | "delete" | "move", targetCampaignId?: string) => {
     if (selectedTopicIds.size === 0 || !bulkTopicCampaignId) return
-    const labels: Record<string, string> = { pause: "pui pe pauză", resume: "reiei", delete: "ștergi", move: "muți" }
-    if (!confirm(`Sigur ${labels[action]} ${selectedTopicIds.size} teme (cu toate postările lor)?`)) return
+    if (!confirm(t("bulk.confirm_topics", { action: t(`bulk.actions.${action}`), count: selectedTopicIds.size }))) return
     setBulkTopicBusy(true)
     try {
       await api.campaigns.bulkTopics(orgId, {
@@ -435,7 +431,7 @@ export function CampaignsList({ orgId, token }: Props) {
   }
 
   const handleDeleteTopic = async (topicId: string, campaignId: string) => {
-    if (!confirm("Ștergi această temă și toate postările din ea?")) return
+    if (!confirm(t("delete_topic_confirm"))) return
     await api.campaigns.deleteTopic(orgId, topicId, token)
     await refreshPosts(campaignId)
   }
@@ -476,7 +472,7 @@ export function CampaignsList({ orgId, token }: Props) {
   const StatusBadge = ({ status }: { status: string }) => (
     <span className="rounded-full px-2 py-0.5 text-xs font-medium text-white"
       style={{ backgroundColor: STATUS_COLORS[status as keyof typeof STATUS_COLORS] ?? "#9CA3AF" }}>
-      {t(`statuses.${status}`) ?? STATUS_LABELS[status] ?? status}
+      {statusLabel(status)}
     </span>
   )
 
@@ -489,7 +485,7 @@ export function CampaignsList({ orgId, token }: Props) {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-4">
           <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            <span>Pe pagină</span>
+            <span>{t("per_page")}</span>
             <select
               value={pageSize}
               onChange={(e) => { setPage(0); setPageSize(parseInt(e.target.value, 10)) }}
@@ -499,44 +495,40 @@ export function CampaignsList({ orgId, token }: Props) {
             </select>
           </label>
           <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            <span>Stare</span>
+            <span>{t("status")}</span>
             <select
               value={statusFilter}
               onChange={(e) => { setPage(0); setStatusFilter(e.target.value) }}
               className="rounded-md border bg-background px-2 py-1 text-sm"
             >
-              <option value="">Active</option>
-              <option value="all">Toate</option>
-              <option value="draft">Ciornă</option>
-              <option value="approved">Aprobat</option>
-              <option value="scheduled">Programat</option>
-              <option value="published">Publicat</option>
-              <option value="paused">Pauză</option>
-              <option value="cancelled">Anulat</option>
-              <option value="archived">Arhivat</option>
+              <option value="">{t("active")}</option>
+              <option value="all">{t("all")}</option>
+              {STATUS_KEYS.filter((status) => !["failed", "skipped"].includes(status)).map((status) => (
+                <option key={status} value={status}>{t(`statuses.${status}`)}</option>
+              ))}
             </select>
           </label>
         </div>
         <div className="flex items-center gap-2">
           <Button onClick={() => setActiveDialog("create_campaign")} size="sm">
-            + Campanie nouă
+            {t("new_campaign")}
           </Button>
         </div>
       </div>
 
       {selected.size > 0 && (
         <div className="flex flex-wrap items-center gap-2 rounded-lg border bg-muted/40 p-2 text-sm">
-          <span className="px-1 font-medium">{selected.size} selectate</span>
+          <span className="px-1 font-medium">{t("selected_count", { count: selected.size })}</span>
           <Button size="sm" variant="outline" disabled={bulkBusy} onClick={() => handleBulk("archive")}>
-            <Archive className="mr-1 h-3.5 w-3.5" /> Arhivează
+            <Archive className="mr-1 h-3.5 w-3.5" /> {t("archive")}
           </Button>
           <Button size="sm" variant="outline" disabled={bulkBusy} onClick={() => handleBulk("pause")}>
-            <Pause className="mr-1 h-3.5 w-3.5" /> Pauză
+            <Pause className="mr-1 h-3.5 w-3.5" /> {t("pause")}
           </Button>
           <Button size="sm" variant="outline" disabled={bulkBusy} onClick={() => handleBulk("clone")}>
-            <Copy className="mr-1 h-3.5 w-3.5" /> Clonează
+            <Copy className="mr-1 h-3.5 w-3.5" /> {t("clone")}
           </Button>
-          <Button size="sm" variant="ghost" onClick={() => setSelected(new Set())}>Deselectează</Button>
+          <Button size="sm" variant="ghost" onClick={() => setSelected(new Set())}>{t("deselect")}</Button>
         </div>
       )}
 
@@ -553,18 +545,18 @@ export function CampaignsList({ orgId, token }: Props) {
             <Inbox className="h-4 w-4 flex-shrink-0 text-amber-600" />
             <div className="min-w-0 flex-1">
               <p className="font-semibold text-amber-800 dark:text-amber-300 text-sm">
-                Posturi fără campanie
+                {t("inbox_title")}
                 <span className="ml-2 text-xs font-normal bg-amber-200 dark:bg-amber-800 text-amber-800 dark:text-amber-200 rounded-full px-2 py-0.5">
                   {uncampaignedPosts.length}
                 </span>
               </p>
-              <p className="text-xs text-amber-600 dark:text-amber-400">Trimise din Telegram fără campanie curentă selectată. Atribuie-le unei campanii.</p>
+              <p className="text-xs text-amber-600 dark:text-amber-400">{t("inbox_description")}</p>
             </div>
           </button>
           {inboxExpanded && (
             <div className="border-t border-amber-200/60 divide-y divide-amber-100/60">
               {loadingInbox ? (
-                <p className="text-sm text-muted-foreground p-4">Se încarcă...</p>
+                <p className="text-sm text-muted-foreground p-4">{t("loading")}</p>
               ) : uncampaignedPosts.map((post) => (
                 <div key={post.id} className="p-4 pl-11 space-y-2 bg-amber-50/20 dark:bg-amber-950/5">
                   <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -586,7 +578,7 @@ export function CampaignsList({ orgId, token }: Props) {
                         <DropdownMenuItem onClick={() => {
                           setActivePost(post); setActiveCampaignId(null); setMoveTargetId(""); setActiveDialog("move_post")
                         }}>
-                          <FolderInput className="mr-2 h-4 w-4" /> Atribuie campanie
+                          <FolderInput className="mr-2 h-4 w-4" /> {t("assign_campaign")}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={async () => {
@@ -627,7 +619,7 @@ export function CampaignsList({ orgId, token }: Props) {
                   className="ml-4 flex-shrink-0"
                   checked={selected.has(campaign.id)}
                   onChange={() => toggleSelect(campaign.id)}
-                  aria-label="Selectează campania"
+                  aria-label={t("select_campaign")}
                 />
               <button onClick={() => toggleCampaign(campaign.id)}
                 className="flex-1 flex items-center justify-between p-4 hover:bg-muted/50 transition-colors text-left">
@@ -669,32 +661,32 @@ export function CampaignsList({ orgId, token }: Props) {
                     <DropdownMenuContent align="end" className="w-44">
                       {campaign.status !== "paused" && campaign.status !== "published" && campaign.status !== "archived" && campaign.status !== "cancelled" && (
                         <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCampaignStatus(campaign, "paused") }}>
-                          <Pause className="mr-2 h-4 w-4" /> Pauză campanie
+                          <Pause className="mr-2 h-4 w-4" /> {t("pause_campaign")}
                         </DropdownMenuItem>
                       )}
                       {campaign.status === "paused" && (
                         <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCampaignStatus(campaign, "approved") }}>
-                          <Play className="mr-2 h-4 w-4" /> Reluare campanie
+                          <Play className="mr-2 h-4 w-4" /> {t("resume_campaign")}
                         </DropdownMenuItem>
                       )}
                       {campaign.status !== "cancelled" && campaign.status !== "archived" && campaign.status !== "published" && (
                         <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCampaignStatus(campaign, "cancelled") }}>
-                          <Ban className="mr-2 h-4 w-4" /> Anulează campania
+                          <Ban className="mr-2 h-4 w-4" /> {t("cancel_campaign")}
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleSetCurrent(campaign) }}>
                         <Star className="mr-2 h-4 w-4" />
-                        {campaign.is_current ? "Elimină marcajul curent" : "Marchează ca curentă"}
+                        {campaign.is_current ? t("unset_current") : t("set_current")}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCloneCampaign(campaign) }}>
-                        <Copy className="mr-2 h-4 w-4" /> Clonează (cu pauză)
+                        <Copy className="mr-2 h-4 w-4" /> {t("clone_paused")}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={(e) => { e.stopPropagation(); openRescheduleDialog(campaign.id) }}>
-                        <Clock className="mr-2 h-4 w-4" /> Reprogramează campania
+                        <Clock className="mr-2 h-4 w-4" /> {t("reschedule_campaign")}
                       </DropdownMenuItem>
                       {campaign.status !== "archived" && (
                         <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleArchiveCampaign(campaign) }}>
-                          <Archive className="mr-2 h-4 w-4" /> Arhivează
+                          <Archive className="mr-2 h-4 w-4" /> {t("archive")}
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuSeparator />
@@ -702,7 +694,7 @@ export function CampaignsList({ orgId, token }: Props) {
                         onClick={(e) => { e.stopPropagation(); handleDeleteCampaign(campaign) }}
                         className="text-destructive focus:text-destructive"
                       >
-                        <Trash2 className="mr-2 h-4 w-4" /> Șterge (doar draft)
+                        <Trash2 className="mr-2 h-4 w-4" /> {t("delete_draft_only")}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -754,12 +746,12 @@ export function CampaignsList({ orgId, token }: Props) {
                                   await api.posts.publishNow(post.id, token)
                                   await refreshPosts(campaign.id)
                                 }}>
-                                  <Play className="mr-2 h-4 w-4 text-green-600" /> Postează Acum
+                                  <Play className="mr-2 h-4 w-4 text-green-600" /> {t("publish_now")}
                                 </DropdownMenuItem>
                               )}
                               <DropdownMenuSeparator />
                               <DropdownMenuItem onClick={() => openDialog("edit", post, campaign.id)}><Pencil className="mr-2 h-4 w-4" /> {t("edit_text")}</DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => { setActivePost(post); setActiveCampaignId(campaign.id); setActiveDialog("edit_image_prompt"); setEditImagePrompt(post.image_prompt ?? "") }}><Pencil className="mr-2 h-4 w-4" /> Prompt imagine</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => { setActivePost(post); setActiveCampaignId(campaign.id); setActiveDialog("edit_image_prompt"); setEditImagePrompt(post.image_prompt ?? "") }}><Pencil className="mr-2 h-4 w-4" /> {t("image_prompt")}</DropdownMenuItem>
                               <DropdownMenuItem onClick={() => openDialog("reschedule", post, campaign.id)}><Clock className="mr-2 h-4 w-4" /> {t("reschedule")}</DropdownMenuItem>
                               <DropdownMenuSeparator />
                               {post.status === "scheduled" ? (
@@ -770,12 +762,12 @@ export function CampaignsList({ orgId, token }: Props) {
                               <DropdownMenuItem onClick={() => openDialog("repost", post, campaign.id)}><RefreshCw className="mr-2 h-4 w-4" /> {t("repost")}</DropdownMenuItem>
                               <DropdownMenuItem onClick={() => openDialog("translate", post, campaign.id)}><Languages className="mr-2 h-4 w-4" /> {t("other_language")}</DropdownMenuItem>
                               <DropdownMenuItem onClick={() => openDialog("repost", post, campaign.id)}><Share2 className="mr-2 h-4 w-4" /> {t("other_social_network")}</DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => { setActivePost(post); setActiveCampaignId(campaign.id); setMoveTargetId(""); setActiveDialog("move_post") }}><FolderInput className="mr-2 h-4 w-4" /> Mută în campanie</DropdownMenuItem>
-                              {post.status === "failed" && (<><DropdownMenuSeparator /><DropdownMenuItem onClick={() => handleRetry(post, campaign.id)}><RefreshCw className="mr-2 h-4 w-4" /> Încearcă din nou</DropdownMenuItem></>)}
+                              <DropdownMenuItem onClick={() => { setActivePost(post); setActiveCampaignId(campaign.id); setMoveTargetId(""); setActiveDialog("move_post") }}><FolderInput className="mr-2 h-4 w-4" /> {t("move_to_campaign")}</DropdownMenuItem>
+                              {post.status === "failed" && (<><DropdownMenuSeparator /><DropdownMenuItem onClick={() => handleRetry(post, campaign.id)}><RefreshCw className="mr-2 h-4 w-4" /> {t("retry")}</DropdownMenuItem></>)}
                               {post.status !== "published" && (
                                 <><DropdownMenuSeparator />
                                 <DropdownMenuItem onClick={() => handleMarkPublished(post, campaign.id)}>
-                                  <CheckCircle className="mr-2 h-4 w-4 text-green-500" /> Marcat publicat extern
+                                  <CheckCircle className="mr-2 h-4 w-4 text-green-500" /> {t("mark_published_external")}
                                 </DropdownMenuItem></>
                               )}
                               <DropdownMenuSeparator />
@@ -808,39 +800,39 @@ export function CampaignsList({ orgId, token }: Props) {
                         {/* Bulk action bar */}
                         {bulkPostCampaignId === campaign.id && selectedPostIds.size > 0 && (
                           <div className="flex flex-wrap items-center gap-2 p-3 bg-primary/5 border-b">
-                            <span className="text-xs font-medium px-1">{selectedPostIds.size} postări selectate</span>
-                            <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkPostBusy} onClick={() => handleBulkPosts("pause")}><Pause className="mr-1 h-3 w-3" /> Pauză</Button>
-                            <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkPostBusy} onClick={() => handleBulkPosts("resume")}><Play className="mr-1 h-3 w-3" /> Reia</Button>
+                            <span className="text-xs font-medium px-1">{t("posts_selected", { count: selectedPostIds.size })}</span>
+                            <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkPostBusy} onClick={() => handleBulkPosts("pause")}><Pause className="mr-1 h-3 w-3" /> {t("pause")}</Button>
+                            <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkPostBusy} onClick={() => handleBulkPosts("resume")}><Play className="mr-1 h-3 w-3" /> {t("resume_short")}</Button>
                             <div className="flex items-center gap-1">
                               <Select value={bulkMoveTargetId} onValueChange={setBulkMoveTargetId}>
-                                <SelectTrigger className="h-7 w-36 text-xs"><SelectValue placeholder="Mută în..." /></SelectTrigger>
+                                <SelectTrigger className="h-7 w-36 text-xs"><SelectValue placeholder={t("move_to_placeholder")} /></SelectTrigger>
                                 <SelectContent>{campaigns.filter((c) => c.id !== campaign.id).map((c) => (<SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>))}</SelectContent>
                               </Select>
                               {bulkMoveTargetId && (
-                                <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkPostBusy} onClick={() => handleBulkPosts("move", bulkMoveTargetId)}><FolderInput className="mr-1 h-3 w-3" /> Mută</Button>
+                                <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkPostBusy} onClick={() => handleBulkPosts("move", bulkMoveTargetId)}><FolderInput className="mr-1 h-3 w-3" /> {t("move")}</Button>
                               )}
                             </div>
-                            <Button size="sm" variant="destructive" className="h-7 text-xs" disabled={bulkPostBusy} onClick={() => handleBulkPosts("delete")}><Trash2 className="mr-1 h-3 w-3" /> Șterge</Button>
-                            <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => { setSelectedPostIds(new Set()); setBulkPostCampaignId(null) }}>Deselectează</Button>
+                            <Button size="sm" variant="destructive" className="h-7 text-xs" disabled={bulkPostBusy} onClick={() => handleBulkPosts("delete")}><Trash2 className="mr-1 h-3 w-3" /> {t("delete")}</Button>
+                            <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => { setSelectedPostIds(new Set()); setBulkPostCampaignId(null) }}>{t("deselect")}</Button>
                           </div>
                         )}
 
                         {/* Bulk action bar pentru temele selectate */}
                         {bulkTopicCampaignId === campaign.id && selectedTopicIds.size > 0 && (
                           <div className="flex flex-wrap items-center gap-2 p-3 bg-primary/10 border-b">
-                            <span className="text-xs font-medium px-1">{selectedTopicIds.size} teme selectate</span>
+                            <span className="text-xs font-medium px-1">{t("topics_selected", { count: selectedTopicIds.size })}</span>
                             <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkTopicBusy}
                               onClick={() => handleBulkTopics("pause")}>
-                              <Pause className="mr-1 h-3 w-3" /> Pauză toate postările
+                              <Pause className="mr-1 h-3 w-3" /> {t("pause_all_posts")}
                             </Button>
                             <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkTopicBusy}
                               onClick={() => handleBulkTopics("resume")}>
-                              <Play className="mr-1 h-3 w-3" /> Reia toate postările
+                              <Play className="mr-1 h-3 w-3" /> {t("resume_all_posts")}
                             </Button>
                             <div className="flex items-center gap-1">
                               <Select value={bulkTopicMoveTargetId} onValueChange={setBulkTopicMoveTargetId}>
                                 <SelectTrigger className="h-7 w-40 text-xs">
-                                  <SelectValue placeholder="Mută temele în..." />
+                                  <SelectValue placeholder={t("move_topics_placeholder")} />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {campaigns.filter((c) => c.id !== campaign.id).map((c) => (
@@ -851,17 +843,17 @@ export function CampaignsList({ orgId, token }: Props) {
                               {bulkTopicMoveTargetId && (
                                 <Button size="sm" variant="outline" className="h-7 text-xs" disabled={bulkTopicBusy}
                                   onClick={() => handleBulkTopics("move", bulkTopicMoveTargetId)}>
-                                  <FolderInput className="mr-1 h-3 w-3" /> Mută
+                                  <FolderInput className="mr-1 h-3 w-3" /> {t("move")}
                                 </Button>
                               )}
                             </div>
                             <Button size="sm" variant="destructive" className="h-7 text-xs" disabled={bulkTopicBusy}
                               onClick={() => handleBulkTopics("delete")}>
-                              <Trash2 className="mr-1 h-3 w-3" /> Șterge + postări
+                              <Trash2 className="mr-1 h-3 w-3" /> {t("delete_with_posts")}
                             </Button>
                             <Button size="sm" variant="ghost" className="h-7 text-xs"
                               onClick={() => { setSelectedTopicIds(new Set()); setBulkTopicCampaignId(null) }}>
-                              Deselectează
+                              {t("deselect")}
                             </Button>
                           </div>
                         )}
@@ -907,13 +899,13 @@ export function CampaignsList({ orgId, token }: Props) {
                                           setRescheduleTopicDate(local.toISOString().slice(0, 16))
                                         }}
                                         className="text-xs text-muted-foreground whitespace-nowrap hover:text-primary hover:underline transition-colors"
-                                        title="Click pentru a reprograma"
+                                        title={t("click_to_reschedule")}
                                       >
-                                        📅 {new Date(earliest).toLocaleString("ro-RO", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
+                                        📅 {new Date(earliest).toLocaleString(locale, { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
                                       </button>
                                     ) : null
                                   })()}
-                                  <span className="text-xs text-muted-foreground whitespace-nowrap">{tPosts.length} postări</span>
+                                  <span className="text-xs text-muted-foreground whitespace-nowrap">{t("posts_count", { count: tPosts.length })}</span>
                                 </div>
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
@@ -923,24 +915,24 @@ export function CampaignsList({ orgId, token }: Props) {
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end" className="w-52">
                                     <DropdownMenuItem onClick={async () => {
-                                      if (!confirm(`Publici acum toate postările din tema "${topic.name}"?`)) return
+                                      if (!confirm(t("publish_topic_confirm", { name: topic.name }))) return
                                       await api.campaigns.bulkTopics(orgId, { action: "publish_now", topic_ids: [topic.id] }, token)
                                       await refreshPosts(campaign.id)
                                     }}>
-                                      <Play className="mr-2 h-4 w-4 text-green-600" /> Postează Acum
+                                      <Play className="mr-2 h-4 w-4 text-green-600" /> {t("publish_now")}
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem onClick={async () => {
                                       await api.campaigns.bulkTopics(orgId, { action: "pause", topic_ids: [topic.id] }, token)
                                       await refreshPosts(campaign.id)
                                     }}>
-                                      <Pause className="mr-2 h-4 w-4" /> Pauză toate postările
+                                      <Pause className="mr-2 h-4 w-4" /> {t("pause_all_posts")}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem onClick={async () => {
                                       await api.campaigns.bulkTopics(orgId, { action: "resume", topic_ids: [topic.id] }, token)
                                       await refreshPosts(campaign.id)
                                     }}>
-                                      <Play className="mr-2 h-4 w-4" /> Reia toate postările
+                                      <Play className="mr-2 h-4 w-4" /> {t("resume_all_posts")}
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem onClick={() => {
@@ -949,7 +941,7 @@ export function CampaignsList({ orgId, token }: Props) {
                                       setRescheduleTopicMode("next_best_time")
                                       setRescheduleTopicDate("")
                                     }}>
-                                      <Clock className="mr-2 h-4 w-4" /> Reprogramează tema
+                                      <Clock className="mr-2 h-4 w-4" /> {t("reschedule_topic")}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem onClick={() => {
                                       setMoveTopicId(topic.id)
@@ -957,14 +949,14 @@ export function CampaignsList({ orgId, token }: Props) {
                                       setMoveTopicCampaignId(campaign.id)
                                       setMoveTopicPostCount(tPosts.length)
                                     }}>
-                                      <FolderInput className="mr-2 h-4 w-4" /> Mută în campanie...
+                                      <FolderInput className="mr-2 h-4 w-4" /> {t("move_to_campaign_ellipsis")}
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem
                                       onClick={() => handleDeleteTopic(topic.id, campaign.id)}
                                       className="text-destructive focus:text-destructive"
                                     >
-                                      <Trash2 className="mr-2 h-4 w-4" /> Șterge tema + postări
+                                      <Trash2 className="mr-2 h-4 w-4" /> {t("delete_topic_with_posts")}
                                     </DropdownMenuItem>
                                   </DropdownMenuContent>
                                 </DropdownMenu>
@@ -972,7 +964,7 @@ export function CampaignsList({ orgId, token }: Props) {
                               {isTopicExpanded && (
                                 <div className="divide-y divide-border/30">
                                   {tPosts.length === 0
-                                    ? <p className="text-sm text-muted-foreground pl-14 py-3 italic">Nicio postare în această temă.</p>
+                                    ? <p className="text-sm text-muted-foreground pl-14 py-3 italic">{t("empty_topic_posts")}</p>
                                     : tPosts.map((post) => renderPostRow(post, "pl-14"))}
                                 </div>
                               )}
@@ -995,13 +987,13 @@ export function CampaignsList({ orgId, token }: Props) {
       {/* Paginație */}
       {total > pageSize && (
         <div className="flex items-center justify-between pt-2 text-sm text-muted-foreground">
-          <span>Pagina {page + 1} din {totalPages} • {total} campanii</span>
+          <span>{t("pagination", { page: page + 1, totalPages, total })}</span>
           <div className="flex gap-2">
             <Button size="sm" variant="outline" disabled={page === 0} onClick={() => setPage((p) => Math.max(0, p - 1))}>
-              Înapoi
+              {t("previous")}
             </Button>
             <Button size="sm" variant="outline" disabled={page + 1 >= totalPages} onClick={() => setPage((p) => p + 1)}>
-              Înainte
+              {t("next")}
             </Button>
           </div>
         </div>
@@ -1050,7 +1042,7 @@ export function CampaignsList({ orgId, token }: Props) {
                     onChange={(e) => setRepostPlatforms(e.target.checked
                       ? [...repostPlatforms, p]
                       : repostPlatforms.filter((x) => x !== p))} />
-                  {PLATFORM_LABELS[p]}
+                  {t(`platforms.${p}`)}
                 </label>
               ))}
             </div>
@@ -1080,7 +1072,7 @@ export function CampaignsList({ orgId, token }: Props) {
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {LANGUAGES.map((l) => (
-                    <SelectItem key={l.code} value={l.code}>{l.label}</SelectItem>
+                    <SelectItem key={l.code} value={l.code}>{t(l.labelKey)}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -1091,7 +1083,7 @@ export function CampaignsList({ orgId, token }: Props) {
                 <SelectTrigger><SelectValue placeholder={t("same_platform")} /></SelectTrigger>
                 <SelectContent>
                   {ALL_PLATFORMS.map((p) => (
-                    <SelectItem key={p} value={p}>{PLATFORM_LABELS[p]}</SelectItem>
+                    <SelectItem key={p} value={p}>{t(`platforms.${p}`)}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -1109,20 +1101,20 @@ export function CampaignsList({ orgId, token }: Props) {
       {/* Dialog: Creare campanie */}
       <Dialog open={activeDialog === "create_campaign"} onOpenChange={closeDialog}>
         <DialogContent className="max-w-lg">
-          <DialogHeader><DialogTitle>Campanie nouă</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{t("new_campaign")}</DialogTitle></DialogHeader>
           <div className="space-y-3">
             <div>
-              <p className="text-sm text-muted-foreground mb-1">Nume campanie *</p>
+              <p className="text-sm text-muted-foreground mb-1">{t("campaign_name_required")}</p>
               <Input
-                placeholder="ex: Lansare produs mai 2026"
+                placeholder={t("campaign_name_placeholder")}
                 value={newCampaignName}
                 onChange={(e) => setNewCampaignName(e.target.value)}
               />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground mb-1">Topic / descriere</p>
+              <p className="text-sm text-muted-foreground mb-1">{t("topic_description")}</p>
               <Textarea
-                placeholder="Despre ce e campania? AI-ul va folosi asta la generare."
+                placeholder={t("topic_description_placeholder")}
                 value={newCampaignTopic}
                 onChange={(e) => setNewCampaignTopic(e.target.value)}
                 rows={3}
@@ -1131,21 +1123,21 @@ export function CampaignsList({ orgId, token }: Props) {
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Data start</p>
+                <p className="text-sm text-muted-foreground mb-1">{t("start_date")}</p>
                 <Input type="date" value={newCampaignStart} onChange={(e) => setNewCampaignStart(e.target.value)} />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Data end</p>
+                <p className="text-sm text-muted-foreground mb-1">{t("end_date")}</p>
                 <Input type="date" value={newCampaignEnd} onChange={(e) => setNewCampaignEnd(e.target.value)} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Buget (opțional)</p>
-                <Input placeholder="ex: 5000" value={newCampaignBudget} onChange={(e) => setNewCampaignBudget(e.target.value)} />
+                <p className="text-sm text-muted-foreground mb-1">{t("budget_optional")}</p>
+                <Input placeholder={t("budget_placeholder")} value={newCampaignBudget} onChange={(e) => setNewCampaignBudget(e.target.value)} />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Monedă</p>
+                <p className="text-sm text-muted-foreground mb-1">{t("currency")}</p>
                 <Select value={newCampaignCurrency} onValueChange={setNewCampaignCurrency}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -1158,9 +1150,9 @@ export function CampaignsList({ orgId, token }: Props) {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={closeDialog}>Anulează</Button>
+            <Button variant="outline" onClick={closeDialog}>{t("cancel")}</Button>
             <Button onClick={handleCreateCampaign} disabled={creating || !newCampaignName.trim()}>
-              {creating ? "Se creează..." : "Creează campania"}
+              {creating ? t("creating") : t("create_campaign")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1169,11 +1161,11 @@ export function CampaignsList({ orgId, token }: Props) {
       {/* Dialog: Mută postare în altă campanie */}
       <Dialog open={activeDialog === "move_post"} onOpenChange={closeDialog}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Mută postarea în altă campanie</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{t("move_post_title")}</DialogTitle></DialogHeader>
           <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">Selectează campania destinație:</p>
+            <p className="text-sm text-muted-foreground">{t("select_destination_campaign")}</p>
             <Select value={moveTargetId} onValueChange={setMoveTargetId}>
-              <SelectTrigger><SelectValue placeholder="Alege campania..." /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={t("choose_campaign_placeholder")} /></SelectTrigger>
               <SelectContent>
                 {campaigns
                   .filter((c) => c.id !== activeCampaignId)
@@ -1184,9 +1176,9 @@ export function CampaignsList({ orgId, token }: Props) {
             </Select>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={closeDialog}>Anulează</Button>
+            <Button variant="outline" onClick={closeDialog}>{t("cancel")}</Button>
             <Button onClick={handleMovePost} disabled={saving || !moveTargetId}>
-              {saving ? "Se mută..." : "Mută postarea"}
+              {saving ? t("moving") : t("move_post")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1195,10 +1187,10 @@ export function CampaignsList({ orgId, token }: Props) {
       {/* Dialog: Editare prompt imagine */}
       <Dialog open={activeDialog === "edit_image_prompt"} onOpenChange={closeDialog}>
         <DialogContent className="max-w-2xl">
-          <DialogHeader><DialogTitle>Editează prompt imagine</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{t("edit_image_prompt_title")}</DialogTitle></DialogHeader>
           <div className="space-y-2">
             <p className="text-xs text-muted-foreground">
-              Promptul EN trimis la generatorul AI. Modifică și salvează.
+              {t("edit_image_prompt_description")}
             </p>
             <Textarea
               value={editImagePrompt}
@@ -1208,9 +1200,9 @@ export function CampaignsList({ orgId, token }: Props) {
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={closeDialog}>Anulează</Button>
+            <Button variant="outline" onClick={closeDialog}>{t("cancel")}</Button>
             <Button onClick={handleSaveImagePrompt} disabled={saving}>
-              {saving ? "Se salvează..." : "Salvează prompt"}
+              {saving ? t("saving") : t("save_prompt")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1219,12 +1211,12 @@ export function CampaignsList({ orgId, token }: Props) {
       <Dialog open={!!rescheduleCampaignId} onOpenChange={(open) => { if (!open) setRescheduleCampaignId(null) }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reprogramează campania</DialogTitle>
+            <DialogTitle>{t("reschedule_campaign")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
             {([
-              { value: "next_best_time" as const, label: "Next best time", desc: "Primul slot comun liber pe toate platformele" },
-              { value: "specific_date" as const, label: "Dată specifică", desc: "Mută tema la o dată aleasă de tine" },
+              { value: "next_best_time" as const, label: t("reschedule_modes.next_best_time.label"), desc: t("reschedule_modes.next_best_time.campaign_desc") },
+              { value: "specific_date" as const, label: t("reschedule_modes.specific_date.label"), desc: t("reschedule_modes.specific_date.campaign_desc") },
             ]).map(({ value, label, desc }) => (
               <button
                 key={value}
@@ -1237,7 +1229,7 @@ export function CampaignsList({ orgId, token }: Props) {
             ))}
             {rescheduleMode === "specific_date" && (
               <div className="pt-1">
-                <label className="text-sm font-medium mb-1 block">Data și ora</label>
+                <label className="text-sm font-medium mb-1 block">{t("date_and_time")}</label>
                 <input
                   type="datetime-local"
                   value={rescheduleDate}
@@ -1248,9 +1240,9 @@ export function CampaignsList({ orgId, token }: Props) {
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setRescheduleCampaignId(null)}>Anulează</Button>
+            <Button variant="outline" onClick={() => setRescheduleCampaignId(null)}>{t("cancel")}</Button>
             <Button onClick={handleCampaignReschedule} disabled={rescheduleBusy}>
-              {rescheduleBusy ? "Se procesează..." : "Reprogramează"}
+              {rescheduleBusy ? t("processing") : t("reschedule")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1260,11 +1252,11 @@ export function CampaignsList({ orgId, token }: Props) {
       <Dialog open={!!moveTopicId} onOpenChange={(open) => { if (!open) setMoveTopicId(null) }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Mută tema în campanie</DialogTitle>
+            <DialogTitle>{t("move_topic_title")}</DialogTitle>
           </DialogHeader>
           <p className="text-sm text-muted-foreground pb-1">
             <span className="font-medium text-foreground">{moveTopicName}</span>
-            {" "}({moveTopicPostCount} postări) → alege campania destinație:
+            {" "}{t("move_topic_description", { count: moveTopicPostCount })}
           </p>
           <div className="space-y-2 max-h-64 overflow-y-auto">
             {campaigns.filter((c) => c.id !== moveTopicCampaignId).map((c) => (
@@ -1272,25 +1264,25 @@ export function CampaignsList({ orgId, token }: Props) {
                 key={c.id}
                 onClick={async () => {
                   if (!moveTopicId || !moveTopicCampaignId) return
-                  if (!confirm(`Muți tema "${moveTopicName}" (${moveTopicPostCount} postări) în "${c.name}"?`)) return
+                  if (!confirm(t("move_topic_confirm", { topic: moveTopicName, count: moveTopicPostCount, campaign: c.name }))) return
                   await api.campaigns.bulkTopics(orgId, { action: "move", topic_ids: [moveTopicId], target_campaign_id: c.id }, token)
                   await refreshPosts(moveTopicCampaignId)
                   if (postsMap[c.id]) await refreshPosts(c.id)
                   setMoveTopicId(null)
-                  toast({ title: `✅ Tema mutată în "${c.name}"` })
+                  toast({ title: t("move_topic_success", { campaign: c.name }) })
                 }}
                 className="w-full text-left rounded-lg border border-border hover:border-primary/60 hover:bg-primary/5 px-4 py-3 transition-colors"
               >
                 <div className="font-medium text-sm">{c.name}</div>
-                {c.start_date && <div className="text-xs text-muted-foreground">{new Date(c.start_date).toLocaleDateString("ro-RO")}</div>}
+                {c.start_date && <div className="text-xs text-muted-foreground">{new Date(c.start_date).toLocaleDateString(locale)}</div>}
               </button>
             ))}
             {campaigns.filter((c) => c.id !== moveTopicCampaignId).length === 0 && (
-              <p className="text-sm text-muted-foreground italic py-4 text-center">Nu există alte campanii.</p>
+              <p className="text-sm text-muted-foreground italic py-4 text-center">{t("no_other_campaigns")}</p>
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setMoveTopicId(null)}>Anulează</Button>
+            <Button variant="outline" onClick={() => setMoveTopicId(null)}>{t("cancel")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -1299,12 +1291,12 @@ export function CampaignsList({ orgId, token }: Props) {
       <Dialog open={!!rescheduleTopicId} onOpenChange={(open) => { if (!open) setRescheduleTopicId(null) }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reprogramează tema</DialogTitle>
+            <DialogTitle>{t("reschedule_topic")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
             {([
-              { value: "next_best_time" as const, label: "Next best time", desc: "Primul slot comun liber pe toate platformele" },
-              { value: "specific_date" as const, label: "Dată specifică", desc: "Mută postările la o dată aleasă de tine" },
+              { value: "next_best_time" as const, label: t("reschedule_modes.next_best_time.label"), desc: t("reschedule_modes.next_best_time.topic_desc") },
+              { value: "specific_date" as const, label: t("reschedule_modes.specific_date.label"), desc: t("reschedule_modes.specific_date.topic_desc") },
             ]).map(({ value, label, desc }) => (
               <button
                 key={value}
@@ -1317,7 +1309,7 @@ export function CampaignsList({ orgId, token }: Props) {
             ))}
             {rescheduleTopicMode === "specific_date" && (
               <div className="pt-1">
-                <label className="text-sm font-medium mb-1 block">Data și ora</label>
+                <label className="text-sm font-medium mb-1 block">{t("date_and_time")}</label>
                 <input
                   type="datetime-local"
                   value={rescheduleTopicDate}
@@ -1328,9 +1320,9 @@ export function CampaignsList({ orgId, token }: Props) {
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setRescheduleTopicId(null)}>Anulează</Button>
+            <Button variant="outline" onClick={() => setRescheduleTopicId(null)}>{t("cancel")}</Button>
             <Button onClick={handleRescheduleTopic} disabled={rescheduleTopicBusy}>
-              {rescheduleTopicBusy ? "Se procesează..." : "Reprogramează"}
+              {rescheduleTopicBusy ? t("processing") : t("reschedule")}
             </Button>
           </DialogFooter>
         </DialogContent>

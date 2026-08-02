@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useTranslations } from "next-intl"
 import { Plus, Trash2, ArrowRightLeft, Building2 } from "lucide-react"
 
 interface Client { id: string; client_org_id: string }
@@ -9,6 +10,7 @@ interface Org { id: string; name: string; slug: string; is_agency: boolean }
 interface Props { orgId: string; token: string }
 
 export function ClientsManager({ orgId, token }: Props) {
+  const t = useTranslations("clients_manager")
   const [clients, setClients] = useState<Client[]>([])
   const [orgs, setOrgs] = useState<Record<string, Org>>({})
   const [agencyOrg, setAgencyOrg] = useState<Org | null>(null)
@@ -54,7 +56,7 @@ export function ClientsManager({ orgId, token }: Props) {
       await fetchClients()
     } else {
       const err = await res.json()
-      alert(err.detail || "Eroare la adăugare client")
+      alert(err.detail || t("errors.add_client"))
     }
     setAdding(false)
   }
@@ -70,13 +72,13 @@ export function ClientsManager({ orgId, token }: Props) {
       await fetchClients()
     } else {
       const err = await res.json().catch(() => ({}))
-      alert(err.detail || "Eroare la adăugare client propriu")
+      alert(err.detail || t("errors.add_self"))
     }
     setAdding(false)
   }
 
   const removeClient = async (clientId: string) => {
-    if (!confirm("Ești sigur că vrei să elimini acest client?")) return
+    if (!confirm(t("confirm_remove_client"))) return
     await fetch(`${API}/api/v1/orgs/${orgId}/clients/${clientId}`, { method: "DELETE", headers })
     setClients((c) => c.filter((x) => x.id !== clientId))
   }
@@ -96,11 +98,11 @@ export function ClientsManager({ orgId, token }: Props) {
     <div className="space-y-6">
       {/* Add client */}
       <div className="rounded-lg border bg-card p-5 space-y-3">
-        <h2 className="font-semibold">Adaugă client nou</h2>
+        <h2 className="font-semibold">{t("add_new_client")}</h2>
         <div className="flex gap-2">
           <input
             className="flex-1 rounded-md border bg-background px-3 py-2 text-sm"
-            placeholder="Numele clientului (ex: Bakery X)"
+            placeholder={t("client_name_placeholder")}
             value={newOrgName}
             onChange={(e) => setNewOrgName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && addClient()}
@@ -111,15 +113,15 @@ export function ClientsManager({ orgId, token }: Props) {
             className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90"
           >
             <Plus className="h-4 w-4" />
-            {adding ? "Se adaugă..." : "Adaugă"}
+            {adding ? t("adding") : t("add")}
           </button>
         </div>
         {/* Adaugă agenția ca propriul client dacă nu e deja */}
         {!loading && !clients.some((c) => c.client_org_id === orgId) && (
           <div className="flex items-center justify-between rounded-md border border-dashed p-3">
             <div>
-              <p className="text-sm font-medium">Adaugă {agencyOrg?.name ?? "agenția"} ca client propriu</p>
-              <p className="text-xs text-muted-foreground">Permite alocarea de buget și rapoarte pentru postările proprii.</p>
+              <p className="text-sm font-medium">{t("add_agency_as_self", { name: agencyOrg?.name ?? t("agency") })}</p>
+              <p className="text-xs text-muted-foreground">{t("add_self_description")}</p>
             </div>
             <button
               onClick={addSelfAsClient}
@@ -127,7 +129,7 @@ export function ClientsManager({ orgId, token }: Props) {
               className="flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium hover:bg-muted disabled:opacity-50"
             >
               <Building2 className="h-3.5 w-3.5" />
-              Adaugă ca propriu
+              {t("add_as_self")}
             </button>
           </div>
         )}
@@ -136,13 +138,13 @@ export function ClientsManager({ orgId, token }: Props) {
       {/* Clients list */}
       <div className="rounded-lg border bg-card">
         <div className="p-4 border-b">
-          <h2 className="font-semibold">Clienți ({clients.length})</h2>
+          <h2 className="font-semibold">{t("clients_count", { count: clients.length })}</h2>
         </div>
         {loading ? (
-          <p className="p-4 text-sm text-muted-foreground">Se încarcă...</p>
+          <p className="p-4 text-sm text-muted-foreground">{t("loading")}</p>
         ) : clients.length === 0 ? (
           <p className="p-8 text-center text-muted-foreground text-sm">
-            Niciun client. Adaugă primul client sau adaugă agenția ca client propriu.
+            {t("empty")}
           </p>
         ) : (
           <ul className="divide-y">
@@ -156,7 +158,7 @@ export function ClientsManager({ orgId, token }: Props) {
                       {isSelf && <Building2 className="h-3.5 w-3.5 text-primary" />}
                       {org?.name ?? client.client_org_id}
                       {isSelf && (
-                        <span className="text-xs rounded-full bg-primary/10 text-primary px-2 py-0.5">propriu</span>
+                        <span className="text-xs rounded-full bg-primary/10 text-primary px-2 py-0.5">{t("self")}</span>
                       )}
                     </p>
                     {org?.slug && <p className="text-xs text-muted-foreground">/{org.slug}</p>}
@@ -167,7 +169,7 @@ export function ClientsManager({ orgId, token }: Props) {
                       className="flex items-center gap-1 rounded-md border px-3 py-1.5 text-xs hover:bg-muted"
                     >
                       <ArrowRightLeft className="h-3 w-3" />
-                      Intră
+                      {t("enter")}
                     </button>
                     {!isSelf && (
                       <button

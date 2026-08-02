@@ -1,408 +1,1095 @@
 {
-  "nav": {
-    "dashboard": "Panou de control",
+  "account": {
+    "active_subscription": "Abonament activ",
+    "delete_button": "Șterge contul",
+    "delete_confirm_title": "Ești sigur?",
+    "delete_description": "Aceasta este o zonă periculoasă. Ai grijă.",
+    "delete_title": "Șterge contul",
+    "delete_warning": "Șterge permanent contul tău {site}{suffix}. Această acțiune nu poate fi anulată. Continuă cu grijă.",
+    "delete_warning_subscription_suffix": " și abonamentul tău",
+    "name_description": "Introdu un nume afișat cu care te simți confortabil.",
+    "name_hint": "Maxim 32 de caractere",
+    "name_label": "Nume",
+    "name_title": "Numele tău",
+    "role_description": "Selectează rolul pe care vrei să-l folosești cât timp testezi aplicația.",
+    "role_hint": "Elimină acest câmp în producția reală",
+    "role_label": "Rol",
+    "role_placeholder": "Selectează un rol",
+    "role_title": "Rolul tău",
+    "save_changes_suffix": "modificările"
+  },
+  "admin_client": {
+    "agencies": "Agenții",
+    "agencies_section": "🏢 Agenții",
+    "agency_clients": "Clienți agenții",
+    "ai_images": "Imagini AI",
+    "ai_texts": "Texte AI",
     "campaigns": "Campanii",
-    "calendar": "Calendar",
-    "settings": "Setări",
-    "brand_kit": "Brand Kit",
-    "billing": "Facturare"
+    "credits_updated": "Credite actualizate",
+    "errors": {
+      "invalid_number": "Introdu un număr valid",
+      "set_credits": "Eroare la setare credite",
+      "set_plan": "Eroare la setare plan"
+    },
+    "organizations_count": "Organizații ({count})",
+    "plan_updated": "Plan actualizat",
+    "published": "Publicate",
+    "remaining_credits": "Credite rămase",
+    "standalone_clients": "Clienți standalone",
+    "standalone_clients_section": "👤 Clienți standalone",
+    "table": {
+      "ai_images": "Imagini AI",
+      "ai_texts": "Texte AI",
+      "campaigns": "Campanii",
+      "credits": "Credite",
+      "members": "Membri",
+      "name": "Nume",
+      "new_plan": "Plan nou",
+      "plan": "Plan",
+      "posts": "Posturi",
+      "published": "Publicate",
+      "set_credits": "Setat credite",
+      "status": "Status",
+      "topics": "Teme"
+    },
+    "topics": "Teme",
+    "total_posts": "Posturi totale",
+    "users": "Utilizatori"
+  },
+  "admin_page": {
+    "access_denied": "Acces interzis (nu ești superuser)",
+    "error_status": "Eroare {status}"
+  },
+  "agency_overview": {
+    "active_clients": "Clienți activi",
+    "add_first_client": "Adaugă primul client →",
+    "campaigns": "Campanii",
+    "clients": "Clienți",
+    "enter": "Intră",
+    "loading": "Se încarcă...",
+    "manage_clients": "Gestionează clienții →",
+    "no_clients": "Niciun client."
+  },
+  "allocations_manager": {
+    "allocate": "Alocă",
+    "allocated_to_clients": "Alocat clienților",
+    "client_usage": "Consumat {consumed} / {allocated} • rest {remaining}",
+    "clients_count": "Clienți ({count})",
+    "default_suggestion": "Sugestie implicită: {credits} credite/brand",
+    "empty": "Adaugă agenția ca client propriu și clienți din pagina Clienți, apoi alocă-le buget.",
+    "error": "Eroare.",
+    "errors": {
+      "invalid_credits": "Introdu un număr valid de credite.",
+      "load_failed": "Nu am putut încărca alocările (cont de agenție necesar).",
+      "save_failed": "Eroare la salvarea alocării."
+    },
+    "loading": "Se încarcă...",
+    "pool_total_per_month": "Pool total / lună",
+    "self": "propriu",
+    "self_usage": "Pool disponibil {remaining} • target {allocated}",
+    "unallocated_pool": "Nealocat (în pool)"
+  },
+  "analytics": {
+    "days": "{count} zile",
+    "empty_subtitle": "Publică primele posturi pentru a vedea analytics.",
+    "empty_title": "Nicio postare publicată în ultimele {days} zile",
+    "engagement_by_platform": "Engagement per platformă",
+    "kpi_published_posts": "Posturi publicate",
+    "kpi_total_likes": "Total Likes",
+    "kpi_total_reach": "Total Reach",
+    "kpi_total_shares": "Total Shares",
+    "loading": "Se încarcă analytics...",
+    "metric_comments": "Comentarii",
+    "metric_likes": "Likes",
+    "metric_reach": "Reach",
+    "metric_shares": "Distribuiri",
+    "no_data": "Nicio dată disponibilă.",
+    "not_available": "—",
+    "post_distribution": "Distribuție posturi",
+    "score": "scor",
+    "sync_now": "Sync acum",
+    "syncing": "Se sincronizează...",
+    "top_posts": "Top 5 posturi"
   },
   "auth": {
-    "sign_in": "Autentificare",
-    "sign_out": "Deconectare",
-    "sign_in_with_google": "Autentificare cu Google",
-    "sign_in_with_email": "Autentificare cu Email",
-    "sign_up_with_email": "Înregistrare",
-    "welcome_back": "Bine ai revenit",
+    "back": "Înapoi",
     "enter_email": "Introdu emailul pentru a te autentifica",
     "no_account": "Nu ai cont? Înregistrează-te",
     "or_continue_with": "Sau continuă cu",
-    "back": "Înapoi"
+    "sign_in": "Autentificare",
+    "sign_in_with_email": "Autentificare cu Email",
+    "sign_in_with_google": "Autentificare cu Google",
+    "sign_out": "Deconectare",
+    "sign_up_with_email": "Înregistrare",
+    "welcome_back": "Bine ai revenit"
+  },
+  "autopilot": {
+    "calendar_count": "{count, plural, one {# idee în Calendar din Intelligence} other {# idei în Calendar din Intelligence}}",
+    "empty_subtitle": "Publică oportunități din tab-ul <opportunities>Oportunități</opportunities> pentru a le vedea aici.",
+    "empty_title": "Nicio idee publicată din Intelligence încă.",
+    "failed_count": "{count} eșuate",
+    "filtered_count": "{count} din {total}",
+    "hide_posts": "Ascunde postările",
+    "loading": "Se încarcă...",
+    "mixed": "Mixt",
+    "mixed_published_scheduled": "{published} publicate · {scheduled} programate",
+    "mixed_published_scheduled_failed": "{published} publicate · {scheduled} programate · {failed} eșuate",
+    "mixed_short": "{published} pub · {scheduled} prog · {failed} eșuate",
+    "networks": "Rețele:",
+    "no_filter_results": "Niciun rezultat pentru filtrele selectate.",
+    "partially_published": "Publicat parțial",
+    "per_page": "Per pagină:",
+    "published_count": "{count} publicate",
+    "published_other_count": "{published} publicate · {other} altele",
+    "reset": "Resetează",
+    "scheduled_count": "{count} programate",
+    "search_placeholder": "Caută după titlu sau hook...",
+    "sort": {
+      "created_at": "Data creării",
+      "post_date": "Data postării",
+      "score": "Scor AI",
+      "title": "Alfabetic"
+    },
+    "statuses": {
+      "approved": "Aprobat",
+      "draft": "Draft",
+      "failed": "Eșuat",
+      "paused": "Pauză",
+      "published": "Publicat",
+      "scheduled": "Programat",
+      "skipped": "Sărit"
+    },
+    "view_post": "Vezi postarea",
+    "view_posts": "Vezi postările"
+  },
+  "bentogrid_section": {
+    "cards": {
+      "best_time": {
+        "description": "Configurezi sloturile preferate per platformă. Nex-Nex programează automat cele 100 de idei generate — uniform, câte 2 pe zi. Analiza AI a audienței vine în curând.",
+        "title": "Programare inteligentă"
+      },
+      "brand_intelligence": {
+        "description": "AI-ul învață vocea, valorile și produsele brandului tău din documente PDF, URL-uri și descrieri. Generează automat 100 de idei de postare organizate pe categorii — tu le aprobi sau le ajustezi.",
+        "title": "Brand Intelligence"
+      },
+      "from_idea_to_published": {
+        "description": "Trimiți un subiect din aplicație sau din Telegram. În 2 minute ai text, imagine și postarea programată pe toate platformele.",
+        "title": "De la idee la publicat"
+      },
+      "languages": {
+        "description": "Generezi conținut în română, engleză, italiană sau orice altă limbă. Adaptat cultural, nu doar tradus.",
+        "title": "Orice limbă, orice piață"
+      }
+    },
+    "subtitle": "Funcționalități construite pentru creatori de conținut și agenții de marketing.",
+    "title": "Tot ce ai nevoie pentru social media"
+  },
+  "best_times": {
+    "add_slot": "+ Adaugă slot",
+    "ai_dialog": {
+      "description": "AI-ul va rescrie toate sloturile și zilele existente cu recomandări optime per platformă, bazate pe date generale de engagement. Modificările nu sunt salvate automat — vei putea verifica și ajusta înainte să apeși Salvează.",
+      "title": "Completare automată cu AI"
+    },
+    "ai_fill": "Completare AI",
+    "ai_slots_done": "Sloturi completate de AI — verifică și salvează!",
+    "cancel": "Anulează",
+    "continue": "Continuă",
+    "description": "Orele sunt afișate în <timezone></timezone> — se salvează automat în UTC. Rețelele afișate sunt cele conectate și active în <socialAccounts>Conturi sociale</socialAccounts>. Bifează zilele din săptămână eligibile — sistemul programează postările în prima zi/oră liberă, aceeași zi pe toate rețelele, fiecare la propriul best time.",
+    "errors": {
+      "ai_suggestions_failed": "Eroare la generarea sugestiilor AI",
+      "day_required": "{platform}: alege cel puțin o zi",
+      "save_failed": "Eroare la salvare",
+      "slot_required": "{platform}: cel puțin un slot obligatoriu"
+    },
+    "generating": "Se generează...",
+    "loading": "Se încarcă...",
+    "local_time": "ora locală",
+    "no_active_connector": "Niciun conector activ — conectează o rețea din <socialAccounts>Conturi sociale</socialAccounts>.",
+    "save": "Salvează",
+    "saved": "Best times salvate!",
+    "saving": "Salvare...",
+    "weekdays": {
+      "friday": "Vineri",
+      "monday": "Luni",
+      "saturday": "Sâmbătă",
+      "sunday": "Duminică",
+      "thursday": "Joi",
+      "tuesday": "Marți",
+      "wednesday": "Miercuri"
+    }
+  },
+  "billing_dashboard": {
+    "active_subscription_suffix": " · Abonament activ",
+    "agency_clients": "Clienți agenție",
+    "available_credits": "Credite disponibile",
+    "change_plan": "Schimbă planul →",
+    "current_plan": "Plan curent",
+    "errors": {
+      "load_failed": "Nu s-au putut încărca datele de billing. Verifică că backend-ul este activ.",
+      "no_active_org": "Sesiunea nu conține un org activ. Încearcă să te reconectezi."
+    },
+    "image_generators": "Generatori imagine:",
+    "loading": "Se încarcă...",
+    "mock_mode": "Mod simulare",
+    "mock_mode_description": "— plățile nu sunt procesate. Schimbă planul direct pentru testare.",
+    "posts_this_month": "Postări luna aceasta",
+    "price_per_month": "{price}/lună",
+    "pricing_page": "pagina de prețuri",
+    "simulate_upgrade": "Simulează upgrade:",
+    "social_accounts": "Conturi sociale",
+    "trial_suffix": " · 14 zile trial gratuit · Anulezi oricând",
+    "upgrade_available": "Upgrade disponibil pe"
+  },
+  "billing_info": {
+    "cancels_on": "Planul se anulează pe {date}.",
+    "choose_plan": "Alege un plan",
+    "description": "Ești pe planul <strong>{plan}</strong>.",
+    "renews_on": "Planul se reînnoiește pe {date}.",
+    "title": "Plan Abonament"
+  },
+  "billing_topup": {
+    "buy": "Cumpără",
+    "credits_count": "{credits} credite",
+    "description": "1 credit = 1 generare text sau imagine standard. Creditele lunare din plan se resetează la fiecare ciclu de facturare. Creditele extra cumpărate expiră la finalul lunii calendaristice curente (nu se reportează).",
+    "errors": {
+      "checkout_create": "Eroare la creare checkout.",
+      "network": "Eroare de rețea."
+    },
+    "heading": "Cumpără credite extra",
+    "most_popular": "Cel mai popular",
+    "opening": "Se deschide...",
+    "packages": {
+      "pro": {
+        "description": "Cel mai bun raport calitate-preț"
+      },
+      "standard": {
+        "description": "Ideal pentru branduri active"
+      },
+      "starter": {
+        "description": "Perfect pentru teste și postări ocazionale"
+      }
+    },
+    "payment_note": "Plata se procesează prin LemonSqueezy. Acceptăm card Visa, Mastercard și PayPal. Factură emisă automat după plată.",
+    "subtitle": "Creditele se adaugă imediat după plată și expiră la finalul lunii curente."
+  },
+  "brand_kit": {
+    "colors": "Culori",
+    "logo": "Sigla",
+    "templates": "Șabloane",
+    "title": "Brand Kit",
+    "typography": "Tipografie"
+  },
+  "brand_kit_form": {
+    "common": {
+      "save": "Salvează",
+      "saved": "✅ Salvat!",
+      "saving": "Se salvează..."
+    },
+    "documents": {
+      "brand_docs": {
+        "description": "Încarcă manuale, FAQ-uri, prezentări sau pagini web. AI-ul le va folosi ca referință la generarea conținutului — prețuri corecte, funcționalități reale, zero halucinații.",
+        "processing": "Se procesează...",
+        "title": "Documente despre brand",
+        "upload": "Încarcă PDF / DOCX / TXT"
+      },
+      "indexed": {
+        "chunks": "{count} fragmente",
+        "empty": "Niciun document încă. Încarcă un fișier sau adaugă un URL.",
+        "loading": "Se încarcă...",
+        "title": "Documente indexate ({count})"
+      },
+      "status": {
+        "failed": "eșuat",
+        "indexed": "indexat",
+        "processing": "în procesare"
+      },
+      "test": {
+        "ask": "Întreabă",
+        "placeholder": "Ex: \"Care sunt prețurile?\" sau \"Ce produse vindem?\"",
+        "title": "Testează — ce știe AI-ul despre brandul tău?"
+      },
+      "url": {
+        "add": "Adaugă URL",
+        "name_placeholder": "Nume (opțional)",
+        "placeholder": "https://site-ul-tau.com/despre"
+      }
+    },
+    "errors": {
+      "logo_network": "Eroare de rețea la încărcarea logo-ului.",
+      "logo_sign_network": "Eroare de rețea la încărcarea logo + semnătură.",
+      "logo_sign_upload_failed": "Încărcarea logo + semnătură a eșuat ({status})",
+      "logo_upload_failed": "Încărcarea logo-ului a eșuat ({status})",
+      "missing_org": "Sesiunea nu are orgId. Te rugăm să te autentifici din nou.",
+      "network": "Eroare de rețea. Verifică conexiunea.",
+      "save_failed": "Eroare {status}: {message}",
+      "sign_network": "Eroare de rețea la încărcarea semnăturii.",
+      "sign_upload_failed": "Încărcarea semnăturii a eșuat ({status})",
+      "storage_not_configured": "Stocarea R2 nu este configurată.",
+      "template_network": "Eroare de rețea la încărcarea șablonului.",
+      "template_upload_failed": "Încărcarea șablonului a eșuat ({status})"
+    },
+    "identity": {
+      "brand_name": {
+        "label": "Numele companiei / brandului",
+        "placeholder": "Ex: Nex-Nex, Agenție Creativă, TechStartup SRL"
+      },
+      "colors": {
+        "accent": {
+          "description": "CTA-uri, butoane, evidențieri",
+          "label": "Accent"
+        },
+        "background": {
+          "description": "Culoarea de fundal a imaginilor",
+          "label": "Fundal"
+        },
+        "primary": {
+          "description": "Culoarea principală a brandului",
+          "label": "Primară"
+        },
+        "secondary": {
+          "description": "Culoare de suport / fundal secundar",
+          "label": "Secundară"
+        },
+        "text_dark": {
+          "description": "Text pe fundal deschis",
+          "label": "Text întunecat"
+        },
+        "text_light": {
+          "description": "Text pe fundal întunecat",
+          "label": "Text deschis"
+        },
+        "title": "Culorile brandului"
+      },
+      "description": {
+        "label": "Descriere scurtă",
+        "placeholder": "1-3 propoziții despre ce face brandul tău."
+      },
+      "logo": {
+        "alt": "Logo",
+        "description": "Imagine pătrată 1:1, fundal transparent",
+        "label": "Logo",
+        "replace": "Înlocuiește logo",
+        "upload": "Încarcă logo",
+        "uploading": "Se încarcă..."
+      },
+      "logo_sign": {
+        "alt": "Logo + Semnătură",
+        "description": "Un singur fișier cu logo și semnătură împreună — folosit când ambele sunt selectate în Telegram. Creează-l în Canva/Figma și încarcă-l aici.",
+        "label": "Logo + semnătură combinate",
+        "replace": "Înlocuiește logo + semnătură",
+        "upload": "Încarcă logo + semnătură",
+        "uploading": "Se încarcă..."
+      },
+      "sign": {
+        "alt": "Semnătură",
+        "description": "Stilul de scriere al brandului (PNG/SVG)",
+        "label": "Semnătură / font brand",
+        "replace": "Înlocuiește semnătura",
+        "upload": "Încarcă semnătură",
+        "uploading": "Se încarcă..."
+      },
+      "slogan": {
+        "label": "Slogan",
+        "placeholder": "Ex: AI Content Copilot pentru creatori"
+      },
+      "templates": {
+        "add": "Adaugă șablon",
+        "alt": "Șablon {index}",
+        "delete": "Șterge șablon",
+        "description": "Imaginile de fundal / layout-urile vizuale ale brandului. AI le va folosi la generarea imaginilor pentru postări.",
+        "item_label": "Șablon {index}",
+        "title": "Șabloane postări",
+        "uploading": "Se încarcă..."
+      },
+      "visual_assets": {
+        "title": "Active vizuale"
+      }
+    },
+    "no_brand": {
+      "description": "Creează sau selectează un brand din meniul din stânga pentru a configura Brand Kit-ul.",
+      "title": "Niciun brand selectat"
+    },
+    "position_label": "Poziție (Fal.ai):",
+    "positions": {
+      "bot_center": "Jos centru",
+      "bot_left": "Jos stânga",
+      "bot_right": "Jos dreapta",
+      "center": "Centru",
+      "mid_left": "Mijloc stânga",
+      "mid_right": "Mijloc dreapta",
+      "top_center": "Sus centru",
+      "top_left": "Sus stânga",
+      "top_right": "Sus dreapta"
+    },
+    "quick_post": {
+      "custom": "✏️ Personalizat",
+      "image_format": {
+        "custom_description": "Specifică propriul format/dimensiune în engleză",
+        "custom_placeholder": "Ex: square format 1:1 (800×800 px), optimized for Pinterest...",
+        "description": "Dimensiunea imaginii generate în Quick Post. Alege formatul potrivit platformelor pe care publici cel mai des.",
+        "descriptions": {
+          "landscape": "1024×536 px — Facebook, LinkedIn feed",
+          "portrait": "864×1080 px — Instagram feed portret",
+          "square": "1024×1024 px — Instagram feed, Facebook",
+          "story": "576×1024 px — Stories, Reels, TikTok",
+          "wide": "1024×576 px — YouTube, Twitter"
+        },
+        "options": {
+          "landscape": "🖥️ Peisaj 1.91:1",
+          "portrait": "🖼️ Portret 4:5",
+          "square": "⬜ Pătrat 1:1",
+          "story": "📱 Story / Reel 9:16",
+          "wide": "📺 Widescreen 16:9"
+        },
+        "title": "Format implicit imagine"
+      },
+      "platforms": {
+        "description": "Selectate automat în Postarea rapidă. Dacă nu alegi nimic, se folosesc conturile active.",
+        "title": "Rețele sociale implicite"
+      },
+      "provider": {
+        "description": "Folosit automat în ⚡ Postare rapidă fără a întreba utilizatorul.",
+        "options": {
+          "comfyui": "🖼️ Nex-Nex RTX (ComfyUI) — local, 1 credit · logo/sign adăugate mecanic",
+          "fal": "⚡ Fal.ai FLUX — rapid, 1 credit (fără branding) / 2 credite (cu logo/sign integrate organic)",
+          "gemini": "🎨 Google Gemini — 2 credite · logo/sign integrate organic în scenă"
+        },
+        "title": "Generator implicit de imagini"
+      },
+      "save_defaults": "Salvează defaults Quick Post",
+      "saved_message": "✓ Setările au fost salvate!",
+      "saved_short": "✓ Salvat",
+      "schedule": {
+        "description": "Momentul publicării ales automat în Quick Post. Poate fi schimbat la fiecare postare.",
+        "options": {
+          "best_time": "🎯 Best time — cel mai bun moment al zilei per platformă",
+          "now": "⚡ Acum — publică imediat la confirmare"
+        },
+        "title": "Programare implicită"
+      },
+      "text_format": {
+        "description": "Controlează dacă AI-ul include emoji și hashtag-uri în textul generat.",
+        "emoji_description": "AI-ul adaugă emoji relevante în corpul textului",
+        "emoji_label": "😊 Emoji în text",
+        "hashtags_description": "3-5 hashtag-uri relevante adăugate la finalul postării",
+        "hashtags_label": "# Hashtag-uri",
+        "title": "Format text implicit"
+      },
+      "tone": {
+        "custom_description": "Scrie propriile instrucțiuni de ton pentru AI",
+        "custom_placeholder": "Ex: tono entusiasta ma professionale, usa metafore visive, evita i clichè...",
+        "description": "Aplicat la generarea textului în Postarea rapidă. \"Neutru\" înseamnă că AI alege.",
+        "descriptions": {
+          "casual": "Prietenos, relaxat, conversațional",
+          "formal": "Profesional și de autoritate — pentru B2B, corporate",
+          "inspiring": "Motivează, energizează — pentru brand awareness",
+          "neutral": "AI-ul alege stilul potrivit contextului"
+        },
+        "options": {
+          "casual": "😊 Casual",
+          "formal": "💼 Formal",
+          "inspiring": "✨ Inspirațional",
+          "neutral": "⚖️ Neutru"
+        },
+        "title": "Tonul implicit al textului"
+      },
+      "visual_assets": {
+        "description": "Dacă sunt bifate, Postarea rapidă va aplica automat aceste elemente pe imaginea generată. Lasă nebifate dacă vrei imagini curate fără branding.",
+        "loaded": "(încărcat ✓)",
+        "logo": "Logo brand",
+        "logo_missing": "(neîncărcat — adaugă-l din tab-ul Identitate)",
+        "logo_sign": "Logo + Sign combinat",
+        "logo_sign_description": "— trimite fișierul combinat ca referință unică",
+        "sign": "Semnătură / tipografie brand",
+        "sign_missing": "(neîncărcat)",
+        "template": "Șablon vizual (primul din lista ta)",
+        "template_loaded_many": "({count} șabloane ✓)",
+        "template_loaded_one": "(1 șablon ✓)",
+        "template_missing": "(niciun șablon — adaugă unul din tab-ul Identitate)",
+        "title": "Active vizuale implicite"
+      },
+      "visual_style": {
+        "ai_decide": "AI decide",
+        "custom_description": "Descrie propriul stil vizual în engleză pentru promptul AI",
+        "custom_placeholder": "Ex: dreamy watercolor illustration, pastel tones, soft brush strokes, romantic mood...",
+        "description_prefix": "Stilul ales automat la generarea imaginii — sari peste pasul de selecție în Telegram. Alege",
+        "description_suffix": "dacă preferi să alegi la fiecare postare.",
+        "descriptions": {
+          "auto": "Alegi stilul la fiecare postare",
+          "bold": "Culori vii, contrast mare, dinamic",
+          "cinematic": "Lumini dramatice, calitate film",
+          "clean": "Minimalist, spațiu alb, tonuri neutre",
+          "elegant": "Lux, accente aurii, editorial rafinat",
+          "energetic": "Neon, motion, impact vizual maxim",
+          "minimal": "Ultra-simplu, un singur punct focal",
+          "professional": "Corporate, structurat, autoritar"
+        },
+        "options": {
+          "auto": "⏭️ AI decide",
+          "bold": "🔥 Îndrăzneț",
+          "cinematic": "🎬 Cinematic",
+          "clean": "✨ Curat",
+          "elegant": "💎 Elegant",
+          "energetic": "⚡ Energic",
+          "minimal": "◻️ Minimalist",
+          "professional": "💼 Profesional"
+        },
+        "title": "Stil vizual implicit"
+      }
+    },
+    "tabs": {
+      "documents": "Documente AI",
+      "identity": "Identitate",
+      "quick_post": "⚡ Postare rapidă",
+      "typography": "Tipografie",
+      "voice": "Voce & Cuvinte"
+    },
+    "typography": {
+      "bold": "Bold",
+      "color": "Culoare",
+      "default_font": "— Implicit (Inter) —",
+      "description_middle": "și pentru",
+      "description_prefix": "Setările de tipografie sunt folosite la generarea imaginilor cu",
+      "description_product_template": "Produs în șablon",
+      "description_text_on_image": "Text pe imagine",
+      "font": "Font",
+      "italic": "Italic",
+      "overlay": {
+        "description_prefix": "Culoarea benzii semi-transparente din spatele textului scris pe imagine. Poți include alfa (ex:",
+        "description_suffix": ").",
+        "title": "Fundal text suprapus"
+      },
+      "product_template": {
+        "preview_description": "Preview aproximativ (font web) — rezultatul din Telegram folosește exact aceleași fișiere TTF. Fundalul e cel din tab-ul Identitate → Culori brand (\"Fundal\"); apare doar în zonele template-ului fără poză/text, dacă template-ul are transparență acolo.",
+        "preview_subtitle": "Subtitlu / preț",
+        "preview_title": "Titlu produs",
+        "test_subtitle_label": "Text de test — Subtitlu",
+        "test_subtitle_placeholder": "Din bumbac 100% · Preț 149 lei",
+        "test_title_label": "Text de test — Titlu",
+        "test_title_placeholder": "Pantaloni bărbați",
+        "title": "📦 Produs în template"
+      },
+      "size": "Dimensiune (px)",
+      "subtitle_block": {
+        "title": "Subtitlu / Preț"
+      },
+      "text_on_image": {
+        "dark_background": "Fundal închis",
+        "description_prefix": "Textul scurt suprapus pe imaginile generate cu AI (Quick Post / Advanced Post). Folosește fontul și italicul de la",
+        "description_suffix": "(mai sus); culoarea textului se alege automat (alb sau negru) pentru contrast maxim — nu e configurabilă.",
+        "light_background": "Fundal deschis",
+        "test_label": "Text de test — Subiect",
+        "test_placeholder": "Ofertă specială -20% azi!",
+        "title": "🖼️ Text pe imagine"
+      },
+      "title_block": {
+        "title": "Titlu"
+      }
+    },
+    "voice": {
+      "avoid_words": {
+        "label": "Cuvinte de evitat",
+        "placeholder": "ieftin, gratuit, 100% garantat"
+      },
+      "description": "Descrie tonul, valorile și publicul țintă. AI-ul va folosi aceasta pentru fiecare generare.",
+      "keywords": {
+        "label": "Cuvinte cheie (separate prin virgulă)",
+        "placeholder": "inovație, calitate, eficiență, rezultate",
+        "title": "Cuvinte cheie & cuvinte de evitat"
+      },
+      "placeholder": "Ex: Ton profesional dar prietenos. Audiență: antreprenori 25-45 ani. Valori: inovație, eficiență, transparență. Evităm jargonul tehnic excesiv.",
+      "title": "Vocea Brandului"
+    }
+  },
+  "business_brain": {
+    "added": "adăugați",
+    "answer_placeholder": "Răspunsul tău...",
+    "brand_interview_description": "Răspunsurile ajută AI-ul să înțeleagă brandul tău înainte de a genera strategia.",
+    "brand_interview_title": "Interviu Brand ({answered}/10 completate)",
+    "close": "Închide",
+    "deep_scan": "Avansat (30cr)",
+    "error_with_message": "Eroare: {message}",
+    "indexed_files": "fișiere indexate",
+    "interview_questions": {
+      "communication_tone": "Care este tonul brandului? (formal, prietenos, autoritar, etc.)",
+      "differentiator": "Care este diferențiatorul față de concurență?",
+      "known_competitors": "Competitori cunoscuți (nume sau URL-uri)",
+      "objectives": "Care sunt obiectivele de marketing? (awareness, lead-uri, vânzări)",
+      "priority_products": "Care sunt produsele/serviciile prioritare de promovat?",
+      "problems_solved": "Ce probleme concrete rezolvi pentru clienți?",
+      "target_audience": "Cine este clientul ideal? (vârstă, profesie, interese)",
+      "website_url": "URL-ul site-ului principal",
+      "what_sells": "Ce vinzi? (produse sau servicii principale)",
+      "what_to_avoid": "Ce subiecte sau mesaje trebuie evitate?"
+    },
+    "interview_saved": "✓ Interviul a fost salvat!",
+    "missing": "lipsă",
+    "missing_click_to_complete": "Lipsă — click să completezi",
+    "not_scanned": "Nescanat",
+    "partially_completed": "Parțial completat",
+    "save_interview": "Salvează interviul",
+    "saving": "Se salvează...",
+    "scan": "Scanează",
+    "scan_completed": "✓ Scanarea s-a finalizat!",
+    "scan_started": "⏳ Scanarea a pornit pentru {url}. Verificăm automat când se termină (1-3 min)...",
+    "scan_taking_longer": "Scanarea durează mai mult decât de obicei. Verifică din nou mai târziu.",
+    "scan_website_description": "Standard (20cr): 15 pagini principale. Avansat (30cr): site complet, blog, FAQ.",
+    "scan_website_title": "Scanează site-ul",
+    "starting": "Se pornește..."
+  },
+  "calendar": {
+    "active_campaigns": "Active",
+    "all": "Toate",
+    "all_brands": "Toate brandurile",
+    "analytics": {
+      "clicks": "Click-uri",
+      "comments": "Comentarii",
+      "impressions": "Impresii",
+      "likes": "Like-uri",
+      "shares": "Share-uri",
+      "synced_at": "Sincronizat: {date}"
+    },
+    "analytics_unavailable": "Analytics indisponibile.",
+    "brand": "Brand",
+    "calendar_view": "📅 Calendar",
+    "campaign_status": "Stare campanie",
+    "choose_new_date": "Alege noua dată și oră:",
+    "choose_repost_accounts": "Alege conturile pentru repostare:",
+    "close": "Închide",
+    "confirm_reschedule": "Confirmă reprogramarea",
+    "day": "Zi",
+    "delete": "Șterge",
+    "delete_button": "🗑 Șterge",
+    "delete_post_confirm": "Ștergi definitiv această postare?",
+    "edit_text": "Modifică text",
+    "error_with_message": "Eroare: {message}",
+    "list_view": "☰ Listă",
+    "month": "Lună",
+    "more_images": "+{count} imagini",
+    "no_connected_accounts": "Niciun cont conectat.",
+    "no_posts_day": "Nicio postare în această zi.",
+    "not_available": "—",
+    "page_subtitle": "Vizualizează și reprogramează postările.",
+    "page_title": "Calendar Editorial",
+    "pause": "Pauză",
+    "pause_button": "⏸ Pauză",
+    "post_status": "Stare postare",
+    "processing": "Se procesează...",
+    "publish_error": "Eroare la publicare",
+    "publish_failed": "Publicare eșuată",
+    "publish_now": "Publică acum",
+    "publish_started": "Publicare inițiată",
+    "publish_started_description": "Postarea va apărea ca publicată în câteva secunde.",
+    "refresh_posts": "Refresh postări",
+    "repost": "Repostează",
+    "reposting": "Se repostează...",
+    "reschedule": "Reprogramează",
+    "reschedule_all": "⚡ Rearanjează toate",
+    "reschedule_all_confirm": "Rearanjezi TOATE temele nepublicate pe noile best times? Operația nu poate fi anulată.",
+    "reschedule_all_error": "Eroare la rearanjare",
+    "reschedule_all_success": "✅ {count} postări rearanjate pe noile best times",
+    "reschedule_button": "📅 Reprogramează",
+    "scheduled_at": "Programat",
+    "start_auto_refresh": "Activează auto-refresh (60s)",
+    "status_legend": "Status:",
+    "statuses": {
+      "approved": "Aprobat",
+      "archived": "Arhivat",
+      "cancelled": "Anulat",
+      "draft": "Ciornă",
+      "failed": "Eșuat",
+      "paused": "Pauză",
+      "published": "Publicat",
+      "rescheduling": "Reprogramare",
+      "scheduled": "Programat",
+      "skipped": "Omis"
+    },
+    "stop_auto_refresh": "Oprește auto-refresh (60s)",
+    "syncing": "Se sincronizează...",
+    "today": "Azi",
+    "token_expired_description": "Accesul la contul <platform></platform> a expirat. Mergi la <settings>Settings → Social Accounts</settings> și reconectează contul. Postarea va fi reîncercată automat.",
+    "token_expired_title": "Token expirat — reconectare necesară",
+    "tomorrow": "Mâine →",
+    "view_published_post": "Vezi postarea publicată →",
+    "view_topic_posts": "🗂️ Vezi toate postările din această temă →",
+    "week": "Săptămână",
+    "yesterday": "← Ieri"
+  },
+  "campaigns": {
+    "active": "Active",
+    "all": "Toate",
+    "archive": "Arhivează",
+    "assign_campaign": "Atribuie campanie",
+    "budget_optional": "Buget (opțional)",
+    "budget_placeholder": "ex: 5000",
+    "bulk": {
+      "actions": {
+        "archive": "arhivezi",
+        "clone": "clonezi",
+        "delete": "ștergi",
+        "move": "muți",
+        "pause": "pui pe pauză",
+        "resume": "reiei"
+      },
+      "confirm_campaigns": "Sigur {action} {count} campanii?",
+      "confirm_posts": "Sigur {action} {count} postări?",
+      "confirm_topics": "Sigur {action} {count} teme (cu toate postările lor)?"
+    },
+    "campaign_name_placeholder": "ex: Lansare produs mai 2026",
+    "campaign_name_required": "Nume campanie *",
+    "cancel": "Anulează",
+    "cancel_campaign": "Anulează campania",
+    "choose_campaign_placeholder": "Alege campania...",
+    "click_to_reschedule": "Click pentru a reprograma",
+    "clone": "Clonează",
+    "clone_paused": "Clonează (cu pauză)",
+    "create_campaign": "Creează campania",
+    "create_posts": "Creează postări",
+    "creating": "Se creează...",
+    "currency": "Monedă",
+    "date_and_time": "Data și ora",
+    "delete": "Șterge",
+    "delete_campaign_confirm": "Ștergi campania \"{name}\"? Toate postările se vor șterge.",
+    "delete_campaign_error": "Nu se poate șterge: doar campaniile draft fără consum de credite pot fi șterse. Folosește Arhivare.",
+    "delete_confirm": "Ștergi această postare definitiv?",
+    "delete_draft_only": "Șterge (doar draft)",
+    "delete_topic_confirm": "Ștergi această temă și toate postările din ea?",
+    "delete_topic_with_posts": "Șterge tema + postări",
+    "delete_with_posts": "Șterge + postări",
+    "deselect": "Deselectează",
+    "dialog_edit_title": "Modifică textul postării",
+    "dialog_repost_title": "Repostează pe alte rețele",
+    "dialog_reschedule_title": "Reprogramează postarea",
+    "dialog_translate_title": "Postare în altă limbă",
+    "edit_image_prompt_description": "Promptul EN trimis la generatorul AI. Modifică și salvează.",
+    "edit_image_prompt_title": "Editează prompt imagine",
+    "edit_text": "Modifică text",
+    "empty_campaign_posts": "Nicio postare în această campanie.",
+    "empty_subtitle": "Creează prima postare din Telegram Bot cu comanda /start.",
+    "empty_title": "Nicio postare încă",
+    "empty_topic_posts": "Nicio postare în această temă.",
+    "end_date": "Data end",
+    "error_prefix": "Eroare",
+    "generate": "Generează",
+    "generating": "Se generează...",
+    "image_alt": "Imagine {index}",
+    "image_prompt": "Prompt imagine",
+    "inbox_description": "Trimise din Telegram fără campanie curentă selectată. Atribuie-le unei campanii.",
+    "inbox_title": "Posturi fără campanie",
+    "language_label": "Limba:",
+    "languages": {
+      "de": "Deutsch",
+      "en": "English",
+      "es": "Español",
+      "fr": "Français",
+      "it": "Italiano",
+      "ro": "Română"
+    },
+    "loading": "Se încarcă...",
+    "loading_campaigns": "Se încarcă campaniile...",
+    "loading_posts": "Se încarcă postările...",
+    "mark_published_external": "Marcat publicat extern",
+    "move": "Mută",
+    "move_post": "Mută postarea",
+    "move_post_title": "Mută postarea în altă campanie",
+    "move_to_campaign": "Mută în campanie",
+    "move_to_campaign_ellipsis": "Mută în campanie...",
+    "move_to_placeholder": "Mută în...",
+    "move_topic_confirm": "Muți tema \"{topic}\" ({count} postări) în \"{campaign}\"?",
+    "move_topic_description": "({count} postări) → alege campania destinație:",
+    "move_topic_success": "✅ Tema mutată în \"{campaign}\"",
+    "move_topic_title": "Mută tema în campanie",
+    "move_topics_placeholder": "Mută temele în...",
+    "moving": "Se mută...",
+    "new_campaign": "Campanie nouă",
+    "next": "Înainte",
+    "no_other_campaigns": "Nu există alte campanii.",
+    "other_language": "Altă limbă",
+    "other_social_network": "Altă rețea socială",
+    "page_subtitle": "Toate postările create din Telegram Bot.",
+    "page_title": "Campanii",
+    "pagination": "Pagina {page} din {totalPages} • {total} campanii",
+    "pause": "Pauză",
+    "pause_all_posts": "Pauză toate postările",
+    "pause_campaign": "Pauză campanie",
+    "per_page": "Pe pagină",
+    "platform_optional_label": "Platformă (opțional, implicit aceeași):",
+    "platforms": {
+      "blog": "Blog",
+      "discord": "Discord",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn",
+      "x": "X / Twitter"
+    },
+    "posts_count": "{count} postări",
+    "posts_selected": "{count} postări selectate",
+    "previous": "Înapoi",
+    "processing": "Se procesează...",
+    "publish_now": "Postează acum",
+    "publish_topic_confirm": "Publici acum toate postările din tema \"{name}\"?",
+    "repost": "Repostează",
+    "reschedule": "Reprogramează",
+    "reschedule_campaign": "Reprogramează campania",
+    "reschedule_error": "Eroare la reprogramare",
+    "reschedule_modes": {
+      "next_best_time": {
+        "campaign_desc": "Primul slot comun liber pe toate platformele",
+        "label": "Next best time",
+        "topic_desc": "Primul slot comun liber pe toate platformele"
+      },
+      "specific_date": {
+        "campaign_desc": "Mută tema la o dată aleasă de tine",
+        "label": "Dată specifică",
+        "topic_desc": "Mută postările la o dată aleasă de tine"
+      }
+    },
+    "reschedule_success": "✅ {count} postări reprogramate",
+    "reschedule_topic": "Reprogramează tema",
+    "resume": "Activează",
+    "resume_all_posts": "Reia toate postările",
+    "resume_campaign": "Reluare campanie",
+    "resume_short": "Reia",
+    "retry": "Încearcă din nou",
+    "same_platform": "Aceeași platformă",
+    "save": "Salvează",
+    "save_prompt": "Salvează prompt",
+    "saving": "Se salvează...",
+    "scheduled_date_optional": "Data programată (opțional):",
+    "select_campaign": "Selectează campania",
+    "select_destination_campaign": "Selectează campania destinație:",
+    "select_platforms": "Selectează platformele:",
+    "selected_count": "{count} selectate",
+    "set_current": "Marchează ca curentă",
+    "start_date": "Data start",
+    "status": "Stare",
+    "statuses": {
+      "approved": "Aprobat",
+      "archived": "Arhivată",
+      "cancelled": "Anulată",
+      "draft": "Ciornă",
+      "failed": "Eșuat",
+      "paused": "Pauză",
+      "published": "Publicat",
+      "scheduled": "Programat",
+      "skipped": "Omis"
+    },
+    "topic_description": "Topic / descriere",
+    "topic_description_placeholder": "Despre ce e campania? AI-ul va folosi asta la generare.",
+    "topics_selected": "{count} teme selectate",
+    "unset_current": "Elimină marcajul curent",
+    "view_post": "Vezi postarea →"
+  },
+  "clients_manager": {
+    "add": "Adaugă",
+    "add_agency_as_self": "Adaugă {name} ca client propriu",
+    "add_as_self": "Adaugă ca propriu",
+    "add_new_client": "Adaugă client nou",
+    "add_self_description": "Permite alocarea de buget și rapoarte pentru postările proprii.",
+    "adding": "Se adaugă...",
+    "agency": "agenția",
+    "client_name_placeholder": "Numele clientului (ex: Bakery X)",
+    "clients_count": "Clienți ({count})",
+    "confirm_remove_client": "Ești sigur că vrei să elimini acest client?",
+    "empty": "Niciun client. Adaugă primul client sau adaugă agenția ca client propriu.",
+    "enter": "Intră",
+    "errors": {
+      "add_client": "Eroare la adăugare client",
+      "add_self": "Eroare la adăugare client propriu"
+    },
+    "loading": "Se încarcă...",
+    "self": "propriu"
   },
   "common": {
-    "save": "Salvează",
     "cancel": "Anulează",
     "delete": "Șterge",
     "edit": "Editează",
-    "loading": "Se încarcă...",
     "error": "A apărut o eroare",
+    "loading": "Se încarcă...",
+    "save": "Salvează",
     "success": "Salvat cu succes",
-    "toggle_sidebar": "Comută bara laterală",
-    "toggle_navigation_menu": "Comută meniul de navigare"
+    "toggle_navigation_menu": "Comută meniul de navigare",
+    "toggle_sidebar": "Comută bara laterală"
   },
-  "settings": {
-    "title": "Setări",
-    "subtitle": "Gestionează setările contului și ale site-ului.",
-    "language": "Limba interfeței",
-    "language_description": "Alege limba pentru interfață",
-    "timezone": "Fus orar",
-    "save_changes": "Salvează modificările"
+  "compare_plans": {
+    "empty": "—",
+    "label": "Planuri",
+    "subtitle": "Găsește planul perfect pentru nevoile tale!",
+    "title": "Compară Planurile"
   },
-  "brand_kit": {
-    "title": "Brand Kit",
-    "logo": "Sigla",
-    "colors": "Culori",
-    "typography": "Tipografie",
-    "templates": "Șabloane"
+  "create_brand_modal": {
+    "brand_name": "Numele brandului",
+    "brand_name_placeholder": "ex: TerraSoft, AllMeters.com",
+    "cancel": "Anulează",
+    "create_brand": "Creează brand",
+    "description": "Introdu numele brandului sau companiei. Vei putea configura logo, culori și vocea brandului în Brand Kit.",
+    "errors": {
+      "create_failed": "Eroare la creare. Încearcă din nou.",
+      "limit_reached": "Ai atins limita de branduri pe planul actual. Upgrade pentru mai multe."
+    },
+    "title": "Brand nou"
   },
   "dashboard": {
-    "title": "Panou de control",
-    "subtitle": "Performanța conținutului tău în timp real."
+    "subtitle": "Performanța conținutului tău în timp real.",
+    "title": "Panou de control"
   },
-  "marketing_nav": {
-    "pricing": "Prețuri",
-    "features": "Funcționalități",
-    "blog": "Blog"
+  "dashboard_sidebar": {
+    "items": {
+      "admin_panel": "Panou Admin",
+      "billing": "Abonament",
+      "brand_kit": "Brand Kit",
+      "calendar": "Calendar",
+      "campaigns": "Campanii",
+      "dashboard": "Dashboard",
+      "settings": "Setări"
+    },
+    "sections": {
+      "account": "CONT",
+      "brand": "BRAND",
+      "content": "CONȚINUT"
+    }
+  },
+  "delete_account_modal": {
+    "confirm_cta": "Confirmă ștergerea contului",
+    "title": "Șterge Contul",
+    "toast": {
+      "loading": "Se șterge contul...",
+      "success": "Contul a fost șters cu succes!"
+    },
+    "verification": {
+      "phrase": "confirm delete account",
+      "prefix": "Pentru confirmare, scrie",
+      "suffix": "mai jos"
+    },
+    "warning_label": "Atenție:",
+    "warning_text": "Aceasta va șterge permanent contul tău și abonamentul activ!"
   },
   "docs_nav": {
     "documentation": "Documentație",
     "guides": "Ghiduri"
   },
-  "dashboard_sidebar": {
-    "sections": {
-      "content": "CONȚINUT",
-      "brand": "BRAND",
-      "account": "CONT"
-    },
+  "features_section": {
+    "cta": "Află mai mult",
     "items": {
-      "dashboard": "Dashboard",
-      "campaigns": "Campanii",
-      "calendar": "Calendar",
-      "brand_kit": "Brand Kit",
-      "billing": "Abonament",
-      "settings": "Setări",
-      "admin_panel": "Panou Admin"
-    }
-  },
-  "search": {
-    "button": "Caută",
-    "docs_suffix": "documentație",
-    "placeholder": "Scrie o comandă sau caută...",
-    "no_results": "Nu am găsit rezultate."
-  },
-  "analytics": {
-    "loading": "Se încarcă analytics...",
-    "days": "{count} zile",
-    "syncing": "Se sincronizează...",
-    "sync_now": "Sync acum",
-    "kpi_published_posts": "Posturi publicate",
-    "kpi_total_reach": "Total Reach",
-    "kpi_total_likes": "Total Likes",
-    "kpi_total_shares": "Total Shares",
-    "empty_title": "Nicio postare publicată în ultimele {days} zile",
-    "empty_subtitle": "Publică primele posturi pentru a vedea analytics.",
-    "engagement_by_platform": "Engagement per platformă",
-    "metric_reach": "Reach",
-    "metric_likes": "Likes",
-    "metric_comments": "Comentarii",
-    "metric_shares": "Distribuiri",
-    "post_distribution": "Distribuție posturi",
-    "top_posts": "Top 5 posturi",
-    "no_data": "Nicio dată disponibilă.",
-    "not_available": "—",
-    "score": "scor"
-  },
-  "calendar": {
-    "page_title": "Calendar Editorial",
-    "page_subtitle": "Vizualizează și reprogramează postările.",
-    "today": "Azi",
-    "month": "Lună",
-    "week": "Săptămână",
-    "day": "Zi",
-    "status_legend": "Status:",
-    "scheduled_at": "Programat",
-    "view_published_post": "Vezi postarea publicată →",
-    "publish_now": "Publică acum",
-    "close": "Închide",
-    "not_available": "—",
-    "statuses": {
-      "draft": "Ciornă",
-      "approved": "Aprobat",
-      "scheduled": "Programat",
-      "published": "Publicat",
-      "failed": "Eșuat",
-      "skipped": "Omis",
-      "archived": "Arhivat"
-    }
-  },
-  "campaigns": {
-    "page_title": "Campanii",
-    "page_subtitle": "Toate postările create din Telegram Bot.",
-    "delete_confirm": "Ștergi această postare definitiv?",
-    "loading_campaigns": "Se încarcă campaniile...",
-    "empty_title": "Nicio postare încă",
-    "empty_subtitle": "Creează prima postare din Telegram Bot cu comanda /start.",
-    "loading_posts": "Se încarcă postările...",
-    "empty_campaign_posts": "Nicio postare în această campanie.",
-    "view_post": "Vezi postarea →",
-    "edit_text": "Modifică text",
-    "reschedule": "Reprogramează",
-    "pause": "Pauză",
-    "resume": "Activează",
-    "repost": "Repostează",
-    "other_language": "Altă limbă",
-    "other_social_network": "Altă rețea socială",
-    "delete": "Șterge",
-    "error_prefix": "Eroare",
-    "dialog_edit_title": "Modifică textul postării",
-    "dialog_reschedule_title": "Reprogramează postarea",
-    "dialog_repost_title": "Repostează pe alte rețele",
-    "dialog_translate_title": "Postare în altă limbă",
-    "select_platforms": "Selectează platformele:",
-    "scheduled_date_optional": "Data programată (opțional):",
-    "cancel": "Anulează",
-    "saving": "Se salvează...",
-    "save": "Salvează",
-    "creating": "Se creează...",
-    "create_posts": "Creează postări",
-    "language_label": "Limba:",
-    "platform_optional_label": "Platformă (opțional, implicit aceeași):",
-    "same_platform": "Aceeași platformă",
-    "generating": "Se generează...",
-    "generate": "Generează",
-    "image_alt": "Imagine {index}",
-    "platforms": {
-      "instagram": "Instagram",
-      "facebook": "Facebook",
-      "linkedin": "LinkedIn",
-      "x": "X / Twitter",
-      "discord": "Discord",
-      "blog": "Blog"
+      "agency_mode": {
+        "description": "Gestionează toți clienții dintr-un singur cont. Switch rapid între workspace-uri, billing unificat.",
+        "title": "Agency Mode"
+      },
+      "analytics": {
+        "description": "Reach, impressions, likes și shares sincronizate de pe toate platformele. Top posturi per perioadă. Dashboard complet analytics în dezvoltare.",
+        "title": "Analytics (în curând)"
+      },
+      "brand_intelligence": {
+        "description": "Upload PDF, DOCX sau URL cu descrierea brandului. AI-ul scrie ca și cum ar cunoaște compania ta de ani de zile.",
+        "title": "Brand Intelligence (RAG)"
+      },
+      "editorial_calendar": {
+        "description": "Vizualizare lunară și săptămânală. Drag & drop pentru reprogramare. Culori per platformă și status.",
+        "title": "Calendar Editorial"
+      },
+      "idea_generator": {
+        "description": "100 de idei de postări generate din contextul brandului tău. Educational, promotional, storytelling — programate automat câte 2 pe zi, pe toate platformele.",
+        "title": "Generator de Idei"
+      },
+      "telegram_bot": {
+        "description": "Creează și aprobă postări din dashboardul web sau direct din Telegram. AI-ul generează postarea, tu o aprobi cu un tap. Publicare imediată sau programată.",
+        "title": "Aplicație web și Telegram Bot"
+      }
     },
-    "statuses": {
-      "draft": "Ciornă",
-      "approved": "Aprobat",
-      "scheduled": "Programat",
-      "published": "Publicat",
-      "failed": "Eșuat",
-      "skipped": "Omis",
-      "paused": "Pauză",
-      "cancelled": "Anulată",
-      "archived": "Arhivată"
-    }
+    "label": "Funcționalități",
+    "subtitle": "Instrumente AI construite pentru a simplifica crearea și publicarea conținutului.",
+    "title": "Tot ce îți trebuie pentru social media"
   },
-  "account": {
-    "delete_title": "Șterge contul",
-    "delete_description": "Aceasta este o zonă periculoasă. Ai grijă.",
-    "delete_confirm_title": "Ești sigur?",
-    "active_subscription": "Abonament activ",
-    "delete_warning": "Șterge permanent contul tău {site}{suffix}. Această acțiune nu poate fi anulată. Continuă cu grijă.",
-    "delete_warning_subscription_suffix": " și abonamentul tău",
-    "delete_button": "Șterge contul",
-    "name_title": "Numele tău",
-    "name_description": "Introdu un nume afișat cu care te simți confortabil.",
-    "name_label": "Nume",
-    "save_changes_suffix": "modificările",
-    "name_hint": "Maxim 32 de caractere",
-    "role_title": "Rolul tău",
-    "role_description": "Selectează rolul pe care vrei să-l folosești cât timp testezi aplicația.",
-    "role_label": "Rol",
-    "role_placeholder": "Selectează un rol",
-    "role_hint": "Elimină acest câmp în producția reală"
-  },
-  "telegram": {
-    "title": "Telegram Bot",
-    "description_before": "Conectează-ți contul la",
-    "description_after": "pentru a crea și aproba postări direct din Telegram.",
-    "generate_code": "Generează cod de conectare",
-    "token_error": "Eroare la generarea token-ului.",
-    "server_error": "Nu se poate conecta la server. Încearcă din nou.",
-    "send_code_before": "Trimite acest cod botului",
-    "send_code_after": ":",
-    "copy": "Copiază",
-    "expires_in": "Codul expiră în 10 minute."
+  "footer": {
+    "anpc_sal": "Soluționarea Alternativă a Litigiilor",
+    "anpc_sol": "Soluționarea Online a Litigiilor",
+    "copyright": "© 2026 Nex-Nex.com · All rights reserved · contact@nex-nex.com",
+    "sections": {
+      "legal": {
+        "privacy": "Politică de Confidențialitate",
+        "terms": "Termeni și Condiții",
+        "title": "Legal"
+      },
+      "product": {
+        "blog": "Blog",
+        "features": "Funcționalități",
+        "how_it_works": "Cum funcționează",
+        "pricing": "Prețuri",
+        "title": "Produs"
+      },
+      "support": {
+        "email": "Email",
+        "title": "Suport"
+      }
+    },
+    "tagline": "AI Marketing Manager — construiește strategia de conținut, creează postări profesioniste și le publică automat pe toate rețelele sociale."
   },
   "hero_landing": {
-    "trial_badge": "Trial gratuit 14 zile pe Starter · fără taxare până la final",
-    "title_prefix": "AI Marketing Manager",
-    "title_highlight": "pentru brandul tău. Chiar și de pe telefon.",
+    "coming_soon_toast": "Lucrăm încă la conectorul {network} — revino curând!",
     "description": "Nex-Nex învață business-ul tău, analizează concurența, îți face analiză și strategie, plus 100 de idei de postare cu text și poze cu AI. Tu doar aprobi.",
     "primary_cta": "Începe gratuit",
     "secondary_cta": "Vezi prețurile",
-    "coming_soon_toast": "Lucrăm încă la conectorul {network} — revino curând!"
+    "title_highlight": "pentru brandul tău. Chiar și de pe telefon.",
+    "title_prefix": "AI Marketing Manager",
+    "trial_badge": "Trial gratuit 14 zile pe Starter · fără taxare până la final"
   },
-  "preview_landing": {
-    "image_alt": "Interfața Nex-Nex — dashboard postări"
-  },
-  "workflow_section": {
-    "title": "Cum funcționează Nex-Nex",
-    "subtitle": "De la idee la postare publicată în câteva minute, fără cunoștințe tehnice.",
-    "steps": {
-      "01": {
-        "title": "Încarci contextul brandului",
-        "description": "Adaugi PDF-uri, URL-uri sau descrieri despre compania ta. AI-ul învață vocea, valorile și produsele tale."
-      },
-      "02": {
-        "title": "Generezi idei de postări",
-        "description": "Primești 100 de idei organizate pe categorii: educational, promotional, storytelling, sezonier."
-      },
-      "03": {
-        "title": "Alegi subiectul",
-        "description": "Selectezi ideea care ți se potrivește sau trimiți orice subiect direct din Telegram."
-      },
-      "04": {
-        "title": "AI generează textul",
-        "description": "Textul este scris în vocea brandului tău, adaptat pentru fiecare platformă socială."
-      },
-      "05": {
-        "title": "Adaugi o fotografie (opțional)",
-        "description": "Trimiți o poză din telefon. AI-ul o transformă într-o imagine profesionistă pentru social media."
-      },
-      "06": {
-        "title": "AI generează imaginea",
-        "description": "Dacă nu ai fotografie, AI-ul creează o imagine originală bazată pe conținutul postării."
-      },
-      "07": {
-        "title": "Programezi publicarea",
-        "description": "Publici imediat sau alegi data și ora. Configurezi intervalele preferate per platformă — Nex-Nex le completează automat."
-      },
-      "08": {
-        "title": "Programare inteligentă per rețea",
-        "description": "Fiecare platformă are ore optime. Configurezi sloturile o singură dată — Nex-Nex alege următoarea fereastră disponibilă. Completare AI automată bazată pe audiență: în curând."
-      },
-      "09": {
-        "title": "Postarea se publică simultan",
-        "description": "Nex-Nex publică simultan pe toate platformele conectate: Instagram, LinkedIn, Facebook, X, Discord, Bluesky."
-      },
-      "10": {
-        "title": "Publici în orice limbă",
-        "description": "Un singur conținut, tradus și adaptat cultural pentru orice piață dorești să atingi."
-      }
+  "login_page": {
+    "metadata": {
+      "description": "Autentifică-te în contul tău",
+      "title": "Autentificare"
     }
   },
-  "bentogrid_section": {
-    "title": "Tot ce ai nevoie pentru social media",
-    "subtitle": "Funcționalități construite pentru creatori de conținut și agenții de marketing.",
-    "cards": {
-      "brand_intelligence": {
-        "title": "Brand Intelligence",
-        "description": "AI-ul învață vocea, valorile și produsele brandului tău din documente PDF, URL-uri și descrieri. Generează automat 100 de idei de postare organizate pe categorii — tu le aprobi sau le ajustezi."
-      },
-      "from_idea_to_published": {
-        "title": "De la idee la publicat",
-        "description": "Trimiți un subiect din aplicație sau din Telegram. În 2 minute ai text, imagine și postarea programată pe toate platformele."
-      },
-      "languages": {
-        "title": "Orice limbă, orice piață",
-        "description": "Generezi conținut în română, engleză, italiană sau orice altă limbă. Adaptat cultural, nu doar tradus."
-      },
-      "best_time": {
-        "title": "Programare inteligentă",
-        "description": "Configurezi sloturile preferate per platformă. Nex-Nex programează automat cele 100 de idei generate — uniform, câte 2 pe zi. Analiza AI a audienței vine în curând."
-      }
-    }
+  "marketing_error": {
+    "retry": "Încearcă din nou",
+    "title": "Ceva nu a funcționat!",
+    "unknown_error": "Eroare necunoscută"
   },
-  "features_section": {
-    "label": "Funcționalități",
-    "title": "Tot ce îți trebuie pentru social media",
-    "subtitle": "Instrumente AI construite pentru a simplifica crearea și publicarea conținutului.",
-    "cta": "Află mai mult",
-    "items": {
-      "telegram_bot": {
-        "title": "Aplicație web și Telegram Bot",
-        "description": "Creează și aprobă postări din dashboardul web sau direct din Telegram. AI-ul generează postarea, tu o aprobi cu un tap. Publicare imediată sau programată."
-      },
-      "brand_intelligence": {
-        "title": "Brand Intelligence (RAG)",
-        "description": "Upload PDF, DOCX sau URL cu descrierea brandului. AI-ul scrie ca și cum ar cunoaște compania ta de ani de zile."
-      },
-      "editorial_calendar": {
-        "title": "Calendar Editorial",
-        "description": "Vizualizare lunară și săptămânală. Drag & drop pentru reprogramare. Culori per platformă și status."
-      },
-      "idea_generator": {
-        "title": "Generator de Idei",
-        "description": "100 de idei de postări generate din contextul brandului tău. Educational, promotional, storytelling — programate automat câte 2 pe zi, pe toate platformele."
-      },
-      "agency_mode": {
-        "title": "Agency Mode",
-        "description": "Gestionează toți clienții dintr-un singur cont. Switch rapid între workspace-uri, billing unificat."
-      },
-      "analytics": {
-        "title": "Analytics (în curând)",
-        "description": "Reach, impressions, likes și shares sincronizate de pe toate platformele. Top posturi per perioadă. Dashboard complet analytics în dezvoltare."
-      }
-    }
+  "marketing_nav": {
+    "blog": "Blog",
+    "features": "Funcționalități",
+    "pricing": "Prețuri"
   },
-  "testimonials_section": {
-    "label": "Testimoniale",
-    "title": "Ce ar spune clienții noștri — dacă i-am fi avut deja 😄",
-    "subtitle": "Testimoniale ipotetice generate de AI. Am preferat mereu adevărul! Cele reale apar în curând.",
-    "badge_ai": "Verificat AI",
-    "items": [
-      {
-        "name": "Andrei Popescu",
-        "job": "Fondator startup SaaS",
-        "review": "Am trecut de la 3 ore/săptămână pe social media la 15 minute. Nex-Nex generează exact tonul brandului nostru — nu mai corectez textele AI.",
-        "image": "https://randomuser.me/api/portraits/men/32.jpg"
-      },
-      {
-        "name": "Maria Ionescu",
-        "job": "Social Media Manager",
-        "review": "Gestionez 8 clienți cu Nex-Nex Agency. Calendar vizual, aprobare rapidă, publicare automată. A eliminat jumătate din munca mea manuală.",
-        "image": "https://randomuser.me/api/portraits/women/44.jpg"
-      },
-      {
-        "name": "Radu Constantin",
-        "job": "Antreprenor e-commerce",
-        "review": "Botul de Telegram e genial. Fac o poză la un produs nou, AI-ul scrie captionul, eu aprob, gata. Tot procesul durează 2 minute.",
-        "image": "https://randomuser.me/api/portraits/men/67.jpg"
-      },
-      {
-        "name": "Elena Dumitrescu",
-        "job": "Creator de conținut",
-        "review": "RAG-ul face diferența față de orice alt tool. AI-ul știe exact prețurile, features și valorile brandului meu. Zero post-uri cu informații greșite.",
-        "image": "https://randomuser.me/api/portraits/women/23.jpg"
-      },
-      {
-        "name": "Mihai Stanescu",
-        "job": "Director Marketing",
-        "review": "Echipa noastră de 5 persoane publică acum de 3x mai mult conținut. Workflow-ul de aprobare cu Nex-Nex e mult mai rapid decât orice tool am testat.",
-        "image": "https://randomuser.me/api/portraits/men/55.jpg"
-      },
-      {
-        "name": "Ana Popa",
-        "job": "Freelancer Content",
-        "review": "Ca freelancer cu 12 clienți, Nex-Nex Agency mi-a salvat business-ul. Un singur abonament, toți clienții sub control, facturare simplă.",
-        "image": "https://randomuser.me/api/portraits/women/12.jpg"
-      },
-      {
-        "name": "Bogdan Muresan",
-        "job": "Co-fondator agenție digitală",
-        "review": "Am încercat Buffer, Hootsuite, SocialBee. Nex-Nex e singurul cu bot Telegram + RAG per client. Pentru agenții, e game changer.",
-        "image": "https://randomuser.me/api/portraits/men/78.jpg"
-      },
-      {
-        "name": "Ioana Constantin",
-        "job": "Antreprenor local — Salon frumusețe",
-        "review": "Nu știam nimic despre social media. Acum postez zilnic pe Instagram și Facebook fără să pierd timp. Nex-Nex face totul — eu doar aprob.",
-        "image": "https://randomuser.me/api/portraits/women/65.jpg"
-      }
-    ]
-  },
-  "powered_section": {
-    "title": "Construit cu tehnologii de top"
+  "marketing_not_found": {
+    "homepage": "Pagina principală",
+    "image_alt": "404",
+    "message": "Pagina nu a fost găsită. Înapoi la"
   },
   "marketing_pricing_page": {
-    "title": "Prețuri simple și transparente",
-    "subtitle": "Starter include trial gratuit 14 zile (card cerut, fără taxare până la final). Pro, Business și Agency se facturează imediat. Anulezi oricând.",
-    "popular_badge": "Popular",
-    "per_month": "/lună",
-    "toggle": {
-      "monthly": "Lunar",
-      "yearly": "Anual",
-      "discount": "-17%",
-      "billed_yearly": "€{total} facturat anual"
-    },
     "agency_extra": "€10/lună per brand suplimentar, fără plafon",
     "metadata": {
-      "title": "Prețuri — Nex-Nex",
-      "description": "Planuri simple pentru creatori individuali și agenții. Trial 14 zile pe Starter. Pro, Business și Agency se facturează imediat."
+      "description": "Planuri simple pentru creatori individuali și agenții. Trial 14 zile pe Starter. Pro, Business și Agency se facturează imediat.",
+      "title": "Prețuri — Nex-Nex"
     },
+    "per_month": "/lună",
     "plans": {
+      "agency": {
+        "cta": "Abonează-te acum",
+        "description": "Pentru agenții",
+        "features": [
+          "20 branduri incluse",
+          "+ €10/lună per brand suplimentar, fără plafon",
+          "Conturi sociale nelimitate",
+          "7.000 credite AI/lună",
+          "Portal client izolat",
+          "Billing unificat",
+          "100 GB storage"
+        ]
+      },
+      "business": {
+        "cta": "Abonează-te acum",
+        "description": "Pentru echipe",
+        "features": [
+          "10 branduri",
+          "Conturi nelimitate",
+          "2.500 credite AI/lună",
+          "AI complet (incl. video)",
+          "Analytics avansat",
+          "50 GB storage"
+        ]
+      },
       "free": {
-        "description": "Pentru a testa platforma",
         "cta": "Încearcă gratuit",
+        "description": "Pentru a testa platforma",
         "features": [
           "1 brand",
           "1 cont social",
@@ -410,21 +1097,9 @@
           "AI text + imagine basic"
         ]
       },
-      "starter": {
-        "description": "Pentru creatori individuali",
-        "cta": "Începe trial 14 zile",
-        "features": [
-          "1 brand",
-          "5 conturi sociale",
-          "250 credite AI/lună",
-          "AI text + imagine",
-          "Telegram Bot",
-          "5 GB storage"
-        ]
-      },
       "pro": {
-        "description": "Cel mai popular",
         "cta": "Abonează-te acum",
+        "description": "Cel mai popular",
         "features": [
           "3 branduri",
           "15 conturi sociale",
@@ -435,408 +1110,625 @@
           "20 GB storage"
         ]
       },
-      "business": {
-        "description": "Pentru echipe",
-        "cta": "Abonează-te acum",
+      "starter": {
+        "cta": "Începe trial 14 zile",
+        "description": "Pentru creatori individuali",
         "features": [
-          "10 branduri",
-          "Conturi nelimitate",
-          "2.500 credite AI/lună",
-          "AI complet (incl. video)",
-          "Analytics avansat",
-          "50 GB storage"
-        ]
-      },
-      "agency": {
-        "description": "Pentru agenții",
-        "cta": "Abonează-te acum",
-        "features": [
-          "20 branduri incluse",
-          "+ €10/lună per brand suplimentar, fără plafon",
-          "Conturi sociale nelimitate",
-          "7.000 credite AI/lună",
-          "Portal client izolat",
-          "Billing unificat",
-          "100 GB storage"
+          "1 brand",
+          "5 conturi sociale",
+          "250 credite AI/lună",
+          "AI text + imagine",
+          "Telegram Bot",
+          "5 GB storage"
         ]
       }
     },
+    "popular_badge": "Popular",
+    "subtitle": "Starter include trial gratuit 14 zile (card cerut, fără taxare până la final). Pro, Business și Agency se facturează imediat. Anulezi oricând.",
+    "title": "Prețuri simple și transparente",
+    "toggle": {
+      "billed_yearly": "€{total} facturat anual",
+      "discount": "-17%",
+      "monthly": "Lunar",
+      "yearly": "Anual"
+    },
     "topup": {
-      "title": "Ai nevoie de mai mult?",
-      "subtitle": "Cumperi credite AI extra oricând, sau adaugi branduri suplimentare la orice plan plătit — fără să faci upgrade de tier.",
-      "credits_title": "Credite AI extra (o singură dată, valabile până la finalul lunii)",
+      "brand_cta": "Adaugă brand",
+      "brand_line": "€10/lună per brand suplimentar — disponibil pe orice plan plătit, nu doar Agency",
+      "brand_title": "Brand suplimentar",
       "credits": [
         "100 credite — €3",
         "500 credite — €12",
         "1.000 credite — €22"
       ],
-      "brand_title": "Brand suplimentar",
-      "brand_line": "€10/lună per brand suplimentar — disponibil pe orice plan plătit, nu doar Agency",
       "credits_cta": "Cumpără credite",
-      "brand_cta": "Adaugă brand"
+      "credits_title": "Credite AI extra (o singură dată, valabile până la finalul lunii)",
+      "subtitle": "Cumperi credite AI extra oricând, sau adaugi branduri suplimentare la orice plan plătit — fără să faci upgrade de tier.",
+      "title": "Ai nevoie de mai mult?"
     }
   },
-  "pricing_faq": {
-    "label": "FAQ",
-    "title": "Întrebări frecvente",
-    "subtitle": "Dacă nu găsești răspunsul, scrie-ne la support@nex-nex.com.",
-    "items": {
-      "item_1": {
-        "question": "Există trial gratuit?",
-        "answer": "Da — planul Starter include trial gratuit 14 zile. Cardul este cerut la înregistrare, dar nu ești taxat până la finalul trial-ului. Pro, Business și Agency se facturează imediat la abonare."
-      },
-      "item_2": {
-        "question": "Pot anula oricând?",
-        "answer": "Da, anulezi oricând din dashboard, fără penalități. După anulare, rămâi pe planul plătit până la sfârșitul perioadei facturate, după care contul revine pe Free."
-      },
-      "item_3": {
-        "question": "Ce înseamnă RAG per brand?",
-        "answer": "RAG (Retrieval-Augmented Generation) înseamnă că AI citește documentele pe care le încarci — descrieri de produse, prețuri, FAQ — și generează conținut bazat pe informații reale, nu detalii inventate. Fiecare brand are setul lui izolat de documente."
-      },
-      "item_4": {
-        "question": "Ce rețele sociale sunt suportate?",
-        "answer": "Facebook, Instagram, LinkedIn, X (Twitter), Discord și WordPress Blog — prin API direct. YouTube, Threads și Bluesky vin în Faza 2. TikTok și Pinterest sunt în backlog și necesită un proces de review extern care poate dura luni."
-      },
-      "item_5": {
-        "question": "Cum funcționează Telegram Bot-ul?",
-        "answer": "Conectezi contul Nex-Nex cu Telegram din Setări. Apoi scrii orice subiect în chat — AI generează postarea folosind RAG-ul brandului tău, tu aprobi cu un buton și se publică sau se programează automat. Funcționează de pe orice telefon."
-      },
-      "item_6": {
-        "question": "Există discount pentru facturare anuală?",
-        "answer": "Da — aproximativ 17% reducere (echivalent cu 2 luni gratuite) la abonamentul anual față de cel lunar."
-      },
-      "item_7": {
-        "question": "Planul Agency acoperă toți clienții mei?",
-        "answer": "Da — planul Agency (€199/lună) include 20 branduri. Fiecare brand suplimentar costă €10/lună, fără plafon. Fiecare client are workspace izolat, login separat și RAG separat."
-      }
-    }
+  "nav": {
+    "billing": "Facturare",
+    "brand_kit": "Brand Kit",
+    "calendar": "Calendar",
+    "campaigns": "Campanii",
+    "dashboard": "Panou de control",
+    "settings": "Setări"
   },
-  "billing_info": {
-    "title": "Plan Abonament",
-    "description": "Ești pe planul <strong>{plan}</strong>.",
-    "cancels_on": "Planul se anulează pe {date}.",
-    "renews_on": "Planul se reînnoiește pe {date}.",
-    "choose_plan": "Alege un plan"
-  },
-  "footer": {
-    "tagline": "AI Marketing Manager — construiește strategia de conținut, creează postări profesioniste și le publică automat pe toate rețelele sociale.",
-    "sections": {
-      "product": {
-        "title": "Produs",
-        "features": "Funcționalități",
-        "how_it_works": "Cum funcționează",
-        "pricing": "Prețuri",
-        "blog": "Blog"
+  "onboarding_wizard": {
+    "brand_name": "Numele brandului sau companiei",
+    "brand_name_placeholder": "Ex: Bakery X, Studio Ana, TechStartup SRL",
+    "brand_voice_placeholder": "Ex: Ton prietenos și inspirațional. Audiență: femei 25-40 ani, pasionate de wellness. Evităm jargon medical.",
+    "brand_voice_subtitle": "Descrie tonul și publicul. Poți adăuga documente din Settings → Brand Intelligence.",
+    "brand_voice_title": "Educă AI-ul despre brandul tău",
+    "continue": "Continuă →",
+    "creating": "Se creează...",
+    "finish": "✅ Gata! Mergi la Dashboard",
+    "platforms_subtitle": "Vei conecta conturile în Settings după onboarding.",
+    "platforms_title": "Pe ce platforme ești activ?",
+    "skip": "Sari peste",
+    "steps": {
+      "brand": {
+        "title": "Brandul tău"
       },
-      "legal": {
-        "title": "Legal",
-        "terms": "Termeni și Condiții",
-        "privacy": "Politică de Confidențialitate"
+      "brand_intelligence": {
+        "title": "Brand Intelligence"
       },
-      "support": {
-        "title": "Suport",
-        "email": "Email"
+      "social_accounts": {
+        "title": "Conturi sociale"
+      },
+      "telegram": {
+        "title": "Telegram Bot"
       }
     },
-    "copyright": "© 2026 Nex-Nex.com · All rights reserved · contact@nex-nex.com",
-    "anpc_sol": "Soluționarea Online a Litigiilor",
-    "anpc_sal": "Soluționarea Alternativă a Litigiilor"
+    "telegram_how_to": "Cum conectezi:",
+    "telegram_steps": {
+      "generate_code": "Generează un cod de conectare",
+      "open_settings": "Mergi la Settings → Telegram din dashboard",
+      "send_code": "Trimite codul la <bot></bot>"
+    },
+    "telegram_subtitle": "Generează și aprobă posturi direct din telefon, fără să deschizi browserul.",
+    "telegram_title": "Conectează Telegram 📱",
+    "welcome_subtitle": "Hai să configurăm brandul tău în 4 pași.",
+    "welcome_title": "Bun venit la Nex-Nex! 👋"
+  },
+  "opportunities": {
+    "cancel": "Anulează",
+    "category_optional": "Categorie (opțional)",
+    "confirm_bulk_publish": "Publici {count} oportunități în Calendar? Se vor crea postări programate.",
+    "create_post": "+ Crează postare",
+    "creating": "Se creează...",
+    "deselect": "Deselectează",
+    "edit": "✎ Editează",
+    "empty": "Nu există oportunități încă. Generează idei cu butonul de mai sus sau creează mai întâi o strategie din tab-ul Strategie.",
+    "error_with_message": "Eroare: {message}",
+    "filters": {
+      "all": "Toate",
+      "generating": "Se generează",
+      "idea": "Idei",
+      "published": "Publicate",
+      "rejected": "Respinse",
+      "review": "De verificat"
+    },
+    "focus_chips": {
+      "app_features": {
+        "label": "Funcționalități app",
+        "value": "Idei despre funcționalitățile specifice ale aplicației — ce poate face utilizatorul, cum funcționează, ce probleme rezolvă concret"
+      },
+      "before_after": {
+        "label": "Înainte / După",
+        "value": "Postări de tip contrast: cum era înainte fără aplicație și cum este acum cu ea — economie de timp, calitate mai bună, mai puțin stres"
+      },
+      "tutorials": {
+        "label": "Tutoriale pas cu pas",
+        "value": "Tutoriale simple și educative despre cum se folosesc funcționalitățile — pas cu pas, fără jargon tehnic"
+      },
+      "use_cases": {
+        "label": "Cazuri de utilizare",
+        "value": "Cazuri concrete de utilizare pe tipuri de business — restaurant, agenție, retail, coach, freelancer — cum folosesc ei aplicația în viața reală"
+      }
+    },
+    "generate_ideas": "Generează idei",
+    "generate_prototype": "⚡ Generează prototip",
+    "generate_prototypes_count": "Generează {count, plural, one {prototip} other {prototipuri}}",
+    "hook_edit_placeholder": "Hook (fraza de deschidere)...",
+    "hook_placeholder": "Hook — fraza de deschidere (opțional)",
+    "idea_focus_placeholder": "Direcție idei (opțional) — ex: funcționalități app, cazuri de utilizare, tutoriale... Gol = idei generice.",
+    "ideas_generating_message": "⏳ Se generează {count} idei noi... apar în ~1-2 minute.",
+    "launching": "Se lansează...",
+    "loading_opportunities": "Se încarcă oportunitățile...",
+    "move_down": "Mută jos",
+    "move_up": "Mută sus",
+    "new_post": "Postare nouă",
+    "no_status_results": "Nicio oportunitate cu statusul „{status}”.",
+    "opportunities_count": "{count} oportunități",
+    "publish_all_to_calendar": "Publică toate în Calendar",
+    "ready_to_publish_count": "{count} prototipuri gata de publicat",
+    "reject": "✕ Respinge",
+    "restore": "↩ Restabilește",
+    "save": "Salvează",
+    "saving": "Se salvează...",
+    "search_placeholder": "Caută după titlu sau pilon...",
+    "select_for_bulk": "Selectează pentru generare bulk",
+    "selected_count": "{count} selectate",
+    "statuses": {
+      "approved": "Aprobat",
+      "generating": "Se generează",
+      "idea": "Idee",
+      "in_production": "În producție",
+      "paused": "Pauză",
+      "published": "Publicat",
+      "rejected": "Respins",
+      "review": "Verifică",
+      "selected": "Selectat"
+    },
+    "title_placeholder": "Titlu / idee de postare *",
+    "updating_suffix": " · se actualizează...",
+    "view_all": "Vezi toate",
+    "visual_prompt_placeholder": "Prompt vizual — descrie imaginea dorită (opțional)"
+  },
+  "opportunity_card": {
+    "click_to_zoom": "Click pentru a mări",
+    "collapse": "▲ Restrânge",
+    "confirm_regenerate_image": "Regenerarea imaginii consumă credite conform selecțiilor din Quick Post. Continui?",
+    "deselect_image": "Click pentru a deselecta",
+    "details_links": "▼ Detalii & link-uri",
+    "generate_prototype": "Generează prototip",
+    "generating_text_image": "Se generează text și imagine...",
+    "image_alt": "Imagine {index}",
+    "images_selection_hint": "Imagini ({count}) — click pentru a selecta / deselecta",
+    "new_image": "+ Imagine nouă",
+    "publish": "Publică",
+    "published_image_alt": "Imagine publicată",
+    "publishing": "Se publică...",
+    "reject": "Respinge",
+    "reset_stuck": "Resetează (blocat?)",
+    "restore": "Restaurează",
+    "save": "Salvează",
+    "scheduled_link_available_after_publish": "Programat — link disponibil după publicare",
+    "scheduling_posts": "Se programează postările…",
+    "select_image": "Click pentru a selecta",
+    "selected_for_publish": "{count} selectate pentru publicare · Click pe o imagine pentru a-i vedea promptul",
+    "statuses": {
+      "generating": "Se generează...",
+      "idea": "Idee",
+      "published": "Publicat",
+      "rejected": "Respins",
+      "review": "Verifică"
+    },
+    "visual_prompt_help": "Editează promptul vizual, apoi apasă <regenerate>Regenerează imagine</regenerate> pentru a regenera cu noul prompt. Atenție! Sunt utilizate credite conform selecțiilor din Quick Post.",
+    "visual_prompt_placeholder": "Descrie scena vizuală...",
+    "zoom": "Mărește"
+  },
+  "powered_section": {
+    "title": "Construit cu tehnologii de top"
+  },
+  "preview_landing": {
+    "image_alt": "Interfața Nex-Nex — dashboard postări"
+  },
+  "pricing_cards": {
+    "go_to_dashboard": "Mergi la dashboard",
+    "label": "Prețuri",
+    "monthly": "Lunar",
+    "monthly_aria": "Comută la facturare lunară",
+    "monthly_charge": "facturat lunar",
+    "per_month": "/lună",
+    "sign_in": "Autentificare",
+    "support_note": "Poți testa abonamentele fără a fi taxat.",
+    "support_prefix": "Email",
+    "support_suffix": "pentru a contacta echipa de suport.",
+    "title": "Începe cu viteză maximă!",
+    "toggle_group_aria": "toggle-an",
+    "yearly": "Anual (-20%)",
+    "yearly_aria": "Comută la facturare anuală",
+    "yearly_charge": "${amount} facturat anual"
+  },
+  "pricing_faq": {
+    "items": {
+      "item_1": {
+        "answer": "Da — planul Starter include trial gratuit 14 zile. Cardul este cerut la înregistrare, dar nu ești taxat până la finalul trial-ului. Pro, Business și Agency se facturează imediat la abonare.",
+        "question": "Există trial gratuit?"
+      },
+      "item_2": {
+        "answer": "Da, anulezi oricând din dashboard, fără penalități. După anulare, rămâi pe planul plătit până la sfârșitul perioadei facturate, după care contul revine pe Free.",
+        "question": "Pot anula oricând?"
+      },
+      "item_3": {
+        "answer": "RAG (Retrieval-Augmented Generation) înseamnă că AI citește documentele pe care le încarci — descrieri de produse, prețuri, FAQ — și generează conținut bazat pe informații reale, nu detalii inventate. Fiecare brand are setul lui izolat de documente.",
+        "question": "Ce înseamnă RAG per brand?"
+      },
+      "item_4": {
+        "answer": "Facebook, Instagram, LinkedIn, X (Twitter), Discord și WordPress Blog — prin API direct. YouTube, Threads și Bluesky vin în Faza 2. TikTok și Pinterest sunt în backlog și necesită un proces de review extern care poate dura luni.",
+        "question": "Ce rețele sociale sunt suportate?"
+      },
+      "item_5": {
+        "answer": "Conectezi contul Nex-Nex cu Telegram din Setări. Apoi scrii orice subiect în chat — AI generează postarea folosind RAG-ul brandului tău, tu aprobi cu un buton și se publică sau se programează automat. Funcționează de pe orice telefon.",
+        "question": "Cum funcționează Telegram Bot-ul?"
+      },
+      "item_6": {
+        "answer": "Da — aproximativ 17% reducere (echivalent cu 2 luni gratuite) la abonamentul anual față de cel lunar.",
+        "question": "Există discount pentru facturare anuală?"
+      },
+      "item_7": {
+        "answer": "Da — planul Agency (€199/lună) include 20 branduri. Fiecare brand suplimentar costă €10/lună, fără plafon. Fiecare client are workspace izolat, login separat și RAG separat.",
+        "question": "Planul Agency acoperă toți clienții mei?"
+      }
+    },
+    "label": "FAQ",
+    "subtitle": "Dacă nu găsești răspunsul, scrie-ne la support@nex-nex.com.",
+    "title": "Întrebări frecvente"
+  },
+  "register_page": {
+    "login": "Autentificare",
+    "metadata": {
+      "description": "Creează un cont pentru a începe.",
+      "title": "Creează un cont"
+    },
+    "privacy_link": "Politica de Confidențialitate",
+    "subtitle": "Introdu emailul de mai jos pentru a-ți crea contul",
+    "terms_link": "Termenii de Serviciu",
+    "terms_middle": "și",
+    "terms_prefix": "Continuând, ești de acord cu",
+    "title": "Creează un cont"
+  },
+  "reports_manager": {
+    "actions": {
+      "ideas_set": "Idei",
+      "image_comfyui": "Imagine (RTX)",
+      "image_fal": "Imagine (Fal.ai)",
+      "image_fal_kontext": "Imagine (Kontext)",
+      "image_gemini": "Imagine (Gemini)",
+      "platform_adaptation": "Adaptare platformă",
+      "text_post": "Text",
+      "video": "Video"
+    },
+    "agency_consumption_summary": "Clienți: {clients} • Branduri proprii: {own}",
+    "agency_consumption_title": "Consum per client (agenție)",
+    "by_action": "Pe acțiune",
+    "by_campaign": "Pe campanie",
+    "csv": {
+      "action_consumed": "Acțiune,Consumat",
+      "agency_own": "Agenție (branduri proprii),{consumed}",
+      "campaign_consumed": "Campanie,Consumat",
+      "client_consumed": "Client,Consumat",
+      "filename": "raport-consum-{period}.csv",
+      "title": "Raport consum credite,{period}"
+    },
+    "loading": "Se încarcă...",
+    "no_consumption": "Niciun consum.",
+    "no_consumption_period": "Niciun consum în această perioadă.",
+    "results_placeholder": "Rezultate (reach, afișări, engagement) — disponibile după implementarea analytics (Sprint 6).",
+    "total_credits": "Total: {total} credite"
+  },
+  "search": {
+    "button": "Caută",
+    "docs_suffix": "documentație",
+    "no_results": "Nu am găsit rezultate.",
+    "placeholder": "Scrie o comandă sau caută..."
+  },
+  "settings": {
+    "language": "Limba interfeței",
+    "language_description": "Alege limba pentru interfață",
+    "save_changes": "Salvează modificările",
+    "subtitle": "Gestionează setările contului și ale site-ului.",
+    "timezone": "Fus orar",
+    "title": "Setări"
+  },
+  "sign_in_modal": {
+    "description": "Aceasta este strict pentru demonstrație — doar emailul și fotografia de profil vor fi stocate.",
+    "google_cta": "Autentificare cu Google",
+    "title": "Autentificare"
+  },
+  "social_accounts": {
+    "active": "Activ",
+    "add": "Adaugă",
+    "blog_description": "WordPress, Ghost CMS, Custom REST API sau blog intern Nex-Nex. Poți adăuga mai mulți conectori — util pentru RO + EN sau clienți diferiți.",
+    "blog_name_placeholder": "Nume (ex: Blog AllMeters RO)",
+    "bluesky_hint_prefix": "Folosește un <appPassword>App Password</appPassword>, nu parola contului.",
+    "bluesky_hint_suffix": " Poți adăuga conturi diferite (ex: RO și EN).",
+    "cancel": "Anulează",
+    "choose_pages": "Alege paginile pe care vrei să le conectezi:",
+    "confirm_delete_blog_connector": "Ștergi acest conector blog?",
+    "confirm_disconnect_account": "Dezconectezi acest cont?",
+    "connect": "Conectează",
+    "connect_network": "Conectează o rețea",
+    "connected": "Conectat",
+    "connected_accounts": "Conturi conectate",
+    "connected_to": "Conectat la: {org}",
+    "custom_rest_help": {
+      "step_1": "• <code>POST {api_url}</code> — publică articol, răspuns: <code>{\"ok\": true, \"post_id\", \"post_url\"}</code>",
+      "step_2": "• <code>GET {api_url}/ping</code> — verifică conexiunea, răspuns: <code>{\"ok\": true}</code>",
+      "step_3": "• Header de autentificare: <code>X-Api-Key: &lt;cheie&gt;</code>",
+      "step_4": "• Dacă e în spatele Cloudflare: dezactivează <strong>Bot Fight Mode</strong> sau adaugă IP <strong>95.217.16.236</strong> în Security → WAF → Tools → IP Access Rules → Allow",
+      "title": "Ce trebuie implementat pe blog:"
+    },
+    "detect": "Detectează",
+    "detected_platform": "Platformă detectată:",
+    "disable_posting_tooltip": "Dezactivează postarea pe acest cont",
+    "discord_hint": "Poți adăuga mai multe webhookuri (canale diferite).",
+    "duration": "Durată:",
+    "enable_posting_tooltip": "Activează postarea pe acest cont",
+    "errors": {
+      "connect_failed": "Eroare la conectare.",
+      "detect_failed": "Detecție eșuată. Verifică URL-ul.",
+      "detect_network": "Eroare de rețea la detecție.",
+      "generic": "Eroare",
+      "network": "Eroare de rețea.",
+      "oauth1_required_fields": "Toate cele 4 câmpuri sunt obligatorii.",
+      "save_failed": "Eroare la salvare."
+    },
+    "facebook_pages_hint": "ℹ️ Apar doar <strong>Paginile Facebook</strong> pe care le administrezi. Conturile Instagram apar automat lângă pagina Facebook la care sunt legate.",
+    "failed": "Eșuat",
+    "ghost_help": {
+      "step_2": "2. Copiază <strong>Admin API Key</strong> (format: <code>id:secret</code>)",
+      "step_3": "3. Dacă e în spatele Cloudflare, adaugă IP <strong>95.217.16.236</strong> în IP Access Rules → Allow",
+      "title": "Ce trebuie făcut în Ghost:"
+    },
+    "heading": "Conturi sociale",
+    "inactive": "Inactiv",
+    "loading": "Se încarcă...",
+    "networks": {
+      "blog": {
+        "description": "WordPress, Ghost CMS sau orice blog cu REST API"
+      },
+      "bluesky": {
+        "description": "Handle + App Password (Settings → Privacy → App passwords)"
+      },
+      "discord": {
+        "description": "Webhook URL din Server Settings → Integrations"
+      },
+      "facebook": {
+        "description": "Pagini Facebook"
+      },
+      "instagram": {
+        "description": "Prin cont Facebook Business"
+      },
+      "linkedin": {
+        "description": "OAuth 2.0 — profil personal sau pagină organizație"
+      },
+      "tiktok": {
+        "description": "Disponibil după implementarea pipeline video"
+      },
+      "x": {
+        "description": "OAuth 2.0 — free tier 1500 tweets/lună"
+      },
+      "youtube": {
+        "description": "Disponibil după implementarea pipeline video"
+      }
+    },
+    "no_accounts": "Niciun cont conectat încă.",
+    "oauth1_active_tooltip": "OAuth 1.0a activ — imagini activate. Click pentru a actualiza.",
+    "oauth1_add_tooltip": "Adaugă OAuth 1.0a pentru a activa imagini pe X",
+    "oauth1_hint": "<strong>OAuth 1.0a</strong> — activează imagini pe X. Din <strong>X Developer Console → Keys &amp; Tokens → OAuth 1.0 Keys</strong>.",
+    "reconnect": "Reconectează",
+    "reconnect_oauth2": "Reconectează OAuth 2.0 (token expirat sau invalid)",
+    "save": "Salvează",
+    "soon": "Curând",
+    "subtitle": "Conectează rețelele sociale ale brandului.",
+    "wordpress_help": {
+      "step_1": "1. <strong>WP Admin → Users → Profile</strong> → secțiunea <strong>Application Passwords</strong>",
+      "step_2": "2. Introdu un nume (ex: <em>Nex-Nex</em>) → <strong>Add New Application Password</strong>",
+      "step_3": "3. Copiază parola generată (format: <code>xxxx xxxx xxxx xxxx xxxx xxxx</code>)",
+      "step_4": "4. Introdu mai jos: username-ul tău WP + parola copiată",
+      "title": "Cum generezi credențialele din WordPress (fără plugin):"
+    },
+    "wordpress_password_placeholder": "Application Password (generat din WP Admin)"
+  },
+  "strategy": {
+    "action_plan": {
+      "next_30_days": "Următoarele 30 zile",
+      "next_60_days": "Următoarele 60 zile",
+      "next_7_days": "Următoarele 7 zile",
+      "next_90_days": "Următoarele 90 zile",
+      "requires_human_input": "Necesită input uman"
+    },
+    "analysis_started_at": "Analiza lansată la {time} se generează...",
+    "audit": {
+      "brand_consistency": "Consistență brand",
+      "confidence": "Încredere audit",
+      "data_completeness": "Completitudine date",
+      "missing_data": "Date lipsă: {data}",
+      "warnings": "Atenționări"
+    },
+    "auto_refresh_note": "~2 minute. Pagina se actualizează automat.",
+    "content_angle": "💡 Unghi de conținut:",
+    "current_positioning": "Poziționare",
+    "diagnosis": {
+      "economic_value": "Valoare economică:",
+      "message_clarity": "Claritate mesaj",
+      "problem_solved": "Problemă rezolvată:",
+      "sells": "Ce vinde:",
+      "serves": "Cui vinde:"
+    },
+    "distribution": "Distribuție: {distribution}",
+    "do_not_position_like_this": "Nu poziționa așa",
+    "empty": "Nu există strategii generate încă.",
+    "error_with_message": "Eroare: {message}",
+    "findings": "Constatări",
+    "generate": "Generează",
+    "generate_strategy": "Generează Strategie",
+    "generate_strategy_description": "Business Analysis + Content Strategy profesională",
+    "generation_failed": "Generarea a eșuat:",
+    "industry_context": "Context industrie",
+    "launching": "Se lansează...",
+    "limitations": "Limitări: {limitations}",
+    "loading": "Se încarcă...",
+    "messages_to_own": "Mesaje de revendicat",
+    "opportunity": "Oportunitate",
+    "package_recommendations": "Recomandări pachete",
+    "personas": {
+      "buying_triggers": "Triggere de cumpărare",
+      "desires": "Dorințe",
+      "pain_points": "Dureri",
+      "resonating_content": "Conținut care rezonează"
+    },
+    "pricing_observations": "Observații pricing",
+    "priority_decision": "Decizie prioritară:",
+    "recommendations": "Recomandări",
+    "recommended_positioning": "Poziționare recomandată",
+    "sections": {
+      "audit_quality": "🧭 Calitatea Auditului",
+      "business_analysis": "📊 Analiza Business",
+      "business_diagnosis": "🩺 Diagnoză Business",
+      "common_objections": "❓ Obiecții Comune",
+      "competitor_analysis": "🏁 Analiză Competitori",
+      "competitor_gaps": "🔍 Goluri față de Competitori",
+      "content_mix": "📊 Mix de Conținut",
+      "content_pillars": "🏛️ Piloni de Conținut",
+      "differentiators": "🌟 Diferențiatori",
+      "distribution_recommendations": "📣 Recomandări de Distribuție",
+      "editorial_calendar_12_weeks": "📆 Calendar Editorial — 12 săptămâni",
+      "offer_pricing": "💶 Ofertă & Pricing",
+      "positioning": "🎯 Poziționare",
+      "roadmap_90_days": "🗺️ Roadmap Marketing — 90 zile",
+      "target_personas": "👥 Persoane Țintă"
+    },
+    "stages": {
+      "awareness": "👁️ Awareness",
+      "consideration": "🤔 Consideration",
+      "decision": "✅ Decision",
+      "retention": "❤️ Retention"
+    },
+    "strategy_started": "⏳ Strategia a pornit! Cost: {credits} credite. Se actualizează automat în ~2 minute.",
+    "summary": "Rezumat",
+    "swot": {
+      "opportunities": "🚀 Oportunități",
+      "strengths": "💪 Puncte forte",
+      "threats": "🛡️ Amenințări",
+      "weaknesses": "⚠️ Puncte slabe"
+    },
+    "table": {
+      "theme": "Temă",
+      "week": "Săpt."
+    },
+    "unknown_error": "eroare necunoscută",
+    "week_number": "Săptămâna {week}"
+  },
+  "telegram": {
+    "copy": "Copiază",
+    "description_after": "pentru a crea și aproba postări direct din Telegram.",
+    "description_before": "Conectează-ți contul la",
+    "expires_in": "Codul expiră în 10 minute.",
+    "generate_code": "Generează cod de conectare",
+    "send_code_after": ":",
+    "send_code_before": "Trimite acest cod botului",
+    "server_error": "Nu se poate conecta la server. Încearcă din nou.",
+    "title": "Telegram Bot",
+    "token_error": "Eroare la generarea token-ului."
+  },
+  "testimonials_section": {
+    "badge_ai": "Verificat AI",
+    "items": [
+      {
+        "image": "https://randomuser.me/api/portraits/men/32.jpg",
+        "job": "Fondator startup SaaS",
+        "name": "Andrei Popescu",
+        "review": "Am trecut de la 3 ore/săptămână pe social media la 15 minute. Nex-Nex generează exact tonul brandului nostru — nu mai corectez textele AI."
+      },
+      {
+        "image": "https://randomuser.me/api/portraits/women/44.jpg",
+        "job": "Social Media Manager",
+        "name": "Maria Ionescu",
+        "review": "Gestionez 8 clienți cu Nex-Nex Agency. Calendar vizual, aprobare rapidă, publicare automată. A eliminat jumătate din munca mea manuală."
+      },
+      {
+        "image": "https://randomuser.me/api/portraits/men/67.jpg",
+        "job": "Antreprenor e-commerce",
+        "name": "Radu Constantin",
+        "review": "Botul de Telegram e genial. Fac o poză la un produs nou, AI-ul scrie captionul, eu aprob, gata. Tot procesul durează 2 minute."
+      },
+      {
+        "image": "https://randomuser.me/api/portraits/women/23.jpg",
+        "job": "Creator de conținut",
+        "name": "Elena Dumitrescu",
+        "review": "RAG-ul face diferența față de orice alt tool. AI-ul știe exact prețurile, features și valorile brandului meu. Zero post-uri cu informații greșite."
+      },
+      {
+        "image": "https://randomuser.me/api/portraits/men/55.jpg",
+        "job": "Director Marketing",
+        "name": "Mihai Stanescu",
+        "review": "Echipa noastră de 5 persoane publică acum de 3x mai mult conținut. Workflow-ul de aprobare cu Nex-Nex e mult mai rapid decât orice tool am testat."
+      },
+      {
+        "image": "https://randomuser.me/api/portraits/women/12.jpg",
+        "job": "Freelancer Content",
+        "name": "Ana Popa",
+        "review": "Ca freelancer cu 12 clienți, Nex-Nex Agency mi-a salvat business-ul. Un singur abonament, toți clienții sub control, facturare simplă."
+      },
+      {
+        "image": "https://randomuser.me/api/portraits/men/78.jpg",
+        "job": "Co-fondator agenție digitală",
+        "name": "Bogdan Muresan",
+        "review": "Am încercat Buffer, Hootsuite, SocialBee. Nex-Nex e singurul cu bot Telegram + RAG per client. Pentru agenții, e game changer."
+      },
+      {
+        "image": "https://randomuser.me/api/portraits/women/65.jpg",
+        "job": "Antreprenor local — Salon frumusețe",
+        "name": "Ioana Constantin",
+        "review": "Nu știam nimic despre social media. Acum postez zilnic pe Instagram și Facebook fără să pierd timp. Nex-Nex face totul — eu doar aprob."
+      }
+    ],
+    "label": "Testimoniale",
+    "subtitle": "Testimoniale ipotetice generate de AI. Am preferat mereu adevărul! Cele reale apar în curând.",
+    "title": "Ce ar spune clienții noștri — dacă i-am fi avut deja 😄"
   },
   "what_is": {
-    "label": "Ce este Nex-Nex",
-    "title": "AI Marketing Manager — nu un simplu tool de programare",
     "body": "Nex-Nex înțelege brandul tău în profunzime și gestionează întregul ciclu de conținut: strategie → idei → creare conținut → generare imagini → programare → publicare → învățare.",
-    "promise_title": "Promisiunea noastră",
-    "promise": "Un creator sau marketer care înainte petrecea 3–5 ore pe săptămână pe conținut poate reduce asta la 15–30 de minute, fără să sacrifice calitatea sau consistența.",
-    "for_label": "Pentru cine",
     "for_1": "Creatori individuali, freelanceri, antreprenori solo (1–3 branduri)",
     "for_2": "Echipe de marketing (2–10 persoane, fluxuri de aprobare)",
     "for_3": "Agenții care gestionează 5–50+ clienți simultan",
+    "for_label": "Pentru cine",
+    "interfaces": "Web dashboard (acces complet la funcționalități) · Telegram Bot (mobile-first: postări rapide, aprobări, capturare idei din mers)",
     "interfaces_label": "Interfețe principale",
-    "interfaces": "Web dashboard (acces complet la funcționalități) · Telegram Bot (mobile-first: postări rapide, aprobări, capturare idei din mers)"
+    "label": "Ce este Nex-Nex",
+    "promise": "Un creator sau marketer care înainte petrecea 3–5 ore pe săptămână pe conținut poate reduce asta la 15–30 de minute, fără să sacrifice calitatea sau consistența.",
+    "promise_title": "Promisiunea noastră",
+    "title": "AI Marketing Manager — nu un simplu tool de programare"
   },
-  "brand_kit_form": {
-    "common": {
-      "save": "Salvează",
-      "saving": "Se salvează...",
-      "saved": "✅ Salvat!"
-    },
-    "errors": {
-      "missing_org": "Sesiunea nu are orgId. Te rugăm să te autentifici din nou.",
-      "save_failed": "Eroare {status}: {message}",
-      "network": "Eroare de rețea. Verifică conexiunea.",
-      "logo_upload_failed": "Încărcarea logo-ului a eșuat ({status})",
-      "storage_not_configured": "Stocarea R2 nu este configurată.",
-      "logo_network": "Eroare de rețea la încărcarea logo-ului.",
-      "sign_upload_failed": "Încărcarea semnăturii a eșuat ({status})",
-      "sign_network": "Eroare de rețea la încărcarea semnăturii.",
-      "logo_sign_upload_failed": "Încărcarea logo + semnătură a eșuat ({status})",
-      "logo_sign_network": "Eroare de rețea la încărcarea logo + semnătură.",
-      "template_upload_failed": "Încărcarea șablonului a eșuat ({status})",
-      "template_network": "Eroare de rețea la încărcarea șablonului."
-    },
-    "tabs": {
-      "identity": "Identitate",
-      "voice": "Voce & Cuvinte",
-      "typography": "Tipografie",
-      "documents": "Documente AI",
-      "quick_post": "⚡ Postare rapidă"
-    },
-    "identity": {
-      "brand_name": {
-        "label": "Numele companiei / brandului",
-        "placeholder": "Ex: Nex-Nex, Agenție Creativă, TechStartup SRL"
+  "workflow_section": {
+    "steps": {
+      "10": {
+        "description": "Un singur conținut, tradus și adaptat cultural pentru orice piață dorești să atingi.",
+        "title": "Publici în orice limbă"
       },
-      "slogan": {
-        "label": "Slogan",
-        "placeholder": "Ex: AI Content Copilot pentru creatori"
+      "01": {
+        "description": "Adaugi PDF-uri, URL-uri sau descrieri despre compania ta. AI-ul învață vocea, valorile și produsele tale.",
+        "title": "Încarci contextul brandului"
       },
-      "description": {
-        "label": "Descriere scurtă",
-        "placeholder": "1-3 propoziții despre ce face brandul tău."
+      "02": {
+        "description": "Primești 100 de idei organizate pe categorii: educational, promotional, storytelling, sezonier.",
+        "title": "Generezi idei de postări"
       },
-      "visual_assets": {
-        "title": "Active vizuale"
+      "03": {
+        "description": "Selectezi ideea care ți se potrivește sau trimiți orice subiect direct din Telegram.",
+        "title": "Alegi subiectul"
       },
-      "logo": {
-        "label": "Logo",
-        "description": "Imagine pătrată 1:1, fundal transparent",
-        "alt": "Logo",
-        "upload": "Încarcă logo",
-        "replace": "Înlocuiește logo",
-        "uploading": "Se încarcă..."
+      "04": {
+        "description": "Textul este scris în vocea brandului tău, adaptat pentru fiecare platformă socială.",
+        "title": "AI generează textul"
       },
-      "sign": {
-        "label": "Semnătură / font brand",
-        "description": "Stilul de scriere al brandului (PNG/SVG)",
-        "alt": "Semnătură",
-        "upload": "Încarcă semnătură",
-        "replace": "Înlocuiește semnătura",
-        "uploading": "Se încarcă..."
+      "05": {
+        "description": "Trimiți o poză din telefon. AI-ul o transformă într-o imagine profesionistă pentru social media.",
+        "title": "Adaugi o fotografie (opțional)"
       },
-      "logo_sign": {
-        "label": "Logo + semnătură combinate",
-        "description": "Un singur fișier cu logo și semnătură împreună — folosit când ambele sunt selectate în Telegram. Creează-l în Canva/Figma și încarcă-l aici.",
-        "alt": "Logo + Semnătură",
-        "upload": "Încarcă logo + semnătură",
-        "replace": "Înlocuiește logo + semnătură",
-        "uploading": "Se încarcă..."
+      "06": {
+        "description": "Dacă nu ai fotografie, AI-ul creează o imagine originală bazată pe conținutul postării.",
+        "title": "AI generează imaginea"
       },
-      "colors": {
-        "title": "Culorile brandului",
-        "primary": {
-          "label": "Primară",
-          "description": "Culoarea principală a brandului"
-        },
-        "secondary": {
-          "label": "Secundară",
-          "description": "Culoare de suport / fundal secundar"
-        },
-        "accent": {
-          "label": "Accent",
-          "description": "CTA-uri, butoane, evidențieri"
-        },
-        "background": {
-          "label": "Fundal",
-          "description": "Culoarea de fundal a imaginilor"
-        },
-        "text_dark": {
-          "label": "Text întunecat",
-          "description": "Text pe fundal deschis"
-        },
-        "text_light": {
-          "label": "Text deschis",
-          "description": "Text pe fundal întunecat"
-        }
+      "07": {
+        "description": "Publici imediat sau alegi data și ora. Configurezi intervalele preferate per platformă — Nex-Nex le completează automat.",
+        "title": "Programezi publicarea"
       },
-      "templates": {
-        "title": "Șabloane postări",
-        "description": "Imaginile de fundal / layout-urile vizuale ale brandului. AI le va folosi la generarea imaginilor pentru postări.",
-        "alt": "Șablon {index}",
-        "delete": "Șterge șablon",
-        "item_label": "Șablon {index}",
-        "uploading": "Se încarcă...",
-        "add": "Adaugă șablon"
+      "08": {
+        "description": "Fiecare platformă are ore optime. Configurezi sloturile o singură dată — Nex-Nex alege următoarea fereastră disponibilă. Completare AI automată bazată pe audiență: în curând.",
+        "title": "Programare inteligentă per rețea"
+      },
+      "09": {
+        "description": "Nex-Nex publică simultan pe toate platformele conectate: Instagram, LinkedIn, Facebook, X, Discord, Bluesky.",
+        "title": "Postarea se publică simultan"
       }
     },
-    "voice": {
-      "title": "Vocea Brandului",
-      "description": "Descrie tonul, valorile și publicul țintă. AI-ul va folosi aceasta pentru fiecare generare.",
-      "placeholder": "Ex: Ton profesional dar prietenos. Audiență: antreprenori 25-45 ani. Valori: inovație, eficiență, transparență. Evităm jargonul tehnic excesiv.",
-      "keywords": {
-        "title": "Cuvinte cheie & cuvinte de evitat",
-        "label": "Cuvinte cheie (separate prin virgulă)",
-        "placeholder": "inovație, calitate, eficiență, rezultate"
-      },
-      "avoid_words": {
-        "label": "Cuvinte de evitat",
-        "placeholder": "ieftin, gratuit, 100% garantat"
-      }
-    },
-    "typography": {
-      "description_prefix": "Setările de tipografie sunt folosite la generarea imaginilor cu",
-      "description_product_template": "Produs în șablon",
-      "description_middle": "și pentru",
-      "description_text_on_image": "Text pe imagine",
-      "title_block": {
-        "title": "Titlu"
-      },
-      "subtitle_block": {
-        "title": "Subtitlu / Preț"
-      },
-      "font": "Font",
-      "size": "Dimensiune (px)",
-      "default_font": "— Implicit (Inter) —",
-      "bold": "Bold",
-      "italic": "Italic",
-      "color": "Culoare",
-      "overlay": {
-        "title": "Fundal text suprapus",
-        "description_prefix": "Culoarea benzii semi-transparente din spatele textului scris pe imagine. Poți include alfa (ex:",
-        "description_suffix": ")."
-      }
-    },
-    "documents": {
-      "brand_docs": {
-        "title": "Documente despre brand",
-        "description": "Încarcă manuale, FAQ-uri, prezentări sau pagini web. AI-ul le va folosi ca referință la generarea conținutului — prețuri corecte, funcționalități reale, zero halucinații.",
-        "upload": "Încarcă PDF / DOCX / TXT",
-        "processing": "Se procesează..."
-      },
-      "url": {
-        "placeholder": "https://site-ul-tau.com/despre",
-        "name_placeholder": "Nume (opțional)",
-        "add": "Adaugă URL"
-      },
-      "indexed": {
-        "title": "Documente indexate ({count})",
-        "loading": "Se încarcă...",
-        "empty": "Niciun document încă. Încarcă un fișier sau adaugă un URL.",
-        "chunks": "{count} fragmente"
-      },
-      "status": {
-        "processing": "în procesare",
-        "indexed": "indexat",
-        "failed": "eșuat"
-      },
-      "test": {
-        "title": "Testează — ce știe AI-ul despre brandul tău?",
-        "placeholder": "Ex: \"Care sunt prețurile?\" sau \"Ce produse vindem?\"",
-        "ask": "Întreabă"
-      }
-    },
-    "quick_post": {
-      "provider": {
-        "title": "Generator implicit de imagini",
-        "description": "Folosit automat în ⚡ Postare rapidă fără a întreba utilizatorul.",
-        "options": {
-          "comfyui": "🖼️ Nex-Nex RTX (ComfyUI) — local, 1 credit",
-          "fal": "⚡ Fal.ai FLUX — rapid, 1 credit",
-          "gemini": "🎨 Google Gemini — branding integrat, 2 credite"
-        }
-      },
-      "platforms": {
-        "title": "Rețele sociale implicite",
-        "description": "Selectate automat în Postarea rapidă. Dacă nu alegi nimic, se folosesc conturile active."
-      },
-      "tone": {
-        "title": "Tonul implicit al textului",
-        "description": "Aplicat la generarea textului în Postarea rapidă. \"Neutru\" înseamnă că AI alege.",
-        "options": {
-          "neutral": "⚖️ Neutru",
-          "inspiring": "✨ Inspirațional",
-          "formal": "💼 Formal",
-          "casual": "😊 Casual"
-        }
-      },
-      "visual_assets": {
-        "title": "Active vizuale implicite",
-        "description": "Dacă sunt bifate, Postarea rapidă va aplica automat aceste elemente pe imaginea generată. Lasă nebifate dacă vrei imagini curate fără branding.",
-        "logo": "Logo brand",
-        "sign": "Semnătură / tipografie brand",
-        "template": "Șablon vizual (primul din lista ta)",
-        "loaded": "(încărcat ✓)",
-        "logo_missing": "(neîncărcat — adaugă-l din tab-ul Identitate)",
-        "sign_missing": "(neîncărcat)",
-        "template_missing": "(niciun șablon — adaugă unul din tab-ul Identitate)",
-        "template_loaded_one": "(1 șablon ✓)",
-        "template_loaded_many": "({count} șabloane ✓)"
-      },
-      "save_defaults": "Salvează setările implicite",
-      "saved_short": "✓ Salvat",
-      "saved_message": "✓ Setările au fost salvate!"
-    }
-  },
-  "compare_plans": {
-    "label": "Planuri",
-    "title": "Compară Planurile",
-    "subtitle": "Găsește planul perfect pentru nevoile tale!",
-    "empty": "—"
-  },
-  "delete_account_modal": {
-    "title": "Șterge Contul",
-    "warning_label": "Atenție:",
-    "warning_text": "Aceasta va șterge permanent contul tău și abonamentul activ!",
-    "verification": {
-      "prefix": "Pentru confirmare, scrie",
-      "phrase": "confirm delete account",
-      "suffix": "mai jos"
-    },
-    "confirm_cta": "Confirmă ștergerea contului",
-    "toast": {
-      "loading": "Se șterge contul...",
-      "success": "Contul a fost șters cu succes!"
-    }
-  },
-  "login_page": {
-    "metadata": {
-      "title": "Autentificare",
-      "description": "Autentifică-te în contul tău"
-    }
-  },
-  "marketing_error": {
-    "title": "Ceva nu a funcționat!",
-    "unknown_error": "Eroare necunoscută",
-    "retry": "Încearcă din nou"
-  },
-  "marketing_not_found": {
-    "image_alt": "404",
-    "message": "Pagina nu a fost găsită. Înapoi la",
-    "homepage": "Pagina principală"
-  },
-  "pricing_cards": {
-    "label": "Prețuri",
-    "title": "Începe cu viteză maximă!",
-    "per_month": "/lună",
-    "yearly_charge": "${amount} facturat anual",
-    "monthly_charge": "facturat lunar",
-    "go_to_dashboard": "Mergi la dashboard",
-    "sign_in": "Autentificare",
-    "toggle_group_aria": "toggle-an",
-    "yearly_aria": "Comută la facturare anuală",
-    "monthly_aria": "Comută la facturare lunară",
-    "yearly": "Anual (-20%)",
-    "monthly": "Lunar",
-    "support_prefix": "Email",
-    "support_suffix": "pentru a contacta echipa de suport.",
-    "support_note": "Poți testa abonamentele fără a fi taxat."
-  },
-  "register_page": {
-    "metadata": {
-      "title": "Creează un cont",
-      "description": "Creează un cont pentru a începe."
-    },
-    "login": "Autentificare",
-    "title": "Creează un cont",
-    "subtitle": "Introdu emailul de mai jos pentru a-ți crea contul",
-    "terms_prefix": "Continuând, ești de acord cu",
-    "terms_link": "Termenii de Serviciu",
-    "terms_middle": "și",
-    "privacy_link": "Politica de Confidențialitate"
-  },
-  "sign_in_modal": {
-    "title": "Autentificare",
-    "description": "Aceasta este strict pentru demonstrație — doar emailul și fotografia de profil vor fi stocate.",
-    "google_cta": "Autentificare cu Google"
+    "subtitle": "De la idee la postare publicată în câteva minute, fără cunoștințe tehnice.",
+    "title": "Cum funcționează Nex-Nex"
   }
 }

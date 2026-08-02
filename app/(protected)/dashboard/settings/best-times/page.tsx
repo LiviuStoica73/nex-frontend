@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
+import { useTranslations } from "next-intl"
 import { useOrg } from "@/contexts/org-context"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -23,7 +24,6 @@ import { toast } from "sonner"
 const API = process.env.NEXT_PUBLIC_API_URL || ""
 
 const WEEKDAY_LABELS = ["L", "M", "M", "J", "V", "S", "D"]
-const WEEKDAY_NAMES = ["Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă", "Duminică"]
 const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6]
 
 type TimeSlot = [number, number]
@@ -103,7 +103,7 @@ function normalizeScheduleToLocal(raw: unknown, platform: string): { days: numbe
   }
 }
 
-function getTimezoneLabel(): string {
+function getTimezoneLabel(fallback: string): string {
   try {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
     const offset = -getBrowserOffsetMinutes()
@@ -113,11 +113,12 @@ function getTimezoneLabel(): string {
     const offsetStr = m > 0 ? `${sign}${h}:${String(m).padStart(2, "0")}` : `${sign}${h}`
     return `${tz} (UTC${offsetStr})`
   } catch {
-    return "ora locală"
+    return fallback
   }
 }
 
 export default function BestTimesPage() {
+  const t = useTranslations("best_times")
   const { data: session } = useSession()
   const token = (session?.user as { accessToken?: string })?.accessToken ?? ""
   const { activeOrgId: orgId } = useOrg()
@@ -127,12 +128,21 @@ export default function BestTimesPage() {
   const [busy, setBusy] = useState(false)
   const [aiLoading, setAiLoading] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [tzLabel, setTzLabel] = useState("ora locală")
+  const [tzLabel, setTzLabel] = useState(t("local_time"))
+  const weekdayNames = [
+    t("weekdays.monday"),
+    t("weekdays.tuesday"),
+    t("weekdays.wednesday"),
+    t("weekdays.thursday"),
+    t("weekdays.friday"),
+    t("weekdays.saturday"),
+    t("weekdays.sunday"),
+  ]
 
   const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` }
 
   useEffect(() => {
-    setTzLabel(getTimezoneLabel())
+    setTzLabel(getTimezoneLabel(t("local_time")))
   }, [])
 
   useEffect(() => {
@@ -168,8 +178,8 @@ export default function BestTimesPage() {
     const payload: BestTimes = {}
     for (const p of platforms) {
       const localSlots = (draft[p]?.slots || []).map(parseTime).filter(Boolean) as TimeSlot[]
-      if (localSlots.length === 0) { toast.error(`${p}: cel puțin un slot obligatoriu`); return }
-      if (!draft[p]?.days?.length) { toast.error(`${p}: alege cel puțin o zi`); return }
+      if (localSlots.length === 0) { toast.error(t("errors.slot_required", { platform: p })); return }
+      if (!draft[p]?.days?.length) { toast.error(t("errors.day_required", { platform: p })); return }
       // Convertim ora locală → UTC înainte de salvare
       const utcSlots = localSlots.map(localToUtc)
       payload[p] = { days: draft[p].days, slots: utcSlots }
@@ -179,8 +189,8 @@ export default function BestTimesPage() {
       method: "PUT", headers, body: JSON.stringify(payload),
     })
     setBusy(false)
-    if (res.ok) toast.success("Best times salvate!")
-    else toast.error("Eroare la salvare")
+    if (res.ok) toast.success(t("saved"))
+    else toast.error(t("errors.save_failed"))
   }
 
   const updateSlot = (platform: string, idx: number, value: string) => {
@@ -220,9 +230,9 @@ export default function BestTimesPage() {
         }
         return next
       })
-      toast.success("Sloturi completate de AI — verifică și salvează!")
+      toast.success(t("ai_slots_done"))
     } catch {
-      toast.error("Eroare la generarea sugestiilor AI")
+      toast.error(t("errors.ai_suggestions_failed"))
     } finally {
       setAiLoading(false)
     }
@@ -235,7 +245,7 @@ export default function BestTimesPage() {
   }
 
   if (loading) {
-    return <div className="p-6 text-sm text-muted-foreground">Se încarcă...</div>
+    return <div className="p-6 text-sm text-muted-foreground">{t("loading")}</div>
   }
 
   return (
@@ -247,39 +257,37 @@ export default function BestTimesPage() {
             <AlertDialogTrigger asChild>
               <Button variant="outline" size="sm" disabled={aiLoading || platforms.length === 0}>
                 <Sparkles className="h-4 w-4 mr-1.5" />
-                {aiLoading ? "Se generează..." : "Completare AI"}
+                {aiLoading ? t("generating") : t("ai_fill")}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Completare automată cu AI</AlertDialogTitle>
+                <AlertDialogTitle>{t("ai_dialog.title")}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  AI-ul va rescrie toate sloturile și zilele existente cu recomandări optime per platformă,
-                  bazate pe date generale de engagement. Modificările nu sunt salvate automat — vei putea
-                  verifica și ajusta înainte să apeși Salvează.
+                  {t("ai_dialog.description")}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Anulează</AlertDialogCancel>
-                <AlertDialogAction onClick={aiSuggest}>Continuă</AlertDialogAction>
+                <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+                <AlertDialogAction onClick={aiSuggest}>{t("continue")}</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-          <Button size="sm" disabled={busy} onClick={save}>{busy ? "Salvare..." : "Salvează"}</Button>
+          <Button size="sm" disabled={busy} onClick={save}>{busy ? t("saving") : t("save")}</Button>
         </div>
       </div>
       <p className="text-sm text-muted-foreground">
-        Orele sunt afișate în <strong>{tzLabel}</strong> — se salvează automat în UTC.
-        Rețelele afișate sunt cele conectate și active în{" "}
-        <a href="/dashboard/settings/social-accounts" className="underline">Conturi sociale</a>.
-        Bifează zilele din săptămână eligibile — sistemul programează postările în prima zi/oră
-        liberă, aceeași zi pe toate rețelele, fiecare la propriul best time.
+        {t.rich("description", {
+          timezone: () => <strong>{tzLabel}</strong>,
+          socialAccounts: (chunks) => <a href="/dashboard/settings/social-accounts" className="underline">{chunks}</a>,
+        })}
       </p>
 
       {platforms.length === 0 && (
         <p className="text-sm text-muted-foreground">
-          Niciun conector activ — conectează o rețea din{" "}
-          <a href="/dashboard/settings/social-accounts" className="underline">Conturi sociale</a>.
+          {t.rich("no_active_connector", {
+            socialAccounts: (chunks) => <a href="/dashboard/settings/social-accounts" className="underline">{chunks}</a>,
+          })}
         </p>
       )}
 
@@ -299,7 +307,7 @@ export default function BestTimesPage() {
                   <button
                     key={day}
                     onClick={() => toggleDay(platform, day)}
-                    title={WEEKDAY_NAMES[day]}
+                    title={weekdayNames[day]}
                     className={`h-8 w-8 rounded-md border text-xs font-medium transition-colors ${
                       checked ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground"
                     }`}
@@ -327,7 +335,7 @@ export default function BestTimesPage() {
                 </div>
               ))}
               <Button variant="outline" size="sm" className="h-8" onClick={() => addSlot(platform)}>
-                + Adaugă slot
+                {t("add_slot")}
               </Button>
             </div>
           </CardContent>

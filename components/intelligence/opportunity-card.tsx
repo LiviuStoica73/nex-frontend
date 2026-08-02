@@ -5,6 +5,7 @@
 
 'use client'
 import { useState, useEffect, useRef } from 'react'
+import { useTranslations } from 'next-intl'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -37,12 +38,12 @@ interface OpportunityCardProps {
   connectedPlatforms?: string[]
 }
 
-const STATUS_BADGE: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }> = {
-  idea: { label: 'Idee', variant: 'secondary' },
-  generating: { label: 'Se generează...', variant: 'outline' },
-  review: { label: 'Verifică', variant: 'default' },
-  published: { label: 'Publicat', variant: 'secondary' },
-  rejected: { label: 'Respins', variant: 'destructive' },
+const STATUS_BADGE: Record<string, { labelKey: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }> = {
+  generating: { labelKey: 'statuses.generating', variant: 'outline' },
+  idea: { labelKey: 'statuses.idea', variant: 'secondary' },
+  published: { labelKey: 'statuses.published', variant: 'secondary' },
+  rejected: { labelKey: 'statuses.rejected', variant: 'destructive' },
+  review: { labelKey: 'statuses.review', variant: 'default' },
 }
 
 export function OpportunityCard({
@@ -59,6 +60,7 @@ export function OpportunityCard({
   token,
   connectedPlatforms = [],
 }: OpportunityCardProps) {
+  const t = useTranslations('opportunity_card')
   const [editText, setEditText] = useState(opp.master_text || '')
   const [editPrompt, setEditPrompt] = useState(opp.image_prompt_raw || opp.image_prompt || '')
   const [showPrompt, setShowPrompt] = useState(false)
@@ -74,7 +76,7 @@ export function OpportunityCard({
   const lastInteractionRef = useRef<number>(0)
 
   // Derivate din status — definite ÎNAINTE de useEffect pentru a evita TDZ în producție
-  const badge = STATUS_BADGE[opp.status] ?? { label: opp.status, variant: 'secondary' as const }
+  const badge = STATUS_BADGE[opp.status] ?? { labelKey: '', variant: 'secondary' as const }
   const isGenerating = opp.status === 'generating'
   const isReview = opp.status === 'review'
   const isPublished = opp.status === 'published'
@@ -210,7 +212,7 @@ export function OpportunityCard({
             {opp.score !== null && (
               <Badge variant="outline" className="text-xs">{opp.score}</Badge>
             )}
-            <Badge variant={badge.variant} className="text-xs">{badge.label}</Badge>
+            <Badge variant={badge.variant} className="text-xs">{badge.labelKey ? t(badge.labelKey) : opp.status}</Badge>
           </div>
         </div>
 
@@ -230,7 +232,7 @@ export function OpportunityCard({
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm text-muted-foreground py-1">
               <Loader2 className="h-4 w-4 animate-spin shrink-0" />
-              <span>Se generează text și imagine...</span>
+              <span>{t('generating_text_image')}</span>
             </div>
             <Button
               size="sm"
@@ -240,7 +242,7 @@ export function OpportunityCard({
               className="w-full text-xs h-7 text-muted-foreground"
             >
               {resetting ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <RotateCcw className="h-3 w-3 mr-1" />}
-              Resetează (blocat?)
+              {t('reset_stuck')}
             </Button>
           </div>
         )}
@@ -252,14 +254,14 @@ export function OpportunityCard({
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-muted-foreground font-medium">
-                  Imagini ({versions.length}) — click pentru a selecta / deselecta
+                  {t('images_selection_hint', { count: versions.length })}
                 </span>
                 <Button
                   size="sm"
                   variant="outline"
                   className="h-7 px-2 text-xs"
                   onClick={() => {
-                    if (!confirm('Regenerarea imaginii consumă credite conform selecțiilor din Quick Post. Continui?')) return
+                    if (!confirm(t('confirm_regenerate_image'))) return
                     handleRegenerateImage()
                   }}
                   disabled={regenerating}
@@ -267,7 +269,7 @@ export function OpportunityCard({
                   {regenerating
                     ? <Loader2 className="h-3 w-3 animate-spin mr-1" />
                     : <RefreshCw className="h-3 w-3 mr-1" />}
-                  + Imagine nouă
+                  {t('new_image')}
                 </Button>
               </div>
 
@@ -289,11 +291,11 @@ export function OpportunityCard({
                     key={v.url}
                     className="relative group cursor-pointer"
                     onClick={() => handleToggleSelect(v)}
-                    title={v.selected ? 'Click pentru a deselecta' : 'Click pentru a selecta'}
+                    title={v.selected ? t('deselect_image') : t('select_image')}
                   >
                     <img
                       src={v.url}
-                      alt={`Imagine ${i + 1}`}
+                      alt={t('image_alt', { index: i + 1 })}
                       className={`h-16 w-16 rounded-md object-cover border-2 transition-all ${
                         v.selected
                           ? 'border-primary ring-2 ring-primary/40'
@@ -308,7 +310,7 @@ export function OpportunityCard({
                     <button
                       className="absolute bottom-0 right-0 bg-black/60 text-white text-[10px] rounded-bl-md rounded-tr-md px-1 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
                       onClick={(e) => { e.stopPropagation(); setLocalImageUrl(v.url); setLightboxOpen(true) }}
-                      title="Mărește"
+                      title={t('zoom')}
                     >
                       🔍
                     </button>
@@ -317,7 +319,7 @@ export function OpportunityCard({
               </div>
               {versions.length > 0 && (
                 <p className="text-xs text-muted-foreground">
-                  {versions.filter(v => v.selected).length} selectate pentru publicare · Click pe o imagine pentru a-i vedea promptul
+                  {t('selected_for_publish', { count: versions.filter(v => v.selected).length })}
                 </p>
               )}
             </div>
@@ -351,9 +353,9 @@ export function OpportunityCard({
                     onChange={(e) => setEditPrompt(e.target.value)}
                     rows={3}
                     className="text-xs resize-y"
-                    placeholder="Descrie scena vizuală..."
+                    placeholder={t('visual_prompt_placeholder')}
                   />
-                  <p className="text-xs text-muted-foreground">Editează promptul vizual, apoi apasă <strong>Regenerează imagine</strong> pentru a regenera cu noul prompt. Atenție! Sunt utilizate credite conform selecțiilor din Quick Post.</p>
+                  <p className="text-xs text-muted-foreground">{t.rich('visual_prompt_help', { regenerate: (chunks) => <strong>{chunks}</strong> })}</p>
                 </div>
               )}
             </div>
@@ -376,7 +378,7 @@ export function OpportunityCard({
                 className="flex-1"
               >
                 {saving && <Loader2 className="h-3 w-3 animate-spin mr-1" />}
-                Salvează
+                {t('save')}
               </Button>
               <Button
                 size="sm"
@@ -388,7 +390,7 @@ export function OpportunityCard({
                   ? <Loader2 className="h-3 w-3 animate-spin mr-1" />
                   : <Send className="h-3 w-3 mr-1" />
                 }
-                {publishing ? 'Se publică...' : 'Publică'}
+                {publishing ? t('publishing') : t('publish')}
               </Button>
             </div>
 
@@ -399,7 +401,7 @@ export function OpportunityCard({
               className="w-full text-destructive hover:text-destructive text-xs h-7"
             >
               <X className="h-3 w-3 mr-1" />
-              Respinge
+              {t('reject')}
             </Button>
           </div>
         )}
@@ -409,14 +411,14 @@ export function OpportunityCard({
           <div className="flex gap-2">
             <Button size="sm" onClick={() => onGenerate(opp.id)} className="flex-1">
               <Zap className="h-3 w-3 mr-1" />
-              Generează prototip
+              {t('generate_prototype')}
             </Button>
             <Button
               size="sm"
               variant="ghost"
               onClick={() => onReject(opp.id)}
               className="text-destructive hover:text-destructive px-2"
-              title="Respinge"
+              title={t('reject')}
             >
               <X className="h-3 w-3" />
             </Button>
@@ -434,10 +436,10 @@ export function OpportunityCard({
               {localImageUrl && (
                 <img
                   src={localImageUrl}
-                  alt="Imagine publicată"
+                  alt={t('published_image_alt')}
                   className="h-16 w-16 rounded-md object-cover shrink-0 border border-border"
                   onClick={(e) => { e.stopPropagation(); setLightboxOpen(true) }}
-                  title="Click pentru a mări"
+                  title={t('click_to_zoom')}
                 />
               )}
               <div className="flex-1 min-w-0 space-y-1">
@@ -450,7 +452,7 @@ export function OpportunityCard({
                   {opp.prototype_generated_at && (
                     <>Prototip generat: {new Date(opp.prototype_generated_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' })} · </>
                   )}
-                  <span className="cursor-pointer">{publishedExpanded ? '▲ Restrânge' : '▼ Detalii & link-uri'}</span>
+                  <span className="cursor-pointer">{publishedExpanded ? t('collapse') : t('details_links')}</span>
                 </p>
               </div>
             </div>
@@ -496,7 +498,7 @@ export function OpportunityCard({
                             </a>
                           ) : (
                             <span className="text-muted-foreground italic pl-22">
-                              {link.status === 'scheduled' ? 'Programat — link disponibil după publicare' : link.status}
+                              {link.status === 'scheduled' ? t('scheduled_link_available_after_publish') : link.status}
                             </span>
                           )}
                         </div>
@@ -505,7 +507,7 @@ export function OpportunityCard({
                   </div>
                 )}
                 {publishedLinks.length === 0 && (
-                  <p className="text-xs text-muted-foreground italic animate-pulse">Se programează postările…</p>
+                  <p className="text-xs text-muted-foreground italic animate-pulse">{t('scheduling_posts')}</p>
                 )}
               </div>
             )}
@@ -530,7 +532,7 @@ export function OpportunityCard({
         {isRejected && (
           <Button size="sm" variant="ghost" onClick={() => onRestore(opp.id)} className="w-full text-xs h-7">
             <RotateCcw className="h-3 w-3 mr-1" />
-            Restaurează
+            {t('restore')}
           </Button>
         )}
       </CardContent>

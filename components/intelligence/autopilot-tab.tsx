@@ -4,6 +4,7 @@
 
 'use client'
 import { useEffect, useState, useRef } from 'react'
+import { useTranslations } from 'next-intl'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
@@ -20,21 +21,16 @@ const PLATFORM_COLORS: Record<string, string> = {
   blog: '#F59E0B', website: '#6B7280',
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  draft: 'Draft', approved: 'Aprobat', scheduled: 'Programat',
-  published: 'Publicat', failed: 'Eșuat', skipped: 'Sărit', paused: 'Pauză',
-}
-
 const STATUS_COLORS: Record<string, string> = {
   draft: '#6B7280', approved: '#3B82F6', scheduled: '#F59E0B',
   published: '#10B981', failed: '#EF4444', skipped: '#6B7280', paused: '#8B5CF6',
 }
 
 const SORT_OPTIONS = [
-  { value: 'post_date', label: 'Data postării' },
-  { value: 'score', label: 'Scor AI' },
-  { value: 'created_at', label: 'Data creării' },
-  { value: 'title', label: 'Alfabetic' },
+  { value: 'post_date', labelKey: 'sort.post_date' },
+  { value: 'score', labelKey: 'sort.score' },
+  { value: 'created_at', labelKey: 'sort.created_at' },
+  { value: 'title', labelKey: 'sort.title' },
 ] as const
 
 type SortKey = typeof SORT_OPTIONS[number]['value']
@@ -75,25 +71,27 @@ function platformLabel(post: LinkedPost) {
 }
 
 // Derivă statusul real din postările asociate
-function deriveStatus(posts: LinkedPost[]): { label: string; color: string; detail: string } {
-  if (posts.length === 0) return { label: 'Publicat', color: STATUS_COLORS.published, detail: '' }
+function deriveStatus(posts: LinkedPost[], t: ReturnType<typeof useTranslations>): { label: string; color: string; detail: string } {
+  if (posts.length === 0) return { label: t('statuses.published'), color: STATUS_COLORS.published, detail: '' }
   const published = posts.filter(p => p.status === 'published').length
   const scheduled = posts.filter(p => p.status === 'scheduled').length
   const failed = posts.filter(p => p.status === 'failed').length
   const total = posts.length
 
-  if (published === total) return { label: 'Publicat', color: STATUS_COLORS.published, detail: `${total} publicate` }
-  if (scheduled === total) return { label: 'Programat', color: STATUS_COLORS.scheduled, detail: `${total} programate` }
+  if (published === total) return { label: t('statuses.published'), color: STATUS_COLORS.published, detail: t('published_count', { count: total }) }
+  if (scheduled === total) return { label: t('statuses.scheduled'), color: STATUS_COLORS.scheduled, detail: t('scheduled_count', { count: total }) }
   if (published > 0 && scheduled > 0) return {
-    label: 'Publicat parțial', color: '#F97316',
-    detail: `${published} publicate · ${scheduled} programate${failed > 0 ? ` · ${failed} eșuate` : ''}`,
+    label: t('partially_published'), color: '#F97316',
+    detail: failed > 0
+      ? t('mixed_published_scheduled_failed', { published, scheduled, failed })
+      : t('mixed_published_scheduled', { published, scheduled }),
   }
   if (published > 0) return {
-    label: 'Publicat parțial', color: '#F97316',
-    detail: `${published} publicate · ${total - published} altele`,
+    label: t('partially_published'), color: '#F97316',
+    detail: t('published_other_count', { published, other: total - published }),
   }
-  if (failed === total) return { label: 'Eșuat', color: STATUS_COLORS.failed, detail: `${failed} eșuate` }
-  return { label: 'Mixt', color: '#6B7280', detail: `${published} pub · ${scheduled} prog · ${failed} eșuate` }
+  if (failed === total) return { label: t('statuses.failed'), color: STATUS_COLORS.failed, detail: t('failed_count', { count: failed }) }
+  return { label: t('mixed'), color: '#6B7280', detail: t('mixed_short', { published, scheduled, failed }) }
 }
 
 // Prima dată relevantă dintr-o oportunitate (pentru sortare și afișare)
@@ -108,12 +106,13 @@ function firstPostDate(opp: OppWithPosts): string | null {
 }
 
 function OppCard({ opp }: { opp: OppWithPosts }) {
+  const t = useTranslations('autopilot')
   const [open, setOpen] = useState(false)
   const posts = opp.linked_posts ?? []
   const platformsToShow = posts.length > 0
     ? [...new Set(posts.map(p => p.platform))]
     : opp.platforms ?? []
-  const { label: statusLabel, color: statusColor, detail: statusDetail } = deriveStatus(posts)
+  const { label: statusLabel, color: statusColor, detail: statusDetail } = deriveStatus(posts, t)
   const latestDate = firstPostDate(opp)
 
   return (
@@ -167,7 +166,7 @@ function OppCard({ opp }: { opp: OppWithPosts }) {
             onClick={e => { e.stopPropagation(); setOpen(o => !o) }}
           >
             {open ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-            {open ? 'Ascunde postările' : 'Vezi postările'}
+            {open ? t('hide_posts') : t('view_posts')}
           </button>
         )}
 
@@ -187,7 +186,7 @@ function OppCard({ opp }: { opp: OppWithPosts }) {
                     className="text-[10px] font-medium rounded-full px-2 py-0.5 text-white"
                     style={{ backgroundColor: STATUS_COLORS[post.status] ?? '#6B7280' }}
                   >
-                    {STATUS_LABELS[post.status] ?? post.status}
+                    {post.status in STATUS_COLORS ? t(`statuses.${post.status}`) : post.status}
                   </span>
                   {post.language && (
                     <span className="text-[10px] text-muted-foreground uppercase">{post.language}</span>
@@ -211,7 +210,7 @@ function OppCard({ opp }: { opp: OppWithPosts }) {
                     className="inline-flex items-center gap-1 text-xs text-blue-500 hover:text-blue-600 hover:underline pl-1 mt-0.5"
                     onClick={e => e.stopPropagation()}
                   >
-                    <ExternalLink className="h-3 w-3" /> Vezi postarea
+                    <ExternalLink className="h-3 w-3" /> {t('view_post')}
                   </a>
                 )}
               </div>
@@ -252,6 +251,7 @@ function filterByPlatforms(items: OppWithPosts[], platforms: Set<string>): OppWi
 const ALL_PLATFORMS = ['facebook', 'instagram', 'linkedin', 'x', 'discord', 'bluesky', 'blog']
 
 export function AutopilotTab({ orgId, token }: AutopilotTabProps) {
+  const t = useTranslations('autopilot')
   const [allItems, setAllItems] = useState<OppWithPosts[]>([])
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
@@ -314,7 +314,7 @@ export function AutopilotTab({ orgId, token }: AutopilotTabProps) {
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Caută după titlu sau hook..."
+            placeholder={t('search_placeholder')}
             value={searchInput}
             onChange={e => handleSearchChange(e.target.value)}
             className="pl-9 pr-8"
@@ -335,14 +335,14 @@ export function AutopilotTab({ orgId, token }: AutopilotTabProps) {
             className="text-xs border rounded-md px-2 py-1.5 bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
           >
             {SORT_OPTIONS.map(o => (
-              <option key={o.value} value={o.value}>{o.label}</option>
+              <option key={o.value} value={o.value}>{t(o.labelKey)}</option>
             ))}
           </select>
         </div>
 
         {/* Cartoane per pagină */}
         <div className="flex items-center gap-1.5">
-          <span className="text-xs text-muted-foreground">Per pagină:</span>
+          <span className="text-xs text-muted-foreground">{t('per_page')}</span>
           <select
             value={pageSize}
             onChange={e => { setPageSize(Number(e.target.value)); setPage(1) }}
@@ -357,7 +357,7 @@ export function AutopilotTab({ orgId, token }: AutopilotTabProps) {
 
       {/* Filtre platforme */}
       <div className="flex gap-2 flex-wrap items-center">
-        <span className="text-xs text-muted-foreground">Rețele:</span>
+        <span className="text-xs text-muted-foreground">{t('networks')}</span>
         {ALL_PLATFORMS.map(p => {
           const active = platformFilter.has(p)
           return (
@@ -380,21 +380,21 @@ export function AutopilotTab({ orgId, token }: AutopilotTabProps) {
             onClick={() => { setPlatformFilter(new Set()); setPage(1) }}
             className="text-xs text-muted-foreground hover:text-foreground underline"
           >
-            Resetează
+            {t('reset')}
           </button>
         )}
       </div>
 
       {loading ? (
-        <div className="text-sm text-muted-foreground p-4 text-center">Se încarcă...</div>
+        <div className="text-sm text-muted-foreground p-4 text-center">{t('loading')}</div>
       ) : processed.length === 0 ? (
         <div className="text-center py-16 text-muted-foreground space-y-2">
           {search || platformFilter.size > 0 ? (
-            <p className="text-sm">Niciun rezultat pentru filtrele selectate.</p>
+            <p className="text-sm">{t('no_filter_results')}</p>
           ) : (
             <>
-              <p className="text-sm font-medium">Nicio idee publicată din Intelligence încă.</p>
-              <p className="text-xs">Publică oportunități din tab-ul <span className="font-medium">Oportunități</span> pentru a le vedea aici.</p>
+              <p className="text-sm font-medium">{t('empty_title')}</p>
+              <p className="text-xs">{t.rich('empty_subtitle', { opportunities: (chunks) => <span className="font-medium">{chunks}</span> })}</p>
             </>
           )}
         </div>
@@ -402,8 +402,8 @@ export function AutopilotTab({ orgId, token }: AutopilotTabProps) {
         <>
           <p className="text-sm text-muted-foreground">
             {processed.length === total
-              ? `${total} ${total === 1 ? 'idee' : 'idei'} în Calendar din Intelligence`
-              : `${processed.length} din ${total} ${total === 1 ? 'idee' : 'idei'}`}
+              ? t('calendar_count', { count: total })
+              : t('filtered_count', { count: processed.length, total })}
             {search && <span> — „{search}"</span>}
           </p>
 

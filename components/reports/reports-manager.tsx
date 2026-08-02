@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useTranslations } from "next-intl"
 import { Download } from "lucide-react"
 
 interface NamedConsumed { name: string; consumed: number }
@@ -22,15 +23,15 @@ interface AgencyReport {
 
 interface Props { orgId: string; token: string }
 
-const ACTION_LABELS: Record<string, string> = {
-  text_post: "Text",
-  image_comfyui: "Imagine (RTX)",
-  image_fal: "Imagine (Fal.ai)",
-  image_fal_kontext: "Imagine (Kontext)",
-  image_gemini: "Imagine (Gemini)",
-  video: "Video",
-  platform_adaptation: "Adaptare platformă",
-  ideas_set: "Idei",
+const ACTION_LABEL_KEYS: Record<string, string> = {
+  ideas_set: "actions.ideas_set",
+  image_comfyui: "actions.image_comfyui",
+  image_fal: "actions.image_fal",
+  image_fal_kontext: "actions.image_fal_kontext",
+  image_gemini: "actions.image_gemini",
+  platform_adaptation: "actions.platform_adaptation",
+  text_post: "actions.text_post",
+  video: "actions.video",
 }
 
 function lastMonths(n: number): string[] {
@@ -44,6 +45,7 @@ function lastMonths(n: number): string[] {
 }
 
 export function ReportsManager({ orgId, token }: Props) {
+  const t = useTranslations("reports_manager")
   const [period, setPeriod] = useState(lastMonths(1)[0])
   const [org, setOrg] = useState<OrgReport | null>(null)
   const [agency, setAgency] = useState<AgencyReport | null>(null)
@@ -73,23 +75,23 @@ export function ReportsManager({ orgId, token }: Props) {
   useEffect(() => { fetchReports() }, [orgId, period])
 
   const exportCsv = () => {
-    const lines: string[] = [`Raport consum credite,${period}`, ""]
+    const lines: string[] = [t("csv.title", { period }), ""]
     if (agency) {
-      lines.push("Client,Consumat")
+      lines.push(t("csv.client_consumed"))
       agency.clients.forEach((c) => lines.push(`${c.name},${c.consumed}`))
-      lines.push(`Agenție (branduri proprii),${agency.agency_own_consumed}`, "")
+      lines.push(t("csv.agency_own", { consumed: agency.agency_own_consumed }), "")
     }
     if (org) {
-      lines.push("Acțiune,Consumat")
-      org.by_action.forEach((a) => lines.push(`${ACTION_LABELS[a.action] ?? a.action},${a.consumed}`))
-      lines.push("", "Campanie,Consumat")
+      lines.push(t("csv.action_consumed"))
+      org.by_action.forEach((a) => lines.push(`${ACTION_LABEL_KEYS[a.action] ? t(ACTION_LABEL_KEYS[a.action]) : a.action},${a.consumed}`))
+      lines.push("", t("csv.campaign_consumed"))
       org.by_campaign.forEach((c) => lines.push(`${c.name},${c.consumed}`))
     }
     const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" })
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    a.download = `raport-consum-${period}.csv`
+    a.download = t("csv.filename", { period })
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -113,20 +115,20 @@ export function ReportsManager({ orgId, token }: Props) {
       </div>
 
       {loading ? (
-        <p className="text-sm text-muted-foreground">Se încarcă...</p>
+        <p className="text-sm text-muted-foreground">{t("loading")}</p>
       ) : (
         <>
           {/* Rollup agenție */}
           {agency && (
             <div className="rounded-lg border bg-card">
               <div className="border-b p-4">
-                <h2 className="font-semibold">Consum per client (agenție)</h2>
+                <h2 className="font-semibold">{t("agency_consumption_title")}</h2>
                 <p className="text-xs text-muted-foreground">
-                  Clienți: {agency.clients_consumed} • Branduri proprii: {agency.agency_own_consumed}
+                  {t("agency_consumption_summary", { clients: agency.clients_consumed, own: agency.agency_own_consumed })}
                 </p>
               </div>
               {agency.clients.length === 0 ? (
-                <p className="p-4 text-sm text-muted-foreground">Niciun consum în această perioadă.</p>
+                <p className="p-4 text-sm text-muted-foreground">{t("no_consumption_period")}</p>
               ) : (
                 <table className="w-full text-sm">
                   <tbody className="divide-y">
@@ -147,17 +149,17 @@ export function ReportsManager({ orgId, token }: Props) {
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
               <div className="rounded-lg border bg-card">
                 <div className="border-b p-4">
-                  <h2 className="font-semibold">Pe acțiune</h2>
-                  <p className="text-xs text-muted-foreground">Total: {org.total_consumed} credite</p>
+                  <h2 className="font-semibold">{t("by_action")}</h2>
+                  <p className="text-xs text-muted-foreground">{t("total_credits", { total: org.total_consumed })}</p>
                 </div>
                 {org.by_action.length === 0 ? (
-                  <p className="p-4 text-sm text-muted-foreground">Niciun consum.</p>
+                  <p className="p-4 text-sm text-muted-foreground">{t("no_consumption")}</p>
                 ) : (
                   <table className="w-full text-sm">
                     <tbody className="divide-y">
                       {org.by_action.map((a) => (
                         <tr key={a.action}>
-                          <td className="px-4 py-2">{ACTION_LABELS[a.action] ?? a.action}</td>
+                          <td className="px-4 py-2">{ACTION_LABEL_KEYS[a.action] ? t(ACTION_LABEL_KEYS[a.action]) : a.action}</td>
                           <td className="px-4 py-2 text-right font-medium">{a.consumed}</td>
                         </tr>
                       ))}
@@ -167,9 +169,9 @@ export function ReportsManager({ orgId, token }: Props) {
               </div>
 
               <div className="rounded-lg border bg-card">
-                <div className="border-b p-4"><h2 className="font-semibold">Pe campanie</h2></div>
+                <div className="border-b p-4"><h2 className="font-semibold">{t("by_campaign")}</h2></div>
                 {org.by_campaign.length === 0 ? (
-                  <p className="p-4 text-sm text-muted-foreground">Niciun consum.</p>
+                  <p className="p-4 text-sm text-muted-foreground">{t("no_consumption")}</p>
                 ) : (
                   <table className="w-full text-sm">
                     <tbody className="divide-y">
@@ -188,7 +190,7 @@ export function ReportsManager({ orgId, token }: Props) {
 
           {/* Placeholder rezultate */}
           <div className="rounded-lg border border-dashed bg-muted/30 p-4 text-sm text-muted-foreground">
-            Rezultate (reach, afișări, engagement) — disponibile după implementarea analytics (Sprint 6).
+            {t("results_placeholder")}
           </div>
         </>
       )}

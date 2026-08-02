@@ -1,21 +1,23 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { Building2, Share2, BookOpen, Bot, Check } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 interface Props { token: string; existingOrgId?: string }
 
 const STEPS = [
-  { id: 1, icon: Building2, title: "Brandul tău",       desc: "Cum se numește brandul sau compania ta?" },
-  { id: 2, icon: Share2,    title: "Conturi sociale",    desc: "Pe ce platforme ești activ?" },
-  { id: 3, icon: BookOpen,  title: "Brand Intelligence", desc: "Educă AI-ul despre brandul tău." },
-  { id: 4, icon: Bot,       title: "Telegram Bot",       desc: "Conectează Telegram pentru postări rapide din telefon." },
+  { id: 1, icon: Building2, titleKey: "steps.brand.title" },
+  { id: 2, icon: Share2, titleKey: "steps.social_accounts.title" },
+  { id: 3, icon: BookOpen, titleKey: "steps.brand_intelligence.title" },
+  { id: 4, icon: Bot, titleKey: "steps.telegram.title" },
 ]
 
 const PLATFORMS = ["facebook", "instagram", "linkedin", "x", "discord", "blog"]
 
 export function OnboardingWizard({ token, existingOrgId }: Props) {
+  const t = useTranslations("onboarding_wizard")
   const router = useRouter()
   const [step, setStep] = useState(1)
   const [orgName, setOrgName] = useState("")
@@ -79,7 +81,7 @@ export function OnboardingWizard({ token, existingOrgId }: Props) {
                 s.id < step ? "text-green-600" : s.id === step ? "text-primary" : "text-muted-foreground"
               }`}>
                 {s.id < step ? <Check className="h-3 w-3" /> : <s.icon className="h-3 w-3" />}
-                <span className="hidden sm:inline">{s.title}</span>
+                <span className="hidden sm:inline">{t(s.titleKey)}</span>
               </div>
             ))}
           </div>
@@ -94,19 +96,19 @@ export function OnboardingWizard({ token, existingOrgId }: Props) {
           {step === 1 && (
             <>
               <div>
-                <h1 className="text-2xl font-bold">Bun venit la Nex-Nex! 👋</h1>
-                <p className="text-muted-foreground mt-1">Hai să configurăm brandul tău în 4 pași.</p>
+                <h1 className="text-2xl font-bold">{t("welcome_title")}</h1>
+                <p className="text-muted-foreground mt-1">{t("welcome_subtitle")}</p>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Numele brandului sau companiei</label>
+                <label className="text-sm font-medium">{t("brand_name")}</label>
                 <input className="w-full rounded-md border bg-background px-3 py-2"
-                  placeholder="Ex: Bakery X, Studio Ana, TechStartup SRL"
+                  placeholder={t("brand_name_placeholder")}
                   value={orgName} onChange={(e) => setOrgName(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && createOrg()} />
               </div>
               <button onClick={createOrg} disabled={creating || !orgName.trim()}
                 className="w-full rounded-md bg-primary py-2.5 text-sm font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90">
-                {creating ? "Se creează..." : "Continuă →"}
+                {creating ? t("creating") : t("continue")}
               </button>
             </>
           )}
@@ -115,8 +117,8 @@ export function OnboardingWizard({ token, existingOrgId }: Props) {
           {step === 2 && (
             <>
               <div>
-                <h1 className="text-2xl font-bold">Pe ce platforme ești activ?</h1>
-                <p className="text-muted-foreground mt-1">Vei conecta conturile în Settings după onboarding.</p>
+                <h1 className="text-2xl font-bold">{t("platforms_title")}</h1>
+                <p className="text-muted-foreground mt-1">{t("platforms_subtitle")}</p>
               </div>
               <div className="grid grid-cols-3 gap-2">
                 {PLATFORMS.map((p) => (
@@ -132,7 +134,7 @@ export function OnboardingWizard({ token, existingOrgId }: Props) {
               </div>
               <button onClick={() => setStep(3)}
                 className="w-full rounded-md bg-primary py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90">
-                Continuă →
+                {t("continue")}
               </button>
             </>
           )}
@@ -141,22 +143,22 @@ export function OnboardingWizard({ token, existingOrgId }: Props) {
           {step === 3 && (
             <>
               <div>
-                <h1 className="text-2xl font-bold">Educă AI-ul despre brandul tău</h1>
+                <h1 className="text-2xl font-bold">{t("brand_voice_title")}</h1>
                 <p className="text-muted-foreground mt-1">
-                  Descrie tonul și publicul. Poți adăuga documente din Settings → Brand Intelligence.
+                  {t("brand_voice_subtitle")}
                 </p>
               </div>
               <textarea className="w-full rounded-md border bg-background px-3 py-2 min-h-[120px] resize-none text-sm"
-                placeholder="Ex: Ton prietenos și inspirațional. Audiență: femei 25-40 ani, pasionate de wellness. Evităm jargon medical."
+                placeholder={t("brand_voice_placeholder")}
                 value={brandVoice} onChange={(e) => setBrandVoice(e.target.value)} />
               <div className="flex gap-2">
                 <button onClick={saveBrandVoice}
                   className="flex-1 rounded-md bg-primary py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90">
-                  Continuă →
+                  {t("continue")}
                 </button>
                 <button onClick={() => setStep(4)}
                   className="rounded-md border px-4 py-2.5 text-sm hover:bg-muted">
-                  Sari peste
+                  {t("skip")}
                 </button>
               </div>
             </>
@@ -166,22 +168,22 @@ export function OnboardingWizard({ token, existingOrgId }: Props) {
           {step === 4 && (
             <>
               <div>
-                <h1 className="text-2xl font-bold">Conectează Telegram 📱</h1>
+                <h1 className="text-2xl font-bold">{t("telegram_title")}</h1>
                 <p className="text-muted-foreground mt-1">
-                  Generează și aprobă posturi direct din telefon, fără să deschizi browserul.
+                  {t("telegram_subtitle")}
                 </p>
               </div>
               <div className="rounded-lg bg-muted/50 border p-4 text-sm space-y-2">
-                <p className="font-medium">Cum conectezi:</p>
+                <p className="font-medium">{t("telegram_how_to")}</p>
                 <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
-                  <li>Mergi la Settings → Telegram din dashboard</li>
-                  <li>Generează un cod de conectare</li>
-                  <li>Trimite codul la <span className="font-mono font-medium">@NexNexBot</span></li>
+                  <li>{t("telegram_steps.open_settings")}</li>
+                  <li>{t("telegram_steps.generate_code")}</li>
+                  <li>{t.rich("telegram_steps.send_code", { bot: () => <span className="font-mono font-medium">@NexNexBot</span> })}</li>
                 </ol>
               </div>
               <button onClick={finish}
                 className="w-full rounded-md bg-green-600 py-2.5 text-sm font-medium text-white hover:bg-green-700">
-                ✅ Gata! Mergi la Dashboard
+                {t("finish")}
               </button>
             </>
           )}

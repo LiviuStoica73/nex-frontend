@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { ArrowRightLeft, Building2, FileText, Users } from "lucide-react"
 import { useOrg } from "@/contexts/org-context"
 
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export function AgencyOverview({ orgId, token }: Props) {
+  const t = useTranslations("agency_overview")
   const { switchOrg, switching } = useOrg()
   const [clients, setClients] = useState<ClientOrg[]>([])
   const [orgs, setOrgs] = useState<Record<string, OrgDetail>>({})
@@ -55,7 +57,7 @@ export function AgencyOverview({ orgId, token }: Props) {
         <div className="rounded-lg border bg-card p-4">
           <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
             <Users className="h-4 w-4" />
-            Clienți activi
+            {t("active_clients")}
           </div>
           <p className="text-3xl font-bold">{clients.length}</p>
         </div>
@@ -63,12 +65,12 @@ export function AgencyOverview({ orgId, token }: Props) {
 
       {/* Clients grid */}
       <div>
-        <h2 className="text-lg font-semibold mb-3">Clienți</h2>
+        <h2 className="text-lg font-semibold mb-3">{t("clients")}</h2>
         {loading ? (
-          <p className="text-sm text-muted-foreground">Se încarcă...</p>
+          <p className="text-sm text-muted-foreground">{t("loading")}</p>
         ) : clients.length === 0 ? (
           <div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
-            <p>Niciun client. <Link href="/dashboard/clients" className="underline">Adaugă primul client →</Link></p>
+            <p>{t("no_clients")} <Link href="/dashboard/clients" className="underline">{t("add_first_client")}</Link></p>
           </div>
         ) : (
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -92,7 +94,7 @@ export function AgencyOverview({ orgId, token }: Props) {
                       className="flex-1 flex items-center justify-center gap-1.5 rounded-md bg-primary text-primary-foreground px-3 py-1.5 text-xs font-medium hover:bg-primary/90 disabled:opacity-50"
                     >
                       <ArrowRightLeft className="h-3 w-3" />
-                      Intră
+                      {t("enter")}
                     </button>
                     <Link
                       href={`/dashboard/campaigns`}
@@ -100,7 +102,7 @@ export function AgencyOverview({ orgId, token }: Props) {
                       className="flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs hover:bg-muted"
                     >
                       <FileText className="h-3 w-3" />
-                      Campanii
+                      {t("campaigns")}
                     </Link>
                   </div>
                 </div>
@@ -112,7 +114,7 @@ export function AgencyOverview({ orgId, token }: Props) {
 
       <div className="flex justify-end">
         <Link href="/dashboard/clients" className="text-sm text-muted-foreground hover:text-foreground underline">
-          Gestionează clienții →
+          {t("manage_clients")}
         </Link>
       </div>
     </div>

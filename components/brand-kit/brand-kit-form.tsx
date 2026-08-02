@@ -2,18 +2,19 @@
 
 import { useEffect, useRef, useState } from "react"
 import { useSearchParams } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Save, Upload, FileText, Trash2, Link, RefreshCw, X, Building2 } from "lucide-react"
 
 const POSITION_OPTIONS = [
-  { value: "top_left",    label: "Sus stânga" },
-  { value: "top_center",  label: "Sus centru" },
-  { value: "top_right",   label: "Sus dreapta" },
-  { value: "mid_left",    label: "Mijloc stânga" },
-  { value: "center",      label: "Centru" },
-  { value: "mid_right",   label: "Mijloc dreapta" },
-  { value: "bot_left",    label: "Jos stânga" },
-  { value: "bot_center",  label: "Jos centru" },
-  { value: "bot_right",   label: "Jos dreapta" },
+  { value: "top_left",    labelKey: "positions.top_left" },
+  { value: "top_center",  labelKey: "positions.top_center" },
+  { value: "top_right",   labelKey: "positions.top_right" },
+  { value: "mid_left",    labelKey: "positions.mid_left" },
+  { value: "center",      labelKey: "positions.center" },
+  { value: "mid_right",   labelKey: "positions.mid_right" },
+  { value: "bot_left",    labelKey: "positions.bot_left" },
+  { value: "bot_center",  labelKey: "positions.bot_center" },
+  { value: "bot_right",   labelKey: "positions.bot_right" },
 ] as const
 
 
@@ -26,6 +27,7 @@ function PositionSelect({
   onChange: (v: string) => void
   label: string
 }) {
+  const t = useTranslations("brand_kit_form")
   return (
     <div className="flex items-center gap-2 mt-2">
       <span className="text-xs text-muted-foreground whitespace-nowrap">{label}</span>
@@ -36,7 +38,7 @@ function PositionSelect({
       >
         {POSITION_OPTIONS.map((opt) => (
           <option key={opt.value} value={opt.value}>
-            {opt.label}
+            {t(opt.labelKey)}
           </option>
         ))}
       </select>
@@ -115,14 +117,15 @@ type Tab = "identitate" | "voce" | "tipografie" | "documente" | "quick_post"
 interface Props { orgId: string; token: string }
 
 export function BrandKitForm({ orgId, token }: Props) {
+  const t = useTranslations("brand_kit_form")
   if (!orgId) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-12 text-center">
         <Building2 className="h-10 w-10 text-muted-foreground" />
         <div>
-          <p className="font-medium">Niciun brand selectat</p>
+          <p className="font-medium">{t("no_brand.title")}</p>
           <p className="text-sm text-muted-foreground mt-1">
-            Creează sau selectează un brand din meniul din stânga pentru a configura Brand Kit-ul.
+            {t("no_brand.description")}
           </p>
         </div>
       </div>
@@ -252,7 +255,7 @@ export function BrandKitForm({ orgId, token }: Props) {
   }
 
   const save = async () => {
-    if (!orgId) { setError("Sesiunea nu are orgId. Re-autentifică-te."); return }
+    if (!orgId) { setError(t("errors.missing_org")); return }
     setSaving(true)
     setSaved(false)
     setError(null)
@@ -305,10 +308,10 @@ export function BrandKitForm({ orgId, token }: Props) {
           logo_sign_position: kit.logo_sign_position,
         }),
       })
-      if (!res.ok) setError(`Eroare ${res.status}: ${await res.text()}`)
+      if (!res.ok) setError(t("errors.save_failed", { status: res.status, message: await res.text() }))
       else setSaved(true)
     } catch {
-      setError("Eroare de rețea. Verifică conexiunea.")
+      setError(t("errors.network"))
     } finally {
       setSaving(false)
       setTimeout(() => setSaved(false), 2000)
@@ -316,7 +319,7 @@ export function BrandKitForm({ orgId, token }: Props) {
   }
 
   const uploadLogo = async (file: File) => {
-    if (!orgId) { setError("Sesiunea nu are orgId. Re-autentifică-te."); return }
+    if (!orgId) { setError(t("errors.missing_org")); return }
     setUploading(true)
     setError(null)
     try {
@@ -327,22 +330,22 @@ export function BrandKitForm({ orgId, token }: Props) {
         const data = await res.json()
         setKit((k) => ({ ...k, logo_url: data.logo_url }))
       } else {
-        let msg = `Upload logo eșuat (${res.status})`
+        let msg = t("errors.logo_upload_failed", { status: res.status })
         try {
           const body = await res.json()
-          msg = res.status === 503 ? "Storage R2 nu este configurat." : (body.detail ?? msg)
+          msg = res.status === 503 ? t("errors.storage_not_configured") : (body.detail ?? msg)
         } catch {}
         setError(msg)
       }
     } catch {
-      setError("Eroare de rețea la upload logo.")
+      setError(t("errors.logo_network"))
     } finally {
       setUploading(false)
     }
   }
 
   const uploadSign = async (file: File) => {
-    if (!orgId) { setError("Sesiunea nu are orgId. Re-autentifică-te."); return }
+    if (!orgId) { setError(t("errors.missing_org")); return }
     setUploadingSign(true)
     setError(null)
     try {
@@ -353,17 +356,17 @@ export function BrandKitForm({ orgId, token }: Props) {
         const data = await res.json()
         setKit((k) => ({ ...k, sign_url: data.sign_url }))
       } else {
-        setError(`Upload sign eșuat (${res.status})`)
+        setError(t("errors.sign_upload_failed", { status: res.status }))
       }
     } catch {
-      setError("Eroare de rețea la upload sign.")
+      setError(t("errors.sign_network"))
     } finally {
       setUploadingSign(false)
     }
   }
 
   const uploadLogoSign = async (file: File) => {
-    if (!orgId) { setError("Sesiunea nu are orgId. Re-autentifică-te."); return }
+    if (!orgId) { setError(t("errors.missing_org")); return }
     setUploadingLogoSign(true)
     setError(null)
     try {
@@ -374,10 +377,10 @@ export function BrandKitForm({ orgId, token }: Props) {
         const data = await res.json()
         setKit((k) => ({ ...k, logo_sign_url: data.logo_sign_url }))
       } else {
-        setError(`Upload logo+sign eșuat (${res.status})`)
+        setError(t("errors.logo_sign_upload_failed", { status: res.status }))
       }
     } catch {
-      setError("Eroare de rețea la upload logo+sign.")
+      setError(t("errors.logo_sign_network"))
     } finally {
       setUploadingLogoSign(false)
     }
@@ -395,13 +398,13 @@ export function BrandKitForm({ orgId, token }: Props) {
         if (res.ok) {
           lastKit = await res.json()
         } else {
-          setError(`Upload template eșuat (${res.status})`)
+          setError(t("errors.template_upload_failed", { status: res.status }))
           break
         }
       }
       if (lastKit) setKit((k) => ({ ...k, visual_templates: lastKit.visual_templates || [] }))
     } catch {
-      setError("Eroare de rețea la upload template.")
+      setError(t("errors.template_network"))
     } finally {
       setUploadingTemplate(false)
     }
@@ -471,11 +474,11 @@ export function BrandKitForm({ orgId, token }: Props) {
   }
 
   const tabs: { id: Tab; label: string }[] = [
-    { id: "identitate",  label: "Identitate" },
-    { id: "voce",        label: "Voce & Cuvinte" },
-    { id: "tipografie",  label: "Tipografie" },
-    { id: "documente",   label: "Documente AI" },
-    { id: "quick_post",  label: "⚡ Quick Post" },
+    { id: "identitate",  label: t("tabs.identity") },
+    { id: "voce",        label: t("tabs.voice") },
+    { id: "tipografie",  label: t("tabs.typography") },
+    { id: "documente",   label: t("tabs.documents") },
+    { id: "quick_post",  label: t("tabs.quick_post") },
   ]
 
   // Doar fonturi bundle-uite fizic pe server (app/assets/fonts/) — orice altă
@@ -483,12 +486,12 @@ export function BrandKitForm({ orgId, token }: Props) {
   const FONT_OPTIONS = ["Inter", "Roboto", "Montserrat", "Playfair Display"]
 
   const colorFields = [
-    { label: "Primară",      desc: "Culoarea principală a brandului",         key: "primary_color" },
-    { label: "Secundară",    desc: "Culoare de suport / fundal secundar",      key: "secondary_color" },
-    { label: "Accent",       desc: "CTA-uri, butoane, highlight-uri",          key: "accent_color" },
-    { label: "Fundal",       desc: "Culoarea de fundal a imaginilor",          key: "background_color" },
-    { label: "Text închis",  desc: "Text pe fundal deschis",                   key: "text_dark_color" },
-    { label: "Text deschis", desc: "Text pe fundal închis",                    key: "text_light_color" },
+    { label: t("identity.colors.primary.label"),      desc: t("identity.colors.primary.description"),      key: "primary_color" },
+    { label: t("identity.colors.secondary.label"),    desc: t("identity.colors.secondary.description"),    key: "secondary_color" },
+    { label: t("identity.colors.accent.label"),       desc: t("identity.colors.accent.description"),       key: "accent_color" },
+    { label: t("identity.colors.background.label"),   desc: t("identity.colors.background.description"),   key: "background_color" },
+    { label: t("identity.colors.text_dark.label"),    desc: t("identity.colors.text_dark.description"),    key: "text_dark_color" },
+    { label: t("identity.colors.text_light.label"),   desc: t("identity.colors.text_light.description"),   key: "text_light_color" },
   ]
 
   return (
@@ -522,28 +525,28 @@ export function BrandKitForm({ orgId, token }: Props) {
           {/* Nume, slogan, descriere */}
           <div className="rounded-lg border bg-card p-5 space-y-4">
             <div className="space-y-2">
-              <label className="text-sm text-muted-foreground">Denumire firmă / brand</label>
+              <label className="text-sm text-muted-foreground">{t("identity.brand_name.label")}</label>
               <input
                 className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                placeholder="Ex: Nex-Nex, Agenția Creativă, TechStartup SRL"
+                placeholder={t("identity.brand_name.placeholder")}
                 value={kit.brand_name || ""}
                 onChange={(e) => setKit((k) => ({ ...k, brand_name: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm text-muted-foreground">Slogan</label>
+              <label className="text-sm text-muted-foreground">{t("identity.slogan.label")}</label>
               <input
                 className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                placeholder="Ex: AI Marketing Manager pentru creatori"
+                placeholder={t("identity.slogan.placeholder")}
                 value={kit.slogan || ""}
                 onChange={(e) => setKit((k) => ({ ...k, slogan: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm text-muted-foreground">Descriere scurtă</label>
+              <label className="text-sm text-muted-foreground">{t("identity.description.label")}</label>
               <textarea
                 className="w-full rounded-md border bg-background px-3 py-2 text-sm resize-none min-h-[80px]"
-                placeholder="1-3 propoziții despre ce face brandul tău."
+                placeholder={t("identity.description.placeholder")}
                 value={kit.description || ""}
                 onChange={(e) => setKit((k) => ({ ...k, description: e.target.value }))}
               />
@@ -552,76 +555,75 @@ export function BrandKitForm({ orgId, token }: Props) {
 
           {/* Logo + Sign */}
           <div className="rounded-lg border bg-card p-5 space-y-4">
-            <h2 className="font-semibold">Active vizuale</h2>
+            <h2 className="font-semibold">{t("identity.visual_assets.title")}</h2>
             <div className="grid grid-cols-2 gap-6">
               {/* Logo */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Logo</label>
-                <p className="text-xs text-muted-foreground">Imagine pătrat 1:1, fundal transparent</p>
+                <label className="text-sm font-medium">{t("identity.logo.label")}</label>
+                <p className="text-xs text-muted-foreground">{t("identity.logo.description")}</p>
                 {kit.logo_url && (
-                  <img src={kit.logo_url} alt="Logo" className="h-20 w-20 rounded border bg-muted object-contain p-2" />
+                  <img src={kit.logo_url} alt={t("identity.logo.alt")} className="h-20 w-20 rounded border bg-muted object-contain p-2" />
                 )}
                 <label className="flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm w-fit hover:bg-muted">
                   <Upload className="h-4 w-4" />
-                  {uploading ? "Se uploadează..." : kit.logo_url ? "Schimbă logo" : "Upload logo"}
+                  {uploading ? t("identity.logo.uploading") : kit.logo_url ? t("identity.logo.replace") : t("identity.logo.upload")}
                   <input type="file" accept="image/*" className="hidden"
                     onChange={(e) => e.target.files?.[0] && uploadLogo(e.target.files[0])} />
                 </label>
                 <PositionSelect
                   value={kit.logo_position || "bot_right"}
                   onChange={(v) => setKit((k) => ({ ...k, logo_position: v }))}
-                  label="Poziție (Fal.ai):"
+                  label={t("position_label")}
                 />
               </div>
 
               {/* Sign */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Sign / Font brand</label>
-                <p className="text-xs text-muted-foreground">Stilul de scriere al brandului (PNG/SVG)</p>
+                <label className="text-sm font-medium">{t("identity.sign.label")}</label>
+                <p className="text-xs text-muted-foreground">{t("identity.sign.description")}</p>
                 {kit.sign_url && (
-                  <img src={kit.sign_url} alt="Sign" className="h-20 w-auto max-w-[160px] rounded border bg-muted object-contain p-2" />
+                  <img src={kit.sign_url} alt={t("identity.sign.alt")} className="h-20 w-auto max-w-[160px] rounded border bg-muted object-contain p-2" />
                 )}
                 <label className="flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm w-fit hover:bg-muted">
                   <Upload className="h-4 w-4" />
-                  {uploadingSign ? "Se uploadează..." : kit.sign_url ? "Schimbă sign" : "Upload sign"}
+                  {uploadingSign ? t("identity.sign.uploading") : kit.sign_url ? t("identity.sign.replace") : t("identity.sign.upload")}
                   <input type="file" accept="image/*" className="hidden"
                     onChange={(e) => e.target.files?.[0] && uploadSign(e.target.files[0])} />
                 </label>
                 <PositionSelect
                   value={kit.sign_position || "bot_center"}
                   onChange={(v) => setKit((k) => ({ ...k, sign_position: v }))}
-                  label="Poziție (Fal.ai):"
+                  label={t("position_label")}
                 />
               </div>
             </div>
 
             {/* Logo + Sign combinat */}
             <div className="border-t pt-4 space-y-2">
-              <label className="text-sm font-medium">Logo + Sign combinat</label>
+              <label className="text-sm font-medium">{t("identity.logo_sign.label")}</label>
               <p className="text-xs text-muted-foreground">
-                Un singur fișier cu logo și sign împreună — folosit când bifezi ambele în Telegram.
-                Creează-l în Canva/Figma și uploadează-l aici.
+                {t("identity.logo_sign.description")}
               </p>
               {kit.logo_sign_url && (
-                <img src={kit.logo_sign_url} alt="Logo+Sign" className="h-20 w-auto max-w-[240px] rounded border bg-muted object-contain p-2" />
+                <img src={kit.logo_sign_url} alt={t("identity.logo_sign.alt")} className="h-20 w-auto max-w-[240px] rounded border bg-muted object-contain p-2" />
               )}
               <label className="flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm w-fit hover:bg-muted">
                 <Upload className="h-4 w-4" />
-                {uploadingLogoSign ? "Se uploadează..." : kit.logo_sign_url ? "Schimbă logo+sign" : "Upload logo+sign"}
+                {uploadingLogoSign ? t("identity.logo_sign.uploading") : kit.logo_sign_url ? t("identity.logo_sign.replace") : t("identity.logo_sign.upload")}
                 <input type="file" accept="image/*" className="hidden"
                   onChange={(e) => e.target.files?.[0] && uploadLogoSign(e.target.files[0])} />
               </label>
               <PositionSelect
                 value={kit.logo_sign_position || "bot_right"}
                 onChange={(v) => setKit((k) => ({ ...k, logo_sign_position: v }))}
-                label="Poziție (Fal.ai):"
+                label={t("position_label")}
               />
             </div>
           </div>
 
           {/* Culori */}
           <div className="rounded-lg border bg-card p-5 space-y-4">
-            <h2 className="font-semibold">Culori brand</h2>
+            <h2 className="font-semibold">{t("identity.colors.title")}</h2>
             <div className="grid grid-cols-2 gap-x-6 gap-y-4">
               {colorFields.map(({ label, desc, key }) => (
                 <div key={key} className="space-y-1">
@@ -649,9 +651,9 @@ export function BrandKitForm({ orgId, token }: Props) {
           {/* Template-uri */}
           <div className="rounded-lg border bg-card p-5 space-y-4">
             <div>
-              <h2 className="font-semibold">Template-uri postări</h2>
+              <h2 className="font-semibold">{t("identity.templates.title")}</h2>
               <p className="text-sm text-muted-foreground mt-1">
-                Imaginile de fundal / machetele vizuale ale brandului. AI-ul le va folosi la generarea de imagini pentru postări.
+                {t("identity.templates.description")}
               </p>
             </div>
 
@@ -663,20 +665,20 @@ export function BrandKitForm({ orgId, token }: Props) {
                     <div className="relative w-full h-48 rounded border bg-muted flex items-center justify-center overflow-hidden">
                       <img
                         src={url}
-                        alt={`Template ${idx + 1}`}
+                        alt={t("identity.templates.alt", { index: idx + 1 })}
                         className="max-w-full max-h-full object-contain"
                       />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <button
                           onClick={() => deleteTemplate(idx)}
                           className="rounded-full bg-destructive p-1.5 text-white hover:bg-destructive/80"
-                          title="Șterge template"
+                          title={t("identity.templates.delete")}
                         >
                           <X className="h-4 w-4" />
                         </button>
                       </div>
                     </div>
-                    <p className="mt-1 text-xs text-center text-muted-foreground">Template {idx + 1}</p>
+                    <p className="mt-1 text-xs text-center text-muted-foreground">{t("identity.templates.item_label", { index: idx + 1 })}</p>
                   </div>
                 ))}
               </div>
@@ -684,7 +686,7 @@ export function BrandKitForm({ orgId, token }: Props) {
 
             <label className="flex cursor-pointer items-center gap-2 rounded-md border px-4 py-2 text-sm w-fit hover:bg-muted">
               <Upload className="h-4 w-4" />
-              {uploadingTemplate ? "Se uploadează..." : "Adaugă template"}
+              {uploadingTemplate ? t("identity.templates.uploading") : t("identity.templates.add")}
               <input type="file" accept="image/*" multiple className="hidden"
                 onChange={(e) => e.target.files?.length && uploadTemplates(e.target.files)} />
             </label>
@@ -693,7 +695,7 @@ export function BrandKitForm({ orgId, token }: Props) {
           <button onClick={save} disabled={saving}
             className="flex items-center gap-2 rounded-md bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
             <Save className="h-4 w-4" />
-            {saving ? "Se salvează..." : saved ? "✅ Salvat!" : "Salvează"}
+            {saving ? t("common.saving") : saved ? t("common.saved") : t("common.save")}
           </button>
         </div>
       )}
@@ -702,30 +704,30 @@ export function BrandKitForm({ orgId, token }: Props) {
       {tab === "voce" && (
         <div className="space-y-6">
           <div className="rounded-lg border bg-card p-5 space-y-3">
-            <h2 className="font-semibold">Brand Voice</h2>
+            <h2 className="font-semibold">{t("voice.title")}</h2>
             <p className="text-sm text-muted-foreground">
-              Descrie tonul, valorile și publicul țintă. AI-ul va folosi asta la fiecare generare.
+              {t("voice.description")}
             </p>
             <textarea
               className="w-full rounded-md border bg-background px-3 py-2 text-sm resize-none min-h-[140px]"
-              placeholder="Ex: Ton profesional dar prietenos. Audiență: antreprenori 25-45 ani. Valori: inovație, eficiență, transparență. Evităm jargon tehnic excesiv."
+              placeholder={t("voice.placeholder")}
               value={kit.brand_voice || ""}
               onChange={(e) => setKit((k) => ({ ...k, brand_voice: e.target.value }))}
             />
           </div>
 
           <div className="rounded-lg border bg-card p-5 space-y-4">
-            <h2 className="font-semibold">Cuvinte cheie & Cuvinte de evitat</h2>
+            <h2 className="font-semibold">{t("voice.keywords.title")}</h2>
             <div className="space-y-2">
-              <label className="text-sm text-muted-foreground">Cuvinte cheie (separate cu virgulă)</label>
+              <label className="text-sm text-muted-foreground">{t("voice.keywords.label")}</label>
               <input className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                placeholder="inovație, calitate, eficiență, rezultate"
+                placeholder={t("voice.keywords.placeholder")}
                 value={keywordsInput} onChange={(e) => setKeywordsInput(e.target.value)} />
             </div>
             <div className="space-y-2">
-              <label className="text-sm text-muted-foreground">Cuvinte de evitat</label>
+              <label className="text-sm text-muted-foreground">{t("voice.avoid_words.label")}</label>
               <input className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                placeholder="ieftin, gratis, garantat 100%"
+                placeholder={t("voice.avoid_words.placeholder")}
                 value={avoidInput} onChange={(e) => setAvoidInput(e.target.value)} />
             </div>
           </div>
@@ -733,7 +735,7 @@ export function BrandKitForm({ orgId, token }: Props) {
           <button onClick={save} disabled={saving}
             className="flex items-center gap-2 rounded-md bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
             <Save className="h-4 w-4" />
-            {saving ? "Se salvează..." : saved ? "✅ Salvat!" : "Salvează"}
+            {saving ? t("common.saving") : saved ? t("common.saved") : t("common.save")}
           </button>
         </div>
       )}
@@ -742,12 +744,12 @@ export function BrandKitForm({ orgId, token }: Props) {
       {tab === "tipografie" && (
         <div className="space-y-8">
           <p className="text-sm text-muted-foreground">
-            Setările de tipografie sunt folosite la generarea imaginilor cu <strong>Produs în template</strong> și la <strong>Text pe imagine</strong>.
+            {t("typography.description_prefix")} <strong>{t("typography.description_product_template")}</strong> {t("typography.description_middle")} <strong>{t("typography.description_text_on_image")}</strong>.
           </p>
 
           {/* ══════════════════ Secțiune: Produs în template ══════════════════ */}
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold">📦 Produs în template</h2>
+            <h2 className="text-lg font-semibold">{t("typography.product_template.title")}</h2>
 
             {/* Preview live — fontul e cel real folosit și de generatorul de imagini */}
             <div
@@ -765,7 +767,7 @@ export function BrandKitForm({ orgId, token }: Props) {
                   margin: 0,
                 }}
               >
-                {previewTitle || "Titlu produs"}
+                {previewTitle || t("typography.product_template.preview_title")}
               </p>
               <p
                 style={{
@@ -778,33 +780,31 @@ export function BrandKitForm({ orgId, token }: Props) {
                   margin: 0,
                 }}
               >
-                {previewSubtitle || "Subtitlu / preț"}
+                {previewSubtitle || t("typography.product_template.preview_subtitle")}
               </p>
               <p className="text-xs text-muted-foreground pt-2">
-                Preview aproximativ (font web) — rezultatul din Telegram folosește exact aceleași fișiere TTF.
-                Fundalul e cel din tab-ul Identitate → Culori brand ("Fundal"); apare doar în zonele
-                template-ului fără poză/text, dacă template-ul are transparență acolo.
+                {t("typography.product_template.preview_description")}
               </p>
             </div>
 
             {/* Texte de test — doar pentru preview, nu se salvează */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-sm text-muted-foreground">Text de test — Titlu</label>
+                <label className="text-sm text-muted-foreground">{t("typography.product_template.test_title_label")}</label>
                 <input
                   type="text"
                   className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                  placeholder="Pantaloni bărbați"
+                  placeholder={t("typography.product_template.test_title_placeholder")}
                   value={previewTitle}
                   onChange={(e) => setPreviewTitle(e.target.value)}
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-sm text-muted-foreground">Text de test — Subtitlu</label>
+                <label className="text-sm text-muted-foreground">{t("typography.product_template.test_subtitle_label")}</label>
                 <input
                   type="text"
                   className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                  placeholder="Din bumbac 100% · Preț 149 lei"
+                  placeholder={t("typography.product_template.test_subtitle_placeholder")}
                   value={previewSubtitle}
                   onChange={(e) => setPreviewSubtitle(e.target.value)}
                 />
@@ -813,21 +813,21 @@ export function BrandKitForm({ orgId, token }: Props) {
 
             {/* Titlu */}
             <div className="rounded-lg border bg-card p-5 space-y-4">
-              <h3 className="font-semibold">Titlu</h3>
+              <h3 className="font-semibold">{t("typography.title_block.title")}</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-sm text-muted-foreground">Font</label>
+                  <label className="text-sm text-muted-foreground">{t("typography.font")}</label>
                   <select
                     className="w-full rounded-md border bg-background px-3 py-2 text-sm"
                     value={kit.title_font || ""}
                     onChange={(e) => setKit((k) => ({ ...k, title_font: e.target.value || null }))}
                   >
-                    <option value="">— Default (Inter) —</option>
+                    <option value="">{t("typography.default_font")}</option>
                     {FONT_OPTIONS.map((f) => <option key={f} value={f}>{f}</option>)}
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-sm text-muted-foreground">Dimensiune (px)</label>
+                  <label className="text-sm text-muted-foreground">{t("typography.size")}</label>
                   <input
                     type="number" min={12} max={120}
                     className="w-full rounded-md border bg-background px-3 py-2 text-sm"
@@ -845,7 +845,7 @@ export function BrandKitForm({ orgId, token }: Props) {
                     onChange={(e) => setKit((k) => ({ ...k, title_bold: e.target.checked ? "true" : "false" }))}
                     className="h-4 w-4 rounded border"
                   />
-                  <span className="text-sm font-bold">Bold</span>
+                  <span className="text-sm font-bold">{t("typography.bold")}</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer select-none">
                   <input
@@ -854,10 +854,10 @@ export function BrandKitForm({ orgId, token }: Props) {
                     onChange={(e) => setKit((k) => ({ ...k, title_italic: e.target.checked ? "true" : "false" }))}
                     className="h-4 w-4 rounded border"
                   />
-                  <span className="text-sm italic">Italic</span>
+                  <span className="text-sm italic">{t("typography.italic")}</span>
                 </label>
                 <div className="flex items-center gap-2">
-                  <label className="text-sm text-muted-foreground">Culoare</label>
+                  <label className="text-sm text-muted-foreground">{t("typography.color")}</label>
                   <input
                     type="color"
                     value={kit.title_color || "#1A1A1A"}
@@ -877,21 +877,21 @@ export function BrandKitForm({ orgId, token }: Props) {
 
             {/* Subtitlu */}
             <div className="rounded-lg border bg-card p-5 space-y-4">
-              <h3 className="font-semibold">Subtitlu / Preț</h3>
+              <h3 className="font-semibold">{t("typography.subtitle_block.title")}</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-sm text-muted-foreground">Font</label>
+                  <label className="text-sm text-muted-foreground">{t("typography.font")}</label>
                   <select
                     className="w-full rounded-md border bg-background px-3 py-2 text-sm"
                     value={kit.subtitle_font || ""}
                     onChange={(e) => setKit((k) => ({ ...k, subtitle_font: e.target.value || null }))}
                   >
-                    <option value="">— Default (Inter) —</option>
+                    <option value="">{t("typography.default_font")}</option>
                     {FONT_OPTIONS.map((f) => <option key={f} value={f}>{f}</option>)}
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-sm text-muted-foreground">Dimensiune (px)</label>
+                  <label className="text-sm text-muted-foreground">{t("typography.size")}</label>
                   <input
                     type="number" min={12} max={120}
                     className="w-full rounded-md border bg-background px-3 py-2 text-sm"
@@ -909,7 +909,7 @@ export function BrandKitForm({ orgId, token }: Props) {
                     onChange={(e) => setKit((k) => ({ ...k, subtitle_bold: e.target.checked ? "true" : "false" }))}
                     className="h-4 w-4 rounded border"
                   />
-                  <span className="text-sm font-bold">Bold</span>
+                  <span className="text-sm font-bold">{t("typography.bold")}</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer select-none">
                   <input
@@ -918,10 +918,10 @@ export function BrandKitForm({ orgId, token }: Props) {
                     onChange={(e) => setKit((k) => ({ ...k, subtitle_italic: e.target.checked ? "true" : "false" }))}
                     className="h-4 w-4 rounded border"
                   />
-                  <span className="text-sm italic">Italic</span>
+                  <span className="text-sm italic">{t("typography.italic")}</span>
                 </label>
                 <div className="flex items-center gap-2">
-                  <label className="text-sm text-muted-foreground">Culoare</label>
+                  <label className="text-sm text-muted-foreground">{t("typography.color")}</label>
                   <input
                     type="color"
                     value={kit.subtitle_color || "#555555"}
@@ -942,20 +942,18 @@ export function BrandKitForm({ orgId, token }: Props) {
 
           {/* ══════════════════ Secțiune: Text pe imagine ══════════════════ */}
           <div className="space-y-4 border-t pt-6">
-            <h2 className="text-lg font-semibold">🖼️ Text pe imagine</h2>
+            <h2 className="text-lg font-semibold">{t("typography.text_on_image.title")}</h2>
             <p className="text-sm text-muted-foreground">
-              Textul scurt suprapus pe imaginile generate cu AI (Quick Post / Advanced Post).
-              Folosește fontul și italicul de la <strong>Titlu</strong> (mai sus); culoarea textului
-              se alege automat (alb sau negru) pentru contrast maxim — nu e configurabilă.
+              {t("typography.text_on_image.description_prefix")} <strong>{t("typography.title_block.title")}</strong> {t("typography.text_on_image.description_suffix")}
             </p>
 
             {/* Text de test */}
             <div className="space-y-1">
-              <label className="text-sm text-muted-foreground">Text de test — Subiect</label>
+              <label className="text-sm text-muted-foreground">{t("typography.text_on_image.test_label")}</label>
               <input
                 type="text"
                 className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                placeholder="Ofertă specială -20% azi!"
+                placeholder={t("typography.text_on_image.test_placeholder")}
                 value={previewOverlay}
                 onChange={(e) => setPreviewOverlay(e.target.value)}
               />
@@ -964,8 +962,8 @@ export function BrandKitForm({ orgId, token }: Props) {
             {/* Preview pe fundal deschis și închis, ca să se vadă contrastul automat */}
             <div className="grid grid-cols-2 gap-4">
               {[
-                { bg: "#E8E4D8", label: "Fundal deschis" },
-                { bg: "#20281E", label: "Fundal închis" },
+                { bg: "#E8E4D8", label: t("typography.text_on_image.light_background") },
+                { bg: "#20281E", label: t("typography.text_on_image.dark_background") },
               ].map(({ bg, label }) => {
                 const bandColor = kit.text_bg_color || "#00000088"
                 const bandOpaqueColor = bandColor.length >= 8 ? `#${bandColor.slice(1, 7)}` : bandColor
@@ -995,7 +993,7 @@ export function BrandKitForm({ orgId, token }: Props) {
                           fontSize: "15px",
                         }}
                       >
-                        {previewOverlay || "Ofertă specială -20% azi!"}
+                        {previewOverlay || t("typography.text_on_image.test_placeholder")}
                       </span>
                     </div>
                     <span className="absolute top-2 left-2 text-[11px] text-muted-foreground bg-background/70 rounded px-1.5 py-0.5">
@@ -1008,9 +1006,9 @@ export function BrandKitForm({ orgId, token }: Props) {
 
             {/* Fundal bandă text overlay */}
             <div className="rounded-lg border bg-card p-5 space-y-3">
-              <h3 className="font-semibold">Fundal text overlay</h3>
+              <h3 className="font-semibold">{t("typography.overlay.title")}</h3>
               <p className="text-sm text-muted-foreground">
-                Culoarea benzii semi-transparente din spatele textului. Poți include alpha (ex: <code className="font-mono text-xs bg-muted px-1 rounded">#00000088</code>).
+                {t("typography.overlay.description_prefix")} <code className="font-mono text-xs bg-muted px-1 rounded">#00000088</code>{t("typography.overlay.description_suffix")}
               </p>
               <div className="flex items-center gap-3">
                 <input
@@ -1033,7 +1031,7 @@ export function BrandKitForm({ orgId, token }: Props) {
           <button onClick={save} disabled={saving}
             className="flex items-center gap-2 rounded-md bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
             <Save className="h-4 w-4" />
-            {saving ? "Se salvează..." : saved ? "✅ Salvat!" : "Salvează"}
+            {saving ? t("common.saving") : saved ? t("common.saved") : t("common.save")}
           </button>
         </div>
       )}
@@ -1043,9 +1041,9 @@ export function BrandKitForm({ orgId, token }: Props) {
         <div className="space-y-6">
           <div className="rounded-lg border bg-card p-5 space-y-4">
             <div>
-              <h2 className="font-semibold">Documente despre brand</h2>
+              <h2 className="font-semibold">{t("documents.brand_docs.title")}</h2>
               <p className="text-sm text-muted-foreground mt-1">
-                Uploadează manuale, FAQ-uri, prezentări sau pagini web. AI-ul le va folosi ca referință la generare — prețuri corecte, features reale, zero hallucinations.
+                {t("documents.brand_docs.description")}
               </p>
             </div>
 
@@ -1055,38 +1053,38 @@ export function BrandKitForm({ orgId, token }: Props) {
               <button onClick={() => fileRef.current?.click()} disabled={uploadingDoc}
                 className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
                 <Upload className="h-4 w-4" />
-                {uploadingDoc ? "Se procesează..." : "Upload PDF / DOCX / TXT"}
+                {uploadingDoc ? t("documents.brand_docs.processing") : t("documents.brand_docs.upload")}
               </button>
             </div>
 
             <div className="flex gap-2">
               <input className="flex-1 rounded-md border bg-background px-3 py-2 text-sm"
-                placeholder="https://site-ul-tau.com/despre" value={urlInput}
+                placeholder={t("documents.url.placeholder")} value={urlInput}
                 onChange={(e) => setUrlInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && addUrl()} />
               <input className="w-36 rounded-md border bg-background px-3 py-2 text-sm"
-                placeholder="Nume (opțional)" value={urlName}
+                placeholder={t("documents.url.name_placeholder")} value={urlName}
                 onChange={(e) => setUrlName(e.target.value)} />
               <button onClick={addUrl} disabled={addingUrl || !urlInput.trim()}
                 className="flex items-center gap-2 rounded-md border px-4 py-2 text-sm hover:bg-muted disabled:opacity-50">
                 <Link className="h-4 w-4" />
-                {addingUrl ? "..." : "Adaugă URL"}
+                {addingUrl ? "..." : t("documents.url.add")}
               </button>
             </div>
           </div>
 
           <div className="rounded-lg border bg-card">
             <div className="flex items-center justify-between p-4 border-b">
-              <h2 className="font-semibold">Documente indexate ({docs.length})</h2>
+              <h2 className="font-semibold">{t("documents.indexed.title", { count: docs.length })}</h2>
               <button onClick={fetchDocs} className="text-muted-foreground hover:text-foreground">
                 <RefreshCw className="h-4 w-4" />
               </button>
             </div>
             {loadingDocs ? (
-              <p className="p-4 text-sm text-muted-foreground">Se încarcă...</p>
+              <p className="p-4 text-sm text-muted-foreground">{t("documents.indexed.loading")}</p>
             ) : docs.length === 0 ? (
               <p className="p-8 text-center text-sm text-muted-foreground">
-                Niciun document. Uploadează un fișier sau adaugă un URL.
+                {t("documents.indexed.empty")}
               </p>
             ) : (
               <ul className="divide-y">
@@ -1097,7 +1095,7 @@ export function BrandKitForm({ orgId, token }: Props) {
                       <div>
                         <p className="text-sm font-medium">{doc.filename}</p>
                         <p className="text-xs text-muted-foreground">
-                          {STATUS_ICON[doc.status]} {doc.status} · {doc.chunk_count} chunks · {doc.file_type.toUpperCase()}
+                          {STATUS_ICON[doc.status]} {t(`documents.status.${doc.status}`)} · {t("documents.indexed.chunks", { count: doc.chunk_count })} · {doc.file_type.toUpperCase()}
                         </p>
                       </div>
                     </div>
@@ -1111,15 +1109,15 @@ export function BrandKitForm({ orgId, token }: Props) {
           </div>
 
           <div className="rounded-lg border bg-card p-5 space-y-3">
-            <h2 className="font-semibold">Testează — ce știe AI-ul despre brandul tău?</h2>
+            <h2 className="font-semibold">{t("documents.test.title")}</h2>
             <div className="flex gap-2">
               <input className="flex-1 rounded-md border bg-background px-3 py-2 text-sm"
-                placeholder='Ex: "Care sunt prețurile?" sau "Ce produse vindem?"'
+                placeholder={t("documents.test.placeholder")}
                 value={question} onChange={(e) => setQuestion(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && queryRag()} />
               <button onClick={queryRag} disabled={querying || !question.trim()}
                 className="rounded-md border px-4 py-2 text-sm hover:bg-muted disabled:opacity-50">
-                {querying ? "⏳" : "Întreabă"}
+                {querying ? "⏳" : t("documents.test.ask")}
               </button>
             </div>
             {answer && (
@@ -1138,16 +1136,16 @@ export function BrandKitForm({ orgId, token }: Props) {
           {/* Generator imagini implicit */}
           <div className="rounded-lg border bg-card p-5 space-y-4">
             <div>
-              <h2 className="font-semibold">Generator imagini implicit</h2>
+              <h2 className="font-semibold">{t("quick_post.provider.title")}</h2>
               <p className="text-xs text-muted-foreground mt-1">
-                Folosit automat la ⚡ Quick Post fără să întrebi utilizatorul.
+                {t("quick_post.provider.description")}
               </p>
             </div>
             <div className="flex flex-col gap-2">
               {[
-                { value: "comfyui", label: "🖼️ Nex-Nex RTX (ComfyUI) — local, 1 credit · logo/sign adăugate mecanic" },
-                { value: "fal",     label: "⚡ Fal.ai FLUX — rapid, 1 credit (fără branding) / 2 credite (cu logo/sign integrate organic)" },
-                { value: "gemini",  label: "🎨 Google Gemini — 2 credite · logo/sign integrate organic în scenă" },
+                { value: "comfyui", label: t("quick_post.provider.options.comfyui") },
+                { value: "fal",     label: t("quick_post.provider.options.fal") },
+                { value: "gemini",  label: t("quick_post.provider.options.gemini") },
               ].map(({ value, label }) => (
                 <label key={value} className="flex items-center gap-3 cursor-pointer">
                   <input
@@ -1167,17 +1165,17 @@ export function BrandKitForm({ orgId, token }: Props) {
           {/* Ton implicit */}
           <div className="rounded-lg border bg-card p-5 space-y-4">
             <div>
-              <h2 className="font-semibold">Ton implicit pentru text</h2>
+              <h2 className="font-semibold">{t("quick_post.tone.title")}</h2>
               <p className="text-xs text-muted-foreground mt-1">
-                Aplicat la generarea textului în Quick Post. "Neutru" înseamnă că AI-ul alege stilul potrivit.
+                {t("quick_post.tone.description")}
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {[
-                { value: "neutral",   label: "⚖️ Neutru",         desc: "AI-ul alege stilul potrivit contextului" },
-                { value: "inspiring", label: "✨ Inspirațional",   desc: "Motivează, energizează — pentru brand awareness" },
-                { value: "formal",    label: "💼 Formal",          desc: "Profesional și de autoritate — pentru B2B, corporate" },
-                { value: "casual",    label: "😊 Casual",          desc: "Prietenos, relaxat, conversațional" },
+                { value: "neutral",   label: t("quick_post.tone.options.neutral"),   desc: t("quick_post.tone.descriptions.neutral") },
+                { value: "inspiring", label: t("quick_post.tone.options.inspiring"), desc: t("quick_post.tone.descriptions.inspiring") },
+                { value: "formal",    label: t("quick_post.tone.options.formal"),    desc: t("quick_post.tone.descriptions.formal") },
+                { value: "casual",    label: t("quick_post.tone.options.casual"),    desc: t("quick_post.tone.descriptions.casual") },
               ].map(({ value, label, desc }) => (
                 <label
                   key={value}
@@ -1214,14 +1212,14 @@ export function BrandKitForm({ orgId, token }: Props) {
                   className="accent-primary mt-0.5"
                 />
                 <div>
-                  <span className="text-sm font-medium">✏️ Personalizat</span>
-                  <p className="text-xs text-muted-foreground">Scrie propriile instrucțiuni de ton pentru AI</p>
+                  <span className="text-sm font-medium">{t("quick_post.custom")}</span>
+                  <p className="text-xs text-muted-foreground">{t("quick_post.tone.custom_description")}</p>
                 </div>
               </label>
               {kit.qp_default_tone === "custom" && (
                 <textarea
                   rows={2}
-                  placeholder="Ex: tono entusiasta ma professionale, usa metafore visive, evita i clichè..."
+                  placeholder={t("quick_post.tone.custom_placeholder")}
                   value={kit.qp_custom_tone}
                   onChange={(e) => setKit((k) => ({ ...k, qp_custom_tone: e.target.value }))}
                   className="mt-2 w-full rounded border border-input bg-background px-2 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
@@ -1233,9 +1231,9 @@ export function BrandKitForm({ orgId, token }: Props) {
           {/* Format text */}
           <div className="rounded-lg border bg-card p-5 space-y-4">
             <div>
-              <h2 className="font-semibold">Format text implicit</h2>
+              <h2 className="font-semibold">{t("quick_post.text_format.title")}</h2>
               <p className="text-xs text-muted-foreground mt-1">
-                Controlează dacă AI-ul include emoji și hashtag-uri în textul generat.
+                {t("quick_post.text_format.description")}
               </p>
             </div>
             <div className="flex flex-col gap-3">
@@ -1247,8 +1245,8 @@ export function BrandKitForm({ orgId, token }: Props) {
                   className="accent-primary"
                 />
                 <div>
-                  <span className="text-sm font-medium">😊 Emoji în text</span>
-                  <p className="text-xs text-muted-foreground">AI-ul adaugă emoji relevante în corpul textului</p>
+                  <span className="text-sm font-medium">{t("quick_post.text_format.emoji_label")}</span>
+                  <p className="text-xs text-muted-foreground">{t("quick_post.text_format.emoji_description")}</p>
                 </div>
               </label>
               <label className="flex items-center gap-3 cursor-pointer">
@@ -1259,8 +1257,8 @@ export function BrandKitForm({ orgId, token }: Props) {
                   className="accent-primary"
                 />
                 <div>
-                  <span className="text-sm font-medium"># Hashtag-uri</span>
-                  <p className="text-xs text-muted-foreground">3-5 hashtag-uri relevante adăugate la finalul postării</p>
+                  <span className="text-sm font-medium">{t("quick_post.text_format.hashtags_label")}</span>
+                  <p className="text-xs text-muted-foreground">{t("quick_post.text_format.hashtags_description")}</p>
                 </div>
               </label>
             </div>
@@ -1269,10 +1267,9 @@ export function BrandKitForm({ orgId, token }: Props) {
           {/* Assets vizuale implicite */}
           <div className="rounded-lg border bg-card p-5 space-y-4">
             <div>
-              <h2 className="font-semibold">Assets vizuale implicite</h2>
+              <h2 className="font-semibold">{t("quick_post.visual_assets.title")}</h2>
               <p className="text-xs text-muted-foreground mt-1">
-                Dacă bifezi, Quick Post va aplica aceste elemente automat pe imaginea generată.
-                Lasă debifat dacă vrei imagini curate fără branding.
+                {t("quick_post.visual_assets.description")}
               </p>
             </div>
             <div className="flex flex-col gap-3">
@@ -1284,10 +1281,10 @@ export function BrandKitForm({ orgId, token }: Props) {
                   className="accent-primary"
                 />
                 <div>
-                  <span className="text-sm font-medium">Logo brand</span>
+                  <span className="text-sm font-medium">{t("quick_post.visual_assets.logo")}</span>
                   {kit.logo_url
-                    ? <span className="ml-2 text-xs text-muted-foreground">(încărcat ✓)</span>
-                    : <span className="ml-2 text-xs text-destructive">(neîncărcat — adaugă din tab Identitate)</span>
+                    ? <span className="ml-2 text-xs text-muted-foreground">{t("quick_post.visual_assets.loaded")}</span>
+                    : <span className="ml-2 text-xs text-destructive">{t("quick_post.visual_assets.logo_missing")}</span>
                   }
                 </div>
               </label>
@@ -1299,10 +1296,10 @@ export function BrandKitForm({ orgId, token }: Props) {
                   className="accent-primary"
                 />
                 <div>
-                  <span className="text-sm font-medium">Sign / Tipografie brand</span>
+                  <span className="text-sm font-medium">{t("quick_post.visual_assets.sign")}</span>
                   {kit.sign_url
-                    ? <span className="ml-2 text-xs text-muted-foreground">(încărcat ✓)</span>
-                    : <span className="ml-2 text-xs text-destructive">(neîncărcat)</span>
+                    ? <span className="ml-2 text-xs text-muted-foreground">{t("quick_post.visual_assets.loaded")}</span>
+                    : <span className="ml-2 text-xs text-destructive">{t("quick_post.visual_assets.sign_missing")}</span>
                   }
                 </div>
               </label>
@@ -1314,11 +1311,11 @@ export function BrandKitForm({ orgId, token }: Props) {
                   className="accent-primary"
                 />
                 <div>
-                  <span className="text-sm font-medium">Logo + Sign combinat</span>
-                  <span className="ml-1 text-xs text-muted-foreground">— trimite fișierul combinat ca referință unică</span>
+                  <span className="text-sm font-medium">{t("quick_post.visual_assets.logo_sign")}</span>
+                  <span className="ml-1 text-xs text-muted-foreground">{t("quick_post.visual_assets.logo_sign_description")}</span>
                   {kit.logo_sign_url
-                    ? <span className="ml-2 text-xs text-muted-foreground">(încărcat ✓)</span>
-                    : <span className="ml-2 text-xs text-destructive">(neîncărcat)</span>
+                    ? <span className="ml-2 text-xs text-muted-foreground">{t("quick_post.visual_assets.loaded")}</span>
+                    : <span className="ml-2 text-xs text-destructive">{t("quick_post.visual_assets.sign_missing")}</span>
                   }
                 </div>
               </label>
@@ -1330,10 +1327,10 @@ export function BrandKitForm({ orgId, token }: Props) {
                   className="accent-primary"
                 />
                 <div>
-                  <span className="text-sm font-medium">Template vizual (primul din lista ta)</span>
+                  <span className="text-sm font-medium">{t("quick_post.visual_assets.template")}</span>
                   {kit.visual_templates.length > 0
-                    ? <span className="ml-2 text-xs text-muted-foreground">({kit.visual_templates.length} template{kit.visual_templates.length > 1 ? "-uri" : ""} ✓)</span>
-                    : <span className="ml-2 text-xs text-destructive">(niciun template — adaugă din tab Identitate)</span>
+                    ? <span className="ml-2 text-xs text-muted-foreground">{kit.visual_templates.length === 1 ? t("quick_post.visual_assets.template_loaded_one") : t("quick_post.visual_assets.template_loaded_many", { count: kit.visual_templates.length })}</span>
+                    : <span className="ml-2 text-xs text-destructive">{t("quick_post.visual_assets.template_missing")}</span>
                   }
                 </div>
               </label>
@@ -1343,22 +1340,21 @@ export function BrandKitForm({ orgId, token }: Props) {
           {/* Stil vizual implicit */}
           <div className="rounded-lg border bg-card p-5 space-y-4">
             <div>
-              <h2 className="font-semibold">Stil vizual implicit</h2>
+              <h2 className="font-semibold">{t("quick_post.visual_style.title")}</h2>
               <p className="text-xs text-muted-foreground mt-1">
-                Stilul ales automat la generarea imaginii — sari peste pasul de selecție în Telegram.
-                Alege <strong>AI decide</strong> dacă preferi să alegi la fiecare postare.
+                {t("quick_post.visual_style.description_prefix")} <strong>{t("quick_post.visual_style.ai_decide")}</strong> {t("quick_post.visual_style.description_suffix")}
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {[
-                { value: "auto",         label: "⏭️ AI decide",       desc: "Alegi stilul la fiecare postare" },
-                { value: "clean",        label: "✨ Curat",            desc: "Minimalist, spațiu alb, tonuri neutre" },
-                { value: "bold",         label: "🔥 Îndrăzneț",       desc: "Culori vii, contrast mare, dinamic" },
-                { value: "professional", label: "💼 Profesional",      desc: "Corporate, structurat, autoritar" },
-                { value: "cinematic",    label: "🎬 Cinematic",        desc: "Lumini dramatice, calitate film" },
-                { value: "minimal",      label: "◻️ Minimalist",       desc: "Ultra-simplu, un singur punct focal" },
-                { value: "energetic",    label: "⚡ Energic",          desc: "Neon, motion, impact vizual maxim" },
-                { value: "elegant",      label: "💎 Elegant",          desc: "Lux, accente aurii, editorial rafinat" },
+                { value: "auto",         label: t("quick_post.visual_style.options.auto"),         desc: t("quick_post.visual_style.descriptions.auto") },
+                { value: "clean",        label: t("quick_post.visual_style.options.clean"),        desc: t("quick_post.visual_style.descriptions.clean") },
+                { value: "bold",         label: t("quick_post.visual_style.options.bold"),         desc: t("quick_post.visual_style.descriptions.bold") },
+                { value: "professional", label: t("quick_post.visual_style.options.professional"), desc: t("quick_post.visual_style.descriptions.professional") },
+                { value: "cinematic",    label: t("quick_post.visual_style.options.cinematic"),    desc: t("quick_post.visual_style.descriptions.cinematic") },
+                { value: "minimal",      label: t("quick_post.visual_style.options.minimal"),      desc: t("quick_post.visual_style.descriptions.minimal") },
+                { value: "energetic",    label: t("quick_post.visual_style.options.energetic"),    desc: t("quick_post.visual_style.descriptions.energetic") },
+                { value: "elegant",      label: t("quick_post.visual_style.options.elegant"),      desc: t("quick_post.visual_style.descriptions.elegant") },
               ].map(({ value, label, desc }) => (
                 <label
                   key={value}
@@ -1395,14 +1391,14 @@ export function BrandKitForm({ orgId, token }: Props) {
                   className="accent-primary mt-0.5"
                 />
                 <div>
-                  <span className="text-sm font-medium">✏️ Personalizat</span>
-                  <p className="text-xs text-muted-foreground">Descrie propriul stil vizual în engleză pentru promptul AI</p>
+                  <span className="text-sm font-medium">{t("quick_post.custom")}</span>
+                  <p className="text-xs text-muted-foreground">{t("quick_post.visual_style.custom_description")}</p>
                 </div>
               </label>
               {kit.qp_default_image_direction === "custom" && (
                 <textarea
                   rows={2}
-                  placeholder="Ex: dreamy watercolor illustration, pastel tones, soft brush strokes, romantic mood..."
+                  placeholder={t("quick_post.visual_style.custom_placeholder")}
                   value={kit.qp_custom_image_direction}
                   onChange={(e) => setKit((k) => ({ ...k, qp_custom_image_direction: e.target.value }))}
                   className="mt-2 w-full rounded border border-input bg-background px-2 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
@@ -1414,18 +1410,18 @@ export function BrandKitForm({ orgId, token }: Props) {
           {/* Format imagine implicit */}
           <div className="rounded-lg border bg-card p-5 space-y-4">
             <div>
-              <h2 className="font-semibold">Format implicit imagine</h2>
+              <h2 className="font-semibold">{t("quick_post.image_format.title")}</h2>
               <p className="text-xs text-muted-foreground mt-1">
-                Dimensiunea imaginii generate în Quick Post. Alege formatul potrivit platformelor pe care publici cel mai des.
+                {t("quick_post.image_format.description")}
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {[
-                { value: "square",    label: "⬜ Pătrat 1:1",          desc: "1024×1024 px — Instagram feed, Facebook" },
-                { value: "portrait",  label: "🖼️ Portret 4:5",          desc: "864×1080 px — Instagram feed portret" },
-                { value: "story",     label: "📱 Story / Reel 9:16",    desc: "576×1024 px — Stories, Reels, TikTok" },
-                { value: "landscape", label: "🖥️ Peisaj 1.91:1",        desc: "1024×536 px — Facebook, LinkedIn feed" },
-                { value: "wide",      label: "📺 Widescreen 16:9",      desc: "1024×576 px — YouTube, Twitter" },
+                { value: "square",    label: t("quick_post.image_format.options.square"),    desc: t("quick_post.image_format.descriptions.square") },
+                { value: "portrait",  label: t("quick_post.image_format.options.portrait"),  desc: t("quick_post.image_format.descriptions.portrait") },
+                { value: "story",     label: t("quick_post.image_format.options.story"),     desc: t("quick_post.image_format.descriptions.story") },
+                { value: "landscape", label: t("quick_post.image_format.options.landscape"), desc: t("quick_post.image_format.descriptions.landscape") },
+                { value: "wide",      label: t("quick_post.image_format.options.wide"),      desc: t("quick_post.image_format.descriptions.wide") },
               ].map(({ value, label, desc }) => (
                 <label
                   key={value}
@@ -1462,14 +1458,14 @@ export function BrandKitForm({ orgId, token }: Props) {
                   className="accent-primary mt-0.5"
                 />
                 <div>
-                  <span className="text-sm font-medium">✏️ Personalizat</span>
-                  <p className="text-xs text-muted-foreground">Specifică propriul format/dimensiune în engleză</p>
+                  <span className="text-sm font-medium">{t("quick_post.custom")}</span>
+                  <p className="text-xs text-muted-foreground">{t("quick_post.image_format.custom_description")}</p>
                 </div>
               </label>
               {kit.qp_default_image_format === "custom" && (
                 <textarea
                   rows={2}
-                  placeholder="Ex: square format 1:1 (800×800 px), optimized for Pinterest..."
+                  placeholder={t("quick_post.image_format.custom_placeholder")}
                   value={kit.qp_custom_image_format}
                   onChange={(e) => setKit((k) => ({ ...k, qp_custom_image_format: e.target.value }))}
                   className="mt-2 w-full rounded border border-input bg-background px-2 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
@@ -1481,15 +1477,15 @@ export function BrandKitForm({ orgId, token }: Props) {
           {/* Programare implicită */}
           <div className="rounded-lg border bg-card p-5 space-y-4">
             <div>
-              <h2 className="font-semibold">Programare implicită</h2>
+              <h2 className="font-semibold">{t("quick_post.schedule.title")}</h2>
               <p className="text-xs text-muted-foreground mt-1">
-                Momentul publicării ales automat în Quick Post. Poate fi schimbat la fiecare postare.
+                {t("quick_post.schedule.description")}
               </p>
             </div>
             <div className="flex flex-col gap-2">
               {[
-                { value: "best_time", label: "🎯 Best time — cel mai bun moment al zilei per platformă" },
-                { value: "now",       label: "⚡ Acum — publică imediat la confirmare" },
+                { value: "best_time", label: t("quick_post.schedule.options.best_time") },
+                { value: "now",       label: t("quick_post.schedule.options.now") },
               ].map(({ value, label }) => (
                 <label key={value} className="flex items-center gap-3 cursor-pointer">
                   <input
@@ -1514,9 +1510,9 @@ export function BrandKitForm({ orgId, token }: Props) {
               disabled={saving}
               className="rounded-md bg-primary px-5 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
             >
-              {saving ? "Se salvează..." : saved ? "✓ Salvat" : "Salvează defaults Quick Post"}
+              {saving ? t("common.saving") : saved ? t("quick_post.saved_short") : t("quick_post.save_defaults")}
             </button>
-            {saved && <span className="text-sm text-green-600">✓ Setările au fost salvate!</span>}
+            {saved && <span className="text-sm text-green-600">{t("quick_post.saved_message")}</span>}
           </div>
 
         </div>

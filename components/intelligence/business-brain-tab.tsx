@@ -5,6 +5,7 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import { useSession } from 'next-auth/react'
+import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -23,20 +24,21 @@ interface BrainStatus {
   can_run_strategy: boolean
 }
 
-const INTERVIEW_QUESTIONS: { key: string; label: string }[] = [
-  { key: 'what_sells', label: 'Ce vinzi? (produse sau servicii principale)' },
-  { key: 'target_audience', label: 'Cine este clientul ideal? (vârstă, profesie, interese)' },
-  { key: 'problems_solved', label: 'Ce probleme concrete rezolvi pentru clienți?' },
-  { key: 'priority_products', label: 'Care sunt produsele/serviciile prioritare de promovat?' },
-  { key: 'differentiator', label: 'Care este diferențiatorul față de concurență?' },
-  { key: 'communication_tone', label: 'Care este tonul brandului? (formal, prietenos, autoritar, etc.)' },
-  { key: 'what_to_avoid', label: 'Ce subiecte sau mesaje trebuie evitate?' },
-  { key: 'objectives', label: 'Care sunt obiectivele de marketing? (awareness, lead-uri, vânzări)' },
-  { key: 'website_url', label: 'URL-ul site-ului principal' },
-  { key: 'known_competitors', label: 'Competitori cunoscuți (nume sau URL-uri)' },
+const INTERVIEW_QUESTIONS: { key: string; labelKey: string }[] = [
+  { key: 'what_sells', labelKey: 'interview_questions.what_sells' },
+  { key: 'target_audience', labelKey: 'interview_questions.target_audience' },
+  { key: 'problems_solved', labelKey: 'interview_questions.problems_solved' },
+  { key: 'priority_products', labelKey: 'interview_questions.priority_products' },
+  { key: 'differentiator', labelKey: 'interview_questions.differentiator' },
+  { key: 'communication_tone', labelKey: 'interview_questions.communication_tone' },
+  { key: 'what_to_avoid', labelKey: 'interview_questions.what_to_avoid' },
+  { key: 'objectives', labelKey: 'interview_questions.objectives' },
+  { key: 'website_url', labelKey: 'interview_questions.website_url' },
+  { key: 'known_competitors', labelKey: 'interview_questions.known_competitors' },
 ]
 
 export function BusinessBrainTab() {
+  const t = useTranslations('business_brain')
   const { data: session } = useSession()
   const { activeOrgId } = useOrg()
   const [status, setStatus] = useState<BrainStatus | null>(null)
@@ -73,10 +75,10 @@ export function BusinessBrainTab() {
         if (s.website_scan_date !== prevDate || attempts >= 12) {
           clearInterval(pollRef.current!)
           if (s.website_scan_date !== prevDate) {
-            setMessage('✓ Scanarea s-a finalizat!')
+            setMessage(t('scan_completed'))
             setMessageType('success')
           } else {
-            setMessage('Scanarea durează mai mult decât de obicei. Verifică din nou mai târziu.')
+            setMessage(t('scan_taking_longer'))
             setMessageType('info')
           }
         }
@@ -93,11 +95,11 @@ export function BusinessBrainTab() {
     const prevDate = status?.website_scan_date || null
     try {
       await scanWebsite(orgId, scanUrl, scanDepth, token)
-      setMessage(`⏳ Scanarea a pornit pentru ${scanUrl}. Verificăm automat când se termină (1-3 min)...`)
+      setMessage(t('scan_started', { url: scanUrl }))
       setMessageType('info')
       startScanPolling(prevDate)
     } catch (e: any) {
-      setMessage(`Eroare: ${e.message}`)
+      setMessage(t('error_with_message', { message: e.message }))
       setMessageType('error')
     } finally {
       setScanning(false)
@@ -111,12 +113,12 @@ export function BusinessBrainTab() {
       // Merge: răspunsurile existente + cele din form (form are prioritate)
       const merged = { ...(status?.interview_answers || {}), ...answers }
       await saveInterview(orgId, merged, token)
-      setMessage('✓ Interviul a fost salvat!')
+      setMessage(t('interview_saved'))
       setMessageType('success')
       setShowInterview(false)
       setRefreshCount(c => c + 1)
     } catch (e: any) {
-      setMessage(`Eroare: ${e.message}`)
+      setMessage(t('error_with_message', { message: e.message }))
       setMessageType('error')
     } finally {
       setSavingInterview(false)
@@ -144,7 +146,7 @@ export function BusinessBrainTab() {
           <CardContent>
             <div className="text-2xl font-bold">{status?.interview_questions_answered || 0}/10</div>
             <Badge variant={status?.interview_questions_answered ? 'default' : 'secondary'}>
-              {status?.interview_questions_answered ? 'Parțial completat' : 'Lipsă — click să completezi'}
+              {status?.interview_questions_answered ? t('partially_completed') : t('missing_click_to_complete')}
             </Badge>
           </CardContent>
         </Card>
@@ -157,10 +159,10 @@ export function BusinessBrainTab() {
             <div className="text-sm font-bold">
               {status?.website_scan_date
                 ? new Date(status.website_scan_date).toLocaleDateString('ro')
-                : 'Nescanat'}
+                : t('not_scanned')}
             </div>
             <Badge variant={status?.website_scan_date ? 'default' : 'secondary'}>
-              {status?.website_scan_depth || 'lipsă'}
+              {status?.website_scan_depth || t('missing')}
             </Badge>
           </CardContent>
         </Card>
@@ -171,7 +173,7 @@ export function BusinessBrainTab() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{status?.competitors_count || 0}</div>
-            <p className="text-xs text-muted-foreground">adăugați</p>
+            <p className="text-xs text-muted-foreground">{t('added')}</p>
           </CardContent>
         </Card>
 
@@ -181,7 +183,7 @@ export function BusinessBrainTab() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{status?.rag_documents_count || 0}</div>
-            <p className="text-xs text-muted-foreground">fișiere indexate</p>
+            <p className="text-xs text-muted-foreground">{t('indexed_files')}</p>
           </CardContent>
         </Card>
       </div>
@@ -190,17 +192,17 @@ export function BusinessBrainTab() {
       {showInterview && (
         <Card>
           <CardHeader>
-            <CardTitle>Interviu Brand ({answeredCount}/10 completate)</CardTitle>
+            <CardTitle>{t('brand_interview_title', { answered: answeredCount })}</CardTitle>
             <CardDescription>
-              Răspunsurile ajută AI-ul să înțeleagă brandul tău înainte de a genera strategia.
+              {t('brand_interview_description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {INTERVIEW_QUESTIONS.map(({ key, label }, i) => (
+            {INTERVIEW_QUESTIONS.map(({ key, labelKey }, i) => (
               <div key={key} className="space-y-1">
-                <label className="text-sm font-medium">{i + 1}. {label}</label>
+                <label className="text-sm font-medium">{i + 1}. {t(labelKey)}</label>
                 <Input
-                  placeholder="Răspunsul tău..."
+                  placeholder={t('answer_placeholder')}
                   value={answers[key] || ''}
                   onChange={(e) => setAnswers(prev => ({ ...prev, [key]: e.target.value }))}
                 />
@@ -208,9 +210,9 @@ export function BusinessBrainTab() {
             ))}
             <div className="flex gap-2 pt-2">
               <Button onClick={handleSaveInterview} disabled={savingInterview || answeredCount === 0}>
-                {savingInterview ? 'Se salvează...' : 'Salvează interviul'}
+                {savingInterview ? t('saving') : t('save_interview')}
               </Button>
-              <Button variant="outline" onClick={() => setShowInterview(false)}>Închide</Button>
+              <Button variant="outline" onClick={() => setShowInterview(false)}>{t('close')}</Button>
             </div>
           </CardContent>
         </Card>
@@ -219,9 +221,9 @@ export function BusinessBrainTab() {
       {/* Scan website */}
       <Card>
         <CardHeader>
-          <CardTitle>Scanează site-ul</CardTitle>
+          <CardTitle>{t('scan_website_title')}</CardTitle>
           <CardDescription>
-            Standard (20cr): 15 pagini principale. Avansat (30cr): site complet, blog, FAQ.
+            {t('scan_website_description')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -238,11 +240,11 @@ export function BusinessBrainTab() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="standard">Standard (20cr)</SelectItem>
-                <SelectItem value="deep">Avansat (30cr)</SelectItem>
+                <SelectItem value="deep">{t('deep_scan')}</SelectItem>
               </SelectContent>
             </Select>
             <Button onClick={handleScan} disabled={scanning || !scanUrl}>
-              {scanning ? 'Se pornește...' : 'Scanează'}
+              {scanning ? t('starting') : t('scan')}
             </Button>
           </div>
         </CardContent>

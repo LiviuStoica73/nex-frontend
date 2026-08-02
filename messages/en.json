@@ -1,408 +1,1095 @@
 {
-  "nav": {
-    "dashboard": "Dashboard",
+  "account": {
+    "active_subscription": "Active subscription",
+    "delete_button": "Delete account",
+    "delete_confirm_title": "Are you sure?",
+    "delete_description": "This is a danger zone. Be careful.",
+    "delete_title": "Delete account",
+    "delete_warning": "Permanently delete your {site} account{suffix}. This action cannot be undone. Please proceed carefully.",
+    "delete_warning_subscription_suffix": " and your subscription",
+    "name_description": "Enter a display name you are comfortable with.",
+    "name_hint": "Max 32 characters",
+    "name_label": "Name",
+    "name_title": "Your name",
+    "role_description": "Select the role you want to use while testing the app.",
+    "role_hint": "Remove this field in real production",
+    "role_label": "Role",
+    "role_placeholder": "Select a role",
+    "role_title": "Your role",
+    "save_changes_suffix": "Changes"
+  },
+  "admin_client": {
+    "agencies": "Agencies",
+    "agencies_section": "🏢 Agencies",
+    "agency_clients": "Agency clients",
+    "ai_images": "AI images",
+    "ai_texts": "AI texts",
     "campaigns": "Campaigns",
-    "calendar": "Calendar",
-    "settings": "Settings",
-    "brand_kit": "Brand Kit",
-    "billing": "Billing"
+    "credits_updated": "Credits updated",
+    "errors": {
+      "invalid_number": "Enter a valid number",
+      "set_credits": "Error setting credits",
+      "set_plan": "Error setting plan"
+    },
+    "organizations_count": "Organizations ({count})",
+    "plan_updated": "Plan updated",
+    "published": "Published",
+    "remaining_credits": "Remaining credits",
+    "standalone_clients": "Standalone clients",
+    "standalone_clients_section": "👤 Standalone clients",
+    "table": {
+      "ai_images": "AI images",
+      "ai_texts": "AI texts",
+      "campaigns": "Campaigns",
+      "credits": "Credits",
+      "members": "Members",
+      "name": "Name",
+      "new_plan": "New plan",
+      "plan": "Plan",
+      "posts": "Posts",
+      "published": "Published",
+      "set_credits": "Set credits",
+      "status": "Status",
+      "topics": "Topics"
+    },
+    "topics": "Topics",
+    "total_posts": "Total posts",
+    "users": "Users"
+  },
+  "admin_page": {
+    "access_denied": "Access denied (you are not a superuser)",
+    "error_status": "Error {status}"
+  },
+  "agency_overview": {
+    "active_clients": "Active clients",
+    "add_first_client": "Add first client →",
+    "campaigns": "Campaigns",
+    "clients": "Clients",
+    "enter": "Enter",
+    "loading": "Loading...",
+    "manage_clients": "Manage clients →",
+    "no_clients": "No clients."
+  },
+  "allocations_manager": {
+    "allocate": "Allocate",
+    "allocated_to_clients": "Allocated to clients",
+    "client_usage": "Used {consumed} / {allocated} • remaining {remaining}",
+    "clients_count": "Clients ({count})",
+    "default_suggestion": "Default suggestion: {credits} credits/brand",
+    "empty": "Add the agency as its own client and add clients from the Clients page, then allocate their budget.",
+    "error": "Error.",
+    "errors": {
+      "invalid_credits": "Enter a valid number of credits.",
+      "load_failed": "Could not load allocations (agency account required).",
+      "save_failed": "Error saving allocation."
+    },
+    "loading": "Loading...",
+    "pool_total_per_month": "Total pool / month",
+    "self": "own",
+    "self_usage": "Available pool {remaining} • target {allocated}",
+    "unallocated_pool": "Unallocated (in pool)"
+  },
+  "analytics": {
+    "days": "{count} days",
+    "empty_subtitle": "Publish your first posts to see analytics.",
+    "empty_title": "No posts published in the last {days} days",
+    "engagement_by_platform": "Engagement by platform",
+    "kpi_published_posts": "Published posts",
+    "kpi_total_likes": "Total likes",
+    "kpi_total_reach": "Total reach",
+    "kpi_total_shares": "Total shares",
+    "loading": "Loading analytics...",
+    "metric_comments": "Comments",
+    "metric_likes": "Likes",
+    "metric_reach": "Reach",
+    "metric_shares": "Shares",
+    "no_data": "No data available.",
+    "not_available": "—",
+    "post_distribution": "Post distribution",
+    "score": "score",
+    "sync_now": "Sync now",
+    "syncing": "Syncing...",
+    "top_posts": "Top 5 posts"
   },
   "auth": {
-    "sign_in": "Sign in",
-    "sign_out": "Sign out",
-    "sign_in_with_google": "Sign in with Google",
-    "sign_in_with_email": "Sign in with Email",
-    "sign_up_with_email": "Sign up",
-    "welcome_back": "Welcome back",
+    "back": "Back",
     "enter_email": "Enter your email to sign in to your account",
     "no_account": "Don't have an account? Sign Up",
     "or_continue_with": "Or continue with",
-    "back": "Back"
+    "sign_in": "Sign in",
+    "sign_in_with_email": "Sign in with Email",
+    "sign_in_with_google": "Sign in with Google",
+    "sign_out": "Sign out",
+    "sign_up_with_email": "Sign up",
+    "welcome_back": "Welcome back"
+  },
+  "autopilot": {
+    "calendar_count": "{count, plural, one {# idea in Intelligence Calendar} other {# ideas in Intelligence Calendar}}",
+    "empty_subtitle": "Publish opportunities from the <opportunities>Opportunities</opportunities> tab to see them here.",
+    "empty_title": "No idea published from Intelligence yet.",
+    "failed_count": "{count} failed",
+    "filtered_count": "{count} of {total}",
+    "hide_posts": "Hide posts",
+    "loading": "Loading...",
+    "mixed": "Mixed",
+    "mixed_published_scheduled": "{published} published · {scheduled} scheduled",
+    "mixed_published_scheduled_failed": "{published} published · {scheduled} scheduled · {failed} failed",
+    "mixed_short": "{published} pub · {scheduled} sched · {failed} failed",
+    "networks": "Networks:",
+    "no_filter_results": "No results for the selected filters.",
+    "partially_published": "Partially published",
+    "per_page": "Per page:",
+    "published_count": "{count} published",
+    "published_other_count": "{published} published · {other} other",
+    "reset": "Reset",
+    "scheduled_count": "{count} scheduled",
+    "search_placeholder": "Search by title or hook...",
+    "sort": {
+      "created_at": "Creation date",
+      "post_date": "Post date",
+      "score": "AI score",
+      "title": "Alphabetical"
+    },
+    "statuses": {
+      "approved": "Approved",
+      "draft": "Draft",
+      "failed": "Failed",
+      "paused": "Paused",
+      "published": "Published",
+      "scheduled": "Scheduled",
+      "skipped": "Skipped"
+    },
+    "view_post": "View post",
+    "view_posts": "View posts"
+  },
+  "bentogrid_section": {
+    "cards": {
+      "best_time": {
+        "description": "Set your preferred slots per platform. Nex-Nex automatically schedules the 100 generated ideas — evenly spread, 2 per day. AI audience analysis coming soon.",
+        "title": "Smart scheduling"
+      },
+      "brand_intelligence": {
+        "description": "AI learns your brand voice, values and products from PDFs, URLs and descriptions. Automatically generates 100 post ideas organized by category — you approve or adjust.",
+        "title": "Brand Intelligence"
+      },
+      "from_idea_to_published": {
+        "description": "Send a topic from the web app or Telegram. In 2 minutes you have text, image and the post scheduled across all platforms.",
+        "title": "From idea to published in 3 minutes"
+      },
+      "languages": {
+        "description": "Generate and publish in any language. AI culturally adapts the message — it doesn't just translate word by word.",
+        "title": "50+ languages"
+      }
+    },
+    "subtitle": "Nex-Nex replaces 4 separate tools with one single app, in a seamless experience.",
+    "title": "Everything you need, in one place"
+  },
+  "best_times": {
+    "add_slot": "+ Add slot",
+    "ai_dialog": {
+      "description": "AI will rewrite all existing slots and days with optimal recommendations per platform, based on general engagement data. Changes are not saved automatically — you can review and adjust them before pressing Save.",
+      "title": "Automatic AI fill"
+    },
+    "ai_fill": "AI fill",
+    "ai_slots_done": "AI slots filled — review and save!",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "description": "Times are displayed in <timezone></timezone> — they are saved automatically in UTC. Displayed networks are the connected and active ones in <socialAccounts>Social accounts</socialAccounts>. Check the eligible weekdays — the system schedules posts in the first free day/time, the same day across all networks, each at its own best time.",
+    "errors": {
+      "ai_suggestions_failed": "Error generating AI suggestions",
+      "day_required": "{platform}: choose at least one day",
+      "save_failed": "Error saving",
+      "slot_required": "{platform}: at least one slot is required"
+    },
+    "generating": "Generating...",
+    "loading": "Loading...",
+    "local_time": "local time",
+    "no_active_connector": "No active connector — connect a network from <socialAccounts>Social accounts</socialAccounts>.",
+    "save": "Save",
+    "saved": "Best times saved!",
+    "saving": "Saving...",
+    "weekdays": {
+      "friday": "Friday",
+      "monday": "Monday",
+      "saturday": "Saturday",
+      "sunday": "Sunday",
+      "thursday": "Thursday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday"
+    }
+  },
+  "billing_dashboard": {
+    "active_subscription_suffix": " · Active subscription",
+    "agency_clients": "Agency clients",
+    "available_credits": "Available credits",
+    "change_plan": "Change plan →",
+    "current_plan": "Current plan",
+    "errors": {
+      "load_failed": "Could not load billing data. Check that the backend is running.",
+      "no_active_org": "The session does not contain an active org. Try reconnecting."
+    },
+    "image_generators": "Image generators:",
+    "loading": "Loading...",
+    "mock_mode": "Simulation mode",
+    "mock_mode_description": "— payments are not processed. Change the plan directly for testing.",
+    "posts_this_month": "Posts this month",
+    "price_per_month": "{price}/month",
+    "pricing_page": "pricing page",
+    "simulate_upgrade": "Simulate upgrade:",
+    "social_accounts": "Social accounts",
+    "trial_suffix": " · 14-day free trial · Cancel anytime",
+    "upgrade_available": "Upgrade available on the"
+  },
+  "billing_info": {
+    "cancels_on": "Your plan will be canceled on {date}.",
+    "choose_plan": "Choose a plan",
+    "description": "You are currently on the <strong>{plan}</strong> plan.",
+    "renews_on": "Your plan renews on {date}.",
+    "title": "Subscription Plan"
+  },
+  "billing_topup": {
+    "buy": "Buy",
+    "credits_count": "{credits} credits",
+    "description": "1 credit = 1 standard text or image generation. Monthly plan credits reset on each billing cycle. Extra purchased credits expire at the end of the current calendar month (they do not roll over).",
+    "errors": {
+      "checkout_create": "Error creating checkout.",
+      "network": "Network error."
+    },
+    "heading": "Buy extra credits",
+    "most_popular": "Most popular",
+    "opening": "Opening...",
+    "packages": {
+      "pro": {
+        "description": "Best value for money"
+      },
+      "standard": {
+        "description": "Ideal for active brands"
+      },
+      "starter": {
+        "description": "Perfect for tests and occasional posts"
+      }
+    },
+    "payment_note": "Payment is processed through LemonSqueezy. We accept Visa, Mastercard, and PayPal. Invoice issued automatically after payment.",
+    "subtitle": "Credits are added immediately after payment and expire at the end of the current month."
+  },
+  "brand_kit": {
+    "colors": "Colors",
+    "logo": "Logo",
+    "templates": "Templates",
+    "title": "Brand Kit",
+    "typography": "Typography"
+  },
+  "brand_kit_form": {
+    "common": {
+      "save": "Save",
+      "saved": "✅ Saved!",
+      "saving": "Saving..."
+    },
+    "documents": {
+      "brand_docs": {
+        "description": "Upload manuals, FAQs, presentations, or web pages. The AI will use them as references when generating content — correct prices, real features, zero hallucinations.",
+        "processing": "Processing...",
+        "title": "Documents about the brand",
+        "upload": "Upload PDF / DOCX / TXT"
+      },
+      "indexed": {
+        "chunks": "{count} chunks",
+        "empty": "No documents yet. Upload a file or add a URL.",
+        "loading": "Loading...",
+        "title": "Indexed documents ({count})"
+      },
+      "status": {
+        "failed": "failed",
+        "indexed": "indexed",
+        "processing": "processing"
+      },
+      "test": {
+        "ask": "Ask",
+        "placeholder": "Ex: \"What are the prices?\" or \"What products do we sell?\"",
+        "title": "Test it — what does the AI know about your brand?"
+      },
+      "url": {
+        "add": "Add URL",
+        "name_placeholder": "Name (optional)",
+        "placeholder": "https://your-site.com/about"
+      }
+    },
+    "errors": {
+      "logo_network": "Network error while uploading logo.",
+      "logo_sign_network": "Network error while uploading logo + sign.",
+      "logo_sign_upload_failed": "Logo + sign upload failed ({status})",
+      "logo_upload_failed": "Logo upload failed ({status})",
+      "missing_org": "The session has no orgId. Please sign in again.",
+      "network": "Network error. Check your connection.",
+      "save_failed": "Error {status}: {message}",
+      "sign_network": "Network error while uploading sign.",
+      "sign_upload_failed": "Sign upload failed ({status})",
+      "storage_not_configured": "R2 storage is not configured.",
+      "template_network": "Network error while uploading template.",
+      "template_upload_failed": "Template upload failed ({status})"
+    },
+    "identity": {
+      "brand_name": {
+        "label": "Company / brand name",
+        "placeholder": "Ex: Nex-Nex, Creative Agency, TechStartup LLC"
+      },
+      "colors": {
+        "accent": {
+          "description": "CTAs, buttons, highlights",
+          "label": "Accent"
+        },
+        "background": {
+          "description": "Image background color",
+          "label": "Background"
+        },
+        "primary": {
+          "description": "The main brand color",
+          "label": "Primary"
+        },
+        "secondary": {
+          "description": "Support color / secondary background",
+          "label": "Secondary"
+        },
+        "text_dark": {
+          "description": "Text on light background",
+          "label": "Dark text"
+        },
+        "text_light": {
+          "description": "Text on dark background",
+          "label": "Light text"
+        },
+        "title": "Brand colors"
+      },
+      "description": {
+        "label": "Short description",
+        "placeholder": "1-3 sentences about what your brand does."
+      },
+      "logo": {
+        "alt": "Logo",
+        "description": "Square 1:1 image, transparent background",
+        "label": "Logo",
+        "replace": "Replace logo",
+        "upload": "Upload logo",
+        "uploading": "Uploading..."
+      },
+      "logo_sign": {
+        "alt": "Logo + Sign",
+        "description": "A single file with logo and sign together — used when both are selected in Telegram. Create it in Canva/Figma and upload it here.",
+        "label": "Combined logo + sign",
+        "replace": "Replace logo + sign",
+        "upload": "Upload logo + sign",
+        "uploading": "Uploading..."
+      },
+      "sign": {
+        "alt": "Sign",
+        "description": "The brand writing style (PNG/SVG)",
+        "label": "Sign / brand font",
+        "replace": "Replace sign",
+        "upload": "Upload sign",
+        "uploading": "Uploading..."
+      },
+      "slogan": {
+        "label": "Slogan",
+        "placeholder": "Ex: AI Content Copilot for creators"
+      },
+      "templates": {
+        "add": "Add template",
+        "alt": "Template {index}",
+        "delete": "Delete template",
+        "description": "The background images / visual layouts of the brand. The AI will use them when generating images for posts.",
+        "item_label": "Template {index}",
+        "title": "Post templates",
+        "uploading": "Uploading..."
+      },
+      "visual_assets": {
+        "title": "Visual assets"
+      }
+    },
+    "no_brand": {
+      "description": "Create or select a brand from the left menu to configure the Brand Kit.",
+      "title": "No brand selected"
+    },
+    "position_label": "Position (Fal.ai):",
+    "positions": {
+      "bot_center": "Bottom center",
+      "bot_left": "Bottom left",
+      "bot_right": "Bottom right",
+      "center": "Center",
+      "mid_left": "Middle left",
+      "mid_right": "Middle right",
+      "top_center": "Top center",
+      "top_left": "Top left",
+      "top_right": "Top right"
+    },
+    "quick_post": {
+      "custom": "✏️ Custom",
+      "image_format": {
+        "custom_description": "Specify your own format/size in English",
+        "custom_placeholder": "Ex: square format 1:1 (800×800 px), optimized for Pinterest...",
+        "description": "The size of the image generated in Quick Post. Choose the format that fits the platforms you publish to most often.",
+        "descriptions": {
+          "landscape": "1024×536 px — Facebook, LinkedIn feed",
+          "portrait": "864×1080 px — Instagram portrait feed",
+          "square": "1024×1024 px — Instagram feed, Facebook",
+          "story": "576×1024 px — Stories, Reels, TikTok",
+          "wide": "1024×576 px — YouTube, Twitter"
+        },
+        "options": {
+          "landscape": "🖥️ Landscape 1.91:1",
+          "portrait": "🖼️ Portrait 4:5",
+          "square": "⬜ Square 1:1",
+          "story": "📱 Story / Reel 9:16",
+          "wide": "📺 Widescreen 16:9"
+        },
+        "title": "Default image format"
+      },
+      "platforms": {
+        "description": "Selected automatically in Quick Post. If you choose nothing, active accounts are used.",
+        "title": "Default social networks"
+      },
+      "provider": {
+        "description": "Used automatically in ⚡ Quick Post without asking the user.",
+        "options": {
+          "comfyui": "🖼️ Nex-Nex RTX (ComfyUI) — local, 1 credit · logo/sign added mechanically",
+          "fal": "⚡ Fal.ai FLUX — fast, 1 credit (without branding) / 2 credits (with organically integrated logo/sign)",
+          "gemini": "🎨 Google Gemini — 2 credits · logo/sign organically integrated into the scene"
+        },
+        "title": "Default image generator"
+      },
+      "save_defaults": "Save Quick Post defaults",
+      "saved_message": "✓ Settings have been saved!",
+      "saved_short": "✓ Saved",
+      "schedule": {
+        "description": "The publishing time automatically selected in Quick Post. It can be changed for each post.",
+        "options": {
+          "best_time": "🎯 Best time — best time of day per platform",
+          "now": "⚡ Now — publish immediately on confirmation"
+        },
+        "title": "Default scheduling"
+      },
+      "text_format": {
+        "description": "Controls whether AI includes emoji and hashtags in generated text.",
+        "emoji_description": "AI adds relevant emoji in the body text",
+        "emoji_label": "😊 Emoji in text",
+        "hashtags_description": "3-5 relevant hashtags added at the end of the post",
+        "hashtags_label": "# Hashtags",
+        "title": "Default text format"
+      },
+      "tone": {
+        "custom_description": "Write your own tone instructions for AI",
+        "custom_placeholder": "Ex: enthusiastic but professional tone, use visual metaphors, avoid clichés...",
+        "description": "Applied when generating text in Quick Post. \"Neutral\" means the AI chooses.",
+        "descriptions": {
+          "casual": "Friendly, relaxed, conversational",
+          "formal": "Professional and authoritative — for B2B and corporate",
+          "inspiring": "Motivates and energizes — for brand awareness",
+          "neutral": "AI chooses the style that fits the context"
+        },
+        "options": {
+          "casual": "😊 Casual",
+          "formal": "💼 Formal",
+          "inspiring": "✨ Inspirational",
+          "neutral": "⚖️ Neutral"
+        },
+        "title": "Default text tone"
+      },
+      "visual_assets": {
+        "description": "If checked, Quick Post will apply these elements automatically to the generated image. Leave unchecked if you want clean images without branding.",
+        "loaded": "(uploaded ✓)",
+        "logo": "Brand logo",
+        "logo_missing": "(not uploaded — add it from the Identity tab)",
+        "logo_sign": "Combined logo + sign",
+        "logo_sign_description": "— sends the combined file as a single reference",
+        "sign": "Sign / brand typography",
+        "sign_missing": "(not uploaded)",
+        "template": "Visual template (the first one in your list)",
+        "template_loaded_many": "({count} templates ✓)",
+        "template_loaded_one": "(1 template ✓)",
+        "template_missing": "(no template — add one from the Identity tab)",
+        "title": "Default visual assets"
+      },
+      "visual_style": {
+        "ai_decide": "AI decides",
+        "custom_description": "Describe your own visual style in English for the AI prompt",
+        "custom_placeholder": "Ex: dreamy watercolor illustration, pastel tones, soft brush strokes, romantic mood...",
+        "description_prefix": "The style automatically selected when generating the image, skipping the selection step in Telegram. Choose",
+        "description_suffix": "if you prefer to choose for each post.",
+        "descriptions": {
+          "auto": "Choose the style for each post",
+          "bold": "Vivid colors, high contrast, dynamic",
+          "cinematic": "Dramatic lighting, film quality",
+          "clean": "Minimalist, white space, neutral tones",
+          "elegant": "Luxury, gold accents, refined editorial style",
+          "energetic": "Neon, motion, maximum visual impact",
+          "minimal": "Ultra-simple, one focal point",
+          "professional": "Corporate, structured, authoritative"
+        },
+        "options": {
+          "auto": "⏭️ AI decides",
+          "bold": "🔥 Bold",
+          "cinematic": "🎬 Cinematic",
+          "clean": "✨ Clean",
+          "elegant": "💎 Elegant",
+          "energetic": "⚡ Energetic",
+          "minimal": "◻️ Minimalist",
+          "professional": "💼 Professional"
+        },
+        "title": "Default visual style"
+      }
+    },
+    "tabs": {
+      "documents": "AI Documents",
+      "identity": "Identity",
+      "quick_post": "⚡ Quick Post",
+      "typography": "Typography",
+      "voice": "Voice & Words"
+    },
+    "typography": {
+      "bold": "Bold",
+      "color": "Color",
+      "default_font": "— Default (Inter) —",
+      "description_middle": "and for",
+      "description_prefix": "Typography settings are used when generating images with",
+      "description_product_template": "Product in template",
+      "description_text_on_image": "Text on image",
+      "font": "Font",
+      "italic": "Italic",
+      "overlay": {
+        "description_prefix": "The color of the semi-transparent band behind the text written on the image. You can include alpha (ex:",
+        "description_suffix": ").",
+        "title": "Text overlay background"
+      },
+      "product_template": {
+        "preview_description": "Approximate preview (web font) — the Telegram output uses the exact same TTF files. The background is the one from Identity → Brand colors (\"Background\"); it only appears in template areas without photo/text if the template is transparent there.",
+        "preview_subtitle": "Subtitle / price",
+        "preview_title": "Product title",
+        "test_subtitle_label": "Test text — Subtitle",
+        "test_subtitle_placeholder": "100% cotton · Price 149 lei",
+        "test_title_label": "Test text — Title",
+        "test_title_placeholder": "Men’s trousers",
+        "title": "📦 Product in template"
+      },
+      "size": "Size (px)",
+      "subtitle_block": {
+        "title": "Subtitle / Price"
+      },
+      "text_on_image": {
+        "dark_background": "Dark background",
+        "description_prefix": "Short text overlaid on AI-generated images (Quick Post / Advanced Post). Uses the font and italic setting from",
+        "description_suffix": "(above); text color is chosen automatically (white or black) for maximum contrast and is not configurable.",
+        "light_background": "Light background",
+        "test_label": "Test text — Subject",
+        "test_placeholder": "Special offer -20% today!",
+        "title": "🖼️ Text on image"
+      },
+      "title_block": {
+        "title": "Title"
+      }
+    },
+    "voice": {
+      "avoid_words": {
+        "label": "Words to avoid",
+        "placeholder": "cheap, free, 100% guaranteed"
+      },
+      "description": "Describe the tone, values, and target audience. The AI will use this for every generation.",
+      "keywords": {
+        "label": "Keywords (comma-separated)",
+        "placeholder": "innovation, quality, efficiency, results",
+        "title": "Keywords & words to avoid"
+      },
+      "placeholder": "Ex: Professional but friendly tone. Audience: entrepreneurs aged 25-45. Values: innovation, efficiency, transparency. We avoid excessive technical jargon.",
+      "title": "Brand Voice"
+    }
+  },
+  "business_brain": {
+    "added": "added",
+    "answer_placeholder": "Your answer...",
+    "brand_interview_description": "The answers help the AI understand your brand before generating the strategy.",
+    "brand_interview_title": "Brand Interview ({answered}/10 completed)",
+    "close": "Close",
+    "deep_scan": "Advanced (30cr)",
+    "error_with_message": "Error: {message}",
+    "indexed_files": "indexed files",
+    "interview_questions": {
+      "communication_tone": "What is the brand tone? (formal, friendly, authoritative, etc.)",
+      "differentiator": "What is the differentiator compared to competitors?",
+      "known_competitors": "Known competitors (names or URLs)",
+      "objectives": "What are the marketing objectives? (awareness, leads, sales)",
+      "priority_products": "Which products/services are the priority to promote?",
+      "problems_solved": "What concrete problems do you solve for customers?",
+      "target_audience": "Who is the ideal customer? (age, profession, interests)",
+      "website_url": "Main website URL",
+      "what_sells": "What do you sell? (main products or services)",
+      "what_to_avoid": "Which topics or messages should be avoided?"
+    },
+    "interview_saved": "✓ Interview saved!",
+    "missing": "missing",
+    "missing_click_to_complete": "Missing — click to complete",
+    "not_scanned": "Not scanned",
+    "partially_completed": "Partially completed",
+    "save_interview": "Save interview",
+    "saving": "Saving...",
+    "scan": "Scan",
+    "scan_completed": "✓ Scan completed!",
+    "scan_started": "⏳ Scan started for {url}. We will check automatically when it finishes (1-3 min)...",
+    "scan_taking_longer": "The scan is taking longer than usual. Check again later.",
+    "scan_website_description": "Standard (20cr): 15 main pages. Advanced (30cr): full site, blog, FAQ.",
+    "scan_website_title": "Scan website",
+    "starting": "Starting..."
+  },
+  "calendar": {
+    "active_campaigns": "Active",
+    "all": "All",
+    "all_brands": "All brands",
+    "analytics": {
+      "clicks": "Clicks",
+      "comments": "Comments",
+      "impressions": "Impressions",
+      "likes": "Likes",
+      "shares": "Shares",
+      "synced_at": "Synced: {date}"
+    },
+    "analytics_unavailable": "Analytics unavailable.",
+    "brand": "Brand",
+    "calendar_view": "📅 Calendar",
+    "campaign_status": "Campaign status",
+    "choose_new_date": "Choose the new date and time:",
+    "choose_repost_accounts": "Choose accounts for reposting:",
+    "close": "Close",
+    "confirm_reschedule": "Confirm reschedule",
+    "day": "Day",
+    "delete": "Delete",
+    "delete_button": "🗑 Delete",
+    "delete_post_confirm": "Permanently delete this post?",
+    "edit_text": "Edit text",
+    "error_with_message": "Error: {message}",
+    "list_view": "☰ List",
+    "month": "Month",
+    "more_images": "+{count} images",
+    "no_connected_accounts": "No connected account.",
+    "no_posts_day": "No posts on this day.",
+    "not_available": "—",
+    "page_subtitle": "View and reschedule your posts.",
+    "page_title": "Editorial Calendar",
+    "pause": "Pause",
+    "pause_button": "⏸ Pause",
+    "post_status": "Post status",
+    "processing": "Processing...",
+    "publish_error": "Publishing error",
+    "publish_failed": "Publishing failed",
+    "publish_now": "Publish now",
+    "publish_started": "Publishing started",
+    "publish_started_description": "The post will appear as published in a few seconds.",
+    "refresh_posts": "Refresh posts",
+    "repost": "Repost",
+    "reposting": "Reposting...",
+    "reschedule": "Reschedule",
+    "reschedule_all": "⚡ Rearrange all",
+    "reschedule_all_confirm": "Rearrange ALL unpublished topics to the new best times? This operation cannot be undone.",
+    "reschedule_all_error": "Error rearranging",
+    "reschedule_all_success": "✅ {count} posts rearranged to the new best times",
+    "reschedule_button": "📅 Reschedule",
+    "scheduled_at": "Scheduled",
+    "start_auto_refresh": "Enable auto-refresh (60s)",
+    "status_legend": "Status:",
+    "statuses": {
+      "approved": "Approved",
+      "archived": "Archived",
+      "cancelled": "Cancelled",
+      "draft": "Draft",
+      "failed": "Failed",
+      "paused": "Paused",
+      "published": "Published",
+      "rescheduling": "Rescheduling",
+      "scheduled": "Scheduled",
+      "skipped": "Skipped"
+    },
+    "stop_auto_refresh": "Stop auto-refresh (60s)",
+    "syncing": "Syncing...",
+    "today": "Today",
+    "token_expired_description": "Access to the <platform></platform> account has expired. Go to <settings>Settings → Social Accounts</settings> and reconnect the account. The post will be retried automatically.",
+    "token_expired_title": "Token expired — reconnect required",
+    "tomorrow": "Tomorrow →",
+    "view_published_post": "View published post →",
+    "view_topic_posts": "🗂️ View all posts in this topic →",
+    "week": "Week",
+    "yesterday": "← Yesterday"
+  },
+  "campaigns": {
+    "active": "Active",
+    "all": "All",
+    "archive": "Archive",
+    "assign_campaign": "Assign campaign",
+    "budget_optional": "Budget (optional)",
+    "budget_placeholder": "ex: 5000",
+    "bulk": {
+      "actions": {
+        "archive": "archive",
+        "clone": "clone",
+        "delete": "delete",
+        "move": "move",
+        "pause": "pause",
+        "resume": "resume"
+      },
+      "confirm_campaigns": "Are you sure you want to {action} {count} campaigns?",
+      "confirm_posts": "Are you sure you want to {action} {count} posts?",
+      "confirm_topics": "Are you sure you want to {action} {count} topics and all their posts?"
+    },
+    "campaign_name_placeholder": "ex: Product launch May 2026",
+    "campaign_name_required": "Campaign name *",
+    "cancel": "Cancel",
+    "cancel_campaign": "Cancel campaign",
+    "choose_campaign_placeholder": "Choose campaign...",
+    "click_to_reschedule": "Click to reschedule",
+    "clone": "Clone",
+    "clone_paused": "Clone (paused)",
+    "create_campaign": "Create campaign",
+    "create_posts": "Create posts",
+    "creating": "Creating...",
+    "currency": "Currency",
+    "date_and_time": "Date and time",
+    "delete": "Delete",
+    "delete_campaign_confirm": "Delete campaign \"{name}\"? All posts will be deleted.",
+    "delete_campaign_error": "Cannot delete: only draft campaigns with no credit usage can be deleted. Use Archive.",
+    "delete_confirm": "Delete this post permanently?",
+    "delete_draft_only": "Delete (draft only)",
+    "delete_topic_confirm": "Delete this topic and all posts in it?",
+    "delete_topic_with_posts": "Delete topic + posts",
+    "delete_with_posts": "Delete + posts",
+    "deselect": "Deselect",
+    "dialog_edit_title": "Edit post text",
+    "dialog_repost_title": "Repost on other networks",
+    "dialog_reschedule_title": "Reschedule post",
+    "dialog_translate_title": "Post in another language",
+    "edit_image_prompt_description": "The English prompt sent to the AI generator. Edit and save it.",
+    "edit_image_prompt_title": "Edit image prompt",
+    "edit_text": "Edit text",
+    "empty_campaign_posts": "No posts in this campaign.",
+    "empty_subtitle": "Create your first post from the Telegram bot with /start.",
+    "empty_title": "No posts yet",
+    "empty_topic_posts": "No posts in this topic.",
+    "end_date": "End date",
+    "error_prefix": "Error",
+    "generate": "Generate",
+    "generating": "Generating...",
+    "image_alt": "Image {index}",
+    "image_prompt": "Image prompt",
+    "inbox_description": "Sent from Telegram without a current campaign selected. Assign them to a campaign.",
+    "inbox_title": "Posts without a campaign",
+    "language_label": "Language:",
+    "languages": {
+      "de": "German",
+      "en": "English",
+      "es": "Spanish",
+      "fr": "French",
+      "it": "Italian",
+      "ro": "Romanian"
+    },
+    "loading": "Loading...",
+    "loading_campaigns": "Loading campaigns...",
+    "loading_posts": "Loading posts...",
+    "mark_published_external": "Mark externally published",
+    "move": "Move",
+    "move_post": "Move post",
+    "move_post_title": "Move post to another campaign",
+    "move_to_campaign": "Move to campaign",
+    "move_to_campaign_ellipsis": "Move to campaign...",
+    "move_to_placeholder": "Move to...",
+    "move_topic_confirm": "Move topic \"{topic}\" ({count} posts) to \"{campaign}\"?",
+    "move_topic_description": "({count} posts) → choose the destination campaign:",
+    "move_topic_success": "✅ Topic moved to \"{campaign}\"",
+    "move_topic_title": "Move topic to campaign",
+    "move_topics_placeholder": "Move topics to...",
+    "moving": "Moving...",
+    "new_campaign": "New campaign",
+    "next": "Next",
+    "no_other_campaigns": "There are no other campaigns.",
+    "other_language": "Another language",
+    "other_social_network": "Another social network",
+    "page_subtitle": "All posts created from the Telegram bot.",
+    "page_title": "Campaigns",
+    "pagination": "Page {page} of {totalPages} • {total} campaigns",
+    "pause": "Pause",
+    "pause_all_posts": "Pause all posts",
+    "pause_campaign": "Pause campaign",
+    "per_page": "Per page",
+    "platform_optional_label": "Platform (optional, default is the same):",
+    "platforms": {
+      "blog": "Blog",
+      "discord": "Discord",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn",
+      "x": "X / Twitter"
+    },
+    "posts_count": "{count} posts",
+    "posts_selected": "{count} posts selected",
+    "previous": "Previous",
+    "processing": "Processing...",
+    "publish_now": "Publish now",
+    "publish_topic_confirm": "Publish all posts from topic \"{name}\" now?",
+    "repost": "Repost",
+    "reschedule": "Reschedule",
+    "reschedule_campaign": "Reschedule campaign",
+    "reschedule_error": "Error while rescheduling",
+    "reschedule_modes": {
+      "next_best_time": {
+        "campaign_desc": "First shared available slot across all platforms",
+        "label": "Next best time",
+        "topic_desc": "First shared available slot across all platforms"
+      },
+      "specific_date": {
+        "campaign_desc": "Move the topic to a date you choose",
+        "label": "Specific date",
+        "topic_desc": "Move the posts to a date you choose"
+      }
+    },
+    "reschedule_success": "✅ {count} posts rescheduled",
+    "reschedule_topic": "Reschedule topic",
+    "resume": "Resume",
+    "resume_all_posts": "Resume all posts",
+    "resume_campaign": "Resume campaign",
+    "resume_short": "Resume",
+    "retry": "Try again",
+    "same_platform": "Same platform",
+    "save": "Save",
+    "save_prompt": "Save prompt",
+    "saving": "Saving...",
+    "scheduled_date_optional": "Scheduled date (optional):",
+    "select_campaign": "Select campaign",
+    "select_destination_campaign": "Select destination campaign:",
+    "select_platforms": "Select platforms:",
+    "selected_count": "{count} selected",
+    "set_current": "Mark as current",
+    "start_date": "Start date",
+    "status": "Status",
+    "statuses": {
+      "approved": "Approved",
+      "archived": "Archived",
+      "cancelled": "Cancelled",
+      "draft": "Draft",
+      "failed": "Failed",
+      "paused": "Paused",
+      "published": "Published",
+      "scheduled": "Scheduled",
+      "skipped": "Skipped"
+    },
+    "topic_description": "Topic / description",
+    "topic_description_placeholder": "What is the campaign about? AI will use this when generating.",
+    "topics_selected": "{count} topics selected",
+    "unset_current": "Remove current marker",
+    "view_post": "View post →"
+  },
+  "clients_manager": {
+    "add": "Add",
+    "add_agency_as_self": "Add {name} as own client",
+    "add_as_self": "Add as own",
+    "add_new_client": "Add new client",
+    "add_self_description": "Allows budget allocation and reports for your own posts.",
+    "adding": "Adding...",
+    "agency": "the agency",
+    "client_name_placeholder": "Client name (ex: Bakery X)",
+    "clients_count": "Clients ({count})",
+    "confirm_remove_client": "Are you sure you want to remove this client?",
+    "empty": "No clients. Add your first client or add the agency as its own client.",
+    "enter": "Enter",
+    "errors": {
+      "add_client": "Error adding client",
+      "add_self": "Error adding own client"
+    },
+    "loading": "Loading...",
+    "self": "own"
   },
   "common": {
-    "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
     "edit": "Edit",
-    "loading": "Loading...",
     "error": "Something went wrong",
+    "loading": "Loading...",
+    "save": "Save",
     "success": "Saved successfully",
-    "toggle_sidebar": "Toggle sidebar",
-    "toggle_navigation_menu": "Toggle navigation menu"
+    "toggle_navigation_menu": "Toggle navigation menu",
+    "toggle_sidebar": "Toggle sidebar"
   },
-  "settings": {
-    "title": "Settings",
-    "subtitle": "Manage account and website settings.",
-    "language": "Interface language",
-    "language_description": "Choose the language for the interface",
-    "timezone": "Timezone",
-    "save_changes": "Save changes"
+  "compare_plans": {
+    "empty": "—",
+    "label": "Plans",
+    "subtitle": "Find the perfect plan tailored for your business needs!",
+    "title": "Compare Our Plans"
   },
-  "brand_kit": {
-    "title": "Brand Kit",
-    "logo": "Logo",
-    "colors": "Colors",
-    "typography": "Typography",
-    "templates": "Templates"
+  "create_brand_modal": {
+    "brand_name": "Brand name",
+    "brand_name_placeholder": "ex: TerraSoft, AllMeters.com",
+    "cancel": "Cancel",
+    "create_brand": "Create brand",
+    "description": "Enter the brand or company name. You will be able to configure the logo, colors, and brand voice in Brand Kit.",
+    "errors": {
+      "create_failed": "Error creating. Try again.",
+      "limit_reached": "You have reached the brand limit on your current plan. Upgrade for more."
+    },
+    "title": "New brand"
   },
   "dashboard": {
-    "title": "Dashboard",
-    "subtitle": "Your content performance in real time."
+    "subtitle": "Your content performance in real time.",
+    "title": "Dashboard"
   },
-  "marketing_nav": {
-    "pricing": "Pricing",
-    "features": "Features",
-    "blog": "Blog"
+  "dashboard_sidebar": {
+    "items": {
+      "admin_panel": "Admin Panel",
+      "billing": "Billing",
+      "brand_kit": "Brand Kit",
+      "calendar": "Calendar",
+      "campaigns": "Campaigns",
+      "dashboard": "Dashboard",
+      "settings": "Settings"
+    },
+    "sections": {
+      "account": "ACCOUNT",
+      "brand": "BRAND",
+      "content": "CONTENT"
+    }
+  },
+  "delete_account_modal": {
+    "confirm_cta": "Confirm delete account",
+    "title": "Delete Account",
+    "toast": {
+      "loading": "Deleting account...",
+      "success": "Account deleted successfully!"
+    },
+    "verification": {
+      "phrase": "confirm delete account",
+      "prefix": "To verify, type",
+      "suffix": "below"
+    },
+    "warning_label": "Warning:",
+    "warning_text": "This will permanently delete your account and your active subscription!"
   },
   "docs_nav": {
     "documentation": "Documentation",
     "guides": "Guides"
   },
-  "dashboard_sidebar": {
-    "sections": {
-      "content": "CONTENT",
-      "brand": "BRAND",
-      "account": "ACCOUNT"
-    },
+  "features_section": {
+    "cta": "View plans",
     "items": {
-      "dashboard": "Dashboard",
-      "campaigns": "Campaigns",
-      "calendar": "Calendar",
-      "brand_kit": "Brand Kit",
-      "billing": "Billing",
-      "settings": "Settings",
-      "admin_panel": "Admin Panel"
-    }
-  },
-  "search": {
-    "button": "Search",
-    "docs_suffix": "documentation",
-    "placeholder": "Type a command or search...",
-    "no_results": "No results found."
-  },
-  "analytics": {
-    "loading": "Loading analytics...",
-    "days": "{count} days",
-    "syncing": "Syncing...",
-    "sync_now": "Sync now",
-    "kpi_published_posts": "Published posts",
-    "kpi_total_reach": "Total reach",
-    "kpi_total_likes": "Total likes",
-    "kpi_total_shares": "Total shares",
-    "empty_title": "No posts published in the last {days} days",
-    "empty_subtitle": "Publish your first posts to see analytics.",
-    "engagement_by_platform": "Engagement by platform",
-    "metric_reach": "Reach",
-    "metric_likes": "Likes",
-    "metric_comments": "Comments",
-    "metric_shares": "Shares",
-    "post_distribution": "Post distribution",
-    "top_posts": "Top 5 posts",
-    "no_data": "No data available.",
-    "not_available": "—",
-    "score": "score"
-  },
-  "calendar": {
-    "page_title": "Editorial Calendar",
-    "page_subtitle": "View and reschedule your posts.",
-    "today": "Today",
-    "month": "Month",
-    "week": "Week",
-    "day": "Day",
-    "status_legend": "Status:",
-    "scheduled_at": "Scheduled",
-    "view_published_post": "View published post →",
-    "publish_now": "Publish now",
-    "close": "Close",
-    "not_available": "—",
-    "statuses": {
-      "draft": "Draft",
-      "approved": "Approved",
-      "scheduled": "Scheduled",
-      "published": "Published",
-      "failed": "Failed",
-      "skipped": "Skipped",
-      "archived": "Archived"
-    }
-  },
-  "campaigns": {
-    "page_title": "Campaigns",
-    "page_subtitle": "All posts created from the Telegram bot.",
-    "delete_confirm": "Delete this post permanently?",
-    "loading_campaigns": "Loading campaigns...",
-    "empty_title": "No posts yet",
-    "empty_subtitle": "Create your first post from the Telegram bot with /start.",
-    "loading_posts": "Loading posts...",
-    "empty_campaign_posts": "No posts in this campaign.",
-    "view_post": "View post →",
-    "edit_text": "Edit text",
-    "reschedule": "Reschedule",
-    "pause": "Pause",
-    "resume": "Resume",
-    "repost": "Repost",
-    "other_language": "Another language",
-    "other_social_network": "Another social network",
-    "delete": "Delete",
-    "error_prefix": "Error",
-    "dialog_edit_title": "Edit post text",
-    "dialog_reschedule_title": "Reschedule post",
-    "dialog_repost_title": "Repost on other networks",
-    "dialog_translate_title": "Post in another language",
-    "select_platforms": "Select platforms:",
-    "scheduled_date_optional": "Scheduled date (optional):",
-    "cancel": "Cancel",
-    "saving": "Saving...",
-    "save": "Save",
-    "creating": "Creating...",
-    "create_posts": "Create posts",
-    "language_label": "Language:",
-    "platform_optional_label": "Platform (optional, default is the same):",
-    "same_platform": "Same platform",
-    "generating": "Generating...",
-    "generate": "Generate",
-    "image_alt": "Image {index}",
-    "platforms": {
-      "instagram": "Instagram",
-      "facebook": "Facebook",
-      "linkedin": "LinkedIn",
-      "x": "X / Twitter",
-      "discord": "Discord",
-      "blog": "Blog"
+      "agency_mode": {
+        "description": "Manage all clients from one account. Fast switch between workspaces, unified billing.",
+        "title": "Agency Mode"
+      },
+      "analytics": {
+        "description": "Reach, impressions, likes and shares synced from all platforms. Top posts per period. Full analytics dashboard is in development.",
+        "title": "Analytics (coming soon)"
+      },
+      "brand_intelligence": {
+        "description": "Upload PDF, DOCX or URL with your brand description. AI writes as if it has known your company for years.",
+        "title": "Brand Intelligence (RAG)"
+      },
+      "editorial_calendar": {
+        "description": "Monthly and weekly view. Drag & drop to reschedule. Colors per platform and status.",
+        "title": "Editorial Calendar"
+      },
+      "idea_generator": {
+        "description": "100 post ideas generated from your brand context. Educational, promotional, storytelling — automatically scheduled 2 per day across all platforms.",
+        "title": "Idea Generator"
+      },
+      "telegram_bot": {
+        "description": "Create and approve posts from the web dashboard or directly from Telegram. AI generates the post, you approve with one tap. Publish immediately or schedule.",
+        "title": "Web App & Telegram Bot"
+      }
     },
-    "statuses": {
-      "draft": "Draft",
-      "approved": "Approved",
-      "scheduled": "Scheduled",
-      "published": "Published",
-      "failed": "Failed",
-      "skipped": "Skipped",
-      "paused": "Paused",
-      "cancelled": "Cancelled",
-      "archived": "Archived"
-    }
+    "label": "Features",
+    "subtitle": "From content generation to automatic publishing — all the tools in a single app.",
+    "title": "Everything Nex-Nex does for you."
   },
-  "account": {
-    "delete_title": "Delete account",
-    "delete_description": "This is a danger zone. Be careful.",
-    "delete_confirm_title": "Are you sure?",
-    "active_subscription": "Active subscription",
-    "delete_warning": "Permanently delete your {site} account{suffix}. This action cannot be undone. Please proceed carefully.",
-    "delete_warning_subscription_suffix": " and your subscription",
-    "delete_button": "Delete account",
-    "name_title": "Your name",
-    "name_description": "Enter a display name you are comfortable with.",
-    "name_label": "Name",
-    "save_changes_suffix": "Changes",
-    "name_hint": "Max 32 characters",
-    "role_title": "Your role",
-    "role_description": "Select the role you want to use while testing the app.",
-    "role_label": "Role",
-    "role_placeholder": "Select a role",
-    "role_hint": "Remove this field in real production"
-  },
-  "telegram": {
-    "title": "Telegram Bot",
-    "description_before": "Connect your account to",
-    "description_after": "to create and approve posts directly from Telegram.",
-    "generate_code": "Generate connection code",
-    "token_error": "Error generating the token.",
-    "server_error": "Cannot connect to the server. Try again.",
-    "send_code_before": "Send this code to the bot",
-    "send_code_after": ":",
-    "copy": "Copy",
-    "expires_in": "The code expires in 10 minutes."
+  "footer": {
+    "anpc_sal": "Alternative Dispute Resolution",
+    "anpc_sol": "Online Dispute Resolution",
+    "copyright": "© 2026 Nex-Nex.com · All rights reserved · contact@nex-nex.com",
+    "sections": {
+      "legal": {
+        "privacy": "Privacy Policy",
+        "terms": "Terms of Service",
+        "title": "Legal"
+      },
+      "product": {
+        "blog": "Blog",
+        "features": "Features",
+        "how_it_works": "How it works",
+        "pricing": "Pricing",
+        "title": "Product"
+      },
+      "support": {
+        "email": "Email",
+        "title": "Support"
+      }
+    },
+    "tagline": "Your AI Marketing Manager — builds your content strategy, creates professional posts, and publishes automatically on all social networks."
   },
   "hero_landing": {
-    "trial_badge": "14-day free trial on Starter · No charge until it ends",
-    "title_prefix": "AI Marketing Manager",
-    "title_highlight": "for your brand. Even from your phone.",
+    "coming_soon_toast": "We're still working on the {network} connector — check back soon!",
     "description": "Nex-Nex learns your business, analyzes competitors, builds your strategy, and generates 100 post ideas with AI text and images. You just approve.",
     "primary_cta": "Try it free",
     "secondary_cta": "View plans",
-    "coming_soon_toast": "We're still working on the {network} connector — check back soon!"
+    "title_highlight": "for your brand. Even from your phone.",
+    "title_prefix": "AI Marketing Manager",
+    "trial_badge": "14-day free trial on Starter · No charge until it ends"
   },
-  "preview_landing": {
-    "image_alt": "Nex-Nex — The Next Era of Content"
-  },
-  "workflow_section": {
-    "title": "How it works",
-    "subtitle": "From idea to publishing across all networks — in just a few minutes.",
-    "steps": {
-      "01": {
-        "title": "AI learns your business",
-        "description": "You upload your brand documents — style guide, products, communication tone. Your personal AI learns everything and becomes the expert of your brand."
-      },
-      "02": {
-        "title": "You ask for post ideas",
-        "description": "You tell Nex-Nex what you want to post about. Instantly, you get 5 creative ideas adapted to your brand and audience."
-      },
-      "03": {
-        "title": "You choose the idea",
-        "description": "You select the idea that fits you best. Nex-Nex develops it in the direction you choose."
-      },
-      "04": {
-        "title": "AI writes the text, SEO, and hashtags",
-        "description": "You receive the full text, SEO-optimized, with the right hashtags for each platform. Edit it if you want, or publish it directly."
-      },
-      "05": {
-        "title": "You upload a photo or ask for an AI one",
-        "description": "Do you have a photo? Upload it. Don't have one? Describe what you want and AI generates a professional prompt for the perfect image."
-      },
-      "06": {
-        "title": "AI generates the image",
-        "description": "From your prompt, AI creates professional images. You choose your preferred version directly from the app."
-      },
-      "07": {
-        "title": "You post now or schedule it",
-        "description": "Publish immediately or pick a date and time. Set your preferred posting windows per platform — AI will fill them automatically."
-      },
-      "08": {
-        "title": "Smart scheduling per network",
-        "description": "Each platform has optimal hours. Set your time slots once — Nex-Nex picks the next best available window. AI-powered auto-fill coming soon."
-      },
-      "09": {
-        "title": "Publish across all your networks",
-        "description": "One click — the post goes live simultaneously on all your connected platforms: Instagram, LinkedIn, Facebook, X, Discord, Bluesky."
-      },
-      "10": {
-        "title": "In any language",
-        "description": "Is your audience global? Nex-Nex translates and culturally adapts your post into 50+ languages while preserving your brand voice."
-      }
+  "login_page": {
+    "metadata": {
+      "description": "Login to your account",
+      "title": "Login"
     }
   },
-  "bentogrid_section": {
-    "title": "Everything you need, in one place",
-    "subtitle": "Nex-Nex replaces 4 separate tools with one single app, in a seamless experience.",
-    "cards": {
-      "brand_intelligence": {
-        "title": "Brand Intelligence",
-        "description": "AI learns your brand voice, values and products from PDFs, URLs and descriptions. Automatically generates 100 post ideas organized by category — you approve or adjust."
-      },
-      "from_idea_to_published": {
-        "title": "From idea to published in 3 minutes",
-        "description": "Send a topic from the web app or Telegram. In 2 minutes you have text, image and the post scheduled across all platforms."
-      },
-      "languages": {
-        "title": "50+ languages",
-        "description": "Generate and publish in any language. AI culturally adapts the message — it doesn't just translate word by word."
-      },
-      "best_time": {
-        "title": "Smart scheduling",
-        "description": "Set your preferred slots per platform. Nex-Nex automatically schedules the 100 generated ideas — evenly spread, 2 per day. AI audience analysis coming soon."
-      }
-    }
+  "marketing_error": {
+    "retry": "Try again",
+    "title": "Something went wrong!",
+    "unknown_error": "Unknown error"
   },
-  "features_section": {
-    "label": "Features",
-    "title": "Everything Nex-Nex does for you.",
-    "subtitle": "From content generation to automatic publishing — all the tools in a single app.",
-    "cta": "View plans",
-    "items": {
-      "telegram_bot": {
-        "title": "Web App & Telegram Bot",
-        "description": "Create and approve posts from the web dashboard or directly from Telegram. AI generates the post, you approve with one tap. Publish immediately or schedule."
-      },
-      "brand_intelligence": {
-        "title": "Brand Intelligence (RAG)",
-        "description": "Upload PDF, DOCX or URL with your brand description. AI writes as if it has known your company for years."
-      },
-      "editorial_calendar": {
-        "title": "Editorial Calendar",
-        "description": "Monthly and weekly view. Drag & drop to reschedule. Colors per platform and status."
-      },
-      "idea_generator": {
-        "title": "Idea Generator",
-        "description": "100 post ideas generated from your brand context. Educational, promotional, storytelling — automatically scheduled 2 per day across all platforms."
-      },
-      "agency_mode": {
-        "title": "Agency Mode",
-        "description": "Manage all clients from one account. Fast switch between workspaces, unified billing."
-      },
-      "analytics": {
-        "title": "Analytics (coming soon)",
-        "description": "Reach, impressions, likes and shares synced from all platforms. Top posts per period. Full analytics dashboard is in development."
-      }
-    }
+  "marketing_nav": {
+    "blog": "Blog",
+    "features": "Features",
+    "pricing": "Pricing"
   },
-  "testimonials_section": {
-    "label": "Testimonials",
-    "title": "What our customers would say — if we already had customers 😄",
-    "subtitle": "Hypothetical testimonials generated by AI. I have always preferred the truth! The real ones will appear soon.",
-    "badge_ai": "🤖 AI",
-    "items": [
-      {
-        "name": "Andrei Popescu",
-        "job": "SaaS Startup Founder",
-        "review": "I went from 3 hours/week on social media to 15 minutes. Nex-Nex generates exactly our brand tone — I no longer correct AI texts.",
-        "image": "https://randomuser.me/api/portraits/men/32.jpg"
-      },
-      {
-        "name": "Maria Ionescu",
-        "job": "Social Media Manager",
-        "review": "I manage 8 clients with Nex-Nex Agency. Visual calendar, quick approval, automatic publishing. It eliminated half of my manual work.",
-        "image": "https://randomuser.me/api/portraits/women/44.jpg"
-      },
-      {
-        "name": "Radu Constantin",
-        "job": "E-commerce Entrepreneur",
-        "review": "The Telegram bot is brilliant. I take a photo of a new product, AI writes the caption, I approve, done. The whole process takes 2 minutes.",
-        "image": "https://randomuser.me/api/portraits/men/67.jpg"
-      },
-      {
-        "name": "Elena Dumitrescu",
-        "job": "Content Creator",
-        "review": "RAG makes the difference compared to any other tool. AI knows exactly the prices, features and values of my brand. Zero posts with wrong information.",
-        "image": "https://randomuser.me/api/portraits/women/23.jpg"
-      },
-      {
-        "name": "Mihai Stanescu",
-        "job": "Marketing Director",
-        "review": "Our team of 5 now publishes 3x more content. The approval workflow with Nex-Nex is much faster than any tool we've tested.",
-        "image": "https://randomuser.me/api/portraits/men/55.jpg"
-      },
-      {
-        "name": "Ana Popa",
-        "job": "Freelancer Content",
-        "review": "As a freelancer with 12 clients, Nex-Nex Agency saved my business. One subscription, all clients under control, simple billing.",
-        "image": "https://randomuser.me/api/portraits/women/12.jpg"
-      },
-      {
-        "name": "Bogdan Muresan",
-        "job": "Co-founder digital agency",
-        "review": "I tried Buffer, Hootsuite, SocialBee. Nex-Nex is the only one with Telegram bot + RAG per client. For agencies, it's a game changer.",
-        "image": "https://randomuser.me/api/portraits/men/78.jpg"
-      },
-      {
-        "name": "Ioana Constantin",
-        "job": "Local entrepreneur — Beauty salon",
-        "review": "I knew nothing about social media. Now I post daily on Instagram and Facebook without losing time. Nex-Nex does everything — I just approve.",
-        "image": "https://randomuser.me/api/portraits/women/65.jpg"
-      }
-    ]
-  },
-  "powered_section": {
-    "title": "Powered by"
+  "marketing_not_found": {
+    "homepage": "Homepage",
+    "image_alt": "404",
+    "message": "Page not found. Back to"
   },
   "marketing_pricing_page": {
-    "metadata": {
-      "title": "Pricing — Nex-Nex",
-      "description": "Simple plans for individual creators and agencies. 14-day free trial on Starter. Pro, Business and Agency billed immediately."
-    },
-    "title": "Simple and transparent pricing",
-    "subtitle": "Starter includes a 14-day free trial (card required, no charge until it ends). Pro, Business and Agency are billed immediately. Cancel anytime.",
-    "popular_badge": "Popular",
-    "per_month": "/month",
-    "toggle": {
-      "monthly": "Monthly",
-      "yearly": "Yearly",
-      "discount": "-17%",
-      "billed_yearly": "€{total} billed yearly"
-    },
     "agency_extra": "€10/month per additional brand, no cap",
+    "metadata": {
+      "description": "Simple plans for individual creators and agencies. 14-day free trial on Starter. Pro, Business and Agency billed immediately.",
+      "title": "Pricing — Nex-Nex"
+    },
+    "per_month": "/month",
     "plans": {
+      "agency": {
+        "cta": "Subscribe now",
+        "description": "For agencies",
+        "features": [
+          "20 brands included",
+          "+ €10/month per additional brand, no cap",
+          "Unlimited social accounts",
+          "7,000 AI credits/month",
+          "Isolated client portal",
+          "Unified billing",
+          "100 GB storage"
+        ]
+      },
+      "business": {
+        "cta": "Subscribe now",
+        "description": "For teams",
+        "features": [
+          "10 brands",
+          "Unlimited accounts",
+          "2,500 AI credits/month",
+          "Full AI (incl. video)",
+          "Advanced analytics",
+          "50 GB storage"
+        ]
+      },
       "free": {
-        "description": "To test the platform",
         "cta": "Try for free",
+        "description": "To test the platform",
         "features": [
           "1 brand",
           "1 social account",
@@ -410,21 +1097,9 @@
           "Basic AI text + image"
         ]
       },
-      "starter": {
-        "description": "For individual creators",
-        "cta": "Start 14-day trial",
-        "features": [
-          "1 brand",
-          "5 social accounts",
-          "250 AI credits/month",
-          "AI text + image",
-          "Telegram Bot",
-          "5 GB storage"
-        ]
-      },
       "pro": {
-        "description": "Most popular",
         "cta": "Subscribe now",
+        "description": "Most popular",
         "features": [
           "3 brands",
           "15 social accounts",
@@ -435,408 +1110,625 @@
           "20 GB storage"
         ]
       },
-      "business": {
-        "description": "For teams",
-        "cta": "Subscribe now",
+      "starter": {
+        "cta": "Start 14-day trial",
+        "description": "For individual creators",
         "features": [
-          "10 brands",
-          "Unlimited accounts",
-          "2,500 AI credits/month",
-          "Full AI (incl. video)",
-          "Advanced analytics",
-          "50 GB storage"
-        ]
-      },
-      "agency": {
-        "description": "For agencies",
-        "cta": "Subscribe now",
-        "features": [
-          "20 brands included",
-          "+ €10/month per additional brand, no cap",
-          "Unlimited social accounts",
-          "7,000 AI credits/month",
-          "Isolated client portal",
-          "Unified billing",
-          "100 GB storage"
+          "1 brand",
+          "5 social accounts",
+          "250 AI credits/month",
+          "AI text + image",
+          "Telegram Bot",
+          "5 GB storage"
         ]
       }
     },
+    "popular_badge": "Popular",
+    "subtitle": "Starter includes a 14-day free trial (card required, no charge until it ends). Pro, Business and Agency are billed immediately. Cancel anytime.",
+    "title": "Simple and transparent pricing",
+    "toggle": {
+      "billed_yearly": "€{total} billed yearly",
+      "discount": "-17%",
+      "monthly": "Monthly",
+      "yearly": "Yearly"
+    },
     "topup": {
-      "title": "Need more?",
-      "subtitle": "Buy extra AI credits anytime, or add more brands to any paid plan — no need to upgrade tiers.",
-      "credits_title": "Extra AI credits (one-time, valid until end of month)",
+      "brand_cta": "Add a brand",
+      "brand_line": "€10/month per additional brand — available on any paid plan, not just Agency",
+      "brand_title": "Extra brand",
       "credits": [
         "100 credits — €3",
         "500 credits — €12",
         "1,000 credits — €22"
       ],
-      "brand_title": "Extra brand",
-      "brand_line": "€10/month per additional brand — available on any paid plan, not just Agency",
       "credits_cta": "Buy credits",
-      "brand_cta": "Add a brand"
+      "credits_title": "Extra AI credits (one-time, valid until end of month)",
+      "subtitle": "Buy extra AI credits anytime, or add more brands to any paid plan — no need to upgrade tiers.",
+      "title": "Need more?"
     }
+  },
+  "nav": {
+    "billing": "Billing",
+    "brand_kit": "Brand Kit",
+    "calendar": "Calendar",
+    "campaigns": "Campaigns",
+    "dashboard": "Dashboard",
+    "settings": "Settings"
+  },
+  "onboarding_wizard": {
+    "brand_name": "Brand or company name",
+    "brand_name_placeholder": "Ex: Bakery X, Studio Ana, TechStartup LLC",
+    "brand_voice_placeholder": "Ex: Friendly and inspiring tone. Audience: women aged 25-40, passionate about wellness. We avoid medical jargon.",
+    "brand_voice_subtitle": "Describe the tone and audience. You can add documents from Settings → Brand Intelligence.",
+    "brand_voice_title": "Teach the AI about your brand",
+    "continue": "Continue →",
+    "creating": "Creating...",
+    "finish": "✅ Done! Go to Dashboard",
+    "platforms_subtitle": "You will connect the accounts in Settings after onboarding.",
+    "platforms_title": "Which platforms are you active on?",
+    "skip": "Skip",
+    "steps": {
+      "brand": {
+        "title": "Your brand"
+      },
+      "brand_intelligence": {
+        "title": "Brand Intelligence"
+      },
+      "social_accounts": {
+        "title": "Social accounts"
+      },
+      "telegram": {
+        "title": "Telegram Bot"
+      }
+    },
+    "telegram_how_to": "How to connect:",
+    "telegram_steps": {
+      "generate_code": "Generate a connection code",
+      "open_settings": "Go to Settings → Telegram from the dashboard",
+      "send_code": "Send the code to <bot></bot>"
+    },
+    "telegram_subtitle": "Generate and approve posts directly from your phone, without opening the browser.",
+    "telegram_title": "Connect Telegram 📱",
+    "welcome_subtitle": "Let’s set up your brand in 4 steps.",
+    "welcome_title": "Welcome to Nex-Nex! 👋"
+  },
+  "opportunities": {
+    "cancel": "Cancel",
+    "category_optional": "Category (optional)",
+    "confirm_bulk_publish": "Publish {count} opportunities to Calendar? Scheduled posts will be created.",
+    "create_post": "+ Create post",
+    "creating": "Creating...",
+    "deselect": "Deselect",
+    "edit": "✎ Edit",
+    "empty": "No opportunities yet. Generate ideas with the button above or create a strategy from the Strategy tab first.",
+    "error_with_message": "Error: {message}",
+    "filters": {
+      "all": "All",
+      "generating": "Generating",
+      "idea": "Ideas",
+      "published": "Published",
+      "rejected": "Rejected",
+      "review": "To review"
+    },
+    "focus_chips": {
+      "app_features": {
+        "label": "App features",
+        "value": "Ideas about the app’s specific features — what users can do, how it works, and what concrete problems it solves"
+      },
+      "before_after": {
+        "label": "Before / After",
+        "value": "Contrast-style posts: how it was before the app and how it is now — time saved, better quality, less stress"
+      },
+      "tutorials": {
+        "label": "Step-by-step tutorials",
+        "value": "Simple educational tutorials about how to use the features — step by step, without technical jargon"
+      },
+      "use_cases": {
+        "label": "Use cases",
+        "value": "Concrete use cases by business type — restaurant, agency, retail, coach, freelancer — how they use the app in real life"
+      }
+    },
+    "generate_ideas": "Generate ideas",
+    "generate_prototype": "⚡ Generate prototype",
+    "generate_prototypes_count": "Generate {count, plural, one {prototype} other {prototypes}}",
+    "hook_edit_placeholder": "Hook (opening phrase)...",
+    "hook_placeholder": "Hook — opening phrase (optional)",
+    "idea_focus_placeholder": "Idea direction (optional) — ex: app features, use cases, tutorials... Empty = generic ideas.",
+    "ideas_generating_message": "⏳ Generating {count} new ideas... they will appear in ~1-2 minutes.",
+    "launching": "Launching...",
+    "loading_opportunities": "Loading opportunities...",
+    "move_down": "Move down",
+    "move_up": "Move up",
+    "new_post": "New post",
+    "no_status_results": "No opportunity with status “{status}”.",
+    "opportunities_count": "{count} opportunities",
+    "publish_all_to_calendar": "Publish all to Calendar",
+    "ready_to_publish_count": "{count} prototypes ready to publish",
+    "reject": "✕ Reject",
+    "restore": "↩ Restore",
+    "save": "Save",
+    "saving": "Saving...",
+    "search_placeholder": "Search by title or pillar...",
+    "select_for_bulk": "Select for bulk generation",
+    "selected_count": "{count} selected",
+    "statuses": {
+      "approved": "Approved",
+      "generating": "Generating",
+      "idea": "Idea",
+      "in_production": "In production",
+      "paused": "Paused",
+      "published": "Published",
+      "rejected": "Rejected",
+      "review": "Review",
+      "selected": "Selected"
+    },
+    "title_placeholder": "Title / post idea *",
+    "updating_suffix": " · updating...",
+    "view_all": "View all",
+    "visual_prompt_placeholder": "Visual prompt — describe the desired image (optional)"
+  },
+  "opportunity_card": {
+    "click_to_zoom": "Click to zoom",
+    "collapse": "▲ Collapse",
+    "confirm_regenerate_image": "Regenerating the image uses credits according to the Quick Post selections. Continue?",
+    "deselect_image": "Click to deselect",
+    "details_links": "▼ Details & links",
+    "generate_prototype": "Generate prototype",
+    "generating_text_image": "Generating text and image...",
+    "image_alt": "Image {index}",
+    "images_selection_hint": "Images ({count}) — click to select / deselect",
+    "new_image": "+ New image",
+    "publish": "Publish",
+    "published_image_alt": "Published image",
+    "publishing": "Publishing...",
+    "reject": "Reject",
+    "reset_stuck": "Reset (stuck?)",
+    "restore": "Restore",
+    "save": "Save",
+    "scheduled_link_available_after_publish": "Scheduled — link available after publishing",
+    "scheduling_posts": "Scheduling posts…",
+    "select_image": "Click to select",
+    "selected_for_publish": "{count} selected for publishing · Click an image to see its prompt",
+    "statuses": {
+      "generating": "Generating...",
+      "idea": "Idea",
+      "published": "Published",
+      "rejected": "Rejected",
+      "review": "Review"
+    },
+    "visual_prompt_help": "Edit the visual prompt, then press <regenerate>Regenerate image</regenerate> to regenerate with the new prompt. Credits are used according to the Quick Post selections.",
+    "visual_prompt_placeholder": "Describe the visual scene...",
+    "zoom": "Zoom"
+  },
+  "powered_section": {
+    "title": "Powered by"
+  },
+  "preview_landing": {
+    "image_alt": "Nex-Nex — The Next Era of Content"
   },
   "pricing_cards": {
-    "label": "Pricing",
-    "title": "Start at full speed!",
-    "per_month": "/month",
-    "yearly_charge": "${amount} will be charged when annual",
-    "monthly_charge": "when charged monthly",
     "go_to_dashboard": "Go to dashboard",
-    "sign_in": "Sign in",
-    "toggle_group_aria": "toggle-year",
-    "yearly_aria": "Toggle yearly billing",
-    "monthly_aria": "Toggle monthly billing",
-    "yearly": "Yearly (-20%)",
+    "label": "Pricing",
     "monthly": "Monthly",
+    "monthly_aria": "Toggle monthly billing",
+    "monthly_charge": "when charged monthly",
+    "per_month": "/month",
+    "sign_in": "Sign in",
+    "support_note": "You can test the subscriptions and won't be charged.",
     "support_prefix": "Email",
     "support_suffix": "to contact our support team.",
-    "support_note": "You can test the subscriptions and won't be charged."
+    "title": "Start at full speed!",
+    "toggle_group_aria": "toggle-year",
+    "yearly": "Yearly (-20%)",
+    "yearly_aria": "Toggle yearly billing",
+    "yearly_charge": "${amount} will be charged when annual"
   },
   "pricing_faq": {
-    "label": "FAQ",
-    "title": "Frequently asked questions",
-    "subtitle": "If you can't find the answer, write to us at support@nex-nex.com.",
     "items": {
       "item_1": {
-        "question": "Is there a free trial?",
-        "answer": "Yes — the Starter plan includes a 14-day free trial. A card is required at signup but you are not charged until the trial ends. Pro, Business and Agency plans are billed immediately upon signup."
+        "answer": "Yes — the Starter plan includes a 14-day free trial. A card is required at signup but you are not charged until the trial ends. Pro, Business and Agency plans are billed immediately upon signup.",
+        "question": "Is there a free trial?"
       },
       "item_2": {
-        "question": "Can I cancel anytime?",
-        "answer": "Yes, you can cancel anytime from the dashboard, with no penalties. After cancellation, you stay on the paid plan until the end of the billed period."
+        "answer": "Yes, you can cancel anytime from the dashboard, with no penalties. After cancellation, you stay on the paid plan until the end of the billed period.",
+        "question": "Can I cancel anytime?"
       },
       "item_3": {
-        "question": "What does RAG per brand mean?",
-        "answer": "RAG (Retrieval-Augmented Generation) means the AI reads the documents you upload — product descriptions, prices, FAQ — and generates content based on real information, not invented details. Each brand has its own isolated set of documents."
+        "answer": "RAG (Retrieval-Augmented Generation) means the AI reads the documents you upload — product descriptions, prices, FAQ — and generates content based on real information, not invented details. Each brand has its own isolated set of documents.",
+        "question": "What does RAG per brand mean?"
       },
       "item_4": {
-        "question": "Which social platforms are supported?",
-        "answer": "Facebook, Instagram, LinkedIn, X (Twitter), Discord, and WordPress Blog — via direct API. YouTube, Threads, and Bluesky are coming in Phase 2. TikTok and Pinterest are in the backlog and require external review that can take months."
+        "answer": "Facebook, Instagram, LinkedIn, X (Twitter), Discord, and WordPress Blog — via direct API. YouTube, Threads, and Bluesky are coming in Phase 2. TikTok and Pinterest are in the backlog and require external review that can take months.",
+        "question": "Which social platforms are supported?"
       },
       "item_5": {
-        "question": "How does the Telegram Bot work?",
-        "answer": "You connect your Nex-Nex account with Telegram from Settings. Then you write any topic in chat — the AI generates the post using your brand's RAG, you approve it with one button, and it is published or scheduled automatically. It works from any phone."
+        "answer": "You connect your Nex-Nex account with Telegram from Settings. Then you write any topic in chat — the AI generates the post using your brand's RAG, you approve it with one button, and it is published or scheduled automatically. It works from any phone.",
+        "question": "How does the Telegram Bot work?"
       },
       "item_6": {
-        "question": "Is there a discount for annual billing?",
-        "answer": "Yes — about a 17% discount (equivalent to 2 free months) on the annual subscription compared to the monthly one."
+        "answer": "Yes — about a 17% discount (equivalent to 2 free months) on the annual subscription compared to the monthly one.",
+        "question": "Is there a discount for annual billing?"
       },
       "item_7": {
-        "question": "Does the Agency plan cover all my clients?",
-        "answer": "Yes — the Agency plan (€199/month) includes 20 brands. Additional brands are €10/month each, with no hard cap. Each client has an isolated workspace, separate login, and separate RAG."
+        "answer": "Yes — the Agency plan (€199/month) includes 20 brands. Additional brands are €10/month each, with no hard cap. Each client has an isolated workspace, separate login, and separate RAG.",
+        "question": "Does the Agency plan cover all my clients?"
       }
-    }
-  },
-  "compare_plans": {
-    "label": "Plans",
-    "title": "Compare Our Plans",
-    "subtitle": "Find the perfect plan tailored for your business needs!",
-    "empty": "—"
-  },
-  "billing_info": {
-    "title": "Subscription Plan",
-    "description": "You are currently on the <strong>{plan}</strong> plan.",
-    "cancels_on": "Your plan will be canceled on {date}.",
-    "renews_on": "Your plan renews on {date}.",
-    "choose_plan": "Choose a plan"
-  },
-  "login_page": {
-    "metadata": {
-      "title": "Login",
-      "description": "Login to your account"
-    }
+    },
+    "label": "FAQ",
+    "subtitle": "If you can't find the answer, write to us at support@nex-nex.com.",
+    "title": "Frequently asked questions"
   },
   "register_page": {
-    "metadata": {
-      "title": "Create an account",
-      "description": "Create an account to get started."
-    },
     "login": "Login",
-    "title": "Create an account",
+    "metadata": {
+      "description": "Create an account to get started.",
+      "title": "Create an account"
+    },
+    "privacy_link": "Privacy Policy",
     "subtitle": "Enter your email below to create your account",
-    "terms_prefix": "By clicking continue, you agree to our",
     "terms_link": "Terms of Service",
     "terms_middle": "and",
-    "privacy_link": "Privacy Policy"
+    "terms_prefix": "By clicking continue, you agree to our",
+    "title": "Create an account"
   },
-  "brand_kit_form": {
-    "common": {
-      "save": "Save",
-      "saving": "Saving...",
-      "saved": "✅ Saved!"
+  "reports_manager": {
+    "actions": {
+      "ideas_set": "Ideas",
+      "image_comfyui": "Image (RTX)",
+      "image_fal": "Image (Fal.ai)",
+      "image_fal_kontext": "Image (Kontext)",
+      "image_gemini": "Image (Gemini)",
+      "platform_adaptation": "Platform adaptation",
+      "text_post": "Text",
+      "video": "Video"
     },
-    "errors": {
-      "missing_org": "The session has no orgId. Please sign in again.",
-      "save_failed": "Error {status}: {message}",
-      "network": "Network error. Check your connection.",
-      "logo_upload_failed": "Logo upload failed ({status})",
-      "storage_not_configured": "R2 storage is not configured.",
-      "logo_network": "Network error while uploading logo.",
-      "sign_upload_failed": "Sign upload failed ({status})",
-      "sign_network": "Network error while uploading sign.",
-      "logo_sign_upload_failed": "Logo + sign upload failed ({status})",
-      "logo_sign_network": "Network error while uploading logo + sign.",
-      "template_upload_failed": "Template upload failed ({status})",
-      "template_network": "Network error while uploading template."
+    "agency_consumption_summary": "Clients: {clients} • Own brands: {own}",
+    "agency_consumption_title": "Consumption per client (agency)",
+    "by_action": "By action",
+    "by_campaign": "By campaign",
+    "csv": {
+      "action_consumed": "Action,Consumed",
+      "agency_own": "Agency (own brands),{consumed}",
+      "campaign_consumed": "Campaign,Consumed",
+      "client_consumed": "Client,Consumed",
+      "filename": "consumption-report-{period}.csv",
+      "title": "Credit consumption report,{period}"
     },
-    "tabs": {
-      "identity": "Identity",
-      "voice": "Voice & Words",
-      "typography": "Typography",
-      "documents": "AI Documents",
-      "quick_post": "⚡ Quick Post"
-    },
-    "identity": {
-      "brand_name": {
-        "label": "Company / brand name",
-        "placeholder": "Ex: Nex-Nex, Creative Agency, TechStartup LLC"
-      },
-      "slogan": {
-        "label": "Slogan",
-        "placeholder": "Ex: AI Content Copilot for creators"
-      },
-      "description": {
-        "label": "Short description",
-        "placeholder": "1-3 sentences about what your brand does."
-      },
-      "visual_assets": {
-        "title": "Visual assets"
-      },
-      "logo": {
-        "label": "Logo",
-        "description": "Square 1:1 image, transparent background",
-        "alt": "Logo",
-        "upload": "Upload logo",
-        "replace": "Replace logo",
-        "uploading": "Uploading..."
-      },
-      "sign": {
-        "label": "Sign / brand font",
-        "description": "The brand writing style (PNG/SVG)",
-        "alt": "Sign",
-        "upload": "Upload sign",
-        "replace": "Replace sign",
-        "uploading": "Uploading..."
-      },
-      "logo_sign": {
-        "label": "Combined logo + sign",
-        "description": "A single file with logo and sign together — used when both are selected in Telegram. Create it in Canva/Figma and upload it here.",
-        "alt": "Logo + Sign",
-        "upload": "Upload logo + sign",
-        "replace": "Replace logo + sign",
-        "uploading": "Uploading..."
-      },
-      "colors": {
-        "title": "Brand colors",
-        "primary": {
-          "label": "Primary",
-          "description": "The main brand color"
-        },
-        "secondary": {
-          "label": "Secondary",
-          "description": "Support color / secondary background"
-        },
-        "accent": {
-          "label": "Accent",
-          "description": "CTAs, buttons, highlights"
-        },
-        "background": {
-          "label": "Background",
-          "description": "Image background color"
-        },
-        "text_dark": {
-          "label": "Dark text",
-          "description": "Text on light background"
-        },
-        "text_light": {
-          "label": "Light text",
-          "description": "Text on dark background"
-        }
-      },
-      "templates": {
-        "title": "Post templates",
-        "description": "The background images / visual layouts of the brand. The AI will use them when generating images for posts.",
-        "alt": "Template {index}",
-        "delete": "Delete template",
-        "item_label": "Template {index}",
-        "uploading": "Uploading...",
-        "add": "Add template"
-      }
-    },
-    "voice": {
-      "title": "Brand Voice",
-      "description": "Describe the tone, values, and target audience. The AI will use this for every generation.",
-      "placeholder": "Ex: Professional but friendly tone. Audience: entrepreneurs aged 25-45. Values: innovation, efficiency, transparency. We avoid excessive technical jargon.",
-      "keywords": {
-        "title": "Keywords & words to avoid",
-        "label": "Keywords (comma-separated)",
-        "placeholder": "innovation, quality, efficiency, results"
-      },
-      "avoid_words": {
-        "label": "Words to avoid",
-        "placeholder": "cheap, free, 100% guaranteed"
-      }
-    },
-    "typography": {
-      "description_prefix": "Typography settings are used when generating images with",
-      "description_product_template": "Product in template",
-      "description_middle": "and for",
-      "description_text_on_image": "Text on image",
-      "title_block": {
-        "title": "Title"
-      },
-      "subtitle_block": {
-        "title": "Subtitle / Price"
-      },
-      "font": "Font",
-      "size": "Size (px)",
-      "default_font": "— Default (Inter) —",
-      "bold": "Bold",
-      "italic": "Italic",
-      "color": "Color",
-      "overlay": {
-        "title": "Text overlay background",
-        "description_prefix": "The color of the semi-transparent band behind the text written on the image. You can include alpha (ex:",
-        "description_suffix": ")."
-      }
-    },
-    "documents": {
-      "brand_docs": {
-        "title": "Documents about the brand",
-        "description": "Upload manuals, FAQs, presentations, or web pages. The AI will use them as references when generating content — correct prices, real features, zero hallucinations.",
-        "upload": "Upload PDF / DOCX / TXT",
-        "processing": "Processing..."
-      },
-      "url": {
-        "placeholder": "https://your-site.com/about",
-        "name_placeholder": "Name (optional)",
-        "add": "Add URL"
-      },
-      "indexed": {
-        "title": "Indexed documents ({count})",
-        "loading": "Loading...",
-        "empty": "No documents yet. Upload a file or add a URL.",
-        "chunks": "{count} chunks"
-      },
-      "status": {
-        "processing": "processing",
-        "indexed": "indexed",
-        "failed": "failed"
-      },
-      "test": {
-        "title": "Test it — what does the AI know about your brand?",
-        "placeholder": "Ex: \"What are the prices?\" or \"What products do we sell?\"",
-        "ask": "Ask"
-      }
-    },
-    "quick_post": {
-      "provider": {
-        "title": "Default image generator",
-        "description": "Used automatically in ⚡ Quick Post without asking the user.",
-        "options": {
-          "comfyui": "🖼️ Nex-Nex RTX (ComfyUI) — local, 1 credit",
-          "fal": "⚡ Fal.ai FLUX — fast, 1 credit",
-          "gemini": "🎨 Google Gemini — integrated branding, 2 credits"
-        }
-      },
-      "platforms": {
-        "title": "Default social networks",
-        "description": "Selected automatically in Quick Post. If you choose nothing, active accounts are used."
-      },
-      "tone": {
-        "title": "Default text tone",
-        "description": "Applied when generating text in Quick Post. \"Neutral\" means the AI chooses.",
-        "options": {
-          "neutral": "⚖️ Neutral",
-          "inspiring": "✨ Inspirational",
-          "formal": "💼 Formal",
-          "casual": "😊 Casual"
-        }
-      },
-      "visual_assets": {
-        "title": "Default visual assets",
-        "description": "If checked, Quick Post will apply these elements automatically to the generated image. Leave unchecked if you want clean images without branding.",
-        "logo": "Brand logo",
-        "sign": "Sign / brand typography",
-        "template": "Visual template (the first one in your list)",
-        "loaded": "(uploaded ✓)",
-        "logo_missing": "(not uploaded — add it from the Identity tab)",
-        "sign_missing": "(not uploaded)",
-        "template_missing": "(no template — add one from the Identity tab)",
-        "template_loaded_one": "(1 template ✓)",
-        "template_loaded_many": "({count} templates ✓)"
-      },
-      "save_defaults": "Save Quick Post defaults",
-      "saved_short": "✓ Saved",
-      "saved_message": "✓ Settings have been saved!"
-    }
+    "loading": "Loading...",
+    "no_consumption": "No consumption.",
+    "no_consumption_period": "No consumption in this period.",
+    "results_placeholder": "Results (reach, impressions, engagement) — available after analytics implementation (Sprint 6).",
+    "total_credits": "Total: {total} credits"
+  },
+  "search": {
+    "button": "Search",
+    "docs_suffix": "documentation",
+    "no_results": "No results found.",
+    "placeholder": "Type a command or search..."
+  },
+  "settings": {
+    "language": "Interface language",
+    "language_description": "Choose the language for the interface",
+    "save_changes": "Save changes",
+    "subtitle": "Manage account and website settings.",
+    "timezone": "Timezone",
+    "title": "Settings"
   },
   "sign_in_modal": {
-    "title": "Sign In",
     "description": "This is strictly for demo purposes - only your email and profile picture will be stored.",
-    "google_cta": "Sign In with Google"
+    "google_cta": "Sign In with Google",
+    "title": "Sign In"
   },
-  "delete_account_modal": {
-    "title": "Delete Account",
-    "warning_label": "Warning:",
-    "warning_text": "This will permanently delete your account and your active subscription!",
-    "verification": {
-      "prefix": "To verify, type",
-      "phrase": "confirm delete account",
-      "suffix": "below"
+  "social_accounts": {
+    "active": "Active",
+    "add": "Add",
+    "blog_description": "WordPress, Ghost CMS, Custom REST API, or the internal Nex-Nex blog. You can add multiple connectors — useful for RO + EN or different clients.",
+    "blog_name_placeholder": "Name (ex: AllMeters RO Blog)",
+    "bluesky_hint_prefix": "Use an <appPassword>App Password</appPassword>, not the account password.",
+    "bluesky_hint_suffix": " You can add different accounts (ex: RO and EN).",
+    "cancel": "Cancel",
+    "choose_pages": "Choose the pages you want to connect:",
+    "confirm_delete_blog_connector": "Delete this blog connector?",
+    "confirm_disconnect_account": "Disconnect this account?",
+    "connect": "Connect",
+    "connect_network": "Connect a network",
+    "connected": "Connected",
+    "connected_accounts": "Connected accounts",
+    "connected_to": "Connected to: {org}",
+    "custom_rest_help": {
+      "step_1": "• <code>POST {api_url}</code> — publishes an article, response: <code>{\"ok\": true, \"post_id\", \"post_url\"}</code>",
+      "step_2": "• <code>GET {api_url}/ping</code> — checks the connection, response: <code>{\"ok\": true}</code>",
+      "step_3": "• Authentication header: <code>X-Api-Key: &lt;key&gt;</code>",
+      "step_4": "• If it is behind Cloudflare: disable <strong>Bot Fight Mode</strong> or add IP <strong>95.217.16.236</strong> in Security → WAF → Tools → IP Access Rules → Allow",
+      "title": "What needs to be implemented on the blog:"
     },
-    "confirm_cta": "Confirm delete account",
-    "toast": {
-      "loading": "Deleting account...",
-      "success": "Account deleted successfully!"
-    }
-  },
-  "marketing_not_found": {
-    "image_alt": "404",
-    "message": "Page not found. Back to",
-    "homepage": "Homepage"
-  },
-  "marketing_error": {
-    "title": "Something went wrong!",
-    "unknown_error": "Unknown error",
-    "retry": "Try again"
-  },
-  "footer": {
-    "tagline": "Your AI Marketing Manager — builds your content strategy, creates professional posts, and publishes automatically on all social networks.",
-    "sections": {
-      "product": {
-        "title": "Product",
-        "features": "Features",
-        "how_it_works": "How it works",
-        "pricing": "Pricing",
-        "blog": "Blog"
+    "detect": "Detect",
+    "detected_platform": "Detected platform:",
+    "disable_posting_tooltip": "Disable posting on this account",
+    "discord_hint": "You can add multiple webhooks (different channels).",
+    "duration": "Duration:",
+    "enable_posting_tooltip": "Enable posting on this account",
+    "errors": {
+      "connect_failed": "Error connecting.",
+      "detect_failed": "Detection failed. Check the URL.",
+      "detect_network": "Network error during detection.",
+      "generic": "Error",
+      "network": "Network error.",
+      "oauth1_required_fields": "All 4 fields are required.",
+      "save_failed": "Error saving."
+    },
+    "facebook_pages_hint": "ℹ️ Only <strong>Facebook Pages</strong> you administer appear. Instagram accounts appear automatically next to the Facebook Page they are linked to.",
+    "failed": "Failed",
+    "ghost_help": {
+      "step_2": "2. Copy the <strong>Admin API Key</strong> (format: <code>id:secret</code>)",
+      "step_3": "3. If it is behind Cloudflare, add IP <strong>95.217.16.236</strong> in IP Access Rules → Allow",
+      "title": "What needs to be done in Ghost:"
+    },
+    "heading": "Social accounts",
+    "inactive": "Inactive",
+    "loading": "Loading...",
+    "networks": {
+      "blog": {
+        "description": "WordPress, Ghost CMS, or any blog with a REST API"
       },
-      "legal": {
-        "title": "Legal",
-        "terms": "Terms of Service",
-        "privacy": "Privacy Policy"
+      "bluesky": {
+        "description": "Handle + App Password (Settings → Privacy → App passwords)"
       },
-      "support": {
-        "title": "Support",
-        "email": "Email"
+      "discord": {
+        "description": "Webhook URL from Server Settings → Integrations"
+      },
+      "facebook": {
+        "description": "Facebook Pages"
+      },
+      "instagram": {
+        "description": "Through a Facebook Business account"
+      },
+      "linkedin": {
+        "description": "OAuth 2.0 — personal profile or organization page"
+      },
+      "tiktok": {
+        "description": "Available after the video pipeline is implemented"
+      },
+      "x": {
+        "description": "OAuth 2.0 — free tier 1500 tweets/month"
+      },
+      "youtube": {
+        "description": "Available after the video pipeline is implemented"
       }
     },
-    "copyright": "© 2026 Nex-Nex.com · All rights reserved · contact@nex-nex.com",
-    "anpc_sol": "Online Dispute Resolution",
-    "anpc_sal": "Alternative Dispute Resolution"
+    "no_accounts": "No account connected yet.",
+    "oauth1_active_tooltip": "OAuth 1.0a active — images enabled. Click to update.",
+    "oauth1_add_tooltip": "Add OAuth 1.0a to enable images on X",
+    "oauth1_hint": "<strong>OAuth 1.0a</strong> — enables images on X. From <strong>X Developer Console → Keys &amp; Tokens → OAuth 1.0 Keys</strong>.",
+    "reconnect": "Reconnect",
+    "reconnect_oauth2": "Reconnect OAuth 2.0 (expired or invalid token)",
+    "save": "Save",
+    "soon": "Soon",
+    "subtitle": "Connect the brand’s social networks.",
+    "wordpress_help": {
+      "step_1": "1. <strong>WP Admin → Users → Profile</strong> → section <strong>Application Passwords</strong>",
+      "step_2": "2. Enter a name (ex: <em>Nex-Nex</em>) → <strong>Add New Application Password</strong>",
+      "step_3": "3. Copy the generated password (format: <code>xxxx xxxx xxxx xxxx xxxx xxxx</code>)",
+      "step_4": "4. Enter below: your WP username + the copied password",
+      "title": "How to generate WordPress credentials (without a plugin):"
+    },
+    "wordpress_password_placeholder": "Application Password (generated from WP Admin)"
+  },
+  "strategy": {
+    "action_plan": {
+      "next_30_days": "Next 30 days",
+      "next_60_days": "Next 60 days",
+      "next_7_days": "Next 7 days",
+      "next_90_days": "Next 90 days",
+      "requires_human_input": "Requires human input"
+    },
+    "analysis_started_at": "Analysis started at {time} is generating...",
+    "audit": {
+      "brand_consistency": "Brand consistency",
+      "confidence": "Audit confidence",
+      "data_completeness": "Data completeness",
+      "missing_data": "Missing data: {data}",
+      "warnings": "Warnings"
+    },
+    "auto_refresh_note": "~2 minutes. The page refreshes automatically.",
+    "content_angle": "💡 Content angle:",
+    "current_positioning": "Positioning",
+    "diagnosis": {
+      "economic_value": "Economic value:",
+      "message_clarity": "Message clarity",
+      "problem_solved": "Problem solved:",
+      "sells": "What it sells:",
+      "serves": "Who it serves:"
+    },
+    "distribution": "Distribution: {distribution}",
+    "do_not_position_like_this": "Do not position it this way",
+    "empty": "No strategies generated yet.",
+    "error_with_message": "Error: {message}",
+    "findings": "Findings",
+    "generate": "Generate",
+    "generate_strategy": "Generate Strategy",
+    "generate_strategy_description": "Professional Business Analysis + Content Strategy",
+    "generation_failed": "Generation failed:",
+    "industry_context": "Industry context",
+    "launching": "Launching...",
+    "limitations": "Limitations: {limitations}",
+    "loading": "Loading...",
+    "messages_to_own": "Messages to own",
+    "opportunity": "Opportunity",
+    "package_recommendations": "Package recommendations",
+    "personas": {
+      "buying_triggers": "Buying triggers",
+      "desires": "Desires",
+      "pain_points": "Pain points",
+      "resonating_content": "Content that resonates"
+    },
+    "pricing_observations": "Pricing observations",
+    "priority_decision": "Priority decision:",
+    "recommendations": "Recommendations",
+    "recommended_positioning": "Recommended positioning",
+    "sections": {
+      "audit_quality": "🧭 Audit Quality",
+      "business_analysis": "📊 Business Analysis",
+      "business_diagnosis": "🩺 Business Diagnosis",
+      "common_objections": "❓ Common Objections",
+      "competitor_analysis": "🏁 Competitor Analysis",
+      "competitor_gaps": "🔍 Gaps vs. Competitors",
+      "content_mix": "📊 Content Mix",
+      "content_pillars": "🏛️ Content Pillars",
+      "differentiators": "🌟 Differentiators",
+      "distribution_recommendations": "📣 Distribution Recommendations",
+      "editorial_calendar_12_weeks": "📆 Editorial Calendar — 12 weeks",
+      "offer_pricing": "💶 Offer & Pricing",
+      "positioning": "🎯 Positioning",
+      "roadmap_90_days": "🗺️ Marketing Roadmap — 90 days",
+      "target_personas": "👥 Target Personas"
+    },
+    "stages": {
+      "awareness": "👁️ Awareness",
+      "consideration": "🤔 Consideration",
+      "decision": "✅ Decision",
+      "retention": "❤️ Retention"
+    },
+    "strategy_started": "⏳ Strategy started! Cost: {credits} credits. It refreshes automatically in ~2 minutes.",
+    "summary": "Summary",
+    "swot": {
+      "opportunities": "🚀 Opportunities",
+      "strengths": "💪 Strengths",
+      "threats": "🛡️ Threats",
+      "weaknesses": "⚠️ Weaknesses"
+    },
+    "table": {
+      "theme": "Theme",
+      "week": "Week"
+    },
+    "unknown_error": "unknown error",
+    "week_number": "Week {week}"
+  },
+  "telegram": {
+    "copy": "Copy",
+    "description_after": "to create and approve posts directly from Telegram.",
+    "description_before": "Connect your account to",
+    "expires_in": "The code expires in 10 minutes.",
+    "generate_code": "Generate connection code",
+    "send_code_after": ":",
+    "send_code_before": "Send this code to the bot",
+    "server_error": "Cannot connect to the server. Try again.",
+    "title": "Telegram Bot",
+    "token_error": "Error generating the token."
+  },
+  "testimonials_section": {
+    "badge_ai": "🤖 AI",
+    "items": [
+      {
+        "image": "https://randomuser.me/api/portraits/men/32.jpg",
+        "job": "SaaS Startup Founder",
+        "name": "Andrei Popescu",
+        "review": "I went from 3 hours/week on social media to 15 minutes. Nex-Nex generates exactly our brand tone — I no longer correct AI texts."
+      },
+      {
+        "image": "https://randomuser.me/api/portraits/women/44.jpg",
+        "job": "Social Media Manager",
+        "name": "Maria Ionescu",
+        "review": "I manage 8 clients with Nex-Nex Agency. Visual calendar, quick approval, automatic publishing. It eliminated half of my manual work."
+      },
+      {
+        "image": "https://randomuser.me/api/portraits/men/67.jpg",
+        "job": "E-commerce Entrepreneur",
+        "name": "Radu Constantin",
+        "review": "The Telegram bot is brilliant. I take a photo of a new product, AI writes the caption, I approve, done. The whole process takes 2 minutes."
+      },
+      {
+        "image": "https://randomuser.me/api/portraits/women/23.jpg",
+        "job": "Content Creator",
+        "name": "Elena Dumitrescu",
+        "review": "RAG makes the difference compared to any other tool. AI knows exactly the prices, features and values of my brand. Zero posts with wrong information."
+      },
+      {
+        "image": "https://randomuser.me/api/portraits/men/55.jpg",
+        "job": "Marketing Director",
+        "name": "Mihai Stanescu",
+        "review": "Our team of 5 now publishes 3x more content. The approval workflow with Nex-Nex is much faster than any tool we've tested."
+      },
+      {
+        "image": "https://randomuser.me/api/portraits/women/12.jpg",
+        "job": "Freelancer Content",
+        "name": "Ana Popa",
+        "review": "As a freelancer with 12 clients, Nex-Nex Agency saved my business. One subscription, all clients under control, simple billing."
+      },
+      {
+        "image": "https://randomuser.me/api/portraits/men/78.jpg",
+        "job": "Co-founder digital agency",
+        "name": "Bogdan Muresan",
+        "review": "I tried Buffer, Hootsuite, SocialBee. Nex-Nex is the only one with Telegram bot + RAG per client. For agencies, it's a game changer."
+      },
+      {
+        "image": "https://randomuser.me/api/portraits/women/65.jpg",
+        "job": "Local entrepreneur — Beauty salon",
+        "name": "Ioana Constantin",
+        "review": "I knew nothing about social media. Now I post daily on Instagram and Facebook without losing time. Nex-Nex does everything — I just approve."
+      }
+    ],
+    "label": "Testimonials",
+    "subtitle": "Hypothetical testimonials generated by AI. I have always preferred the truth! The real ones will appear soon.",
+    "title": "What our customers would say — if we already had customers 😄"
   },
   "what_is": {
-    "label": "What is Nex-Nex",
-    "title": "AI Marketing Manager — not just a scheduling tool",
     "body": "Nex-Nex understands your brand deeply and handles the full content lifecycle: strategy → ideas → content creation → image generation → scheduling → publishing → learning.",
-    "promise_title": "Our promise",
-    "promise": "A creator or marketer who previously spent 3–5 hours per week on content can reduce that to 15–30 minutes, without sacrificing quality or consistency.",
-    "for_label": "Who it is for",
     "for_1": "Individual creators, freelancers, solo entrepreneurs (1–3 brands)",
     "for_2": "Marketing teams (2–10 people, approval workflows)",
     "for_3": "Agencies managing 5–50+ clients simultaneously",
+    "for_label": "Who it is for",
+    "interfaces": "Web dashboard (full feature access) · Telegram Bot (mobile-first: quick posts, approvals, idea capture on the go)",
     "interfaces_label": "Primary interfaces",
-    "interfaces": "Web dashboard (full feature access) · Telegram Bot (mobile-first: quick posts, approvals, idea capture on the go)"
+    "label": "What is Nex-Nex",
+    "promise": "A creator or marketer who previously spent 3–5 hours per week on content can reduce that to 15–30 minutes, without sacrificing quality or consistency.",
+    "promise_title": "Our promise",
+    "title": "AI Marketing Manager — not just a scheduling tool"
+  },
+  "workflow_section": {
+    "steps": {
+      "10": {
+        "description": "Is your audience global? Nex-Nex translates and culturally adapts your post into 50+ languages while preserving your brand voice.",
+        "title": "In any language"
+      },
+      "01": {
+        "description": "You upload your brand documents — style guide, products, communication tone. Your personal AI learns everything and becomes the expert of your brand.",
+        "title": "AI learns your business"
+      },
+      "02": {
+        "description": "You tell Nex-Nex what you want to post about. Instantly, you get 5 creative ideas adapted to your brand and audience.",
+        "title": "You ask for post ideas"
+      },
+      "03": {
+        "description": "You select the idea that fits you best. Nex-Nex develops it in the direction you choose.",
+        "title": "You choose the idea"
+      },
+      "04": {
+        "description": "You receive the full text, SEO-optimized, with the right hashtags for each platform. Edit it if you want, or publish it directly.",
+        "title": "AI writes the text, SEO, and hashtags"
+      },
+      "05": {
+        "description": "Do you have a photo? Upload it. Don't have one? Describe what you want and AI generates a professional prompt for the perfect image.",
+        "title": "You upload a photo or ask for an AI one"
+      },
+      "06": {
+        "description": "From your prompt, AI creates professional images. You choose your preferred version directly from the app.",
+        "title": "AI generates the image"
+      },
+      "07": {
+        "description": "Publish immediately or pick a date and time. Set your preferred posting windows per platform — AI will fill them automatically.",
+        "title": "You post now or schedule it"
+      },
+      "08": {
+        "description": "Each platform has optimal hours. Set your time slots once — Nex-Nex picks the next best available window. AI-powered auto-fill coming soon.",
+        "title": "Smart scheduling per network"
+      },
+      "09": {
+        "description": "One click — the post goes live simultaneously on all your connected platforms: Instagram, LinkedIn, Facebook, X, Discord, Bluesky.",
+        "title": "Publish across all your networks"
+      }
+    },
+    "subtitle": "From idea to publishing across all networks — in just a few minutes.",
+    "title": "How it works"
   }
 }

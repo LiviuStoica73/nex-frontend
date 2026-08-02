@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useTranslations } from "next-intl"
 import { Coins, Save } from "lucide-react"
 
 interface ClientAllocation {
@@ -25,6 +26,7 @@ interface AllocationsData {
 interface Props { orgId: string; token: string }
 
 export function AllocationsManager({ orgId, token }: Props) {
+  const t = useTranslations("allocations_manager")
   const [data, setData] = useState<AllocationsData | null>(null)
   const [loading, setLoading] = useState(true)
   const [drafts, setDrafts] = useState<Record<string, string>>({})
@@ -43,7 +45,7 @@ export function AllocationsManager({ orgId, token }: Props) {
       setDrafts(Object.fromEntries(d.clients.map((c) => [c.client_org_id, String(c.monthly_allocation)])))
     } else {
       const err = await res.json().catch(() => ({}))
-      setError(err.detail || "Nu am putut încărca alocările (cont de agenție necesar).")
+      setError(err.detail || t("errors.load_failed"))
     }
     setLoading(false)
   }
@@ -53,7 +55,7 @@ export function AllocationsManager({ orgId, token }: Props) {
   const save = async (clientId: string) => {
     const amount = parseInt(drafts[clientId] ?? "", 10)
     if (Number.isNaN(amount) || amount < 0) {
-      setError("Introdu un număr valid de credite.")
+      setError(t("errors.invalid_credits"))
       return
     }
     setSavingId(clientId)
@@ -67,13 +69,13 @@ export function AllocationsManager({ orgId, token }: Props) {
       await fetchData()
     } else {
       const err = await res.json().catch(() => ({}))
-      setError(err.detail || "Eroare la salvarea alocării.")
+      setError(err.detail || t("errors.save_failed"))
     }
     setSavingId(null)
   }
 
-  if (loading) return <p className="text-sm text-muted-foreground">Se încarcă...</p>
-  if (!data) return <p className="text-sm text-destructive">{error || "Eroare."}</p>
+  if (loading) return <p className="text-sm text-muted-foreground">{t("loading")}</p>
+  if (!data) return <p className="text-sm text-destructive">{error || t("error")}</p>
 
   const barColor = (pct: number) =>
     pct >= 100 ? "bg-destructive" : pct >= 90 ? "bg-amber-500" : "bg-primary"
@@ -89,17 +91,17 @@ export function AllocationsManager({ orgId, token }: Props) {
       {/* Pool agenție */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div className="rounded-lg border bg-card p-4">
-          <p className="text-xs text-muted-foreground">Pool total / lună</p>
+          <p className="text-xs text-muted-foreground">{t("pool_total_per_month")}</p>
           <p className="mt-1 flex items-center gap-2 text-2xl font-bold">
             <Coins className="h-5 w-5 text-primary" /> {data.pool_total}
           </p>
         </div>
         <div className="rounded-lg border bg-card p-4">
-          <p className="text-xs text-muted-foreground">Alocat clienților</p>
+          <p className="text-xs text-muted-foreground">{t("allocated_to_clients")}</p>
           <p className="mt-1 text-2xl font-bold">{data.total_allocated}</p>
         </div>
         <div className="rounded-lg border bg-card p-4">
-          <p className="text-xs text-muted-foreground">Nealocat (în pool)</p>
+          <p className="text-xs text-muted-foreground">{t("unallocated_pool")}</p>
           <p className="mt-1 text-2xl font-bold">{data.pool_unallocated}</p>
         </div>
       </div>
@@ -107,16 +109,16 @@ export function AllocationsManager({ orgId, token }: Props) {
       {/* Listă clienți */}
       <div className="rounded-lg border bg-card">
         <div className="flex items-center justify-between border-b p-4">
-          <h2 className="font-semibold">Clienți ({data.clients.length})</h2>
+          <h2 className="font-semibold">{t("clients_count", { count: data.clients.length })}</h2>
           <span className="text-xs text-muted-foreground">
-            Sugestie implicită: {data.default_per_brand} credite/brand
+            {t("default_suggestion", { credits: data.default_per_brand })}
           </span>
         </div>
 
         <ul className="divide-y">
             {data.clients.length === 0 ? (
               <li className="p-6 text-center text-muted-foreground text-sm">
-                Adaugă agenția ca client propriu și clienți din pagina Clienți, apoi alocă-le buget.
+                {t("empty")}
               </li>
             ) : data.clients.map((c) => (
               <li key={c.client_org_id} className={`space-y-2 px-4 py-3 ${c.is_self ? "bg-muted/30" : ""}`}>
@@ -124,14 +126,14 @@ export function AllocationsManager({ orgId, token }: Props) {
                   <div className="min-w-0">
                     <p className="truncate font-medium flex items-center gap-1.5">
                       {c.is_self && (
-                        <span className="text-xs rounded-full bg-primary/10 text-primary px-2 py-0.5">propriu</span>
+                        <span className="text-xs rounded-full bg-primary/10 text-primary px-2 py-0.5">{t("self")}</span>
                       )}
                       {c.name}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {c.is_self
-                        ? `Pool disponibil ${c.remaining} • target ${c.allocated}`
-                        : `Consumat ${c.consumed} / ${c.allocated} • rest ${c.remaining}`}
+                        ? t("self_usage", { remaining: c.remaining, allocated: c.allocated })
+                        : t("client_usage", { consumed: c.consumed, allocated: c.allocated, remaining: c.remaining })}
                     </p>
                   </div>
                   <div className="flex flex-shrink-0 items-center gap-2">
@@ -150,7 +152,7 @@ export function AllocationsManager({ orgId, token }: Props) {
                       className="flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
                     >
                       <Save className="h-3 w-3" />
-                      {savingId === c.client_org_id ? "..." : "Alocă"}
+                      {savingId === c.client_org_id ? "..." : t("allocate")}
                     </button>
                   </div>
                 </div>

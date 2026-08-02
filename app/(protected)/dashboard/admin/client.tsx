@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -62,16 +63,17 @@ function OrgTableRow({
   setBusy: (fn: (p: Record<string, boolean>) => Record<string, boolean>) => void
   router: ReturnType<typeof useRouter>
 }) {
+  const t = useTranslations("admin_client")
   const setCredits = async () => {
     const credits = parseInt(editCredits[org.id] ?? "")
-    if (isNaN(credits) || credits < 0) { toast.error("Introdu un număr valid"); return }
+    if (isNaN(credits) || credits < 0) { toast.error(t("errors.invalid_number")); return }
     setBusy((b) => ({ ...b, [org.id]: true }))
     const res = await fetch(`${apiUrl}/api/v1/admin/superadmin/orgs/${org.id}/set-credits`, {
       method: "POST", headers, body: JSON.stringify({ credits }),
     })
     setBusy((b) => ({ ...b, [org.id]: false }))
-    if (res.ok) { toast.success("Credite actualizate"); router.refresh() }
-    else toast.error("Eroare la setare credite")
+    if (res.ok) { toast.success(t("credits_updated")); router.refresh() }
+    else toast.error(t("errors.set_credits"))
   }
 
   const setPlan = async (plan: string) => {
@@ -80,8 +82,8 @@ function OrgTableRow({
       method: "POST", headers, body: JSON.stringify({ plan, reset_credits: false }),
     })
     setBusy((b) => ({ ...b, [`plan_${org.id}`]: false }))
-    if (res.ok) { toast.success("Plan actualizat"); router.refresh() }
-    else toast.error("Eroare la setare plan")
+    if (res.ok) { toast.success(t("plan_updated")); router.refresh() }
+    else toast.error(t("errors.set_plan"))
   }
 
   return (
@@ -148,6 +150,7 @@ function SectionHeader({ label, count, color }: { label: string; count: number; 
 }
 
 export function SuperAdminClient({ data, token, apiUrl }: Props) {
+  const t = useTranslations("admin_client")
   const router = useRouter()
   const [editCredits, setEditCredits] = useState<Record<string, string>>({})
   const [busy, setBusy] = useState<Record<string, boolean>>({})
@@ -166,7 +169,11 @@ export function SuperAdminClient({ data, token, apiUrl }: Props) {
 
   const rowProps = { headers, apiUrl, editCredits, setEditCredits, busy, setBusy, router }
 
-  const TABLE_HEADERS = ["Nume", "Plan", "Status", "Credite", "Membri", "Campanii", "Teme", "Posturi", "Publicate", "Texte AI", "Imagini AI", "Setat credite", "Plan nou"]
+  const TABLE_HEADERS = [
+    t("table.name"), t("table.plan"), t("table.status"), t("table.credits"), t("table.members"),
+    t("table.campaigns"), t("table.topics"), t("table.posts"), t("table.published"),
+    t("table.ai_texts"), t("table.ai_images"), t("table.set_credits"), t("table.new_plan"),
+  ]
 
   return (
     <div className="p-6 space-y-6">
@@ -176,32 +183,32 @@ export function SuperAdminClient({ data, token, apiUrl }: Props) {
         <>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <Card className="text-center border-blue-200">
-              <CardHeader className="pb-1 pt-4"><CardTitle className="text-xs text-muted-foreground">Agenții</CardTitle></CardHeader>
+              <CardHeader className="pb-1 pt-4"><CardTitle className="text-xs text-muted-foreground">{t("agencies")}</CardTitle></CardHeader>
               <CardContent className="pb-4"><p className="text-2xl font-bold text-blue-600">{agencies.length}</p></CardContent>
             </Card>
             <Card className="text-center border-purple-200">
-              <CardHeader className="pb-1 pt-4"><CardTitle className="text-xs text-muted-foreground">Clienți agenții</CardTitle></CardHeader>
+              <CardHeader className="pb-1 pt-4"><CardTitle className="text-xs text-muted-foreground">{t("agency_clients")}</CardTitle></CardHeader>
               <CardContent className="pb-4"><p className="text-2xl font-bold text-purple-600">{agencyClientIds.size}</p></CardContent>
             </Card>
             <Card className="text-center border-green-200">
-              <CardHeader className="pb-1 pt-4"><CardTitle className="text-xs text-muted-foreground">Clienți standalone</CardTitle></CardHeader>
+              <CardHeader className="pb-1 pt-4"><CardTitle className="text-xs text-muted-foreground">{t("standalone_clients")}</CardTitle></CardHeader>
               <CardContent className="pb-4"><p className="text-2xl font-bold text-green-600">{standaloneClients.length}</p></CardContent>
             </Card>
             <Card className="text-center">
-              <CardHeader className="pb-1 pt-4"><CardTitle className="text-xs text-muted-foreground">Utilizatori</CardTitle></CardHeader>
+              <CardHeader className="pb-1 pt-4"><CardTitle className="text-xs text-muted-foreground">{t("users")}</CardTitle></CardHeader>
               <CardContent className="pb-4"><p className="text-2xl font-bold">{overview.total_users}</p></CardContent>
             </Card>
           </div>
 
           <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
             {[
-              { label: "Campanii", value: overview.total_campaigns },
-              { label: "Teme", value: overview.total_topics },
-              { label: "Posturi totale", value: overview.total_posts },
-              { label: "Publicate", value: overview.published_posts },
-              { label: "Texte AI", value: overview.texts_generated },
-              { label: "Imagini AI", value: overview.images_generated },
-              { label: "Credite rămase", value: overview.total_credits_remaining },
+              { label: t("campaigns"), value: overview.total_campaigns },
+              { label: t("topics"), value: overview.total_topics },
+              { label: t("total_posts"), value: overview.total_posts },
+              { label: t("published"), value: overview.published_posts },
+              { label: t("ai_texts"), value: overview.texts_generated },
+              { label: t("ai_images"), value: overview.images_generated },
+              { label: t("remaining_credits"), value: overview.total_credits_remaining },
             ].map(({ label, value }) => (
               <Card key={label} className="text-center">
                 <CardHeader className="pb-1 pt-4"><CardTitle className="text-xs text-muted-foreground">{label}</CardTitle></CardHeader>
@@ -214,7 +221,7 @@ export function SuperAdminClient({ data, token, apiUrl }: Props) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Organizații ({orgs.length})</CardTitle>
+          <CardTitle>{t("organizations_count", { count: orgs.length })}</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
@@ -229,7 +236,7 @@ export function SuperAdminClient({ data, token, apiUrl }: Props) {
               <tbody>
                 {agencies.length > 0 && (
                   <>
-                    <SectionHeader label="🏢 Agenții" count={agencies.length} color="bg-blue-50/50 dark:bg-blue-950/20" />
+                    <SectionHeader label={t("agencies_section")} count={agencies.length} color="bg-blue-50/50 dark:bg-blue-950/20" />
                     {agencies.map((agency) => (
                       <>
                         <OrgTableRow key={agency.id} org={agency} indent={false} {...rowProps} />
@@ -245,7 +252,7 @@ export function SuperAdminClient({ data, token, apiUrl }: Props) {
 
                 {standaloneClients.length > 0 && (
                   <>
-                    <SectionHeader label="👤 Clienți standalone" count={standaloneClients.length} color="bg-green-50/50 dark:bg-green-950/20" />
+                    <SectionHeader label={t("standalone_clients_section")} count={standaloneClients.length} color="bg-green-50/50 dark:bg-green-950/20" />
                     {standaloneClients.map((org) => (
                       <OrgTableRow key={org.id} org={org} indent={false} {...rowProps} />
                     ))}

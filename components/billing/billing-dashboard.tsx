@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useTranslations } from "next-intl"
 import { Zap, HardDrive, Users, Share2, Coins, FlaskConical } from "lucide-react"
 
 interface Credits {
@@ -35,6 +36,7 @@ const PLAN_PRICES: Record<string, string> = {
 interface Props { orgId: string; token: string; appUrl: string; mockMode?: boolean }
 
 export function BillingDashboard({ orgId, token, appUrl, mockMode = false }: Props) {
+  const t = useTranslations("billing_dashboard")
   const [usage, setUsage] = useState<Usage | null>(null)
   const [loading, setLoading] = useState(true)
   const [mockPlans, setMockPlans] = useState<MockPlan[]>([])
@@ -75,15 +77,15 @@ export function BillingDashboard({ orgId, token, appUrl, mockMode = false }: Pro
     setSwitching(null)
   }
 
-  if (loading) return <p className="text-muted-foreground">Se încarcă...</p>
+  if (loading) return <p className="text-muted-foreground">{t("loading")}</p>
   if (!orgId || !token) return (
     <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-      Sesiunea nu conține un org activ. Încearcă să te reconectezi.
+      {t("errors.no_active_org")}
     </div>
   )
   if (!usage) return (
     <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-      Nu s-au putut încărca datele de billing. Verifică că backend-ul este activ.
+      {t("errors.load_failed")}
     </div>
   )
 
@@ -94,18 +96,18 @@ export function BillingDashboard({ orgId, token, appUrl, mockMode = false }: Pro
       {mockMode && (
         <div className="flex items-center gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
           <FlaskConical className="h-4 w-4 shrink-0" />
-          <span><strong>Mod simulare</strong> — plățile nu sunt procesate. Schimbă planul direct pentru testare.</span>
+          <span><strong>{t("mock_mode")}</strong> {t("mock_mode_description")}</span>
         </div>
       )}
 
       {/* Plan curent */}
       <div className="rounded-lg border bg-card p-5 flex items-center justify-between">
         <div>
-          <p className="text-sm text-muted-foreground">Plan curent</p>
+          <p className="text-sm text-muted-foreground">{t("current_plan")}</p>
           <p className="text-2xl font-bold capitalize">{usage.plan}</p>
           <p className="text-sm text-muted-foreground mt-0.5">
-            {PLAN_PRICES[usage.plan] ?? ""}/lună
-            {usage.stripe_subscription_id && " · Abonament activ"}
+            {t("price_per_month", { price: PLAN_PRICES[usage.plan] ?? "" })}
+            {usage.stripe_subscription_id && t("active_subscription_suffix")}
           </p>
         </div>
         {!mockMode && (
@@ -113,14 +115,14 @@ export function BillingDashboard({ orgId, token, appUrl, mockMode = false }: Pro
             href="/pricing"
             className="text-sm font-medium underline text-muted-foreground hover:text-foreground transition-colors"
           >
-            Schimbă planul →
+            {t("change_plan")}
           </a>
         )}
 
         {/* Selector plan mock */}
         {mockMode && mockPlans.length > 0 && (
           <div className="flex flex-col items-end gap-2">
-            <p className="text-xs text-muted-foreground">Simulează upgrade:</p>
+            <p className="text-xs text-muted-foreground">{t("simulate_upgrade")}</p>
             <div className="flex flex-wrap gap-1 justify-end">
               {mockPlans.map((p) => (
                 <button
@@ -146,7 +148,7 @@ export function BillingDashboard({ orgId, token, appUrl, mockMode = false }: Pro
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Coins className="h-5 w-5 text-amber-500" />
-              <span className="font-semibold">Credite disponibile</span>
+              <span className="font-semibold">{t("available_credits")}</span>
             </div>
             <span className="text-2xl font-bold">
               {usage.credits.remaining}
@@ -171,7 +173,7 @@ export function BillingDashboard({ orgId, token, appUrl, mockMode = false }: Pro
           </div>
           {usage.image_providers?.length > 0 && (
             <p className="text-xs text-muted-foreground">
-              Generatori imagine: <span className="font-medium">{usage.image_providers.join(", ")}</span>
+              {t("image_generators")} <span className="font-medium">{usage.image_providers.join(", ")}</span>
             </p>
           )}
         </div>
@@ -179,24 +181,24 @@ export function BillingDashboard({ orgId, token, appUrl, mockMode = false }: Pro
 
       {/* Usage gauges */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        <UsageCard icon={<Zap className="h-4 w-4" />} label="Postări luna aceasta"
+        <UsageCard icon={<Zap className="h-4 w-4" />} label={t("posts_this_month")}
           value={usage.posts_this_month.used} limit={usage.posts_this_month.limit}
           percent={usage.posts_this_month.percent} />
         <UsageCard icon={<HardDrive className="h-4 w-4" />} label="Storage"
           value={Math.round(usage.storage.used_mb / 1024 * 10) / 10}
           limit={usage.storage.limit_gb} unit="GB" percent={usage.storage.percent} />
-        <UsageCard icon={<Share2 className="h-4 w-4" />} label="Conturi sociale"
+        <UsageCard icon={<Share2 className="h-4 w-4" />} label={t("social_accounts")}
           value={usage.social_accounts.count} limit={usage.social_accounts.limit} />
-        <UsageCard icon={<Users className="h-4 w-4" />} label="Clienți agenție"
+        <UsageCard icon={<Users className="h-4 w-4" />} label={t("agency_clients")}
           value={usage.agency_clients.count} limit={usage.agency_clients.limit} />
       </div>
 
       {/* Link upgrade real (non-mock) */}
       {!mockMode && usage.plan === "free" && (
         <div className="rounded-lg border bg-muted/30 p-4 text-center text-sm text-muted-foreground">
-          Upgrade disponibil pe{" "}
-          <a href="/pricing" className="font-medium underline">pagina de prețuri</a>.
-          · 14 zile trial gratuit · Anulezi oricând
+          {t("upgrade_available")}{" "}
+          <a href="/pricing" className="font-medium underline">{t("pricing_page")}</a>.
+          {t("trial_suffix")}
         </div>
       )}
     </div>

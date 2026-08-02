@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { Zap, Star, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +17,7 @@ const PACKAGES = [
     price: "3€",
     label: "Starter",
     icon: <Zap className="h-6 w-6 text-yellow-500" />,
-    description: "Perfect pentru teste și postări ocazionale",
+    descriptionKey: "packages.starter.description",
     perCredit: "0.03€/credit",
   },
   {
@@ -24,7 +25,7 @@ const PACKAGES = [
     price: "12€",
     label: "Standard",
     icon: <Star className="h-6 w-6 text-blue-500" />,
-    description: "Ideal pentru branduri active",
+    descriptionKey: "packages.standard.description",
     perCredit: "0.024€/credit",
     popular: true,
   },
@@ -33,12 +34,13 @@ const PACKAGES = [
     price: "22€",
     label: "Pro",
     icon: <Rocket className="h-6 w-6 text-purple-500" />,
-    description: "Cel mai bun raport calitate-preț",
+    descriptionKey: "packages.pro.description",
     perCredit: "0.022€/credit",
   },
 ];
 
 export default function TopUpPage() {
+  const t = useTranslations("billing_topup")
   const { data: session } = useSession();
   const { activeOrgId } = useOrg();
   const [loading, setLoading] = useState<number | null>(null);
@@ -64,10 +66,10 @@ export default function TopUpPage() {
         window.location.href = data.checkout_url;
       } else {
         const err = await res.json();
-        setError(err.detail || "Eroare la creare checkout.");
+        setError(err.detail || t("errors.checkout_create"));
       }
     } catch {
-      setError("Eroare de rețea.");
+      setError(t("errors.network"));
     }
     setLoading(null);
   };
@@ -75,15 +77,13 @@ export default function TopUpPage() {
   return (
     <>
       <DashboardHeader
-        heading="Cumpără credite extra"
-        text="Creditele se adaugă imediat după plată și expiră la finalul lunii curente."
+        heading={t("heading")}
+        text={t("subtitle")}
       />
 
       <div className="space-y-6 pb-10 max-w-2xl">
         <p className="text-sm text-muted-foreground">
-          1 credit = 1 generare text sau imagine standard. Creditele lunare din plan se resetează
-          la fiecare ciclu de facturare. Creditele extra cumpărate expiră la finalul lunii
-          calendaristice curente (nu se reportează).
+          {t("description")}
         </p>
 
         <div className="grid gap-4 sm:grid-cols-3">
@@ -96,7 +96,7 @@ export default function TopUpPage() {
             >
               {pkg.popular && (
                 <Badge className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs">
-                  Cel mai popular
+                  {t("most_popular")}
                 </Badge>
               )}
               <div className="flex items-center gap-3">
@@ -108,16 +108,16 @@ export default function TopUpPage() {
               </div>
               <div>
                 <p className="text-3xl font-bold">{pkg.price}</p>
-                <p className="text-sm text-muted-foreground">{pkg.credits} credite</p>
+                <p className="text-sm text-muted-foreground">{t("credits_count", { credits: pkg.credits })}</p>
               </div>
-              <p className="text-xs text-muted-foreground flex-1">{pkg.description}</p>
+              <p className="text-xs text-muted-foreground flex-1">{t(pkg.descriptionKey)}</p>
               <Button
                 className="w-full"
                 variant={pkg.popular ? "default" : "outline"}
                 onClick={() => handleBuy(pkg.credits)}
                 disabled={loading !== null || !activeOrgId}
               >
-                {loading === pkg.credits ? "Se deschide..." : "Cumpără"}
+                {loading === pkg.credits ? t("opening") : t("buy")}
               </Button>
             </div>
           ))}
@@ -128,8 +128,7 @@ export default function TopUpPage() {
         )}
 
         <p className="text-xs text-muted-foreground">
-          Plata se procesează prin LemonSqueezy. Acceptăm card Visa, Mastercard și PayPal.
-          Factură emisă automat după plată.
+          {t("payment_note")}
         </p>
       </div>
     </>

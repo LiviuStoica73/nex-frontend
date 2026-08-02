@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { Building2, Loader2 } from "lucide-react"
 import { useOrg } from "@/contexts/org-context"
 import {
@@ -20,6 +21,7 @@ interface Props {
 }
 
 export function CreateBrandModal({ open, onClose }: Props) {
+  const t = useTranslations("create_brand_modal")
   const { createBrand } = useOrg()
   const [name, setName] = useState("")
   const [loading, setLoading] = useState(false)
@@ -31,12 +33,12 @@ export function CreateBrandModal({ open, onClose }: Props) {
     setError("")
     const result = await createBrand(name.trim())
     if (result.limitReached) {
-      setError("Ai atins limita de branduri pe planul actual. Upgrade pentru mai multe.")
+      setError(t("errors.limit_reached"))
       setLoading(false)
       return
     }
     if (!result.ok) {
-      setError("Eroare la creare. Încearcă din nou.")
+      setError(t("errors.create_failed"))
       setLoading(false)
       return
     }
@@ -49,19 +51,19 @@ export function CreateBrandModal({ open, onClose }: Props) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Building2 className="h-5 w-5" />
-            Brand nou
+            {t("title")}
           </DialogTitle>
           <DialogDescription>
-            Introdu numele brandului sau companiei. Vei putea configura logo, culori și vocea brandului în Brand Kit.
+            {t("description")}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
           <div className="space-y-1.5">
-            <Label htmlFor="brand-name">Numele brandului</Label>
+            <Label htmlFor="brand-name">{t("brand_name")}</Label>
             <Input
               id="brand-name"
-              placeholder="ex: TerraSoft, AllMeters.com"
+              placeholder={t("brand_name_placeholder")}
               value={name}
               onChange={(e) => setName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleCreate()}
@@ -73,11 +75,11 @@ export function CreateBrandModal({ open, onClose }: Props) {
 
           <div className="flex gap-2 justify-end">
             <Button variant="outline" onClick={onClose} disabled={loading}>
-              Anulează
+              {t("cancel")}
             </Button>
             <Button onClick={handleCreate} disabled={!name.trim() || loading}>
               {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              Creează brand
+              {t("create_brand")}
             </Button>
           </div>
         </div>

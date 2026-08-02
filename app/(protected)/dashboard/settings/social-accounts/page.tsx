@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import {
   Facebook, Instagram, Trash2, Plus, Globe, Check, X as XIcon,
   MessageSquare, Linkedin, Youtube, Music2, AtSign, ExternalLink,
@@ -75,15 +76,15 @@ interface FbPage {
 }
 
 const NETWORKS = [
-  { key: "facebook",  label: "Facebook",   icon: <Facebook className="h-4 w-4 text-[#1877F2]" />, available: true,  method: "oauth",         description: "Pagini Facebook" },
-  { key: "instagram", label: "Instagram",  icon: <Instagram className="h-4 w-4 text-[#E1306C]" />, available: true, method: "via-facebook",  description: "Prin cont Facebook Business" },
-  { key: "discord",   label: "Discord",    icon: <MessageSquare className="h-4 w-4 text-[#5865F2]" />, available: true, method: "webhook", description: "Webhook URL din Server Settings → Integrations" },
-  { key: "x",        label: "X / Twitter", icon: <XIcon className="h-4 w-4" />, available: true, method: "oauth", description: "OAuth 2.0 — free tier 1500 tweets/lună" },
-  { key: "linkedin",  label: "LinkedIn",   icon: <Linkedin className="h-4 w-4 text-[#0A66C2]" />, available: true, method: "oauth", description: "OAuth 2.0 — profil personal sau pagină organizație" },
-  { key: "bluesky",   label: "Bluesky",   icon: <AtSign className="h-4 w-4 text-[#0085FF]" />, available: true, method: "app-password", description: "Handle + App Password (Settings → Privacy → App passwords)" },
-  { key: "blog",      label: "Blog",       icon: <Rss className="h-4 w-4 text-[#F97316]" />, available: true, method: "api-key", description: "WordPress, Ghost CMS sau orice blog cu REST API" },
-  { key: "youtube",   label: "YouTube",    icon: <Youtube className="h-4 w-4 text-[#FF0000]" />, available: false, description: "Disponibil după implementarea pipeline video" },
-  { key: "tiktok",    label: "TikTok",    icon: <Music2 className="h-4 w-4" />, available: false, description: "Disponibil după implementarea pipeline video" },
+  { key: "facebook",  label: "Facebook",   icon: <Facebook className="h-4 w-4 text-[#1877F2]" />, available: true,  method: "oauth",         descriptionKey: "networks.facebook.description" },
+  { key: "instagram", label: "Instagram",  icon: <Instagram className="h-4 w-4 text-[#E1306C]" />, available: true, method: "via-facebook",  descriptionKey: "networks.instagram.description" },
+  { key: "discord",   label: "Discord",    icon: <MessageSquare className="h-4 w-4 text-[#5865F2]" />, available: true, method: "webhook", descriptionKey: "networks.discord.description" },
+  { key: "x",        label: "X / Twitter", icon: <XIcon className="h-4 w-4" />, available: true, method: "oauth", descriptionKey: "networks.x.description" },
+  { key: "linkedin",  label: "LinkedIn",   icon: <Linkedin className="h-4 w-4 text-[#0A66C2]" />, available: true, method: "oauth", descriptionKey: "networks.linkedin.description" },
+  { key: "bluesky",   label: "Bluesky",   icon: <AtSign className="h-4 w-4 text-[#0085FF]" />, available: true, method: "app-password", descriptionKey: "networks.bluesky.description" },
+  { key: "blog",      label: "Blog",       icon: <Rss className="h-4 w-4 text-[#F97316]" />, available: true, method: "api-key", descriptionKey: "networks.blog.description" },
+  { key: "youtube",   label: "YouTube",    icon: <Youtube className="h-4 w-4 text-[#FF0000]" />, available: false, descriptionKey: "networks.youtube.description" },
+  { key: "tiktok",    label: "TikTok",    icon: <Music2 className="h-4 w-4" />, available: false, descriptionKey: "networks.tiktok.description" },
 ];
 
 function PlatformIcon({ platform }: { platform: string }) {
@@ -92,6 +93,7 @@ function PlatformIcon({ platform }: { platform: string }) {
 }
 
 export default function SocialAccountsPage() {
+  const t = useTranslations("social_accounts");
   const { data: session } = useSession();
   const { activeOrgId } = useOrg();
   const searchParams = useSearchParams();
@@ -212,7 +214,7 @@ export default function SocialAccountsPage() {
     if (!orgId || !token) return;
     const { consumer_key, consumer_secret, access_token, access_token_secret } = xOauth1Form;
     if (!consumer_key || !consumer_secret || !access_token || !access_token_secret) {
-      setXOauth1Error("Toate cele 4 câmpuri sunt obligatorii."); return;
+      setXOauth1Error(t("errors.oauth1_required_fields")); return;
     }
     setXOauth1Saving(true); setXOauth1Error("");
     try {
@@ -221,7 +223,7 @@ export default function SocialAccountsPage() {
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ org_id: orgId, consumer_key, consumer_secret, access_token, access_token_secret }),
       });
-      if (!res.ok) { const d = await res.json(); throw new Error(d.detail || "Eroare"); }
+      if (!res.ok) { const d = await res.json(); throw new Error(d.detail || t("errors.generic")); }
       setOpenXOAuth1(false);
       setXOauth1Form({ consumer_key: "", consumer_secret: "", access_token: "", access_token_secret: "" });
       fetchAccounts(orgId, token);
@@ -244,8 +246,8 @@ export default function SocialAccountsPage() {
         body: JSON.stringify({ webhook_url: discordWebhook.trim() }),
       });
       if (res.ok) { setDiscordWebhook(""); await fetchAccounts(orgId, token); }
-      else { const err = await res.json(); setDiscordError(err.detail || "Eroare la conectare."); }
-    } catch { setDiscordError("Eroare de rețea."); }
+      else { const err = await res.json(); setDiscordError(err.detail || t("errors.connect_failed")); }
+    } catch { setDiscordError(t("errors.network")); }
     setDiscordSaving(false);
   };
 
@@ -259,8 +261,8 @@ export default function SocialAccountsPage() {
         body: JSON.stringify({ handle: bskyHandle.trim(), app_password: bskyPassword.trim() }),
       });
       if (res.ok) { setBskyHandle(""); setBskyPassword(""); await fetchAccounts(orgId, token); }
-      else { const err = await res.json(); setBskyError(err.detail || "Eroare la conectare."); }
-    } catch { setBskyError("Eroare de rețea."); }
+      else { const err = await res.json(); setBskyError(err.detail || t("errors.connect_failed")); }
+    } catch { setBskyError(t("errors.network")); }
     setBskySaving(false);
   };
 
@@ -289,9 +291,9 @@ export default function SocialAccountsPage() {
         await fetchBlogConnectors(orgId, token);
       } else {
         const err = await res.json();
-        setBlogError(err.detail || "Eroare la salvare.");
+        setBlogError(err.detail || t("errors.save_failed"));
       }
-    } catch { setBlogError("Eroare de rețea."); }
+    } catch { setBlogError(t("errors.network")); }
     setBlogSaving(false);
   };
 
@@ -310,9 +312,9 @@ export default function SocialAccountsPage() {
         setBlogForm((f) => ({ ...f, platform_type: data.platform_type, site_url: data.site_url }));
         setDetectSignals({ confidence: data.confidence, signals: data.signals });
       } else {
-        setBlogError("Detecție eșuată. Verifică URL-ul.");
+        setBlogError(t("errors.detect_failed"));
       }
-    } catch { setBlogError("Eroare de rețea la detecție."); }
+    } catch { setBlogError(t("errors.detect_network")); }
     setDetecting(false);
   };
 
@@ -333,7 +335,7 @@ export default function SocialAccountsPage() {
   };
 
   const handleDeleteBlog = async (connectorId: string) => {
-    if (!orgId || !token || !confirm("Ștergi acest conector blog?")) return;
+    if (!orgId || !token || !confirm(t("confirm_delete_blog_connector"))) return;
     setDeletingBlog(connectorId);
     try {
       await fetch(`${API_URL}/api/v1/orgs/${orgId}/blog-connectors/${connectorId}`, {
@@ -407,7 +409,7 @@ export default function SocialAccountsPage() {
   };
 
   const handleDisconnect = async (accountId: string) => {
-    if (!orgId || !token || !confirm("Dezconectezi acest cont?")) return;
+    if (!orgId || !token || !confirm(t("confirm_disconnect_account"))) return;
     try {
       const res = await fetch(`${API_URL}/api/v1/orgs/${orgId}/social-accounts/${accountId}`, {
         method: "DELETE", headers: { Authorization: `Bearer ${token}` },
@@ -427,12 +429,12 @@ export default function SocialAccountsPage() {
 
   return (
     <TooltipProvider>
-      <DashboardHeader heading="Conturi sociale" text="Conectează rețelele sociale ale brandului." />
+      <DashboardHeader heading={t("heading")} text={t("subtitle")} />
 
       <div className="space-y-8 pb-10">
         {/* ── Grid rețele ───────────────────────────────────────────── */}
         <div>
-          <p className="text-sm font-medium text-muted-foreground mb-3">Conectează o rețea</p>
+          <p className="text-sm font-medium text-muted-foreground mb-3">{t("connect_network")}</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {NETWORKS.map((net) => {
               if (!net.available) {
@@ -442,10 +444,10 @@ export default function SocialAccountsPage() {
                       <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed p-4 opacity-40 cursor-not-allowed select-none">
                         {net.icon}
                         <span className="text-xs font-medium">{net.label}</span>
-                        <Badge variant="outline" className="text-[10px]">Curând</Badge>
+                        <Badge variant="outline" className="text-[10px]">{t("soon")}</Badge>
                       </div>
                     </TooltipTrigger>
-                    <TooltipContent><p>{net.description}</p></TooltipContent>
+                    <TooltipContent><p>{t(net.descriptionKey)}</p></TooltipContent>
                   </Tooltip>
                 );
               }
@@ -460,7 +462,7 @@ export default function SocialAccountsPage() {
                         <Badge variant="secondary" className="text-[10px]">Auto</Badge>
                       </div>
                     </TooltipTrigger>
-                    <TooltipContent><p>{net.description}</p></TooltipContent>
+                    <TooltipContent><p>{t(net.descriptionKey)}</p></TooltipContent>
                   </Tooltip>
                 );
               }
@@ -476,11 +478,11 @@ export default function SocialAccountsPage() {
                         <span className="text-xs font-medium">{net.label}</span>
                         {hasBlogConnectors
                           ? <Badge className="text-[10px] gap-1"><Check className="h-2.5 w-2.5" /> {blogConnectors.length}</Badge>
-                          : <span className="text-[10px] text-muted-foreground">Conectează</span>
+                          : <span className="text-[10px] text-muted-foreground">{t("connect")}</span>
                         }
                       </button>
                     </TooltipTrigger>
-                    <TooltipContent><p>{net.description}</p></TooltipContent>
+                    <TooltipContent><p>{t(net.descriptionKey)}</p></TooltipContent>
                   </Tooltip>
                 );
               }
@@ -491,7 +493,7 @@ export default function SocialAccountsPage() {
                   <div key={net.key} className="flex flex-col items-center gap-2 rounded-lg border bg-primary/5 p-4">
                     {net.icon}
                     <span className="text-xs font-medium">{net.label}</span>
-                    <Badge className="text-[10px] gap-1"><Check className="h-2.5 w-2.5" /> Conectat</Badge>
+                    <Badge className="text-[10px] gap-1"><Check className="h-2.5 w-2.5" /> {t("connected")}</Badge>
                   </div>
                 );
               }
@@ -500,7 +502,7 @@ export default function SocialAccountsPage() {
                 <button key={net.key} onClick={handleConnectFacebook} disabled={!orgId || !token}
                   className="flex flex-col items-center gap-2 rounded-lg border p-4 hover:bg-muted/50 transition-colors cursor-pointer disabled:opacity-50">
                   {net.icon}<span className="text-xs font-medium">{net.label}</span>
-                  <span className="text-[10px] text-muted-foreground">Conectează</span>
+                  <span className="text-[10px] text-muted-foreground">{t("connect")}</span>
                 </button>
               );
 
@@ -508,7 +510,7 @@ export default function SocialAccountsPage() {
                 <button key={net.key} onClick={handleConnectX} disabled={!orgId || !token}
                   className="flex flex-col items-center gap-2 rounded-lg border p-4 hover:bg-muted/50 transition-colors cursor-pointer disabled:opacity-50">
                   {net.icon}<span className="text-xs font-medium">{net.label}</span>
-                  <span className="text-[10px] text-muted-foreground">Conectează</span>
+                  <span className="text-[10px] text-muted-foreground">{t("connect")}</span>
                 </button>
               );
 
@@ -516,7 +518,7 @@ export default function SocialAccountsPage() {
                 <button key={net.key} onClick={handleConnectLinkedIn} disabled={!orgId || !token}
                   className="flex flex-col items-center gap-2 rounded-lg border p-4 hover:bg-muted/50 transition-colors cursor-pointer disabled:opacity-50">
                   {net.icon}<span className="text-xs font-medium">{net.label}</span>
-                  <span className="text-[10px] text-muted-foreground">Conectează</span>
+                  <span className="text-[10px] text-muted-foreground">{t("connect")}</span>
                 </button>
               );
 
@@ -544,7 +546,7 @@ export default function SocialAccountsPage() {
             <div className="border-t px-4 py-3 space-y-3 bg-muted/10">
               <p className="text-xs text-muted-foreground">
                 <strong>Server Settings → Integrations → Webhooks → New Webhook</strong>.
-                Poți adăuga mai multe webhookuri (canale diferite).
+                {t("discord_hint")}
               </p>
               <div className="flex gap-2">
                 <Input placeholder="https://discord.com/api/webhooks/..." value={discordWebhook}
@@ -552,7 +554,7 @@ export default function SocialAccountsPage() {
                   className="flex-1 text-sm" />
                 <Button onClick={handleConnectDiscord}
                   disabled={discordSaving || !discordWebhook.trim() || !orgId} size="sm">
-                  {discordSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : "Conectează"}
+                  {discordSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : t("connect")}
                 </Button>
               </div>
               {discordError && <p className="text-xs text-destructive">{discordError}</p>}
@@ -576,9 +578,9 @@ export default function SocialAccountsPage() {
           {openBluesky && (
             <div className="border-t px-4 py-3 space-y-3 bg-muted/10">
               <p className="text-xs text-muted-foreground">
-                Folosește un <strong>App Password</strong>, nu parola contului.
+                {t.rich("bluesky_hint_prefix", { appPassword: (chunks) => <strong>{chunks}</strong> })}
                 <strong> Settings → Privacy and Security → App passwords</strong>.
-                Poți adăuga conturi diferite (ex: RO și EN).
+                {t("bluesky_hint_suffix")}
               </p>
               <div className="flex gap-2">
                 <Input placeholder="user.bsky.social" value={bskyHandle}
@@ -589,7 +591,7 @@ export default function SocialAccountsPage() {
                   className="flex-1 text-sm" />
                 <Button onClick={handleConnectBluesky}
                   disabled={bskySaving || !bskyHandle.trim() || !bskyPassword.trim() || !orgId} size="sm">
-                  {bskySaving ? <Loader2 className="h-3 w-3 animate-spin" /> : "Conectează"}
+                  {bskySaving ? <Loader2 className="h-3 w-3 animate-spin" /> : t("connect")}
                 </Button>
               </div>
               {bskyError && <p className="text-xs text-destructive">{bskyError}</p>}
@@ -613,36 +615,35 @@ export default function SocialAccountsPage() {
           {openBlog && (
             <div className="border-t px-4 py-3 space-y-3 bg-muted/10">
               <p className="text-xs text-muted-foreground">
-                WordPress, Ghost CMS, Custom REST API sau blog intern Nex-Nex.
-                Poți adăuga mai mulți conectori — util pentru RO + EN sau clienți diferiți.
+                {t("blog_description")}
               </p>
 
 
               {/* Hint per platformă */}
               {blogForm.platform_type === "wordpress" && (
                 <div className="rounded-md bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 px-3 py-2 text-xs text-blue-800 dark:text-blue-300 space-y-1">
-                  <p className="font-medium">Cum generezi credențialele din WordPress (fără plugin):</p>
-                  <p>1. <strong>WP Admin → Users → Profile</strong> → secțiunea <strong>Application Passwords</strong></p>
-                  <p>2. Introdu un nume (ex: <em>Nex-Nex</em>) → <strong>Add New Application Password</strong></p>
-                  <p>3. Copiază parola generată (format: <code>xxxx xxxx xxxx xxxx xxxx xxxx</code>)</p>
-                  <p>4. Introdu mai jos: username-ul tău WP + parola copiată</p>
+                  <p className="font-medium">{t("wordpress_help.title")}</p>
+                  <p>{t.rich("wordpress_help.step_1", { strong: (chunks) => <strong>{chunks}</strong> })}</p>
+                  <p>{t.rich("wordpress_help.step_2", { em: (chunks) => <em>{chunks}</em>, strong: (chunks) => <strong>{chunks}</strong> })}</p>
+                  <p>{t.rich("wordpress_help.step_3", { code: (chunks) => <code>{chunks}</code> })}</p>
+                  <p>{t("wordpress_help.step_4")}</p>
                 </div>
               )}
               {blogForm.platform_type === "ghost" && (
                 <div className="rounded-md bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 px-3 py-2 text-xs text-blue-800 dark:text-blue-300 space-y-1">
-                  <p className="font-medium">Ce trebuie făcut în Ghost:</p>
+                  <p className="font-medium">{t("ghost_help.title")}</p>
                   <p>1. <strong>Settings → Integrations → Add custom integration</strong></p>
-                  <p>2. Copiază <strong>Admin API Key</strong> (format: <code>id:secret</code>)</p>
-                  <p>3. Dacă e în spatele Cloudflare, adaugă IP <strong>95.217.16.236</strong> în IP Access Rules → Allow</p>
+                  <p>{t.rich("ghost_help.step_2", { strong: (chunks) => <strong>{chunks}</strong>, code: (chunks) => <code>{chunks}</code> })}</p>
+                  <p>{t.rich("ghost_help.step_3", { strong: (chunks) => <strong>{chunks}</strong> })}</p>
                 </div>
               )}
               {blogForm.platform_type === "custom_rest" && (
                 <div className="rounded-md bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 px-3 py-2 text-xs text-blue-800 dark:text-blue-300 space-y-1">
-                  <p className="font-medium">Ce trebuie implementat pe blog:</p>
-                  <p>• <code>POST {"{api_url}"}</code> — publică articol, răspuns: <code>{"{"}"ok": true, "post_id", "post_url"{"}"}</code></p>
-                  <p>• <code>GET {"{api_url}"}/ping</code> — verifică conexiunea, răspuns: <code>{"{"}"ok": true{"}"}</code></p>
-                  <p>• Header de autentificare: <code>X-Api-Key: &lt;cheie&gt;</code></p>
-                  <p>• Dacă e în spatele Cloudflare: dezactivează <strong>Bot Fight Mode</strong> sau adaugă IP <strong>95.217.16.236</strong> în Security → WAF → Tools → IP Access Rules → Allow</p>
+                  <p className="font-medium">{t("custom_rest_help.title")}</p>
+                  <p>{t.rich("custom_rest_help.step_1", { code: (chunks) => <code>{chunks}</code> })}</p>
+                  <p>{t.rich("custom_rest_help.step_2", { code: (chunks) => <code>{chunks}</code> })}</p>
+                  <p>{t.rich("custom_rest_help.step_3", { code: (chunks) => <code>{chunks}</code> })}</p>
+                  <p>{t.rich("custom_rest_help.step_4", { strong: (chunks) => <strong>{chunks}</strong> })}</p>
                 </div>
               )}
 
@@ -656,7 +657,7 @@ export default function SocialAccountsPage() {
                   <Button variant="outline" size="sm" onClick={handleDetect}
                     disabled={detecting || !blogForm.site_url.trim()} className="shrink-0 gap-1">
                     {detecting ? <Loader2 className="h-3 w-3 animate-spin" /> : <ScanSearch className="h-3 w-3" />}
-                    Detectează
+                    {t("detect")}
                   </Button>
                 </div>
               )}
@@ -670,7 +671,7 @@ export default function SocialAccountsPage() {
                 }`}>
                   <div className="flex items-center gap-1.5 font-medium">
                     <Info className="h-3 w-3" />
-                    Platformă detectată: <span className="capitalize">{BLOG_PLATFORM_LABELS[blogForm.platform_type] || blogForm.platform_type}</span>
+                    {t("detected_platform")} <span className="capitalize">{BLOG_PLATFORM_LABELS[blogForm.platform_type] || blogForm.platform_type}</span>
                     <Badge variant="outline" className="text-[10px] ml-1">{detectSignals.confidence}</Badge>
                   </div>
                   {detectSignals.signals.map((s, i) => (
@@ -695,7 +696,7 @@ export default function SocialAccountsPage() {
                     <option key={l.value} value={l.value}>{l.label} — {l.value.toUpperCase()}</option>
                   ))}
                 </select>
-                <Input placeholder="Nume (ex: Blog AllMeters RO)"
+                <Input placeholder={t("blog_name_placeholder")}
                   value={blogForm.name}
                   onChange={(e) => setBlogForm((f) => ({ ...f, name: e.target.value }))}
                   className="text-sm sm:col-span-2" />
@@ -707,7 +708,7 @@ export default function SocialAccountsPage() {
                 )}
                 <Input type="password"
                   placeholder={
-                    blogForm.platform_type === "wordpress" ? "Application Password (generat din WP Admin)" :
+                    blogForm.platform_type === "wordpress" ? t("wordpress_password_placeholder") :
                     blogForm.platform_type === "ghost" ? "Admin API Key (id:secret)" : "API Key"
                   }
                   value={blogForm.api_key}
@@ -722,7 +723,7 @@ export default function SocialAccountsPage() {
                   (blogForm.platform_type !== "wordpress" && (!blogForm.site_url || !blogForm.api_key))
                 }>
                 {blogSaving ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Plus className="h-3 w-3 mr-1" />}
-                Conectează
+                {t("connect")}
               </Button>
             </div>
           )}
@@ -731,10 +732,9 @@ export default function SocialAccountsPage() {
         {/* ── Pagini FB după OAuth ──────────────────────────────────── */}
         {fbPages.length > 0 && (
           <div className="rounded-lg border bg-muted/30 p-4 space-y-3">
-            <p className="text-sm font-medium">Alege paginile pe care vrei să le conectezi:</p>
+            <p className="text-sm font-medium">{t("choose_pages")}</p>
             <p className="text-xs text-muted-foreground">
-              ℹ️ Apar doar <strong>Paginile Facebook</strong> pe care le administrezi.
-              Conturile Instagram apar automat lângă pagina Facebook la care sunt legate.
+              {t.rich("facebook_pages_hint", { strong: (chunks) => <strong>{chunks}</strong> })}
             </p>
             {fbPages.map((page) => {
               const alreadyConnected = !!page.connected_to_org;
@@ -751,7 +751,7 @@ export default function SocialAccountsPage() {
                     )}
                     {alreadyConnected && (
                       <p className="text-xs text-amber-600 mt-0.5">
-                        Conectat la: {page.connected_to_org}
+                        {t("connected_to", { org: page.connected_to_org ?? "" })}
                       </p>
                     )}
                   </div>
@@ -764,7 +764,7 @@ export default function SocialAccountsPage() {
                   </Select>
                   <Button size="sm" onClick={() => handleSavePage(page)} disabled={connecting === page.page_id} className="gap-1">
                     <Plus className="h-3 w-3" />
-                    {connecting === page.page_id ? "..." : alreadyConnected ? "Reconectează" : "Adaugă"}
+                    {connecting === page.page_id ? "..." : alreadyConnected ? t("reconnect") : t("add")}
                   </Button>
                 </div>
               );
@@ -774,12 +774,12 @@ export default function SocialAccountsPage() {
 
         {/* ── Lista conturi conectate ───────────────────────────────── */}
         {loading ? (
-          <p className="text-sm text-muted-foreground">Se încarcă...</p>
+          <p className="text-sm text-muted-foreground">{t("loading")}</p>
         ) : accounts.length === 0 && blogConnectors.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Niciun cont conectat încă.</p>
+          <p className="text-sm text-muted-foreground">{t("no_accounts")}</p>
         ) : (
           <div className="space-y-2">
-            <p className="text-sm font-medium text-muted-foreground">Conturi conectate</p>
+            <p className="text-sm font-medium text-muted-foreground">{t("connected_accounts")}</p>
             {accounts.map((account) => (
               <div key={account.id} className="rounded-md border bg-background overflow-hidden">
                 <div className="flex items-center gap-3 p-3">
@@ -819,7 +819,7 @@ export default function SocialAccountsPage() {
                       </label>
                       {(account.post_as_stories || account.post_as_reels) && (
                         <div className="flex items-center gap-1 mt-0.5">
-                          <span className="text-muted-foreground">Durată:</span>
+                          <span className="text-muted-foreground">{t("duration")}</span>
                           <input
                             type="number"
                             min="3"
@@ -841,11 +841,11 @@ export default function SocialAccountsPage() {
                         className="cursor-pointer select-none"
                         onClick={() => handleToggleActive(account.id, !account.is_active)}
                       >
-                        {account.is_active ? "Activ" : "Inactiv"}
+                        {account.is_active ? t("active") : t("inactive")}
                       </Badge>
                     </TooltipTrigger>
                     <TooltipContent>
-                      {account.is_active ? "Dezactivează postarea pe acest cont" : "Activează postarea pe acest cont"}
+                      {account.is_active ? t("disable_posting_tooltip") : t("enable_posting_tooltip")}
                     </TooltipContent>
                   </Tooltip>
 
@@ -871,7 +871,7 @@ export default function SocialAccountsPage() {
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
-                        {account.has_oauth1 ? "OAuth 1.0a activ — imagini activate. Click pentru a actualiza." : "Adaugă OAuth 1.0a pentru a activa imagini pe X"}
+                        {account.has_oauth1 ? t("oauth1_active_tooltip") : t("oauth1_add_tooltip")}
                       </TooltipContent>
                     </Tooltip>
                   )}
@@ -883,7 +883,7 @@ export default function SocialAccountsPage() {
                           <RefreshCw className="h-4 w-4 text-muted-foreground" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent>Reconectează OAuth 2.0 (token expirat sau invalid)</TooltipContent>
+                      <TooltipContent>{t("reconnect_oauth2")}</TooltipContent>
                     </Tooltip>
                   )}
                   <Button variant="ghost" size="icon" onClick={() => handleDisconnect(account.id)}
@@ -896,7 +896,7 @@ export default function SocialAccountsPage() {
                 {account.platform === 'x' && xOauth1AccountId === account.id && (
                   <div className="border-t bg-muted/30 p-4 space-y-3">
                     <p className="text-xs text-muted-foreground">
-                      <strong>OAuth 1.0a</strong> — activează imagini pe X. Din <strong>X Developer Console → Keys &amp; Tokens → OAuth 1.0 Keys</strong>.
+                      {t.rich("oauth1_hint", { strong: (chunks) => <strong>{chunks}</strong> })}
                     </p>
                     {[
                       { key: "consumer_key", label: "API Key (Consumer Key)" },
@@ -918,9 +918,9 @@ export default function SocialAccountsPage() {
                     <div className="flex gap-2">
                       <Button size="sm" onClick={handleSaveXOAuth1} disabled={xOauth1Saving}>
                         {xOauth1Saving ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : null}
-                        Salvează
+                        {t("save")}
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => setXOauth1AccountId(null)}>Anulează</Button>
+                      <Button size="sm" variant="outline" onClick={() => setXOauth1AccountId(null)}>{t("cancel")}</Button>
                     </div>
                   </div>
                 )}
@@ -946,7 +946,7 @@ export default function SocialAccountsPage() {
                   <span className="flex items-center gap-1 text-xs text-green-600 shrink-0"><CheckCircle2 className="h-3.5 w-3.5" /> OK</span>
                 )}
                 {testBlogResult[bc.id] === false && (
-                  <span className="flex items-center gap-1 text-xs text-red-500 shrink-0"><XCircle className="h-3.5 w-3.5" /> Eșuat</span>
+                  <span className="flex items-center gap-1 text-xs text-red-500 shrink-0"><XCircle className="h-3.5 w-3.5" /> {t("failed")}</span>
                 )}
                 <Button variant="ghost" size="sm" className="text-xs h-8 px-2 shrink-0"
                   onClick={() => handleTestBlog(bc.id)} disabled={testingBlog === bc.id}>
@@ -956,7 +956,7 @@ export default function SocialAccountsPage() {
                   {bc.extra_config?.post_language || "ro"}
                 </Badge>
                 <Badge variant={bc.last_test_ok ? "default" : "secondary"}>
-                  {bc.last_test_ok ? "Activ" : "Inactiv"}
+                  {bc.last_test_ok ? t("active") : t("inactive")}
                 </Badge>
                 <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive shrink-0"
                   onClick={() => handleDeleteBlog(bc.id)} disabled={deletingBlog === bc.id}>

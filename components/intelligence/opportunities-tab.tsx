@@ -6,6 +6,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
+import { useTranslations } from 'next-intl'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -42,26 +43,26 @@ type Opportunity = ContentOpportunity & {
   insight?: string | null
 }
 
-const STATUS_LABELS: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }> = {
-  idea: { label: 'Idee', variant: 'secondary' },
-  generating: { label: 'Se generează', variant: 'outline' },
-  review: { label: 'Verifică', variant: 'default' },
-  rejected: { label: 'Respins', variant: 'destructive' },
-  published: { label: 'Publicat', variant: 'secondary' },
+const STATUS_LABELS: Record<string, { labelKey: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }> = {
+  idea: { labelKey: 'statuses.idea', variant: 'secondary' },
+  generating: { labelKey: 'statuses.generating', variant: 'outline' },
+  review: { labelKey: 'statuses.review', variant: 'default' },
+  rejected: { labelKey: 'statuses.rejected', variant: 'destructive' },
+  published: { labelKey: 'statuses.published', variant: 'secondary' },
   // legacy
-  approved: { label: 'Aprobat', variant: 'default' },
-  paused: { label: 'Pauză', variant: 'outline' },
-  selected: { label: 'Selectat', variant: 'default' },
-  in_production: { label: 'În producție', variant: 'default' },
+  approved: { labelKey: 'statuses.approved', variant: 'default' },
+  paused: { labelKey: 'statuses.paused', variant: 'outline' },
+  selected: { labelKey: 'statuses.selected', variant: 'default' },
+  in_production: { labelKey: 'statuses.in_production', variant: 'default' },
 }
 
 const STATUS_FILTERS = [
-  { value: '', label: 'Toate' },
-  { value: 'idea', label: 'Idei' },
-  { value: 'generating', label: 'Se generează' },
-  { value: 'review', label: 'De verificat' },
-  { value: 'published', label: 'Publicate' },
-  { value: 'rejected', label: 'Respinse' },
+  { value: '', labelKey: 'filters.all' },
+  { value: 'idea', labelKey: 'filters.ideas' },
+  { value: 'generating', labelKey: 'filters.generating' },
+  { value: 'review', labelKey: 'filters.review' },
+  { value: 'published', labelKey: 'filters.published' },
+  { value: 'rejected', labelKey: 'filters.rejected' },
 ]
 
 // Stări care folosesc OpportunityCard în loc de rândul text clasic
@@ -77,6 +78,7 @@ interface OpportunitiesTabProps {
 }
 
 export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot }: OpportunitiesTabProps) {
+  const t = useTranslations('opportunities')
   // selectedIds din props = pentru fluxul vechi Autopilot (păstrat pentru compatibilitate)
   // bulkGenerateIds = selecție locală pentru bulk generate prototip
   const { data: session } = useSession()
@@ -198,13 +200,13 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
     setIdeasMessage('')
     try {
       await generateIdeas(orgId, parseInt(ideaCount), token, ideaFocus || undefined)
-      setIdeasMessage(`⏳ Se generează ${ideaCount} idei noi... apar în ~1-2 minute.`)
+      setIdeasMessage(t('ideas_generating_message', { count: ideaCount }))
       setTimeout(() => {
         loadPage(1, statusFilter)
         setIdeasMessage('')
       }, 90000)
     } catch (e: any) {
-      setIdeasMessage(`Eroare: ${e.message}`)
+      setIdeasMessage(t('error_with_message', { message: e.message }))
     } finally {
       setGeneratingIdeas(false)
     }
@@ -212,7 +214,7 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
 
   const handleBulkPublish = async (ids: string[]) => {
     if (!token || !orgId || ids.length === 0) return
-    if (!confirm(`Publici ${ids.length} oportunități în Calendar? Se vor crea postări programate.`)) return
+    if (!confirm(t('confirm_bulk_publish', { count: ids.length }))) return
     setOpportunities(os => os.map(o => ids.includes(o.id) ? { ...o, status: 'published' } : o))
     try {
       const result = await publishOpportunities(orgId, ids, token)
@@ -347,14 +349,14 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
   const totalPages = Math.ceil(total / pageSize)
 
   const FOCUS_CHIPS = [
-    { label: 'Funcționalități app', value: 'Idei despre funcționalitățile specifice ale aplicației — ce poate face utilizatorul, cum funcționează, ce probleme rezolvă concret' },
-    { label: 'Cazuri de utilizare', value: 'Cazuri concrete de utilizare pe tipuri de business — restaurant, agenție, retail, coach, freelancer — cum folosesc ei aplicația în viața reală' },
-    { label: 'Înainte / După', value: 'Postări de tip contrast: cum era înainte fără aplicație și cum este acum cu ea — economie de timp, calitate mai bună, mai puțin stres' },
-    { label: 'Tutoriale pas cu pas', value: 'Tutoriale simple și educative despre cum se folosesc funcționalitățile — pas cu pas, fără jargon tehnic' },
+    { label: t('focus_chips.app_features.label'), value: t('focus_chips.app_features.value') },
+    { label: t('focus_chips.use_cases.label'), value: t('focus_chips.use_cases.value') },
+    { label: t('focus_chips.before_after.label'), value: t('focus_chips.before_after.value') },
+    { label: t('focus_chips.tutorials.label'), value: t('focus_chips.tutorials.value') },
   ]
 
   if (loading && opportunities.length === 0) {
-    return <div className="text-muted-foreground py-8 text-center">Se încarcă oportunitățile...</div>
+    return <div className="text-muted-foreground py-8 text-center">{t('loading_opportunities')}</div>
   }
 
   if (!loading && total === 0 && !statusFilter) {
@@ -373,7 +375,7 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
             ))}
           </div>
           <textarea
-            placeholder="Direcție idei (opțional) — ex: funcționalități app, cazuri de utilizare, tutoriale... Gol = idei generice."
+            placeholder={t('idea_focus_placeholder')}
             value={ideaFocus}
             onChange={e => setIdeaFocus(e.target.value)}
             className="w-full text-xs border rounded-md px-3 py-2 resize-none bg-background text-foreground min-h-[56px]"
@@ -393,12 +395,12 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
           </Select>
           <Button size="sm" variant="outline" onClick={handleGenerateIdeas} disabled={generatingIdeas}>
             <Sparkles className="h-3 w-3 mr-1" />
-            {generatingIdeas ? 'Se lansează...' : 'Generează idei'}
+            {generatingIdeas ? t('launching') : t('generate_ideas')}
           </Button>
           {ideasMessage && <span className="text-xs text-muted-foreground">{ideasMessage}</span>}
         </div>
         <div className="text-center py-8 text-muted-foreground text-sm">
-          Nu există oportunități încă. Generează idei cu butonul de mai sus sau creează mai întâi o strategie din tab-ul Strategie.
+          {t('empty')}
         </div>
       </div>
     )
@@ -416,7 +418,7 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
               variant={statusFilter === sf.value ? 'default' : 'outline'}
               onClick={() => { setStatusFilter(sf.value); setPage(1) }}
             >
-              {sf.label}
+              {t(sf.labelKey)}
             </Button>
           ))}
           <Button
@@ -425,11 +427,11 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
             className="border-dashed"
             onClick={() => { setShowCreateForm(v => !v); setCreateFields({ title: '', hook: '', image_prompt: '', pillar: '', platforms: [...connectedPlatforms] }) }}
           >
-            + Crează postare
+            {t('create_post')}
           </Button>
         </div>
         <Input
-          placeholder="Caută după titlu sau pilon..."
+          placeholder={t('search_placeholder')}
           value={textFilter}
           onChange={e => setTextFilter(e.target.value)}
           className="w-64"
@@ -441,32 +443,32 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
         <Card className="border-primary/40">
           <CardContent className="pt-4 space-y-3">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold">Postare nouă</p>
+              <p className="text-sm font-semibold">{t('new_post')}</p>
               <button onClick={() => setShowCreateForm(false)} className="text-muted-foreground hover:text-foreground text-lg leading-none">×</button>
             </div>
             <textarea
-              placeholder="Titlu / idee de postare *"
+              placeholder={t('title_placeholder')}
               value={createFields.title}
               onChange={e => setCreateFields(f => ({ ...f, title: e.target.value }))}
               className="w-full text-sm border rounded-md px-3 py-2 resize-none min-h-[56px] bg-background"
               rows={2}
             />
             <textarea
-              placeholder="Hook — fraza de deschidere (opțional)"
+              placeholder={t('hook_placeholder')}
               value={createFields.hook}
               onChange={e => setCreateFields(f => ({ ...f, hook: e.target.value }))}
               className="w-full text-xs border rounded-md px-3 py-2 resize-none bg-background text-muted-foreground"
               rows={2}
             />
             <textarea
-              placeholder="Prompt vizual — descrie imaginea dorită (opțional)"
+              placeholder={t('visual_prompt_placeholder')}
               value={createFields.image_prompt}
               onChange={e => setCreateFields(f => ({ ...f, image_prompt: e.target.value }))}
               className="w-full text-xs border rounded-md px-3 py-2 resize-none bg-background text-muted-foreground"
               rows={2}
             />
             <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">Categorie (opțional)</p>
+              <p className="text-xs text-muted-foreground">{t('category_optional')}</p>
               <div className="flex flex-wrap gap-1.5">
                 {PILLAR_OPTIONS.map(p => (
                   <button
@@ -506,9 +508,9 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
             </div>
             <div className="flex gap-2 pt-1">
               <Button size="sm" disabled={creating || !createFields.title.trim()} onClick={handleCreate}>
-                {creating ? 'Se creează...' : 'Salvează'}
+                {creating ? t('creating') : t('save')}
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => setShowCreateForm(false)}>Anulează</Button>
+              <Button size="sm" variant="ghost" onClick={() => setShowCreateForm(false)}>{t('cancel')}</Button>
             </div>
           </CardContent>
         </Card>
@@ -517,13 +519,13 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
       {/* Bara bulk generate */}
       {bulkGenerateIds.size > 0 && (
         <div className="flex items-center gap-3 p-3 bg-muted rounded-md flex-wrap">
-          <span className="text-sm font-medium">{bulkGenerateIds.size} selectate</span>
+          <span className="text-sm font-medium">{t('selected_count', { count: bulkGenerateIds.size })}</span>
           <Button size="sm" onClick={handleBulkGenerate}>
             <Zap className="h-3 w-3 mr-1" />
-            Generează {bulkGenerateIds.size === 1 ? 'prototip' : 'prototipuri'}
+            {t('generate_prototypes_count', { count: bulkGenerateIds.size })}
           </Button>
           <Button size="sm" variant="ghost" onClick={() => setBulkGenerateIds(new Set())}>
-            Deselectează
+            {t('deselect')}
           </Button>
         </div>
       )}
@@ -542,7 +544,7 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
           ))}
         </div>
         <textarea
-          placeholder="Direcție idei (opțional) — ex: funcționalități app, cazuri de utilizare, tutoriale... Gol = idei generice."
+          placeholder={t('idea_focus_placeholder')}
           value={ideaFocus}
           onChange={e => setIdeaFocus(e.target.value)}
           className="w-full text-xs border rounded-md px-3 py-2 resize-none bg-background text-foreground min-h-[48px]"
@@ -561,7 +563,7 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
           </Select>
           <Button size="sm" variant="outline" onClick={handleGenerateIdeas} disabled={generatingIdeas}>
             <Sparkles className="h-3 w-3 mr-1" />
-            {generatingIdeas ? 'Se lansează...' : 'Generează idei'}
+            {generatingIdeas ? t('launching') : t('generate_ideas')}
           </Button>
           {ideasMessage && <span className="text-xs text-muted-foreground">{ideasMessage}</span>}
         </div>
@@ -571,7 +573,7 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
       {opportunities.filter(o => o.status === 'review').length > 0 && (
         <div className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-950 rounded-md">
           <span className="text-sm font-medium text-green-700 dark:text-green-300">
-            {opportunities.filter(o => o.status === 'review').length} prototipuri gata de publicat
+            {t('ready_to_publish_count', { count: opportunities.filter(o => o.status === 'review').length })}
           </span>
           <Button
             size="sm"
@@ -579,15 +581,15 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
             onClick={() => handleBulkPublish(opportunities.filter(o => o.status === 'review').map(o => o.id))}
           >
             <Send className="h-3 w-3 mr-1" />
-            Publică toate în Calendar
+            {t('publish_all_to_calendar')}
           </Button>
         </div>
       )}
 
       <div className="text-sm text-muted-foreground">
         {total === 0 && statusFilter
-          ? <span>Nicio oportunitate cu statusul „{STATUS_FILTERS.find(s => s.value === statusFilter)?.label}". <button className="underline" onClick={() => setStatusFilter('')}>Vezi toate</button></span>
-          : <>{total} oportunități{loading && ' · se actualizează...'}</>
+          ? <span>{t('no_status_results', { status: t(STATUS_FILTERS.find(s => s.value === statusFilter)?.labelKey ?? 'filters.all') })} <button className="underline" onClick={() => setStatusFilter('')}>{t('view_all')}</button></span>
+          : <>{t('opportunities_count', { count: total })}{loading && t('updating_suffix')}</>
         }
       </div>
 
@@ -629,7 +631,7 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
           // Idei → rândul text clasic cu checkbox bulk generate
           const isEditing = editingId === opp.id
           const isBulkSelected = bulkGenerateIds.has(opp.id)
-          const statusMeta = STATUS_LABELS[opp.status] || { label: opp.status, variant: 'secondary' as const }
+          const statusMeta = STATUS_LABELS[opp.status] || { labelKey: '', variant: 'secondary' as const }
           const rank = (page - 1) * pageSize + index + 1
           const editPlatforms = editFields.platformsEdit ?? opp.platforms
 
@@ -652,7 +654,7 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
                       })
                     }}
                     className="mt-1.5 cursor-pointer shrink-0"
-                    title="Selectează pentru generare bulk"
+                    title={t('select_for_bulk')}
                   />
 
                   {/* Săgeți reordonare */}
@@ -661,13 +663,13 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
                       onClick={() => handleMove(index, 'up')}
                       disabled={index === 0}
                       className="text-muted-foreground hover:text-foreground disabled:opacity-20 text-xs leading-none px-0.5"
-                      title="Mută sus"
+                      title={t('move_up')}
                     >▲</button>
                     <button
                       onClick={() => handleMove(index, 'down')}
                       disabled={index === filtered.length - 1}
                       className="text-muted-foreground hover:text-foreground disabled:opacity-20 text-xs leading-none px-0.5"
-                      title="Mută jos"
+                      title={t('move_down')}
                     >▼</button>
                   </div>
 
@@ -692,7 +694,7 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
                           <Badge variant="outline" className="text-xs">{opp.score}</Badge>
                         )}
                         <Badge variant={statusMeta.variant} className="text-xs">
-                          {statusMeta.label}
+                          {statusMeta.labelKey ? t(statusMeta.labelKey) : opp.status}
                         </Badge>
                       </div>
                     </div>
@@ -702,7 +704,7 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
                       <textarea
                         value={editFields.hook ?? opp.hook ?? ''}
                         onChange={e => setEditFields(f => ({ ...f, hook: e.target.value }))}
-                        placeholder="Hook (fraza de deschidere)..."
+                        placeholder={t('hook_edit_placeholder')}
                         className="w-full text-xs border rounded-md px-2 py-1 resize-none min-h-[48px] bg-background text-muted-foreground"
                         rows={2}
                       />
@@ -750,34 +752,34 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
                         <>
                           <Button size="sm" variant="outline" className="h-6 text-xs"
                             onClick={() => handleGenerate(opp.id)}>
-                            ⚡ Generează prototip
+                            {t('generate_prototype')}
                           </Button>
                           {opp.status !== 'rejected' && (
                             <Button size="sm" variant="outline" className="h-6 text-xs text-destructive hover:text-destructive"
                               onClick={() => handleStatusChange(opp, 'rejected')}>
-                              ✕ Respinge
+                              {t('reject')}
                             </Button>
                           )}
                           {opp.status === 'rejected' && (
                             <Button size="sm" variant="outline" className="h-6 text-xs"
                               onClick={() => handleStatusChange(opp, 'idea')}>
-                              ↩ Restabilește
+                              {t('restore')}
                             </Button>
                           )}
                           <Button size="sm" variant="ghost" className="h-6 text-xs"
                             onClick={() => { setEditingId(opp.id); setEditFields({ platformsEdit: connectedPlatforms.length > 0 ? [...connectedPlatforms] : [...opp.platforms] }) }}>
-                            ✎ Editează
+                            {t('edit')}
                           </Button>
                         </>
                       ) : (
                         <>
                           <Button size="sm" className="h-7 text-xs" disabled={saving}
                             onClick={() => handleEditSave(opp)}>
-                            {saving ? 'Se salvează...' : 'Salvează'}
+                            {saving ? t('saving') : t('save')}
                           </Button>
                           <Button size="sm" variant="ghost" className="h-7 text-xs"
                             onClick={() => { setEditingId(null); setEditFields({}) }}>
-                            Anulează
+                            {t('cancel')}
                           </Button>
                         </>
                       )}

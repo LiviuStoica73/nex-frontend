@@ -176,7 +176,7 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
             size="sm"
             onClick={handleRefresh}
             disabled={refreshing}
-            title="Refresh postări"
+            title={t("refresh_posts")}
           >
             <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
           </Button>
@@ -184,7 +184,7 @@ export function EditorialCalendar({ orgId, token, isAgency = false }: Props) {
             variant={autoRefresh ? "default" : "outline"}
             size="sm"
             onClick={() => setAutoRefresh((v) => !v)}
-            title={autoRefresh ? "Oprește auto-refresh (60s)" : "Activează auto-refresh (60s)"}
+            title={autoRefresh ? t("stop_auto_refresh") : t("start_auto_refresh")}
           >
             <RefreshCw className={`h-3.5 w-3.5 mr-1 ${autoRefresh ? "animate-spin" : ""}`} />
             <span className="text-xs">Auto</span>
