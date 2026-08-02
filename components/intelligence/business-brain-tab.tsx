@@ -149,13 +149,15 @@ export function BusinessBrainTab() {
   useEffect(() => () => { if (pollRef.current) clearInterval(pollRef.current) }, [])
 
   const handleScan = async () => {
-    if (!scanUrl || !token || !orgId) return
+    const normalizedScanUrl = normalizeUrl(scanUrl)
+    if (normalizedScanUrl !== scanUrl) setScanUrl(normalizedScanUrl)
+    if (!normalizedScanUrl || !token || !orgId) return
     setScanning(true)
     setMessage('')
     const prevDate = status?.website_scan_date || null
     try {
-      await scanWebsite(orgId, scanUrl, scanDepth, token)
-      setMessage(t('scan_started', { url: scanUrl }))
+      await scanWebsite(orgId, normalizedScanUrl, scanDepth, token)
+      setMessage(t('scan_started', { url: normalizedScanUrl }))
       setMessageType('info')
       startScanPolling(prevDate)
     } catch (e: any) {
