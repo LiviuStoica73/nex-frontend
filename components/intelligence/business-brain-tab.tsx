@@ -1,9 +1,9 @@
 // components/intelligence/business-brain-tab.tsx
-// Version: 1.1.0 — 2026-07-11
-// Scope: Business Brain tab — interview, website scan, strategy trigger, status polling
+// Version: 1.2.0 — 2026-08-02
+// Scope: Business Brain tab — interview cu tag input pentru competitori, website scan, strategy trigger, status polling
 
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, KeyboardEvent } from 'react'
 import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -36,6 +36,66 @@ const INTERVIEW_QUESTIONS: { key: string; labelKey: string }[] = [
   { key: 'website_url', labelKey: 'interview_questions.website_url' },
   { key: 'known_competitors', labelKey: 'interview_questions.known_competitors' },
 ]
+
+function parseCompetitors(value: string): string[] {
+  if (!value.trim()) return []
+  return value.split(',').map(s => s.trim()).filter(Boolean)
+}
+
+function normalizeUrl(input: string): string {
+  const trimmed = input.trim()
+  if (!trimmed) return ''
+  if (/^https?:\/\//i.test(trimmed)) return trimmed
+  if (trimmed.includes('.')) return 'https://' + trimmed
+  return trimmed
+}
+
+function CompetitorTagInput({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [inputVal, setInputVal] = useState('')
+  const tags = parseCompetitors(value)
+
+  const addTag = () => {
+    const normalized = normalizeUrl(inputVal)
+    if (!normalized || tags.includes(normalized)) { setInputVal(''); return }
+    onChange([...tags, normalized].join(', '))
+    setInputVal('')
+  }
+
+  const removeTag = (tag: string) => {
+    onChange(tags.filter(t => t !== tag).join(', '))
+  }
+
+  const handleKey = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag() }
+    if (e.key === 'Backspace' && !inputVal && tags.length > 0) {
+      removeTag(tags[tags.length - 1])
+    }
+  }
+
+  return (
+    <div className="flex flex-wrap gap-1.5 min-h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+      {tags.map(tag => (
+        <span key={tag} className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2.5 py-0.5 text-xs font-medium max-w-[260px]">
+          <span className="truncate">{tag}</span>
+          <button
+            type="button"
+            onClick={() => removeTag(tag)}
+            className="text-primary/60 hover:text-primary ml-0.5 flex-shrink-0"
+            aria-label="Șterge"
+          >×</button>
+        </span>
+      ))}
+      <input
+        className="flex-1 min-w-[160px] bg-transparent outline-none placeholder:text-muted-foreground text-sm"
+        placeholder={tags.length === 0 ? 'buffer.com, hootsuite.com … Enter pentru a adăuga' : 'Adaugă competitor…'}
+        value={inputVal}
+        onChange={e => setInputVal(e.target.value)}
+        onKeyDown={handleKey}
+        onBlur={addTag}
+      />
+    </div>
+  )
+}
 
 export function BusinessBrainTab() {
   const t = useTranslations('business_brain')
@@ -201,11 +261,17 @@ export function BusinessBrainTab() {
             {INTERVIEW_QUESTIONS.map(({ key, labelKey }, i) => (
               <div key={key} className="space-y-1">
                 <label className="text-sm font-medium">{i + 1}. {t(labelKey)}</label>
-                <Input
-                  placeholder={t('answer_placeholder')}
-                  value={answers[key] || ''}
-                  onChange={(e) => setAnswers(prev => ({ ...prev, [key]: e.target.value }))}
-                />
+                {key === 'known_competitors'
+                  ? <CompetitorTagInput
+                      value={answers[key] || ''}
+                      onChange={(val) => setAnswers(prev => ({ ...prev, [key]: val }))}
+                    />
+                  : <Input
+                      placeholder={t('answer_placeholder')}
+                      value={answers[key] || ''}
+                      onChange={(e) => setAnswers(prev => ({ ...prev, [key]: e.target.value }))}
+                    />
+                }
               </div>
             ))}
             <div className="flex gap-2 pt-2">
