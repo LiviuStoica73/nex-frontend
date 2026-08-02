@@ -49,25 +49,35 @@ const SCORE_EXPLANATIONS: Record<string, { what: string; how: string }> = {
   },
 }
 
-function ScoreBadge({ label, value, explanationKey }: { label: string; value: any; explanationKey?: string }) {
+function ScoreBadge({ label, value, explanationKey, reasons }: { label: string; value: any; explanationKey?: string; reasons?: string[] }) {
   const [open, setOpen] = useState(false)
   if (value === undefined || value === null || value === '') return null
   const n = Number(value)
   const tone = n >= 80 ? 'border-green-300 text-green-700' : n >= 60 ? 'border-yellow-300 text-yellow-700' : 'border-red-300 text-red-700'
   const exp = explanationKey ? SCORE_EXPLANATIONS[explanationKey] : null
+  const hasDetails = !!(exp || (reasons && reasons.length > 0))
   return (
     <div className={`rounded-md border px-3 py-2 ${Number.isFinite(n) ? tone : ''}`}>
       <div className="flex items-center justify-between gap-1">
         <div className="text-xs text-muted-foreground">{label}</div>
-        {exp && (
+        {hasDetails && (
           <button onClick={() => setOpen(v => !v)} className="text-muted-foreground hover:text-foreground text-xs leading-none" title="What does this mean?">?</button>
         )}
       </div>
       <div className="text-lg font-semibold">{value}</div>
-      {open && exp && (
+      {open && hasDetails && (
         <div className="mt-2 space-y-1.5 border-t pt-2 text-xs text-muted-foreground">
-          <p><span className="font-medium text-foreground">What:</span> {exp.what}</p>
-          <p><span className="font-medium text-foreground">How to improve:</span> {exp.how}</p>
+          {exp && (
+            <>
+              <p><span className="font-medium text-foreground">What:</span> {exp.what}</p>
+              <p><span className="font-medium text-foreground">How to improve:</span> {exp.how}</p>
+            </>
+          )}
+          {reasons && reasons.length > 0 && (
+            <ul className="mt-1 space-y-0.5">
+              {reasons.map((r, i) => <li key={i} className="leading-snug">{r}</li>)}
+            </ul>
+          )}
         </div>
       )}
     </div>
@@ -285,8 +295,8 @@ export function StrategyTab({ pollTrigger }: { pollTrigger?: number }) {
               <div className="space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <ScoreBadge label={t('audit.confidence')} value={aq.confidence_score} explanationKey="confidence" />
-                  <ScoreBadge label={t('audit.data_completeness')} value={aq.data_completeness_score} explanationKey="data_completeness" />
-                  <ScoreBadge label={t('audit.brand_consistency')} value={aq.brand_consistency_score} explanationKey="brand_consistency" />
+                  <ScoreBadge label={t('audit.data_completeness')} value={aq.data_completeness_score} explanationKey="data_completeness" reasons={aq.score_reasons?.data_completeness} />
+                  <ScoreBadge label={t('audit.brand_consistency')} value={aq.brand_consistency_score} explanationKey="brand_consistency" reasons={aq.score_reasons?.brand_consistency} />
                 </div>
                 {aq.warnings?.length > 0 && (
                   <div className="rounded-md border border-yellow-200 bg-yellow-50 p-3 text-sm text-yellow-900 dark:border-yellow-800 dark:bg-yellow-950 dark:text-yellow-100">
