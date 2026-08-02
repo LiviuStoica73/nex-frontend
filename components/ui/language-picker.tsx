@@ -56,8 +56,8 @@ export function LanguagePicker({ className }: LanguagePickerProps) {
   const currentLocale = getCurrentLocale();
   const t = useTranslations("settings");
 
-  function handleChange(locale: string) {
-    void syncLocaleToBackend(locale);
+  async function handleChange(locale: string) {
+    await syncLocaleToBackend(locale);
     const returnTo = encodeURIComponent(pathname ?? "/");
     window.location.href = `/api/locale/set?locale=${locale}&return=${returnTo}`;
   }
