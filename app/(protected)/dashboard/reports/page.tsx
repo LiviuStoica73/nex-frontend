@@ -2,10 +2,15 @@ import { getActiveOrgId } from "@/lib/active-org"
 import { redirect } from "next/navigation"
 import { getCurrentUser } from "@/lib/session"
 import { ReportsManager } from "@/components/reports/reports-manager"
+import { getTranslations } from "next-intl/server"
 
-export const metadata = { title: "Rapoarte consum — Nex-Nex" }
+export async function generateMetadata() {
+  const t = await getTranslations("reports_page")
+  return { title: `${t("title")} — Nex-Nex` }
+}
 
 export default async function ReportsPage() {
+  const t = await getTranslations("reports_page")
   const user = await getCurrentUser()
   if (!user) redirect("/login")
 
@@ -15,9 +20,9 @@ export default async function ReportsPage() {
   return (
     <div className="space-y-6 p-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Rapoarte consum</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
         <p className="text-muted-foreground">
-          Consum de credite per client, campanie și acțiune. Rezultatele (reach, engagement) sosesc odată cu analytics.
+          {t("description")}
         </p>
       </div>
       <ReportsManager orgId={orgId} token={token} />

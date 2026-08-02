@@ -2,10 +2,15 @@ import { redirect } from "next/navigation"
 import { getCurrentUser } from "@/lib/session"
 import { getActiveOrgId } from "@/lib/active-org"
 import { AllocationsManager } from "@/components/agency/allocations-manager"
+import { getTranslations } from "next-intl/server"
 
-export const metadata = { title: "Alocare credite — Nex-Nex" }
+export async function generateMetadata() {
+  const t = await getTranslations("allocations_page")
+  return { title: `${t("title")} — Nex-Nex` }
+}
 
 export default async function AllocationsPage() {
+  const t = await getTranslations("allocations_page")
   const user = await getCurrentUser()
   if (!user) redirect("/login")
 
@@ -15,9 +20,9 @@ export default async function AllocationsPage() {
   return (
     <div className="space-y-6 p-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Alocare credite</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
         <p className="text-muted-foreground">
-          Împarte creditele din abonament pe clienți. La 90% se trimite avertizare, la 100% se oprește generarea de conținut nou.
+          {t("description")}
         </p>
       </div>
       <AllocationsManager orgId={orgId} token={token} />

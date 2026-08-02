@@ -138,7 +138,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                     className="flex items-center justify-center gap-2 w-full rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
                   >
                     <Plus className="h-4 w-4" />
-                    Crează postare
+                    {t("dashboard_sidebar.create_post")}
                   </Link>
                 </div>
               ) : (
@@ -152,7 +152,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                         <Plus className="h-4 w-4" />
                       </Link>
                     </TooltipTrigger>
-                    <TooltipContent side="right">Crează postare</TooltipContent>
+                    <TooltipContent side="right">{t("dashboard_sidebar.create_post")}</TooltipContent>
                   </Tooltip>
                 </div>
               )}
@@ -242,7 +242,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                     className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-muted"
                   >
                     <Icons.home className="size-3.5" />
-                    <span>Înapoi la site</span>
+                    <span>{t("dashboard_sidebar.back_to_site")}</span>
                   </Link>
                 ) : null}
                 {isSidebarExpanded ? <UpgradeCard /> : null}
@@ -290,7 +290,7 @@ export function MobileSheetSidebar({ links }: DashboardSidebarProps) {
                   className="flex items-center justify-center gap-2 w-full rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
                 >
                   <Plus className="h-4 w-4" />
-                  Crează postare
+                  {t("dashboard_sidebar.create_post")}
                 </Link>
 
                 {links.map((section) => {
@@ -348,7 +348,7 @@ export function MobileSheetSidebar({ links }: DashboardSidebarProps) {
                     className="flex items-center gap-2 px-2 py-2 text-xs text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-muted"
                   >
                     <Icons.home className="size-3.5" />
-                    <span>Înapoi la site</span>
+                    <span>{t("dashboard_sidebar.back_to_site")}</span>
                   </Link>
                   <UpgradeCard />
                 </div>

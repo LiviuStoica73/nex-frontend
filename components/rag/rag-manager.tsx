@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { Trash2, Upload, Link, RefreshCw, RotateCcw, Download } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 interface RagDoc {
   id: string
@@ -21,6 +22,7 @@ const STATUS_ICON: Record<RagDoc["status"], string> = {
 }
 
 export function RagManager({ orgId, token }: Props) {
+  const t = useTranslations("rag_manager")
   const [docs, setDocs] = useState<RagDoc[]>([])
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
@@ -87,7 +89,7 @@ export function RagManager({ orgId, token }: Props) {
   }
 
   const deleteAllDocs = async () => {
-    if (!confirm("Ștergi TOATE documentele din Business Brain? AI-ul va uita tot ce știe despre brand până reîncarci documente noi.")) return
+    if (!confirm(t("delete_all_confirm"))) return
     setDeletingAll(true)
     await fetch(`${API}/api/v1/orgs/${orgId}/rag`, { method: "DELETE", headers })
     setDocs([])
@@ -114,9 +116,9 @@ export function RagManager({ orgId, token }: Props) {
     <div className="space-y-8">
       {/* Upload section */}
       <div className="rounded-lg border bg-card p-5 space-y-4">
-        <h2 className="font-semibold">Adaugă documente despre brandul tău</h2>
+        <h2 className="font-semibold">{t("upload.title")}</h2>
         <p className="text-sm text-muted-foreground">
-          AI-ul va folosi aceste documente când generează conținut — prețuri corecte, features reale, zero hallucinations.
+          {t("upload.description")}
         </p>
 
         <div className="flex gap-3 flex-wrap">
@@ -126,22 +128,22 @@ export function RagManager({ orgId, token }: Props) {
           <button onClick={() => fileRef.current?.click()} disabled={uploading}
             className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
             <Upload className="h-4 w-4" />
-            {uploading ? "Se uploadează..." : "Upload PDF / DOCX / TXT"}
+            {uploading ? t("upload.uploading") : t("upload.button")}
           </button>
         </div>
 
         {/* URL ingest */}
         <div className="flex gap-2">
           <input className="flex-1 rounded-md border bg-background px-3 py-2 text-sm"
-            placeholder="https://site-ul-tau.com/despre" value={urlInput}
+            placeholder={t("url.placeholder")} value={urlInput}
             onChange={(e) => setUrlInput(e.target.value)} />
           <input className="w-40 rounded-md border bg-background px-3 py-2 text-sm"
-            placeholder="Nume (opțional)" value={urlName}
+            placeholder={t("url.name_placeholder")} value={urlName}
             onChange={(e) => setUrlName(e.target.value)} />
           <button onClick={addUrl} disabled={addingUrl || !urlInput.trim()}
             className="flex items-center gap-2 rounded-md border px-4 py-2 text-sm hover:bg-muted disabled:opacity-50">
             <Link className="h-4 w-4" />
-            {addingUrl ? "Se procesează..." : "Adaugă URL"}
+            {addingUrl ? t("processing") : t("url.add")}
           </button>
         </div>
       </div>
@@ -149,29 +151,29 @@ export function RagManager({ orgId, token }: Props) {
       {/* Documents list */}
       <div className="rounded-lg border bg-card">
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="font-semibold">Documente indexate ({docs.length})</h2>
+          <h2 className="font-semibold">{t("indexed.title", { count: docs.length })}</h2>
           <div className="flex items-center gap-2">
-            <button onClick={fetchDocs} className="text-muted-foreground hover:text-foreground" title="Reîncarcă lista">
+            <button onClick={fetchDocs} className="text-muted-foreground hover:text-foreground" title={t("refresh_list")}>
               <RefreshCw className="h-4 w-4" />
             </button>
             {docs.length > 0 && (
               <button
                 onClick={deleteAllDocs}
                 disabled={deletingAll}
-                title="Șterge tot și reîncepe RAG de la zero"
+                title={t("delete_all_title")}
                 className="flex items-center gap-1 rounded-md border border-destructive/40 px-2 py-1 text-xs text-destructive hover:bg-destructive/10 disabled:opacity-50"
               >
                 <RotateCcw className="h-3 w-3" />
-                {deletingAll ? "Se șterge..." : "RAG nou"}
+                {deletingAll ? t("deleting") : t("new_rag")}
               </button>
             )}
           </div>
         </div>
         {loading ? (
-          <p className="p-4 text-sm text-muted-foreground">Se încarcă...</p>
+          <p className="p-4 text-sm text-muted-foreground">{t("loading")}</p>
         ) : docs.length === 0 ? (
           <p className="p-8 text-center text-sm text-muted-foreground">
-            Niciun document. Uploadează un PDF sau adaugă un URL pentru a începe.
+            {t("indexed.empty")}
           </p>
         ) : (
           <ul className="divide-y">
@@ -180,14 +182,14 @@ export function RagManager({ orgId, token }: Props) {
                 <div>
                   <p className="text-sm font-medium">{doc.filename}</p>
                   <p className="text-xs text-muted-foreground">
-                    {STATUS_ICON[doc.status]} {doc.status} · {doc.chunk_count} chunks · {doc.file_type.toUpperCase()}
+                    {STATUS_ICON[doc.status]} {t(`status.${doc.status}`)} · {t("indexed.chunks", { count: doc.chunk_count })} · {doc.file_type.toUpperCase()}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button onClick={() => downloadDoc(doc.id, doc.filename)} title="Descarcă" className="text-muted-foreground hover:text-foreground">
+                  <button onClick={() => downloadDoc(doc.id, doc.filename)} title={t("download")} className="text-muted-foreground hover:text-foreground">
                     <Download className="h-4 w-4" />
                   </button>
-                  <button onClick={() => deleteDoc(doc.id)} title="Șterge" className="text-muted-foreground hover:text-destructive">
+                  <button onClick={() => deleteDoc(doc.id)} title={t("delete")} className="text-muted-foreground hover:text-destructive">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
@@ -199,15 +201,15 @@ export function RagManager({ orgId, token }: Props) {
 
       {/* Test RAG */}
       <div className="rounded-lg border bg-card p-5 space-y-3">
-        <h2 className="font-semibold">Testează — ce știe AI-ul despre brandul tău?</h2>
+        <h2 className="font-semibold">{t("test.title")}</h2>
         <div className="flex gap-2">
           <input className="flex-1 rounded-md border bg-background px-3 py-2 text-sm"
-            placeholder='Ex: "Care sunt prețurile?" sau "Ce produse vindem?"'
+            placeholder={t("test.placeholder")}
             value={question} onChange={(e) => setQuestion(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && queryRag()} />
           <button onClick={queryRag} disabled={querying || !question.trim()}
             className="rounded-md bg-secondary px-4 py-2 text-sm font-medium hover:bg-secondary/80 disabled:opacity-50">
-            {querying ? "⏳" : "Întreabă"}
+            {querying ? "⏳" : t("test.ask")}
           </button>
         </div>
         {answer && (

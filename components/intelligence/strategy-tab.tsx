@@ -117,6 +117,24 @@ export function StrategyTab({ pollTrigger }: { pollTrigger?: number }) {
 
   if (loading) return <div className="text-muted-foreground py-8 text-center">{t('loading')}</div>
 
+  const formatLabel = (value: string) => {
+    const normalized = value.toLowerCase().trim()
+    const keyByValue: Record<string, string> = {
+      articol: 'article',
+      carusel: 'carousel',
+      postare: 'post',
+      poveste: 'story',
+    }
+    const key = keyByValue[normalized]
+    return key ? t(`content_formats.${key}`) : value
+  }
+
+  const frequencyLabel = (value: string) => {
+    const normalized = value.toLowerCase().trim()
+    if (normalized === '3x/săptămână' || normalized === '3x/saptamana') return t('frequencies.three_per_week')
+    return value
+  }
+
   const generateBlock = (
     <Card className="mb-4">
       <CardContent className="pt-4">
@@ -354,7 +372,7 @@ export function StrategyTab({ pollTrigger }: { pollTrigger?: number }) {
 
           {/* Quick Wins */}
           {cs.quick_wins?.length > 0 && (
-            <Section title="⚡ Quick Wins — primele 30 de zile">
+            <Section title={t('sections.quick_wins')}>
               <div className="space-y-2">
                 {cs.quick_wins.map((win: string, i: number) => (
                   <div key={i} className="flex gap-3 p-2 bg-green-50 dark:bg-green-950 rounded text-sm">
@@ -594,7 +612,7 @@ export function StrategyTab({ pollTrigger }: { pollTrigger?: number }) {
 
           {/* Plan Editorial Lunar */}
           {cs.monthly_editorial_plan?.length > 0 && (
-            <Section title="📅 Plan Editorial Lunar">
+            <Section title={t('sections.monthly_editorial_plan')}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {cs.monthly_editorial_plan.map((week: any) => (
                   <div key={week.week} className="border rounded p-3 space-y-1.5">
@@ -607,7 +625,7 @@ export function StrategyTab({ pollTrigger }: { pollTrigger?: number }) {
                     {week.suggested_formats?.length > 0 && (
                       <div className="flex gap-1 flex-wrap">
                         {week.suggested_formats.map((f: string) => (
-                          <Badge key={f} variant="outline" className="text-xs">{f}</Badge>
+                          <Badge key={f} variant="outline" className="text-xs">{formatLabel(f)}</Badge>
                         ))}
                       </div>
                     )}
@@ -690,19 +708,19 @@ export function StrategyTab({ pollTrigger }: { pollTrigger?: number }) {
 
           {/* Platforme Prioritare */}
           {cs.priority_platforms?.length > 0 && (
-            <Section title="📱 Platforme Prioritare">
+            <Section title={t('sections.priority_platforms')}>
               <div className="space-y-3">
                 {cs.priority_platforms.map((pl: any, i: number) => (
                   <div key={i} className="border rounded p-3 space-y-1.5 text-sm">
                     <div className="flex items-center gap-2">
                       <span className="font-semibold capitalize">{pl.platform}</span>
-                      {pl.frequency && <Badge variant="outline" className="text-xs">{pl.frequency}</Badge>}
+                      {pl.frequency && <Badge variant="outline" className="text-xs">{frequencyLabel(pl.frequency)}</Badge>}
                       {pl.tone && <span className="text-xs text-muted-foreground">{pl.tone}</span>}
                     </div>
                     {pl.what_works_here && <p className="text-xs text-muted-foreground">{pl.what_works_here}</p>}
                     {pl.formats?.length > 0 && (
                       <div className="flex gap-1 flex-wrap">
-                        {pl.formats.map((f: string) => <Badge key={f} variant="secondary" className="text-xs">{f}</Badge>)}
+                        {pl.formats.map((f: string) => <Badge key={f} variant="secondary" className="text-xs">{formatLabel(f)}</Badge>)}
                       </div>
                     )}
                   </div>
@@ -746,7 +764,7 @@ export function StrategyTab({ pollTrigger }: { pollTrigger?: number }) {
               </Section>
             )}
             {cs.what_to_avoid?.length > 0 && (
-              <Section title="🚫 De Evitat">
+              <Section title={t('sections.what_to_avoid')}>
                 <BulletList items={cs.what_to_avoid} />
               </Section>
             )}

@@ -89,6 +89,10 @@
     "self_usage": "Pool disponibil {remaining} • target {allocated}",
     "unallocated_pool": "Nealocat (în pool)"
   },
+  "allocations_page": {
+    "description": "Împarte creditele din abonament pe clienți. La 90% se trimite avertizare, la 100% se oprește generarea de conținut nou.",
+    "title": "Alocare credite"
+  },
   "analytics": {
     "days": "{count} zile",
     "empty_subtitle": "Publică primele posturi pentru a vedea analytics.",
@@ -246,6 +250,10 @@
     "description": "Ești pe planul <strong>{plan}</strong>.",
     "renews_on": "Planul se reînnoiește pe {date}.",
     "title": "Plan Abonament"
+  },
+  "billing_page": {
+    "description": "Plan curent, credite disponibile și opțiuni de upgrade.",
+    "title": "Abonament & Plan"
   },
   "billing_topup": {
     "buy": "Cumpără",
@@ -601,6 +609,10 @@
       "title": "Vocea Brandului"
     }
   },
+  "brand_kit_page": {
+    "description": "Logo, culori, tonul vocii. AI-ul folosește acestea la fiecare postare generată.",
+    "title": "Brand Kit"
+  },
   "business_brain": {
     "added": "adăugați",
     "answer_placeholder": "Răspunsul tău...",
@@ -900,6 +912,10 @@
     "loading": "Se încarcă...",
     "self": "propriu"
   },
+  "clients_page": {
+    "description": "Gestionează clienții și comută rapid între workspace-uri.",
+    "title": "Clienți Agenție"
+  },
   "common": {
     "cancel": "Anulează",
     "delete": "Șterge",
@@ -934,19 +950,37 @@
     "title": "Panou de control"
   },
   "dashboard_sidebar": {
+    "back_to_site": "Înapoi la site",
+    "create_post": "Creează postare",
     "items": {
       "admin_panel": "Panou Admin",
+      "ai_documents": "Documente AI",
+      "allocations": "Alocare credite",
+      "best_times": "Best Times",
       "billing": "Abonament",
       "brand_kit": "Brand Kit",
+      "business_brain": "Business Brain",
+      "buy_credits": "Cumpără credite",
       "calendar": "Calendar",
       "campaigns": "Campanii",
+      "clients": "Clienți",
       "dashboard": "Dashboard",
-      "settings": "Setări"
+      "opportunities": "Oportunități",
+      "reports": "Rapoarte",
+      "settings": "Setări",
+      "social_accounts": "Conturi Sociale",
+      "strategy": "Strategie",
+      "super_admin": "Super Admin",
+      "visualization": "Vizualizare"
     },
     "sections": {
       "account": "CONT",
+      "agency": "AGENȚIE",
+      "ai_marketing": "AI MARKETING",
       "brand": "BRAND",
-      "content": "CONȚINUT"
+      "configuration": "CONFIGURARE",
+      "content": "CONȚINUT",
+      "publishing": "PUBLICARE"
     }
   },
   "delete_account_modal": {
@@ -1032,6 +1066,16 @@
     "title_highlight": "pentru brandul tău. Chiar și de pe telefon.",
     "title_prefix": "AI Marketing Manager",
     "trial_badge": "Trial gratuit 14 zile pe Starter · fără taxare până la final"
+  },
+  "intelligence_page": {
+    "subtitle": "AI Marketing Manager — strategie și oportunități pentru brandul tău",
+    "tabs": {
+      "brain": "Business Brain",
+      "opportunities": "Oportunități",
+      "strategy": "Strategie",
+      "visualization": "Vizualizare"
+    },
+    "title": "Content Intelligence"
   },
   "login_page": {
     "metadata": {
@@ -1234,6 +1278,7 @@
     "hook_edit_placeholder": "Hook (fraza de deschidere)...",
     "hook_placeholder": "Hook — fraza de deschidere (opțional)",
     "idea_focus_placeholder": "Direcție idei (opțional) — ex: funcționalități app, cazuri de utilizare, tutoriale... Gol = idei generice.",
+    "ideas_count": "{count} idei",
     "ideas_generating_message": "⏳ Se generează {count} idei noi... apar în ~1-2 minute.",
     "launching": "Se lansează...",
     "loading_opportunities": "Se încarcă oportunitățile...",
@@ -1300,6 +1345,19 @@
     "visual_prompt_placeholder": "Descrie scena vizuală...",
     "zoom": "Mărește"
   },
+  "org_switcher": {
+    "create_brand": "Creează brand",
+    "new_brand": "Brand nou"
+  },
+  "paginator": {
+    "first_page": "Prima pagină",
+    "last_page": "Ultima pagină",
+    "next_page": "Pagina următoare",
+    "page_number": "Introdu numărul paginii",
+    "per_page": "{count} / pagină",
+    "previous_page": "Pagina anterioară",
+    "show": "Afișează"
+  },
   "powered_section": {
     "title": "Construit cu tehnologii de top"
   },
@@ -1358,6 +1416,43 @@
     "subtitle": "Dacă nu găsești răspunsul, scrie-ne la support@nex-nex.com.",
     "title": "Întrebări frecvente"
   },
+  "rag_manager": {
+    "delete": "Șterge",
+    "delete_all_confirm": "Ștergi TOATE documentele din Business Brain? AI-ul va uita tot ce știe despre brand până reîncarci documente noi.",
+    "delete_all_title": "Șterge tot și reîncepe RAG de la zero",
+    "deleting": "Se șterge...",
+    "download": "Descarcă",
+    "indexed": {
+      "chunks": "{count} chunks",
+      "empty": "Niciun document. Uploadează un PDF sau adaugă un URL pentru a începe.",
+      "title": "Documente indexate ({count})"
+    },
+    "loading": "Se încarcă...",
+    "new_rag": "RAG nou",
+    "processing": "Se procesează...",
+    "refresh_list": "Reîncarcă lista",
+    "status": {
+      "failed": "eșuat",
+      "indexed": "indexat",
+      "processing": "în procesare"
+    },
+    "test": {
+      "ask": "Întreabă",
+      "placeholder": "Ex: \"Care sunt prețurile?\" sau \"Ce produse vindem?\"",
+      "title": "Testează — ce știe AI-ul despre brandul tău?"
+    },
+    "upload": {
+      "button": "Upload PDF / DOCX / TXT",
+      "description": "AI-ul va folosi aceste documente când generează conținut — prețuri corecte, features reale, zero hallucinations.",
+      "title": "Adaugă documente despre brandul tău",
+      "uploading": "Se uploadează..."
+    },
+    "url": {
+      "add": "Adaugă URL",
+      "name_placeholder": "Nume (opțional)",
+      "placeholder": "https://site-ul-tau.com/despre"
+    }
+  },
   "register_page": {
     "login": "Autentificare",
     "metadata": {
@@ -1399,6 +1494,10 @@
     "no_consumption_period": "Niciun consum în această perioadă.",
     "results_placeholder": "Rezultate (reach, afișări, engagement) — disponibile după implementarea analytics (Sprint 6).",
     "total_credits": "Total: {total} credite"
+  },
+  "reports_page": {
+    "description": "Consum de credite per client, campanie și acțiune. Rezultatele (reach, engagement) sosesc odată cu analytics.",
+    "title": "Rapoarte consum"
   },
   "search": {
     "button": "Caută",
@@ -1532,6 +1631,12 @@
     },
     "auto_refresh_note": "~2 minute. Pagina se actualizează automat.",
     "content_angle": "💡 Unghi de conținut:",
+    "content_formats": {
+      "article": "articol",
+      "carousel": "carusel",
+      "post": "postare",
+      "story": "poveste"
+    },
     "current_positioning": "Poziționare",
     "diagnosis": {
       "economic_value": "Valoare economică:",
@@ -1545,6 +1650,9 @@
     "empty": "Nu există strategii generate încă.",
     "error_with_message": "Eroare: {message}",
     "findings": "Constatări",
+    "frequencies": {
+      "three_per_week": "3x/săptămână"
+    },
     "generate": "Generează",
     "generate_strategy": "Generează Strategie",
     "generate_strategy_description": "Business Analysis + Content Strategy profesională",
@@ -1578,10 +1686,14 @@
       "differentiators": "🌟 Diferențiatori",
       "distribution_recommendations": "📣 Recomandări de Distribuție",
       "editorial_calendar_12_weeks": "📆 Calendar Editorial — 12 săptămâni",
+      "monthly_editorial_plan": "📅 Plan Editorial Lunar",
       "offer_pricing": "💶 Ofertă & Pricing",
       "positioning": "🎯 Poziționare",
+      "priority_platforms": "📱 Platforme Prioritare",
+      "quick_wins": "⚡ Quick Wins — primele 30 de zile",
       "roadmap_90_days": "🗺️ Roadmap Marketing — 90 zile",
-      "target_personas": "👥 Persoane Țintă"
+      "target_personas": "👥 Persoane Țintă",
+      "what_to_avoid": "🚫 De Evitat"
     },
     "stages": {
       "awareness": "👁️ Awareness",

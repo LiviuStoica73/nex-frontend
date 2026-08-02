@@ -7,8 +7,10 @@ import { cn } from "@/lib/utils"
 import { useOrg } from "@/contexts/org-context"
 import { useState } from "react"
 import { CreateBrandModal } from "@/components/dashboard/create-brand-modal"
+import { useTranslations } from "next-intl"
 
 export function OrgSwitcher() {
+  const t = useTranslations("org_switcher")
   const { orgs, activeOrgId, activeOrg, switching, switchOrg } = useOrg()
   const [open, setOpen] = useState(false)
   const [showCreate, setShowCreate] = useState(false)
@@ -21,7 +23,7 @@ export function OrgSwitcher() {
           className="flex items-center gap-2 px-2 py-1.5 rounded-md bg-muted/50 hover:bg-muted text-sm text-muted-foreground"
         >
           <Plus className="h-4 w-4" />
-          Creează brand
+          {t("create_brand")}
         </button>
         <CreateBrandModal open={showCreate} onClose={() => setShowCreate(false)} />
       </>
@@ -72,7 +74,7 @@ export function OrgSwitcher() {
                 className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-left hover:bg-muted transition-colors text-muted-foreground"
               >
                 <Plus className="h-3.5 w-3.5 flex-shrink-0" />
-                Brand nou
+                {t("new_brand")}
               </button>
             </div>
           </div>

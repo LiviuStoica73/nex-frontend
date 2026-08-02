@@ -89,6 +89,10 @@
     "self_usage": "Available pool {remaining} • target {allocated}",
     "unallocated_pool": "Unallocated (in pool)"
   },
+  "allocations_page": {
+    "description": "Allocate subscription credits across clients. At 90% a warning is sent, and at 100% new content generation stops.",
+    "title": "Credit allocation"
+  },
   "analytics": {
     "days": "{count} days",
     "empty_subtitle": "Publish your first posts to see analytics.",
@@ -246,6 +250,10 @@
     "description": "You are currently on the <strong>{plan}</strong> plan.",
     "renews_on": "Your plan renews on {date}.",
     "title": "Subscription Plan"
+  },
+  "billing_page": {
+    "description": "Current plan, available credits, and upgrade options.",
+    "title": "Subscription & Plan"
   },
   "billing_topup": {
     "buy": "Buy",
@@ -601,6 +609,10 @@
       "title": "Brand Voice"
     }
   },
+  "brand_kit_page": {
+    "description": "Logo, colors, and voice tone. AI uses them for every generated post.",
+    "title": "Brand Kit"
+  },
   "business_brain": {
     "added": "added",
     "answer_placeholder": "Your answer...",
@@ -900,6 +912,10 @@
     "loading": "Loading...",
     "self": "own"
   },
+  "clients_page": {
+    "description": "Manage clients and switch quickly between workspaces.",
+    "title": "Agency Clients"
+  },
   "common": {
     "cancel": "Cancel",
     "delete": "Delete",
@@ -934,19 +950,37 @@
     "title": "Dashboard"
   },
   "dashboard_sidebar": {
+    "back_to_site": "Back to site",
+    "create_post": "Create post",
     "items": {
       "admin_panel": "Admin Panel",
+      "ai_documents": "AI Documents",
+      "allocations": "Credit allocation",
+      "best_times": "Best Times",
       "billing": "Billing",
       "brand_kit": "Brand Kit",
+      "business_brain": "Business Brain",
+      "buy_credits": "Buy credits",
       "calendar": "Calendar",
       "campaigns": "Campaigns",
+      "clients": "Clients",
       "dashboard": "Dashboard",
-      "settings": "Settings"
+      "opportunities": "Opportunities",
+      "reports": "Reports",
+      "settings": "Settings",
+      "social_accounts": "Social Accounts",
+      "strategy": "Strategy",
+      "super_admin": "Super Admin",
+      "visualization": "Visualization"
     },
     "sections": {
       "account": "ACCOUNT",
+      "agency": "AGENCY",
+      "ai_marketing": "AI MARKETING",
       "brand": "BRAND",
-      "content": "CONTENT"
+      "configuration": "CONFIGURATION",
+      "content": "CONTENT",
+      "publishing": "PUBLISHING"
     }
   },
   "delete_account_modal": {
@@ -1032,6 +1066,16 @@
     "title_highlight": "for your brand. Even from your phone.",
     "title_prefix": "AI Marketing Manager",
     "trial_badge": "14-day free trial on Starter · No charge until it ends"
+  },
+  "intelligence_page": {
+    "subtitle": "AI Marketing Manager — strategy and opportunities for your brand",
+    "tabs": {
+      "brain": "Business Brain",
+      "opportunities": "Opportunities",
+      "strategy": "Strategy",
+      "visualization": "Visualization"
+    },
+    "title": "Content Intelligence"
   },
   "login_page": {
     "metadata": {
@@ -1234,6 +1278,7 @@
     "hook_edit_placeholder": "Hook (opening phrase)...",
     "hook_placeholder": "Hook — opening phrase (optional)",
     "idea_focus_placeholder": "Idea direction (optional) — ex: app features, use cases, tutorials... Empty = generic ideas.",
+    "ideas_count": "{count} ideas",
     "ideas_generating_message": "⏳ Generating {count} new ideas... they will appear in ~1-2 minutes.",
     "launching": "Launching...",
     "loading_opportunities": "Loading opportunities...",
@@ -1300,6 +1345,19 @@
     "visual_prompt_placeholder": "Describe the visual scene...",
     "zoom": "Zoom"
   },
+  "org_switcher": {
+    "create_brand": "Create brand",
+    "new_brand": "New brand"
+  },
+  "paginator": {
+    "first_page": "First page",
+    "last_page": "Last page",
+    "next_page": "Next page",
+    "page_number": "Enter page number",
+    "per_page": "{count} / page",
+    "previous_page": "Previous page",
+    "show": "Show"
+  },
   "powered_section": {
     "title": "Powered by"
   },
@@ -1358,6 +1416,43 @@
     "subtitle": "If you can't find the answer, write to us at support@nex-nex.com.",
     "title": "Frequently asked questions"
   },
+  "rag_manager": {
+    "delete": "Delete",
+    "delete_all_confirm": "Delete ALL documents from Business Brain? AI will forget everything it knows about the brand until you upload new documents.",
+    "delete_all_title": "Delete everything and restart RAG from zero",
+    "deleting": "Deleting...",
+    "download": "Download",
+    "indexed": {
+      "chunks": "{count} chunks",
+      "empty": "No documents. Upload a PDF or add a URL to get started.",
+      "title": "Indexed documents ({count})"
+    },
+    "loading": "Loading...",
+    "new_rag": "New RAG",
+    "processing": "Processing...",
+    "refresh_list": "Reload list",
+    "status": {
+      "failed": "failed",
+      "indexed": "indexed",
+      "processing": "processing"
+    },
+    "test": {
+      "ask": "Ask",
+      "placeholder": "Ex: \"What are the prices?\" or \"What products do we sell?\"",
+      "title": "Test — what does AI know about your brand?"
+    },
+    "upload": {
+      "button": "Upload PDF / DOCX / TXT",
+      "description": "AI will use these documents when generating content — accurate prices, real features, zero hallucinations.",
+      "title": "Add documents about your brand",
+      "uploading": "Uploading..."
+    },
+    "url": {
+      "add": "Add URL",
+      "name_placeholder": "Name (optional)",
+      "placeholder": "https://your-site.com/about"
+    }
+  },
   "register_page": {
     "login": "Login",
     "metadata": {
@@ -1399,6 +1494,10 @@
     "no_consumption_period": "No consumption in this period.",
     "results_placeholder": "Results (reach, impressions, engagement) — available after analytics implementation (Sprint 6).",
     "total_credits": "Total: {total} credits"
+  },
+  "reports_page": {
+    "description": "Credit usage by client, campaign, and action. Results (reach, engagement) arrive with analytics.",
+    "title": "Usage reports"
   },
   "search": {
     "button": "Search",
@@ -1532,6 +1631,12 @@
     },
     "auto_refresh_note": "~2 minutes. The page refreshes automatically.",
     "content_angle": "💡 Content angle:",
+    "content_formats": {
+      "article": "article",
+      "carousel": "carousel",
+      "post": "post",
+      "story": "story"
+    },
     "current_positioning": "Positioning",
     "diagnosis": {
       "economic_value": "Economic value:",
@@ -1545,6 +1650,9 @@
     "empty": "No strategies generated yet.",
     "error_with_message": "Error: {message}",
     "findings": "Findings",
+    "frequencies": {
+      "three_per_week": "3x/week"
+    },
     "generate": "Generate",
     "generate_strategy": "Generate Strategy",
     "generate_strategy_description": "Professional Business Analysis + Content Strategy",
@@ -1578,10 +1686,14 @@
       "differentiators": "🌟 Differentiators",
       "distribution_recommendations": "📣 Distribution Recommendations",
       "editorial_calendar_12_weeks": "📆 Editorial Calendar — 12 weeks",
+      "monthly_editorial_plan": "📅 Monthly Editorial Plan",
       "offer_pricing": "💶 Offer & Pricing",
       "positioning": "🎯 Positioning",
+      "priority_platforms": "📱 Priority Platforms",
+      "quick_wins": "⚡ Quick Wins — first 30 days",
       "roadmap_90_days": "🗺️ Marketing Roadmap — 90 days",
-      "target_personas": "👥 Target Personas"
+      "target_personas": "👥 Target Personas",
+      "what_to_avoid": "🚫 Avoid"
     },
     "stages": {
       "awareness": "👁️ Awareness",

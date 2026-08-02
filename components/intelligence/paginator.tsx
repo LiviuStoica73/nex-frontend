@@ -5,6 +5,7 @@
 'use client'
 import { useState, useRef } from 'react'
 import { Button } from '@/components/ui/button'
+import { useTranslations } from 'next-intl'
 
 interface PaginatorProps {
   page: number
@@ -23,6 +24,7 @@ export function Paginator({
   pageSizeOptions,
   onPageSizeChange,
 }: PaginatorProps) {
+  const t = useTranslations('paginator')
   const [inputVal, setInputVal] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -59,11 +61,11 @@ export function Paginator({
       {/* Navigație pagini */}
       <div className="flex items-center gap-1 flex-wrap">
         {/* |« Prima */}
-        <Button size="sm" variant="outline" className="px-2 h-8" disabled={page === 1} onClick={() => goTo(1)} title="Prima pagină">
+        <Button size="sm" variant="outline" className="px-2 h-8" disabled={page === 1} onClick={() => goTo(1)} title={t('first_page')}>
           «
         </Button>
         {/* < Anterior */}
-        <Button size="sm" variant="outline" className="px-2 h-8" disabled={page === 1} onClick={() => goTo(page - 1)} title="Pagina anterioară">
+        <Button size="sm" variant="outline" className="px-2 h-8" disabled={page === 1} onClick={() => goTo(page - 1)} title={t('previous_page')}>
           ‹
         </Button>
 
@@ -97,16 +99,16 @@ export function Paginator({
             onBlur={handleInputSubmit}
             placeholder="…"
             className="w-12 h-8 border rounded px-1 text-sm text-center bg-background [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            title="Introdu numărul paginii"
+            title={t('page_number')}
           />
         </div>
 
         {/* > Următor */}
-        <Button size="sm" variant="outline" className="px-2 h-8" disabled={page === totalPages} onClick={() => goTo(page + 1)} title="Pagina următoare">
+        <Button size="sm" variant="outline" className="px-2 h-8" disabled={page === totalPages} onClick={() => goTo(page + 1)} title={t('next_page')}>
           ›
         </Button>
         {/* »| Ultima */}
-        <Button size="sm" variant="outline" className="px-2 h-8" disabled={page === totalPages} onClick={() => goTo(totalPages)} title="Ultima pagină">
+        <Button size="sm" variant="outline" className="px-2 h-8" disabled={page === totalPages} onClick={() => goTo(totalPages)} title={t('last_page')}>
           »
         </Button>
       </div>
@@ -114,14 +116,14 @@ export function Paginator({
       {/* Afișează N / pagină */}
       {pageSizeOptions && onPageSizeChange && (
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span>Afișează:</span>
+          <span>{t('show')}:</span>
           <select
             value={pageSize}
             onChange={e => onPageSizeChange(Number(e.target.value))}
             className="border rounded px-1 py-0.5 text-sm bg-background"
           >
             {pageSizeOptions.map(n => (
-              <option key={n} value={n}>{n} / pagină</option>
+              <option key={n} value={n}>{t('per_page', { count: n })}</option>
             ))}
           </select>
         </div>

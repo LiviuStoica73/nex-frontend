@@ -32,6 +32,10 @@ export function translateSidebarSectionTitle(
   t: (key: string) => string,
 ): string {
   const keyByTitle: Record<string, string> = {
+    "PUBLICARE": "publishing",
+    "AI MARKETING": "ai_marketing",
+    "CONFIGURARE": "configuration",
+    "AGENȚIE": "agency",
     "CONȚINUT": "content",
     BRAND: "brand",
     CONT: "account",
@@ -50,9 +54,21 @@ export function translateSidebarItemTitle(
     "/dashboard": "dashboard",
     "/dashboard/campaigns": "campaigns",
     "/dashboard/calendar": "calendar",
+    "/dashboard/intelligence?tab=opportunities": "opportunities",
+    "/dashboard/intelligence?tab=vizualizare": "visualization",
+    "/dashboard/settings/brand-kit?tab=documente": "ai_documents",
+    "/dashboard/intelligence?tab=brain": "business_brain",
+    "/dashboard/intelligence?tab=strategy": "strategy",
     "/dashboard/settings/brand-kit": "brand_kit",
+    "/dashboard/settings/social-accounts": "social_accounts",
+    "/dashboard/settings/best-times": "best_times",
+    "/dashboard/clients": "clients",
+    "/dashboard/allocations": "allocations",
+    "/dashboard/reports": "reports",
     "/dashboard/billing": "billing",
+    "/dashboard/billing/topup": "buy_credits",
     "/dashboard/settings": "settings",
+    "/dashboard/admin": "super_admin",
     "/admin": "admin_panel",
   };
 

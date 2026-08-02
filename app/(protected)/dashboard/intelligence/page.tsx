@@ -13,12 +13,14 @@ import { StrategyTab } from '@/components/intelligence/strategy-tab'
 import { OpportunitiesTab } from '@/components/intelligence/opportunities-tab'
 import type { SelectedOpportunity } from '@/components/intelligence/opportunities-tab'
 import { AutopilotTab } from '@/components/intelligence/autopilot-tab'
+import { useTranslations } from 'next-intl'
 
 // Acceptăm și vechiul slug 'autopilot' pentru compatibilitate cu URL-uri salvate
 const VALID_TABS = ['brain', 'strategy', 'opportunities', 'vizualizare', 'autopilot']
 const normalizeTab = (t: string) => t === 'autopilot' ? 'vizualizare' : t
 
 export default function IntelligencePage() {
+  const t = useTranslations('intelligence_page')
   const { activeOrgId } = useOrg()
   const { data: session } = useSession()
   const router = useRouter()
@@ -50,18 +52,18 @@ export default function IntelligencePage() {
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Content Intelligence</h1>
+        <h1 className="text-2xl font-bold">{t('title')}</h1>
         <p className="text-muted-foreground">
-          AI Marketing Manager — strategie și oportunități pentru brandul tău
+          {t('subtitle')}
         </p>
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
-          <TabsTrigger value="brain">Business Brain</TabsTrigger>
-          <TabsTrigger value="strategy">Strategie</TabsTrigger>
-          <TabsTrigger value="opportunities">Oportunități</TabsTrigger>
-          <TabsTrigger value="vizualizare">Vizualizare</TabsTrigger>
+          <TabsTrigger value="brain">{t('tabs.brain')}</TabsTrigger>
+          <TabsTrigger value="strategy">{t('tabs.strategy')}</TabsTrigger>
+          <TabsTrigger value="opportunities">{t('tabs.opportunities')}</TabsTrigger>
+          <TabsTrigger value="vizualizare">{t('tabs.visualization')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="brain" className="mt-6">

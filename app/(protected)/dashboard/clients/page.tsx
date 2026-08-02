@@ -2,10 +2,15 @@ import { redirect } from "next/navigation"
 import { getCurrentUser } from "@/lib/session"
 import { getActiveOrgId } from "@/lib/active-org"
 import { ClientsManager } from "@/components/agency/clients-manager"
+import { getTranslations } from "next-intl/server"
 
-export const metadata = { title: "Clienți Agenție — Nex-Nex" }
+export async function generateMetadata() {
+  const t = await getTranslations("clients_page")
+  return { title: `${t("title")} — Nex-Nex` }
+}
 
 export default async function ClientsPage() {
+  const t = await getTranslations("clients_page")
   const user = await getCurrentUser()
   if (!user) redirect("/login")
 
@@ -15,9 +20,9 @@ export default async function ClientsPage() {
   return (
     <div className="space-y-6 p-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Clienți Agenție</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
         <p className="text-muted-foreground">
-          Gestionează clienții și comută rapid între workspace-uri.
+          {t("description")}
         </p>
       </div>
       <ClientsManager orgId={orgId} token={token} />

@@ -58,7 +58,7 @@ const STATUS_LABELS: Record<string, { labelKey: string; variant: 'default' | 'se
 
 const STATUS_FILTERS = [
   { value: '', labelKey: 'filters.all' },
-  { value: 'idea', labelKey: 'filters.ideas' },
+  { value: 'idea', labelKey: 'filters.idea' },
   { value: 'generating', labelKey: 'filters.generating' },
   { value: 'review', labelKey: 'filters.review' },
   { value: 'published', labelKey: 'filters.published' },
@@ -388,9 +388,9 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="5">5 idei</SelectItem>
-              <SelectItem value="10">10 idei</SelectItem>
-              <SelectItem value="25">25 idei</SelectItem>
+              <SelectItem value="5">{t('ideas_count', { count: 5 })}</SelectItem>
+              <SelectItem value="10">{t('ideas_count', { count: 10 })}</SelectItem>
+              <SelectItem value="25">{t('ideas_count', { count: 25 })}</SelectItem>
             </SelectContent>
           </Select>
           <Button size="sm" variant="outline" onClick={handleGenerateIdeas} disabled={generatingIdeas}>
@@ -556,9 +556,9 @@ export function OpportunitiesTab({ selectedIds, onToggleSelect, onGoToAutopilot 
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="5">5 idei</SelectItem>
-              <SelectItem value="10">10 idei</SelectItem>
-              <SelectItem value="25">25 idei</SelectItem>
+              <SelectItem value="5">{t('ideas_count', { count: 5 })}</SelectItem>
+              <SelectItem value="10">{t('ideas_count', { count: 10 })}</SelectItem>
+              <SelectItem value="25">{t('ideas_count', { count: 25 })}</SelectItem>
             </SelectContent>
           </Select>
           <Button size="sm" variant="outline" onClick={handleGenerateIdeas} disabled={generatingIdeas}>
