@@ -554,5 +554,289 @@
     "for_3": "Agenții care gestionează 5–50+ clienți simultan",
     "interfaces_label": "Interfețe principale",
     "interfaces": "Web dashboard (acces complet la funcționalități) · Telegram Bot (mobile-first: postări rapide, aprobări, capturare idei din mers)"
+  },
+  "brand_kit_form": {
+    "common": {
+      "save": "Salvează",
+      "saving": "Se salvează...",
+      "saved": "✅ Salvat!"
+    },
+    "errors": {
+      "missing_org": "Sesiunea nu are orgId. Te rugăm să te autentifici din nou.",
+      "save_failed": "Eroare {status}: {message}",
+      "network": "Eroare de rețea. Verifică conexiunea.",
+      "logo_upload_failed": "Încărcarea logo-ului a eșuat ({status})",
+      "storage_not_configured": "Stocarea R2 nu este configurată.",
+      "logo_network": "Eroare de rețea la încărcarea logo-ului.",
+      "sign_upload_failed": "Încărcarea semnăturii a eșuat ({status})",
+      "sign_network": "Eroare de rețea la încărcarea semnăturii.",
+      "logo_sign_upload_failed": "Încărcarea logo + semnătură a eșuat ({status})",
+      "logo_sign_network": "Eroare de rețea la încărcarea logo + semnătură.",
+      "template_upload_failed": "Încărcarea șablonului a eșuat ({status})",
+      "template_network": "Eroare de rețea la încărcarea șablonului."
+    },
+    "tabs": {
+      "identity": "Identitate",
+      "voice": "Voce & Cuvinte",
+      "typography": "Tipografie",
+      "documents": "Documente AI",
+      "quick_post": "⚡ Postare rapidă"
+    },
+    "identity": {
+      "brand_name": {
+        "label": "Numele companiei / brandului",
+        "placeholder": "Ex: Nex-Nex, Agenție Creativă, TechStartup SRL"
+      },
+      "slogan": {
+        "label": "Slogan",
+        "placeholder": "Ex: AI Content Copilot pentru creatori"
+      },
+      "description": {
+        "label": "Descriere scurtă",
+        "placeholder": "1-3 propoziții despre ce face brandul tău."
+      },
+      "visual_assets": {
+        "title": "Active vizuale"
+      },
+      "logo": {
+        "label": "Logo",
+        "description": "Imagine pătrată 1:1, fundal transparent",
+        "alt": "Logo",
+        "upload": "Încarcă logo",
+        "replace": "Înlocuiește logo",
+        "uploading": "Se încarcă..."
+      },
+      "sign": {
+        "label": "Semnătură / font brand",
+        "description": "Stilul de scriere al brandului (PNG/SVG)",
+        "alt": "Semnătură",
+        "upload": "Încarcă semnătură",
+        "replace": "Înlocuiește semnătura",
+        "uploading": "Se încarcă..."
+      },
+      "logo_sign": {
+        "label": "Logo + semnătură combinate",
+        "description": "Un singur fișier cu logo și semnătură împreună — folosit când ambele sunt selectate în Telegram. Creează-l în Canva/Figma și încarcă-l aici.",
+        "alt": "Logo + Semnătură",
+        "upload": "Încarcă logo + semnătură",
+        "replace": "Înlocuiește logo + semnătură",
+        "uploading": "Se încarcă..."
+      },
+      "colors": {
+        "title": "Culorile brandului",
+        "primary": {
+          "label": "Primară",
+          "description": "Culoarea principală a brandului"
+        },
+        "secondary": {
+          "label": "Secundară",
+          "description": "Culoare de suport / fundal secundar"
+        },
+        "accent": {
+          "label": "Accent",
+          "description": "CTA-uri, butoane, evidențieri"
+        },
+        "background": {
+          "label": "Fundal",
+          "description": "Culoarea de fundal a imaginilor"
+        },
+        "text_dark": {
+          "label": "Text întunecat",
+          "description": "Text pe fundal deschis"
+        },
+        "text_light": {
+          "label": "Text deschis",
+          "description": "Text pe fundal întunecat"
+        }
+      },
+      "templates": {
+        "title": "Șabloane postări",
+        "description": "Imaginile de fundal / layout-urile vizuale ale brandului. AI le va folosi la generarea imaginilor pentru postări.",
+        "alt": "Șablon {index}",
+        "delete": "Șterge șablon",
+        "item_label": "Șablon {index}",
+        "uploading": "Se încarcă...",
+        "add": "Adaugă șablon"
+      }
+    },
+    "voice": {
+      "title": "Vocea Brandului",
+      "description": "Descrie tonul, valorile și publicul țintă. AI-ul va folosi aceasta pentru fiecare generare.",
+      "placeholder": "Ex: Ton profesional dar prietenos. Audiență: antreprenori 25-45 ani. Valori: inovație, eficiență, transparență. Evităm jargonul tehnic excesiv.",
+      "keywords": {
+        "title": "Cuvinte cheie & cuvinte de evitat",
+        "label": "Cuvinte cheie (separate prin virgulă)",
+        "placeholder": "inovație, calitate, eficiență, rezultate"
+      },
+      "avoid_words": {
+        "label": "Cuvinte de evitat",
+        "placeholder": "ieftin, gratuit, 100% garantat"
+      }
+    },
+    "typography": {
+      "description_prefix": "Setările de tipografie sunt folosite la generarea imaginilor cu",
+      "description_product_template": "Produs în șablon",
+      "description_middle": "și pentru",
+      "description_text_on_image": "Text pe imagine",
+      "title_block": {
+        "title": "Titlu"
+      },
+      "subtitle_block": {
+        "title": "Subtitlu / Preț"
+      },
+      "font": "Font",
+      "size": "Dimensiune (px)",
+      "default_font": "— Implicit (Inter) —",
+      "bold": "Bold",
+      "italic": "Italic",
+      "color": "Culoare",
+      "overlay": {
+        "title": "Fundal text suprapus",
+        "description_prefix": "Culoarea benzii semi-transparente din spatele textului scris pe imagine. Poți include alfa (ex:",
+        "description_suffix": ")."
+      }
+    },
+    "documents": {
+      "brand_docs": {
+        "title": "Documente despre brand",
+        "description": "Încarcă manuale, FAQ-uri, prezentări sau pagini web. AI-ul le va folosi ca referință la generarea conținutului — prețuri corecte, funcționalități reale, zero halucinații.",
+        "upload": "Încarcă PDF / DOCX / TXT",
+        "processing": "Se procesează..."
+      },
+      "url": {
+        "placeholder": "https://site-ul-tau.com/despre",
+        "name_placeholder": "Nume (opțional)",
+        "add": "Adaugă URL"
+      },
+      "indexed": {
+        "title": "Documente indexate ({count})",
+        "loading": "Se încarcă...",
+        "empty": "Niciun document încă. Încarcă un fișier sau adaugă un URL.",
+        "chunks": "{count} fragmente"
+      },
+      "status": {
+        "processing": "în procesare",
+        "indexed": "indexat",
+        "failed": "eșuat"
+      },
+      "test": {
+        "title": "Testează — ce știe AI-ul despre brandul tău?",
+        "placeholder": "Ex: \"Care sunt prețurile?\" sau \"Ce produse vindem?\"",
+        "ask": "Întreabă"
+      }
+    },
+    "quick_post": {
+      "provider": {
+        "title": "Generator implicit de imagini",
+        "description": "Folosit automat în ⚡ Postare rapidă fără a întreba utilizatorul.",
+        "options": {
+          "comfyui": "🖼️ Nex-Nex RTX (ComfyUI) — local, 1 credit",
+          "fal": "⚡ Fal.ai FLUX — rapid, 1 credit",
+          "gemini": "🎨 Google Gemini — branding integrat, 2 credite"
+        }
+      },
+      "platforms": {
+        "title": "Rețele sociale implicite",
+        "description": "Selectate automat în Postarea rapidă. Dacă nu alegi nimic, se folosesc conturile active."
+      },
+      "tone": {
+        "title": "Tonul implicit al textului",
+        "description": "Aplicat la generarea textului în Postarea rapidă. \"Neutru\" înseamnă că AI alege.",
+        "options": {
+          "neutral": "⚖️ Neutru",
+          "inspiring": "✨ Inspirațional",
+          "formal": "💼 Formal",
+          "casual": "😊 Casual"
+        }
+      },
+      "visual_assets": {
+        "title": "Active vizuale implicite",
+        "description": "Dacă sunt bifate, Postarea rapidă va aplica automat aceste elemente pe imaginea generată. Lasă nebifate dacă vrei imagini curate fără branding.",
+        "logo": "Logo brand",
+        "sign": "Semnătură / tipografie brand",
+        "template": "Șablon vizual (primul din lista ta)",
+        "loaded": "(încărcat ✓)",
+        "logo_missing": "(neîncărcat — adaugă-l din tab-ul Identitate)",
+        "sign_missing": "(neîncărcat)",
+        "template_missing": "(niciun șablon — adaugă unul din tab-ul Identitate)",
+        "template_loaded_one": "(1 șablon ✓)",
+        "template_loaded_many": "({count} șabloane ✓)"
+      },
+      "save_defaults": "Salvează setările implicite",
+      "saved_short": "✓ Salvat",
+      "saved_message": "✓ Setările au fost salvate!"
+    }
+  },
+  "compare_plans": {
+    "label": "Planuri",
+    "title": "Compară Planurile",
+    "subtitle": "Găsește planul perfect pentru nevoile tale!",
+    "empty": "—"
+  },
+  "delete_account_modal": {
+    "title": "Șterge Contul",
+    "warning_label": "Atenție:",
+    "warning_text": "Aceasta va șterge permanent contul tău și abonamentul activ!",
+    "verification": {
+      "prefix": "Pentru confirmare, scrie",
+      "phrase": "confirm delete account",
+      "suffix": "mai jos"
+    },
+    "confirm_cta": "Confirmă ștergerea contului",
+    "toast": {
+      "loading": "Se șterge contul...",
+      "success": "Contul a fost șters cu succes!"
+    }
+  },
+  "login_page": {
+    "metadata": {
+      "title": "Autentificare",
+      "description": "Autentifică-te în contul tău"
+    }
+  },
+  "marketing_error": {
+    "title": "Ceva nu a funcționat!",
+    "unknown_error": "Eroare necunoscută",
+    "retry": "Încearcă din nou"
+  },
+  "marketing_not_found": {
+    "image_alt": "404",
+    "message": "Pagina nu a fost găsită. Înapoi la",
+    "homepage": "Pagina principală"
+  },
+  "pricing_cards": {
+    "label": "Prețuri",
+    "title": "Începe cu viteză maximă!",
+    "per_month": "/lună",
+    "yearly_charge": "${amount} facturat anual",
+    "monthly_charge": "facturat lunar",
+    "go_to_dashboard": "Mergi la dashboard",
+    "sign_in": "Autentificare",
+    "toggle_group_aria": "toggle-an",
+    "yearly_aria": "Comută la facturare anuală",
+    "monthly_aria": "Comută la facturare lunară",
+    "yearly": "Anual (-20%)",
+    "monthly": "Lunar",
+    "support_prefix": "Email",
+    "support_suffix": "pentru a contacta echipa de suport.",
+    "support_note": "Poți testa abonamentele fără a fi taxat."
+  },
+  "register_page": {
+    "metadata": {
+      "title": "Creează un cont",
+      "description": "Creează un cont pentru a începe."
+    },
+    "login": "Autentificare",
+    "title": "Creează un cont",
+    "subtitle": "Introdu emailul de mai jos pentru a-ți crea contul",
+    "terms_prefix": "Continuând, ești de acord cu",
+    "terms_link": "Termenii de Serviciu",
+    "terms_middle": "și",
+    "privacy_link": "Politica de Confidențialitate"
+  },
+  "sign_in_modal": {
+    "title": "Autentificare",
+    "description": "Aceasta este strict pentru demonstrație — doar emailul și fotografia de profil vor fi stocate.",
+    "google_cta": "Autentificare cu Google"
   }
 }
