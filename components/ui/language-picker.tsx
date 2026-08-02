@@ -35,13 +35,15 @@ function getCurrentLocale(): string {
 
 async function syncLocaleToBackend(locale: string): Promise<void> {
   try {
-    await fetch("/api/user/language", {
+    const res = await fetch("/api/user/language", {
       method: "PATCH",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ language: locale }),
     });
-  } catch {
-    // Non-critical — cookie is already set, backend sync is best-effort
+    if (!res.ok) console.warn("Language sync failed:", res.status, await res.text().catch(() => ""));
+  } catch (e) {
+    console.warn("Language sync error:", e);
   }
 }
 
